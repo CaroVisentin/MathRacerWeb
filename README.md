@@ -27,4 +27,8 @@ src/                  # Código fuente de la aplicación
   utils/              # Funciones auxiliares
   types/              # Definición de tipos/interfaces
   shared/             # Componentes reutilizables del layout, ej. sidebar, navbar
-  
+
+# Librerías
+tailwindcss
+remixicon
+framer-motion

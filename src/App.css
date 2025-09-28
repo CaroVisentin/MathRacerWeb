@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "remixicon/fonts/remixicon.css";
 
 body {
   font-family: 'Jersey 10', 'sans serif'
