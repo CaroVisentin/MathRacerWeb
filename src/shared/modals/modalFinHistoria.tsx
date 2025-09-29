@@ -1,6 +1,9 @@
 import React from "react";
 import coinImg from "../../assets/images/coin.png";
 import carImg from "../../assets/images/auto.png";
+import grayRectangle from "../../assets/images/gray-rectangle.png";
+import yellowRectangle from "../../assets/images/yellow-rectangle.png";
+import iconoEnergia from "../../assets/images/icono-energia.png";
 
 interface ModalFinHistoriaProps {
     nivel: number;
@@ -8,6 +11,7 @@ interface ModalFinHistoriaProps {
     gano: boolean;
     onClose: () => void;
     onNext: () => void;
+    vidasRestantes: number;
 }
 
 export const ModalFinHistoria: React.FC<ModalFinHistoriaProps> = ({
@@ -16,6 +20,7 @@ export const ModalFinHistoria: React.FC<ModalFinHistoriaProps> = ({
     gano,
     onClose,
     onNext,
+    vidasRestantes
 }) => {
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black/60 z-50">
@@ -45,11 +50,30 @@ export const ModalFinHistoria: React.FC<ModalFinHistoriaProps> = ({
                         />
                     </div>
 
-                    <p className="mt-4 text-xl">Recompensa obtenida</p>
-                    <div className="flex items-center justify-center gap-2 mt-2">
-                        <img src={coinImg} alt="moneda" className="w-6 h-6" />
-                        <span className="text-4xl">{recompensa}</span>
-                    </div>
+                    {gano ? (
+                        <>
+                            <p className="mt-4 text-xl">Recompensa obtenida</p>
+                            <div className="flex items-center justify-center gap-2 mt-2">
+                                <img src={coinImg} alt="moneda" className="w-6 h-6" />
+                                <span className="text-4xl">{recompensa}</span>
+                            </div>
+                        </>
+                    ) : (
+                        <>
+                            <p className="mt-4 text-xl">Vida restante</p>
+                            <div className="flex items-center justify-center gap-2 mt-2">
+                                <img src={iconoEnergia} alt="energias" className="w-6 h-6" />
+                                {Array.from({ length: 3 }).map((_, index) => (
+                                    <img
+                                        key={index}
+                                        src={index < vidasRestantes ? yellowRectangle : grayRectangle}
+                                        alt="vida"
+                                        className="w-6 h-9"
+                                    />
+                                ))}
+                            </div>
+                        </>
+                    )}
                 </div>
 
                 {/* Botones */}
