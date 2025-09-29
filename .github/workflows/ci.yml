@@ -15,11 +15,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2. Configurar Node.js
+      # 2. Configurar Node.js 20 con cache de npm
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
           cache: 'npm'
 
       # 3. Instalar dependencias
@@ -30,6 +30,6 @@ jobs:
       - name: Build project
         run: npm run build
 
-      # 5. Ejecutar tests (Vitest o Jest)
+      # 5. Ejecutar tests (Vitest o Jest según tengas)
       - name: Run tests
         run: npm test
