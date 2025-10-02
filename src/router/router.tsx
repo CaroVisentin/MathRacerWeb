@@ -1,5 +1,6 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Home } from "../pages/home/home";
+import { PartidaMultijugador } from "../pages/partidaMultijugador";
 
 const router = createBrowserRouter([
   { path: "/", element: <Home /> },
@@ -11,6 +12,7 @@ const router = createBrowserRouter([
 //       { path: "settings", element: <Settings /> }
 //     ]
 //   }
+  { path: "/multijugador", element: <PartidaMultijugador /> }
 ]);
 
 export function AppRouter() {
