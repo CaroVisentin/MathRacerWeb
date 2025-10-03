@@ -4,7 +4,7 @@ import { PartidaMultijugador } from "../pages/partidaMultijugador";
 
 const router = createBrowserRouter([
   { path: "/", element: <Home /> },
-  // { path: "/multijugador", element: <Multijugador /> },
+  { path: "/multijugador", element: <PartidaMultijugador /> },
   // { path: "/historia", element: <Historia /> },
   // { path: "/practica", element: <Practica /> },
   // { path: "/ranking", element: <Ranking /> },
@@ -20,7 +20,7 @@ const router = createBrowserRouter([
 //       { path: "settings", element: <Settings /> }
 //     ]
 //   }
-  { path: "/multijugador", element: <PartidaMultijugador /> }
+ // { path: "/multijugador", element: <PartidaMultijugador /> }
 ]);
 
 export function AppRouter() {
