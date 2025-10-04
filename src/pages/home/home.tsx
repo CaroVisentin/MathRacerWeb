@@ -117,7 +117,7 @@ export function Home() {
       </div>
 
       {/* img auto */}
-      <div className="absolute inset-0 flex items-center justify-center">
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         <img src={auto} alt="Auto" className="w-100 drop-shadow-lg translate-y-16" />
       </div>
     </div>
