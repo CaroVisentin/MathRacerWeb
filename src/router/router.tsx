@@ -20,7 +20,7 @@ const router = createBrowserRouter([
 //       { path: "settings", element: <Settings /> }
 //     ]
 //   }
- // { path: "/multijugador", element: <PartidaMultijugador /> }
+
 ]);
 
 export function AppRouter() {

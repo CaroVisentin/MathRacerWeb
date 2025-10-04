@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from "react";
-import auto1 from "../assets/images/auto.png"
-
+import auto1 from "../assets/images/auto.png";
+import { div } from "framer-motion/client";
 
 interface Ecuacion{
     x: number;
@@ -12,36 +12,54 @@ export const JuegoMultijugador: React.FC = () => {
     const [opciones, setOpciones] = useState<number[]>([9, 10]);
     const [respuestaCorrecta, setRespuestaCorrecta] = useState<number>(9);
     const [respuestaSeleccionada, setRespuestaSeleccionada] = useState<number | null>(null);
-    const [vidas, setVidas] = useState<number>(3);
+   // const [vidas, setVidas] = useState<number>(3);
     const [contador, setContador] = useState<number>(5);
     const [resultado, setResultado] = useState<"acierto" | "error" | null>(null);
     const [posicionAuto1, setPosicionAuto1] = useState<number>(0);
     const [acierto, setAcierto] = useState<number>(0);
+    const [ganador,setGanador] = useState<boolean>(false);
 
     useEffect(() => {
-        if (contador === 0) {
+
+        if (ganador) return;
+        
+        if (contador > 0) {
             const timer = setTimeout(() => setContador(contador -1), 1000);
             return () => clearTimeout(timer);
         } else {
             tiempoAgotado(null);
         }
-        }, [contador]);
+        }, [contador, ganador]);
 
         const tiempoAgotado = (respuestaSeleccionada: number | null) => {
+            if(ganador) return;
             if(respuestaSeleccionada === respuestaCorrecta){
                 setResultado("acierto");
-                setAcierto(acierto + 1);
-                setPosicionAuto1(posicionAuto1 + 10);
+                setAcierto((a) => {
+                    const total = a +1 ;
+                    
+                        setPosicionAuto1(posicionAuto1 + 10);
+                    
+                   // else {setPosicionAuto2(posicionAuto2 +10)} seria el rivall 
+                   if(total >= 10){
+                    setGanador(true);
+                   }
+                    return total;
+                });
+                
             } else {
                 setResultado("error");
-                setVidas(vidas - 1);
+              //  setVidas(vidas - 1);
+                // si erramos podemos hacer algo a favor del otro
             }
 
             setTimeout(() => {
+                if(!ganador ){
                 generarNuevaEcuacion(); //cambiar porque pida de la api
                 setRespuestaSeleccionada(null);
                 setResultado(null);
                 setContador(5);
+                }
             }, 1000);
         };
 
@@ -54,8 +72,9 @@ export const JuegoMultijugador: React.FC = () => {
         setOpciones(nuevasOpciones);
         setRespuestaCorrecta(nuevoY);
     };
+
     return (
-        <div className="juego">
+          <div className="juego">
             {/*fondo cielo*/}
         <div className="fondoCielo"></div>
         {/*contenido del juego*/}
@@ -77,7 +96,7 @@ export const JuegoMultijugador: React.FC = () => {
             {/*vidas*/}
             <div className="absolute right-6 text-lg text-white bg-black/50 px-4 py-2 rounded">
             <i className="ri-oil-line"></i>
-            <span>Vidas: {vidas}</span>
+            <span>Vidas: </span>
             </div>
             
             {/*instrucciones*/}
@@ -114,12 +133,8 @@ export const JuegoMultijugador: React.FC = () => {
             </div>
 
             
-</div>
         </div>
-        
+        </div>
+
     );
 }
-
-
-
-
