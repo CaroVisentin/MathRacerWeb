@@ -1,8 +1,9 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFireExtinguisher, faSyncAlt, faBolt } from "@fortawesome/free-solid-svg-icons";
+import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 
 interface ComodinCardProps {
-    icon: any;
+    icon: IconDefinition;
     color: string;
     count: number;
     size?: string; // tamaño del icono
