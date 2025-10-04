@@ -1,14 +1,9 @@
 import isologo from "/images/isologotipo.png";
 import auto from "../../assets/images/auto.png";
-import fondo from "../../assets/images/garage-bg.png"; 
-import { Link,useNavigate } from "react-router-dom";
+import fondo from "../../assets/images/garage-bg.png";
+import { Link } from "react-router-dom";
 
-
-
-
-export const Home =() => {
-
-  const navigate = useNavigate();
+export const Home = () => {
   return (
     <div
       className="relative h-screen w-screen flex flex-col"
@@ -27,10 +22,9 @@ export const Home =() => {
       {/* contenedor para los botones */}
       <div className="flex flex-1 items-end justify-between px-4 pb-8">
         {/* botones izquierdos */}
-       {/*} <div className="flex flex-col gap-3">
-          <Link to="/multijugador">         
-            <button 
-            className="w-56 h-16 text-[#0f0f0f] text-3xl rounded-2xl shadow bg-[#5df9f9] hover:bg-[#f95ec8] transition-colors">
+        <div className="flex flex-col gap-3">
+          <Link to="/multijugador">
+            <button className="w-56 h-16 text-[#0f0f0f] text-3xl rounded-2xl shadow bg-[#5df9f9] hover:bg-[#f95ec8] transition-colors">
               Multijugador
             </button>
           </Link>
@@ -49,7 +43,7 @@ export const Home =() => {
         </div>
 
         {/* botones derechos */}
-       {/*} <div className="flex flex-col gap-3 items-end">
+        <div className="flex flex-col gap-3 items-end">
           <Link to="/ranking">
             <button className="w-16 h-16 flex items-center justify-center bg-[#5df9f9] text-[#0f0f0f] rounded-xl shadow hover:bg-[#f95ec8] transition-colors">
               <i className="ri-trophy-fill text-2xl"></i>
@@ -71,19 +65,9 @@ export const Home =() => {
       </div>
 
       {/* img auto */}
-     {/*} <div className="absolute inset-0 flex items-center justify-center">
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         <img src={auto} alt="Auto" className="w-100 drop-shadow-lg translate-y-16" />
-      </div>*/}
-
-      <div className="flex flex-col gap-3">
-            <button 
-             onClick={() => navigate("/multijugador")}
-            className="w-56 h-16 text-[#0f0f0f] text-3xl rounded-2xl shadow bg-[#5df9f9] hover:bg-[#f95ec8] transition-colors">
-              Multijugador
-            </button>
-         
-    </div>
-    </div>
+      </div>
     </div>
   );
 }
