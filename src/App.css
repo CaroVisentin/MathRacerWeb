@@ -1,7 +1,11 @@
 @import "tailwindcss";
 @import "remixicon/fonts/remixicon.css";
 
+*{
+  margin: 0;
+}
 body {
+  
   font-family: 'Jersey 10', 'sans serif'
 }
 
@@ -13,21 +17,26 @@ body {
   font-family: 'Audiowide', cursive;
 }
 .juego{ 
-  display: flex;
-  position: relative;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 180px 180px 100px 100px;
   height: 100vh;
-   overflow: hidden;
+  width: 100%;
+  
+}
+
+.filas{
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .fondoCielo {
-  position: relative;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 50%;
-  background-image: url('../assets/images/fondo2.png');
+ 
+  background-color: aqua;
+  background-image: url('../src/assets/images/fondo2.png');
   background-repeat: repeat-x;
-  animation: moverFondo 20s linear infinite;
+  animation: moverFondoCielo 10s linear infinite;
   background-size: cover;
   z-index: 0;
 }
@@ -39,16 +48,15 @@ body {
 }
 
 .fondoRuta{
-  position: absolute;
-  bottom: -35%;
-  left: 0;
-  width: 100%;
-  background-image: url('../assets/images/ruta.png');
+  position: relative;
+  background-color: azure;
+ background-image: url('../src/assets/images/ruta.png');
+  
   background-repeat: repeat-x;
-  height: 200px;
+  height: 180px;
   animation: moverFondoRuta 10s linear infinite;
   background-size: cover;
-    z-index: 10;
+    z-index: 1;
   
 
 }
@@ -59,23 +67,42 @@ body {
 
 .auto {
   position: absolute;
-  top: 40px;
+  top: 70%;
   bottom: 40px;
   width: 80px;
   transform: translateY(-50%);
   transition: left 0.5s ease, top 0.5s ease;
-  z-index: 2;
-}
-.opciones button {
-  margin: 0 8px;
-  padding: 12px 24px;
-  font-size: 18px;
-  border: 2px solid black;
-  border-radius: 8px;
-  background-color: white;
-  transition: background-color 0.3s;
+  z-index: 4;
 }
 
-.opciones button:hover {
-  background-color: #fef08a;
+.auto2{
+  top: 30%;
+}
+.gridComodin{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: 100%;
+}
+
+.instruccion {
+  text-align: left;
+  padding-left: 20px;
+  font-size: 1.2rem;
+}
+
+.comodin {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-right: 20px;
+}
+
+.ecuacion h2{
+  font-size: 2rem;
+}
+
+.opciones button{
+  margin: 0 10px;
+  padding: 10px 20px;
+  font-size: 1.2rem;
 }
