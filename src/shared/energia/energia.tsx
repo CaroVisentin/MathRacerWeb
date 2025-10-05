@@ -18,7 +18,7 @@ export const FuelIndicator = ({
 
     // array de colores según las vidas restantes
     const colores = Array.from({ length: cantVidasPorPartida }, (_, i) =>
-        i < vidasRestantes ? "ffe600" : "394a59"
+        i < vidasRestantes ? "#ffe600" : "#394a59"
     );
 
     return (

@@ -1,4 +1,4 @@
-import { JuegoMultijugador } from "../components/juegoMultijugador";
+import { JuegoMultijugador } from "../../../components/juego/multijugador/juegoMultijugador";
 
 export const PartidaMultijugador = () => {
    return (

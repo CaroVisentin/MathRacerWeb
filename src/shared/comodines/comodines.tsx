@@ -11,14 +11,21 @@ interface ComodinCardProps {
     height?: string; // alto del card
 }
 
-export const ComodinCard = ({ icon, color, count, size = "2.5rem", width = "6rem", height = "9rem" }: ComodinCardProps) => {
+export const ComodinCard = ({
+    icon,
+    color,
+    count,
+    size = "2rem",       
+    width = "4rem",      
+    height = "5rem"     
+}: ComodinCardProps) => {
     return (
         <div
-            className="flex flex-col items-center justify-center rounded-lg border-4 bg-black font-audiowide"
+            className="flex flex-col items-center justify-center rounded-lg border-2 bg-black font-audiowide"
             style={{ borderColor: color, width, height }}
         >
             <FontAwesomeIcon icon={icon} style={{ color, fontSize: size }} />
-            <span className="text-white text-2xl mt-2">{count}</span>
+            <span className="text-white text-lg mt-1">{count}</span>
         </div>
     );
 };

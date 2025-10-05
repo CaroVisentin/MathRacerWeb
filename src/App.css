@@ -1,11 +1,12 @@
 @import "tailwindcss";
 @import "remixicon/fonts/remixicon.css";
 
-*{
+* {
   margin: 0;
 }
+
 body {
-  
+
   font-family: 'Jersey 10', 'sans serif'
 }
 
@@ -16,23 +17,16 @@ body {
 .font-audiowide {
   font-family: 'Audiowide', cursive;
 }
-.juego{ 
+
+.juego {
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 180px 180px 100px 100px;
   height: 100vh;
   width: 100%;
-  
-}
-
-.filas{
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 .fondoCielo {
- 
   background-color: aqua;
   background-image: url('../src/assets/images/fondo2.png');
   background-repeat: repeat-x;
@@ -41,28 +35,36 @@ body {
   z-index: 0;
 }
 
-
 @keyframes moverFondoCielo {
-  from { background-position: 0 0; }
-  to { background-position-x: -2000px; }
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position-x: -2000px;
+  }
 }
 
-.fondoRuta{
+.fondoRuta {
   position: relative;
   background-color: azure;
- background-image: url('../src/assets/images/ruta.png');
-  
+  background-image: url('../src/assets/images/ruta.png');
+
   background-repeat: repeat-x;
   height: 180px;
   animation: moverFondoRuta 10s linear infinite;
   background-size: cover;
-    z-index: 1;
-  
-
+  z-index: 1;
 }
+
 @keyframes moverFondoRuta {
-  from { background-position: 0 0; }
-  to { background-position-x: -2000px; }
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position-x: -2000px;
+  }
 }
 
 .auto {
@@ -75,10 +77,11 @@ body {
   z-index: 4;
 }
 
-.auto2{
+.auto2 {
   top: 30%;
 }
-.gridComodin{
+
+.gridComodin {
   display: grid;
   grid-template-columns: 1fr 1fr;
   width: 100%;
@@ -95,14 +98,4 @@ body {
   justify-content: flex-end;
   gap: 10px;
   padding-right: 20px;
-}
-
-.ecuacion h2{
-  font-size: 2rem;
-}
-
-.opciones button{
-  margin: 0 10px;
-  padding: 10px 20px;
-  font-size: 1.2rem;
 }
