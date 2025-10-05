@@ -1,5 +1,8 @@
 import { useState, useEffect } from "react";
 import auto1 from "../assets/images/auto.png";
+import { ModalFinMultijugador } from "../shared/modals/modalFinMultijugador";
+import type { JugadorDto } from "../types/jugador/jugador";
+import fondoCielo from "../assets/images/fondo2.png";
 
 interface Ecuacion {
     x: number;
@@ -17,6 +20,19 @@ export const JuegoMultijugador = () => {
     const [posicionAuto1, setPosicionAuto1] = useState<number>(0);
     const [acierto, setAcierto] = useState<number>(0);
     const [ganador, setGanador] = useState<boolean>(false);
+    const jugadores: JugadorDto[]= [
+        {nombreJugador : "mariela", nivelJugador:7548 , autoId: 1, puntos: acierto},
+        { nombreJugador: "jugador2", nivelJugador: 2542,autoId: 2, puntos: 4},
+    ];
+    const cerrarModal = () => setGanador(false);
+
+    const reiniciarJuego = ()=>{
+        setGanador(false);
+        setAcierto(0);
+        setPosicionAuto1(0);
+        setContador(5);
+        generarNuevaEcuacion();
+    }
 
     useEffect(() => {
 
@@ -74,12 +90,28 @@ export const JuegoMultijugador = () => {
 
     return (
         <div className="juego">
+
+            
+ {/* Modal de fin de partida */}
+     
+{ganador && (
+  <div className="absolute inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <ModalFinMultijugador 
+        jugadores= {jugadores}
+        jugadorActual="mariela"
+        gano={true}
+        onClose={cerrarModal}
+        onRetry={reiniciarJuego}/>
+  </div>
+)}
+
             {/*fondo cielo*/}
-            <div className="fondoCielo"></div>
+            <div className="filas fondoCielo w-full "></div>
+            
             {/*contenido del juego*/}
-            <div className="juegoContenido">
+            
                 {/*ruta*/}
-                <div className="fondoRuta " >
+                <div className="filas fondoRuta w-full  relative" >
                     {/*auto1*/}
                     <img src={auto1}
                         alt="Auto 1"
@@ -89,27 +121,35 @@ export const JuegoMultijugador = () => {
                     {/*auto2*/}
                     <img src={auto1}
                         alt="Auto 2"
-                        className="absolute bottom-[180px] auto left-[10%]" />
+                        className="absolute bottom-[180px] auto left-[0%] auto2" />
                 </div>
 
-                {/*vidas*/}
+                {/*vidas*
                 <div className="absolute right-6 text-lg text-white bg-black/50 px-4 py-2 rounded">
                     <i className="ri-oil-line"></i>
                     <span>Vidas: </span>
-                </div>
+                </div>*/}
 
                 {/*instrucciones*/}
-                <div className="text -2xl text center text-black pt-4">
+                <div className="filas gridComodin">
+                <div className="instruccion">
                     Elegí la opcon para que Y sea MAYOR
                 </div>
 
+                <div className="comodin">
+                    <button>comodin1</button>
+                    <button>comodin2</button>
+                    <button>comodin3</button>
+                </div>
+                </div>
+
                 {/*ecuacion*/}
-                <div className="text-4xl text-center text-white pt-4">
-                    y = {ecuacion.x} + 5
+                <div className="filas ecuacion">
+                   <h2> y = {ecuacion.x} + 5 </h2>
                 </div>
 
                 {/*opciones*/}
-                <div className="flex justify-center mt-6 gap-4">
+                <div className="filas opciones">
                     {opciones.map((opcion, i) => (
                         <button
                             key={i}
@@ -130,7 +170,7 @@ export const JuegoMultijugador = () => {
                     <i className="ri-time-line"></i>
                     <span> Tiempo: {contador}s </span>
                 </div>
-            </div>
+            
         </div>
 
     );
