@@ -6,14 +6,17 @@ import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { FuelIndicator } from "../../../shared/energia/energia";
 import { Comodines } from "../../../shared/comodines/comodines";
+import { crearPartida, unirsePartida, obtenerEcuacion,responderEcuacion } from "../../../api/partidaApi";
 
 interface Ecuacion {
     x: number;
-    y: number;
+    y : number;
+    opciones : number[];
+    respuestaCorrecta: number;
 }
 
 export const JuegoMultijugador = () => {
-    const [ecuacion, setEcuacion] = useState<Ecuacion>({ x: 9, y: 10 });
+    const [ecuacion, setEcuacion] = useState<Ecuacion>();
     const [opciones, setOpciones] = useState<number[]>([9, 10]);
     const [respuestaCorrecta, setRespuestaCorrecta] = useState<number>(9);
     const [respuestaSeleccionada, setRespuestaSeleccionada] = useState<number | null>(null);
@@ -29,6 +32,10 @@ export const JuegoMultijugador = () => {
         { nombreJugador: "jugador2", nivelJugador: 2542, autoId: 2, puntos: 4 },
     ];
 
+    const [jugadorId] = useState<string> ("mariela");
+
+    const [partidaId, setPartidaId] = useState<string | null>(null);
+
     const cerrarModal = () => setGanador(false);
 
     const reiniciarJuego = () => {
@@ -36,10 +43,10 @@ export const JuegoMultijugador = () => {
         setAcierto(0);
         setPosicionAuto1(0);
         setContador(5);
-        generarNuevaEcuacion();
+      //  generarNuevaEcuacion();
     }
 
-    useEffect(() => {
+    /*useEffect(() => {
         if (ganador) return;
         if (contador > 0) {
             const timer = setTimeout(() => setContador(contador - 1), 1000);
@@ -90,7 +97,67 @@ export const JuegoMultijugador = () => {
 
     const handleVolver = () => {
         console.log("Volver");
+    };*/
+
+    useEffect(()=>{
+        const iniciarPartida = async () =>{
+            try{
+                const partida = await crearPartida(jugadorId);
+                setPartidaId(partida.id);
+
+                const ecuacion = await obtenerEcuacion(partida.id);
+                setEcuacion({ x: ecuacion.x, y: ecuacion.y});
+                setOpciones(ecuacion.opciones);
+                setRespuestaCorrecta(ecuacion.respuestaCorrecta);
+                
+            } catch (error){
+                console.error("error al iniciar la partida", error);
+            }
+        };
+        iniciarPartida();
+    }, []);
+    const tiempoAgotado = async (respuestaSeleccionada: number | null) => {
+  if (ganador || !partidaId || respuestaSeleccionada === null) return;
+
+  try {
+    const resultadoApi = await responderEcuacion(partidaId, respuestaSeleccionada);
+
+    if (resultadoApi.correcta) {
+      setResultado("acierto");
+      setAcierto((a) => {
+        const total = a + 1;
+        setPosicionAuto1(posicionAuto1 + 10);
+        if (total >= 10) setGanador(true);
+        return total;
+      });
+    } else {
+      setResultado("error");
+      if (vidasRestantes > 0) {
+        setVidasRestantes(vidasRestantes - 1);
+      }
+    }
+
+    setTimeout(async () => {
+      if (!ganador) {
+        const nuevaEcuacion = await obtenerEcuacion(partidaId);
+        setEcuacion({ x: nuevaEcuacion.x, y: nuevaEcuacion.y });
+        setOpciones(nuevaEcuacion.opciones);
+        setRespuestaCorrecta(nuevaEcuacion.respuestaCorrecta);
+        setRespuestaSeleccionada(null);
+        setResultado(null);
+        setContador(5);
+      }
+    }, 1000);
+
+    
+  } catch (error) {
+    console.error("Error al responder:", error);
+  }
+
+   const handleVolver = () => {
+        console.log("Volver");
     };
+};
 
     return (
         <div className="juego w-full h-full bg-black text-white relative">
