@@ -9,16 +9,15 @@ import { Comodines } from "../../../shared/comodines/comodines";
 import { crearPartida, unirsePartida, obtenerEcuacion,responderEcuacion } from "../../../api/partidaApi";
 
 interface Ecuacion {
-    x: number;
-    y : number;
-    opciones : number[];
-    respuestaCorrecta: number;
+    equationString: string;
+    options : number[];
+    correctAnswer: number;
 }
 
 export const JuegoMultijugador = () => {
     const [ecuacion, setEcuacion] = useState<Ecuacion>();
-    const [opciones, setOpciones] = useState<number[]>([9, 10]);
-    const [respuestaCorrecta, setRespuestaCorrecta] = useState<number>(9);
+    const [opciones, setOpciones] = useState<number[]>();
+    const [respuestaCorrecta, setRespuestaCorrecta] = useState<number>();
     const [respuestaSeleccionada, setRespuestaSeleccionada] = useState<number | null>(null);
     const [contador, setContador] = useState<number>(5);
     const [resultado, setResultado] = useState<"acierto" | "error" | null>(null);
@@ -99,14 +98,30 @@ export const JuegoMultijugador = () => {
         console.log("Volver");
     };*/
 
+    const handleVolver = () => {
+        console.log("Volver");
+    };
+
     useEffect(()=>{
         const iniciarPartida = async () =>{
             try{
                 const partida = await crearPartida(jugadorId);
-                setPartidaId(partida.id);
+                if (!partida?.gameId) {
+  console.error("La partida no devolvió un ID válido:", partida);
+  return;
+}
 
-                const ecuacion = await obtenerEcuacion(partida.id);
-                setEcuacion({ x: ecuacion.x, y: ecuacion.y});
+                setPartidaId(partida.gameId);
+    // Simular otro jugador uniéndose (para pruebas)
+                await unirsePartida(partida.gameId, "fulanini");
+
+                const ecuacion = await obtenerEcuacion(partida.gameId, jugadorId);
+                console
+                setEcuacion({ 
+                    equationString: ecuacion.equationString ,
+                     options: ecuacion.options, 
+                     correctAnswer: ecuacion.correctAnswer });
+            
                 setOpciones(ecuacion.opciones);
                 setRespuestaCorrecta(ecuacion.respuestaCorrecta);
                 
@@ -120,7 +135,7 @@ export const JuegoMultijugador = () => {
   if (ganador || !partidaId || respuestaSeleccionada === null) return;
 
   try {
-    const resultadoApi = await responderEcuacion(partidaId, respuestaSeleccionada);
+    const resultadoApi = await responderEcuacion(partidaId, jugadorId,respuestaSeleccionada);
 
     if (resultadoApi.correcta) {
       setResultado("acierto");
@@ -139,8 +154,12 @@ export const JuegoMultijugador = () => {
 
     setTimeout(async () => {
       if (!ganador) {
-        const nuevaEcuacion = await obtenerEcuacion(partidaId);
-        setEcuacion({ x: nuevaEcuacion.x, y: nuevaEcuacion.y });
+        const nuevaEcuacion = await obtenerEcuacion(partidaId, jugadorId);
+        setEcuacion({ 
+           equationString: nuevaEcuacion.equationString,
+           options: nuevaEcuacion.options, 
+           correctAnswer: nuevaEcuacion.correctAnswer
+        });
         setOpciones(nuevaEcuacion.opciones);
         setRespuestaCorrecta(nuevaEcuacion.respuestaCorrecta);
         setRespuestaSeleccionada(null);
@@ -154,9 +173,7 @@ export const JuegoMultijugador = () => {
     console.error("Error al responder:", error);
   }
 
-   const handleVolver = () => {
-        console.log("Volver");
-    };
+   
 };
 
     return (
@@ -224,13 +241,14 @@ export const JuegoMultijugador = () => {
             <div className="flex flex-col justify-center items-center h-full gap-10 mb-10">
                 <div className="flex justify-center mb-6">
                     <div className="inline-block border-2 border-white rounded-lg text-6xl px-6 py-3">
-                        y = {ecuacion.x} + 5
+                      {/* Mostrar ecuación solo si está definida */}
+                      {ecuacion?.equationString && <span>{ecuacion.equationString}</span>}
                     </div>
                 </div>
 
                 {/* Opciones */}
                 <div className="flex justify-center items-center mt-6 gap-6 opciones">
-                    {opciones.map((opcion, i) => {
+                    {opciones?.map((opcion, i) => {
                         let bgColor = "";
                         if (respuestaSeleccionada === opcion) {
                             if (resultado === "acierto") bgColor = "#a6ff00";
