@@ -1,6 +1,6 @@
 import React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { BackButton } from "../../../shared/buttons/backButton";
+import { useNavigate } from "react-router-dom";
 
 interface TabPanelProps {
     seccionActiva: "perfil" | "amigos" | "ajustes";
@@ -10,6 +10,7 @@ interface TabPanelProps {
 }
 
 export const TabPanel = ({ seccionActiva, setSeccionActiva }: TabPanelProps) => {
+    const navigate = useNavigate();
     const tabs: { label: string; key: "perfil" | "amigos" | "ajustes" }[] = [
         { label: "Perfil", key: "perfil" },
         { label: "Amigos", key: "amigos" },
@@ -18,13 +19,9 @@ export const TabPanel = ({ seccionActiva, setSeccionActiva }: TabPanelProps) => 
 
     return (
         <div className="w-full flex items-center justify-between mb-8">
-            {/* BackButton */}
-            <button
-                onClick={() => console.log("Volver atrás")}
-                className="border-2 border-cyan-400 rounded-lg p-2 text-cyan-400 hover:bg-cyan-900 transition"
-            >
-                <FontAwesomeIcon icon={faArrowLeft} className="text-xl" />
-            </button>
+            <BackButton
+                onClick={() => navigate(-1)}
+            />
 
             {/* Tabs */}
             <div className="flex gap-6">

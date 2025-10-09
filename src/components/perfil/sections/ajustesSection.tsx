@@ -1,5 +1,3 @@
-import { faQuestion } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { AudioControls } from "../components/controlDeSonido";
 
 export const AjustesSection = () => {
@@ -17,13 +15,6 @@ export const AjustesSection = () => {
 
                 <button className="bg-black border-2 border-red-600 text-red-600 px-8 py-2 rounded text-xl tracking-wider transition-all duration-300 hover:bg-red-600 hover:text-white">
                     Eliminar cuenta
-                </button>
-            </div>
-
-            {/* Botón de ayuda abajo */}
-            <div className="flex justify-end mt-4 mb-4 w-full">
-                <button className="border border-cyan-400 p-2 rounded text-cyan-400 hover:bg-cyan-500 transition">
-                    <FontAwesomeIcon icon={faQuestion} />
                 </button>
             </div>
         </div>
