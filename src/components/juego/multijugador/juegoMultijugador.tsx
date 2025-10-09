@@ -6,7 +6,8 @@ import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { FuelIndicator } from "../../../shared/energia/energia";
 import { Comodines } from "../../../shared/comodines/comodines";
-import { crearPartida, unirsePartida, obtenerEcuacion,responderEcuacion } from "../../../api/partidaApi";
+//import { crearPartida, unirsePartida, obtenerEcuacion,responderEcuacion } from "../../../api/partidaApi";
+import connection from "../../../signalR/conexion";
 
 interface Ecuacion {
     equationString: string;
@@ -25,11 +26,12 @@ export const JuegoMultijugador = () => {
     const [acierto, setAcierto] = useState<number>(0);
     const [ganador, setGanador] = useState<boolean>(false);
     const [vidasRestantes, setVidasRestantes] = useState(3);
+    const [jugadoresPartida, setJugadoresPartida] = useState<JugadorDto[]>([]);
 
-    const jugadores: JugadorDto[] = [
-        { nombreJugador: "mariela", nivelJugador: 7548, autoId: 1, puntos: acierto },
-        { nombreJugador: "jugador2", nivelJugador: 2542, autoId: 2, puntos: 4 },
-    ];
+   //const jugadores: JugadorDto[] = [
+  //     { nombreJugador: "mariela", nivelJugador: 7548, autoId: 1, puntos: acierto },
+   //   { nombreJugador: "jugador2", nivelJugador: 2542, autoId: 2, puntos: 4 },
+   //];
 
     const [jugadorId] = useState<string> ("mariela");
 
@@ -42,66 +44,78 @@ export const JuegoMultijugador = () => {
         setAcierto(0);
         setPosicionAuto1(0);
         setContador(5);
-      //  generarNuevaEcuacion();
+        setVidasRestantes(3);
+        setResultado(null);
+        setRespuestaSeleccionada(null);
+      
     }
 
-    /*useEffect(() => {
-        if (ganador) return;
-        if (contador > 0) {
-            const timer = setTimeout(() => setContador(contador - 1), 1000);
-            return () => clearTimeout(timer);
-        } else {
-            tiempoAgotado(null);
-        }
-    }, [contador, ganador]);
-
-    const tiempoAgotado = (respuestaSeleccionada: number | null) => {
-        if (ganador) return;
-        if (respuestaSeleccionada === respuestaCorrecta) {
-            setResultado("acierto");
-            setAcierto((a) => {
-                const total = a + 1;
-                setPosicionAuto1(posicionAuto1 + 10);
-                if (total >= 10) setGanador(true);
-                return total;
-            });
-        } else {
-            setResultado("error");
-
-            if (vidasRestantes > 0) {
-                setVidasRestantes(vidasRestantes - 1)
-            } else {
-                // Dar el juego por terminado si no tiene vidas restantes
-            }
-        }
-
-        setTimeout(() => {
-            if (!ganador) {
-                generarNuevaEcuacion();
-                setRespuestaSeleccionada(null);
-                setResultado(null);
-                setContador(5);
-            }
-        }, 1000);
-    };
-
-    const generarNuevaEcuacion = () => {
-        const nuevoX = Math.floor(Math.random() * 10) + 1;
-        const nuevoY = nuevoX + 5;
-        const nuevasOpciones = [nuevoY, nuevoY + 5];
-        setEcuacion({ x: nuevoX, y: nuevoY });
-        setOpciones(nuevasOpciones);
-        setRespuestaCorrecta(nuevoY);
-    };
-
-    const handleVolver = () => {
-        console.log("Volver");
-    };*/
-
-    const handleVolver = () => {
+       const handleVolver = () => {
         console.log("Volver");
     };
 
+    useEffect(() => {
+        const iniciarPartida = async () => {
+            try {
+                await connection.invoke("FindMatch", jugadorId);
+                console.log("Buscando partida...", jugadorId);
+            } catch (error) {
+                console.error("Error al buscar partida:", error);
+            }
+        };
+         connection.on("GameUpdate", (data) => {
+      console.log("GameUpdate recibido:", data);
+
+      if (data.player?.name === jugadorId && data.currentQuestion) {
+        setPartidaId(data.gameId);
+        setEcuacion({
+          equationString: data.currentQuestion.equation,
+          options: data.currentQuestion.options,
+          correctAnswer: data.currentQuestion.correctAnswer,
+        });
+        setOpciones(data.currentQuestion.options);
+        setRespuestaCorrecta(data.currentQuestion.correctAnswer);
+        setContador(5);
+        setRespuestaSeleccionada(null);
+        setResultado(null);
+
+        const jugadoresActualizados = data.players.map((p: any) => ({
+          nombreJugador: p.name,
+          nivelJugador: p.level,
+            autoId: p.carId,
+            puntos: p.score,
+        }));
+        setJugadoresPartida(jugadoresActualizados);
+      }
+    });
+        iniciarPartida();
+
+        return () => {
+            connection.off("GameUpdate");
+        };
+    }, []);
+
+    const tiempoAgotado = async (respuestaSeleccionada: number | null) => {
+  if (ganador || !partidaId || respuestaSeleccionada === null) return;
+    try {
+    await connection.invoke("SubmitAnswer",partidaId,jugadorId,respuestaSeleccionada);
+    console.log("Respuesta enviada:", respuestaSeleccionada);
+    } catch (error) {
+    console.error("Error al enviar respuesta:", error);
+    }
+};
+
+const manejarRespuesta = (opcion: number) => {
+    setRespuestaSeleccionada(opcion);
+    tiempoAgotado(opcion);
+  };
+
+  
+
+
+
+
+        /*}
     useEffect(()=>{
         const iniciarPartida = async () =>{
             try{
@@ -131,6 +145,8 @@ export const JuegoMultijugador = () => {
         };
         iniciarPartida();
     }, []);
+
+
     const tiempoAgotado = async (respuestaSeleccionada: number | null) => {
   if (ganador || !partidaId || respuestaSeleccionada === null) return;
 
@@ -171,11 +187,9 @@ export const JuegoMultijugador = () => {
     
   } catch (error) {
     console.error("Error al responder:", error);
-  }
+  }*/
 
    
-};
-
     return (
         <div className="juego w-full h-full bg-black text-white relative">
 
@@ -200,8 +214,8 @@ export const JuegoMultijugador = () => {
             {ganador && (
                 <div className="absolute inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
                     <ModalFinMultijugador
-                        jugadores={jugadores}
-                        jugadorActual="mariela"
+                        jugadores={jugadoresPartida}
+                        jugadorActual={jugadorId}
                         gano={true}
                         onClose={cerrarModal}
                         onRetry={reiniciarJuego}
@@ -258,10 +272,7 @@ export const JuegoMultijugador = () => {
                         return (
                             <button
                                 key={i}
-                                onClick={() => {
-                                    setRespuestaSeleccionada(opcion);
-                                    tiempoAgotado(opcion);
-                                }}
+                                onClick={() => manejarRespuesta(opcion)}
                                 className="border-2 border-white px-6 py-3 rounded-lg text-xl transition"
                                 style={{ backgroundColor: bgColor }}
                             >
@@ -274,4 +285,4 @@ export const JuegoMultijugador = () => {
 
         </div>
     );
-}
+};
