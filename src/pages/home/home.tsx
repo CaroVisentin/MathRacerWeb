@@ -8,7 +8,7 @@ import pilabolt from "../../assets/images/pila-bolt.png";
 import moneda from "../../assets/images/coin.png";
 import { Link } from "react-router-dom";
 
-export function Home() {
+export const Home = () => {
   return (
     <div
       className="relative h-screen w-screen flex flex-col"
