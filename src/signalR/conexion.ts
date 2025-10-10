@@ -1,7 +1,7 @@
 import {HubConnectionBuilder, LogLevel} from "@microsoft/signalr";
 
 export const connection = new HubConnectionBuilder()
-    .withUrl("https://localhost:5001/hub")
+    .withUrl("http://localhost:5153/gamehub")
     .configureLogging(LogLevel.Information)
     .withAutomaticReconnect()
     .build();

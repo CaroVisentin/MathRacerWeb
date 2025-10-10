@@ -35,3 +35,6 @@ export const responderEcuacion = async (partidaId: string, jugadorId: string, re
   return res.data;
 };
 
+
+
+

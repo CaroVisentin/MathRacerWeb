@@ -6,8 +6,8 @@ import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { FuelIndicator } from "../../../shared/energia/energia";
 import { Comodines } from "../../../shared/comodines/comodines";
-//import { crearPartida, unirsePartida, obtenerEcuacion,responderEcuacion } from "../../../api/partidaApi";
 import connection from "../../../signalR/conexion";
+import { ModalBuscandoRival } from "../../../shared/modals/modalBuscandoRival";
 
 interface Ecuacion {
     equationString: string;
@@ -23,30 +23,32 @@ export const JuegoMultijugador = () => {
     const [contador, setContador] = useState<number>(5);
     const [resultado, setResultado] = useState<"acierto" | "error" | null>(null);
     const [posicionAuto1, setPosicionAuto1] = useState<number>(0);
+    const [posicionAuto2, setPosicionAuto2] = useState<number>(0);
     const [acierto, setAcierto] = useState<number>(0);
     const [ganador, setGanador] = useState<boolean>(false);
     const [vidasRestantes, setVidasRestantes] = useState(3);
     const [jugadoresPartida, setJugadoresPartida] = useState<JugadorDto[]>([]);
-
-   //const jugadores: JugadorDto[] = [
-  //     { nombreJugador: "mariela", nivelJugador: 7548, autoId: 1, puntos: acierto },
-   //   { nombreJugador: "jugador2", nivelJugador: 2542, autoId: 2, puntos: 4 },
-   //];
-
-    const [jugadorId] = useState<string> ("mariela");
-
-    const [partidaId, setPartidaId] = useState<string | null>(null);
-
+    const [buscandoRival,setBuscandoRival]= useState(true);
+    const [jugadoresConectados, setJugadoresConectados] = useState<number>(0);
+    const [jugadorId, setJugadorId] = useState<number | null>(null);
+    const [nombreJugador,setNombreJugador] = useState<string>("");
+    const [partidaId, setPartidaId] = useState<number| null>(null);
+    const [instruccion, setInstruccion] = useState<string>("");
+    const [perdedor, setPerdedor]= useState<boolean>(false);
     const cerrarModal = () => setGanador(false);
 
     const reiniciarJuego = () => {
         setGanador(false);
+        setPerdedor(false);
         setAcierto(0);
         setPosicionAuto1(0);
-        setContador(5);
+        setPosicionAuto2(0);
+            setContador(5);
         setVidasRestantes(3);
         setResultado(null);
         setRespuestaSeleccionada(null);
+        setBuscandoRival(true);
+        conectarJugador();
       
     }
 
@@ -55,50 +57,97 @@ export const JuegoMultijugador = () => {
     };
 
     useEffect(() => {
-        const iniciarPartida = async () => {
-            try {
-                await connection.invoke("FindMatch", jugadorId);
-                console.log("Buscando partida...", jugadorId);
-            } catch (error) {
-                console.error("Error al buscar partida:", error);
-            }
-        };
-         connection.on("GameUpdate", (data) => {
+       connection.on("GameUpdate", (data) => {
       console.log("GameUpdate recibido:", data);
+      console.log("Jugador recibido:", data.player?.name);
+console.log("Jugador actual:", jugadorId);
 
-      if (data.player?.name === jugadorId && data.currentQuestion) {
-        setPartidaId(data.gameId);
-        setEcuacion({
-          equationString: data.currentQuestion.equation,
-          options: data.currentQuestion.options,
-          correctAnswer: data.currentQuestion.correctAnswer,
-        });
-        setOpciones(data.currentQuestion.options);
-        setRespuestaCorrecta(data.currentQuestion.correctAnswer);
-        setContador(5);
-        setRespuestaSeleccionada(null);
-        setResultado(null);
-
-        const jugadoresActualizados = data.players.map((p: any) => ({
+      const jugadoresActualizados = data.players.map((p: any) => ({
           nombreJugador: p.name,
           nivelJugador: p.level,
             autoId: p.carId,
             puntos: p.score,
         }));
-        setJugadoresPartida(jugadoresActualizados);
+      setJugadoresPartida(jugadoresActualizados);
+      setJugadoresConectados(jugadoresActualizados.length);
+
+      const jugadorActual = data.players.find((p:any)=> 
+        p.name.trim().toLowerCase() === nombreJugador.trim().toLowerCase());
+      
+      const otroJugador = data.players.find((p: any) => p.id !== jugadorActual.id);
+
+if (otroJugador) {
+  const avanceOtro = (otroJugador.correctAnswers / 10) * 100;
+  setPosicionAuto2(avanceOtro);
+}
+      if(jugadorActual){
+        setJugadorId(jugadorActual.id);      
+  const avance = (jugadorActual.correctAnswers / 10) * 100; // 100% es la meta
+  setPosicionAuto1(avance);
+      }
+
+  // Mostrar resultado (correcto/error)
+  if (respuestaSeleccionada !== null && respuestaCorrecta !== undefined) {
+   // const opciones = ecuacion?.options || [];
+  //  const fueCorrecta = opciones.includes(respuestaSeleccionada);
+  const fueCorrecta = respuestaSeleccionada === respuestaCorrecta; 
+    setResultado(fueCorrecta ? "acierto" : "error");
+    if (!fueCorrecta) {
+      setVidasRestantes(prev => prev - 1);
+    }
+      }  
+
+          // Ganador
+  if (data.winnerId && jugadorActual) {
+    if (data.winnerId === jugadorActual.id){
+setGanador(true);
+setPerdedor(false);
+    } else{
+    setPerdedor(true);
+    setGanador(false);
+  }
+}
+
+      if(jugadoresActualizados.length >=2){
+         setBuscandoRival(false);
+      }      
+
+      if (data.currentQuestion) {
+        setPartidaId(data.gameId);      
+        setEcuacion({
+          equationString: data.currentQuestion.equation,
+          options: data.currentQuestion.options,
+        correctAnswer: data.currentQuestion.correctAnswer,
+        });
+        setOpciones(data.currentQuestion.options);
+      setRespuestaCorrecta(data.currentQuestion.correctAnswer);
+        setContador(5);
+        setRespuestaSeleccionada(null);
+        setResultado(null);    
+        setInstruccion(data.currentQuestion.instruccion)  ;
       }
     });
-        iniciarPartida();
 
-        return () => {
+     return () => {
             connection.off("GameUpdate");
         };
-    }, []);
+    }, [nombreJugador]);
 
+    
+const conectarJugador = async () => {
+  if (!nombreJugador.trim()) return;
+
+  try {
+    await connection.invoke("FindMatch", nombreJugador);
+    console.log("Buscando partida...", nombreJugador);
+  } catch (error) {
+    console.error("Error al buscar partida:", error);
+  }
+};
     const tiempoAgotado = async (respuestaSeleccionada: number | null) => {
   if (ganador || !partidaId || respuestaSeleccionada === null) return;
     try {
-    await connection.invoke("SubmitAnswer",partidaId,jugadorId,respuestaSeleccionada);
+    await connection.invoke("SendAnswer",partidaId,jugadorId,respuestaSeleccionada.toString());
     console.log("Respuesta enviada:", respuestaSeleccionada);
     } catch (error) {
     console.error("Error al enviar respuesta:", error);
@@ -109,88 +158,7 @@ const manejarRespuesta = (opcion: number) => {
     setRespuestaSeleccionada(opcion);
     tiempoAgotado(opcion);
   };
-
-  
-
-
-
-
-        /*}
-    useEffect(()=>{
-        const iniciarPartida = async () =>{
-            try{
-                const partida = await crearPartida(jugadorId);
-                if (!partida?.gameId) {
-  console.error("La partida no devolvió un ID válido:", partida);
-  return;
-}
-
-                setPartidaId(partida.gameId);
-    // Simular otro jugador uniéndose (para pruebas)
-                await unirsePartida(partida.gameId, "fulanini");
-
-                const ecuacion = await obtenerEcuacion(partida.gameId, jugadorId);
-                console
-                setEcuacion({ 
-                    equationString: ecuacion.equationString ,
-                     options: ecuacion.options, 
-                     correctAnswer: ecuacion.correctAnswer });
-            
-                setOpciones(ecuacion.opciones);
-                setRespuestaCorrecta(ecuacion.respuestaCorrecta);
-                
-            } catch (error){
-                console.error("error al iniciar la partida", error);
-            }
-        };
-        iniciarPartida();
-    }, []);
-
-
-    const tiempoAgotado = async (respuestaSeleccionada: number | null) => {
-  if (ganador || !partidaId || respuestaSeleccionada === null) return;
-
-  try {
-    const resultadoApi = await responderEcuacion(partidaId, jugadorId,respuestaSeleccionada);
-
-    if (resultadoApi.correcta) {
-      setResultado("acierto");
-      setAcierto((a) => {
-        const total = a + 1;
-        setPosicionAuto1(posicionAuto1 + 10);
-        if (total >= 10) setGanador(true);
-        return total;
-      });
-    } else {
-      setResultado("error");
-      if (vidasRestantes > 0) {
-        setVidasRestantes(vidasRestantes - 1);
-      }
-    }
-
-    setTimeout(async () => {
-      if (!ganador) {
-        const nuevaEcuacion = await obtenerEcuacion(partidaId, jugadorId);
-        setEcuacion({ 
-           equationString: nuevaEcuacion.equationString,
-           options: nuevaEcuacion.options, 
-           correctAnswer: nuevaEcuacion.correctAnswer
-        });
-        setOpciones(nuevaEcuacion.opciones);
-        setRespuestaCorrecta(nuevaEcuacion.respuestaCorrecta);
-        setRespuestaSeleccionada(null);
-        setResultado(null);
-        setContador(5);
-      }
-    }, 1000);
-
-    
-  } catch (error) {
-    console.error("Error al responder:", error);
-  }*/
-
-   
-    return (
+     return (
         <div className="juego w-full h-full bg-black text-white relative">
 
             {/* HEADER */}
@@ -209,17 +177,35 @@ const manejarRespuesta = (opcion: number) => {
                 {/* Vidas */}
                 <FuelIndicator vidasRestantes={vidasRestantes} />
             </div>
+            {/*modal de busqueda de rival*/}
+            { buscandoRival && (
+                <ModalBuscandoRival
+                jugadorId={nombreJugador}
+                setJugadorId={setNombreJugador}
+                onConectar={conectarJugador}/>)}
 
             {/* Modal de fin de partida */}
             {ganador && (
                 <div className="absolute inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
                     <ModalFinMultijugador
                         jugadores={jugadoresPartida}
-                        jugadorActual={jugadorId}
+                        jugadorActual={nombreJugador}
                         gano={true}
                         onClose={cerrarModal}
                         onRetry={reiniciarJuego}
                     />
+                </div>
+            )}
+
+            {perdedor &&(
+                <div className="absolute inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                <ModalFinMultijugador
+                jugadores={jugadoresPartida}
+                jugadorActual={nombreJugador}
+                gano={false}
+                onClose={cerrarModal}
+                onRetry={reiniciarJuego}
+                />
                 </div>
             )}
 
@@ -234,13 +220,17 @@ const manejarRespuesta = (opcion: number) => {
                     style={{ left: `${posicionAuto1}%` }} />
                 <img src={auto1}
                     alt="Auto 2"
-                    className="absolute bottom-[180px] auto left-[0%] auto2" />
+                    className="absolute bottom-[180px] auto left-[0%] auto2" 
+                   style={{ left: `${posicionAuto2}%` }} />
             </div>
 
             {/* Instrucciones y Comodines */}
             <div className="flex justify-center items-center gridComodin mt-4">
                 <div className="instruccion">
-                    Elegí la opción para que Y sea MAYOR
+                    {instruccion
+                    ? `Elegí la opción para que Y sea ${instruccion.toUpperCase()}`
+                    :"esperando instruccion"  }
+                   
                 </div>
                 <div className="comodin">
                     <Comodines
@@ -268,7 +258,6 @@ const manejarRespuesta = (opcion: number) => {
                             if (resultado === "acierto") bgColor = "#a6ff00";
                             else if (resultado === "error") bgColor = "#ff0040";
                         }
-
                         return (
                             <button
                                 key={i}
