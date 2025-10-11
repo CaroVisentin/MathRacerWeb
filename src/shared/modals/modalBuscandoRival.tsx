@@ -1,6 +1,12 @@
 import { motion } from "framer-motion";
 
-export const ModalBuscandoRival = () => {
+interface ModalBuscandoRivalProps{
+    jugadorId : string;
+    setJugadorId: (id:string) => void;
+    onConectar: () => void;
+}
+
+export const ModalBuscandoRival = ({jugadorId, setJugadorId, onConectar}: ModalBuscandoRivalProps) => {
     // Configuraciones de giro para cada reloj
     const relojConfigs = [
         { duration: 2, delay: 0 },
@@ -17,6 +23,25 @@ export const ModalBuscandoRival = () => {
                     <i className="ri-earth-fill text-[#00F0FF] text-5xl"></i>
 
                     <p className="text-3xl text-[#00F0FF]">Buscando rival</p>
+                  
+                  
+ <input
+            type="text"
+            value={jugadorId}
+            onChange={(e) => setJugadorId(e.target.value)}
+            placeholder="Tu nombre"
+            className="px-4 py-2 rounded text-black w-full"
+          />
+
+          <button
+            onClick={onConectar}
+            className="bg-[#00F0FF] text-black px-4 py-2 rounded mt-2 hover:bg-[#00d0d0]"
+          >
+            Conectar
+          </button>
+
+                  
+                  
                     {/* Tres relojes de arena */}
                     <div className="flex space-x-4 mt-2">
                         {relojConfigs.map((config, i) => (
