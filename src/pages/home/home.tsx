@@ -1,13 +1,13 @@
 import isologo from "/images/isologotipo.png";
 import auto from "../../assets/images/auto.png";
-//import fondo from "../../assets/images/garage-bg.png";
-import fondo from "../../assets/images/Math.png"
+import fondo from "../../assets/images/garage-bg.png";
+
 import { Link } from "react-router-dom";
 
 export const Home = () => {
   return (
     <div
-      className="relative h-screen w-screen flex flex-col fondoHome"
+      className="relative h-screen w-screen flex flex-col "
       style={{
         backgroundImage: `url(${fondo})`,
         backgroundSize: "cover",

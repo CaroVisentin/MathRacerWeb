@@ -27,7 +27,8 @@ export const MultiplayerGame = () => {
     const [posicionAuto2, setPosicionAuto2] = useState<number>(0);
     const [acierto, setAcierto] = useState<number>(0);
     const [ganador, setGanador] = useState<boolean>(false);
-    const [vidasRestantes, setVidasRestantes] = useState(3);
+    const [jugadoresConectados, setJugadoresConectados] = useState<number>(0);
+    //const [vidasRestantes, setVidasRestantes] = useState(3);
     const [jugadoresPartida, setJugadoresPartida] = useState<JugadorDto[]>([]);
     const [buscandoRival, setBuscandoRival] = useState(true);
     const [jugadorId, setJugadorId] = useState<number | null>(null);
@@ -49,7 +50,7 @@ export const MultiplayerGame = () => {
 
        // setContador(10);
 
-        setVidasRestantes(3);
+       // setVidasRestantes(3);
         setResultado(null);
         setRespuestaSeleccionada(null);
         setBuscandoRival(true);
@@ -70,8 +71,8 @@ export const MultiplayerGame = () => {
                 puntos: p.score,
             }));
 
-
             setJugadoresPartida(jugadoresActualizados);
+            setJugadoresConectados(jugadoresActualizados.length);
 
             const jugadorActual = data.players.find(
                 (p: any) => p.name.trim().toLowerCase() === nombreJugador.trim().toLowerCase() );
@@ -88,37 +89,20 @@ export const MultiplayerGame = () => {
                 setPosicionAuto2(avanceOtro);
             }
 
-            // Mostrar resultado y actualizar aciertos locales
-            if (respuestaSeleccionada !== null && respuestaCorrecta !== undefined) {
-                const fueCorrecta = respuestaSeleccionada === respuestaCorrecta;
-                setResultado(fueCorrecta ? "acierto" : "error");
-
-                if (fueCorrecta) setAcierto(prev => prev + 1);
-                else setVidasRestantes(prev => prev - 1);
+             
+            if (data.winnerId && jugadorActual) {
+             if (data.winnerId === jugadorActual.id){
+            setGanador(true);
+            setPerdedor(false);
+             } else{
+            setPerdedor(true);
+            setGanador(false);
+             }
             }
 
-            // TERMINAR PARTIDA si alguien llega a 10 aciertos
-            const misAciertos = jugadorActual?.correctAnswers ?? acierto;
-            const aciertosRival = otroJugador?.correctAnswers ?? 0;
+             if (jugadoresActualizados.length >= 2) setBuscandoRival(false);
 
-            if (misAciertos >= 10 || aciertosRival >= 10) {
-                if (misAciertos >= 10) setGanador(true);
-                else setPerdedor(true);
-            }
-
-            //ESTO TENIA PARA VER EL GANADOR 
-            //  if (data.winnerId && jugadorActual) {
-             //if (data.winnerId === jugadorActual.id){
-            //setGanador(true);
-            //setPerdedor(false);
-            // } else{
-            //setPerdedor(true);
-            //setGanador(false);
-            // }
-
-            if (jugadoresActualizados.length >= 2) setBuscandoRival(false);
-
-            // Actualizar pregunta
+                       // Actualizar pregunta
             if (data.currentQuestion) {
                 setPartidaId(data.gameId);
                 setEcuacion({
@@ -131,23 +115,44 @@ export const MultiplayerGame = () => {
                 //setContador(10);
                 setRespuestaSeleccionada(null);
                 setResultado(null);
-                setInstruccion(data.currentQuestion.instruccion);
+                setInstruccion(data.expectedResult);
             }
         });
 
         return () => connection.off("GameUpdate");
-    }, [nombreJugador, respuestaSeleccionada, acierto]);
+    }, [nombreJugador, respuestaSeleccionada]);
 
-     //  useEffect(() =>{ ESTA ARRIBA ADENTRO DEL OTRO POR LAS DUDAS YO LO TENIA AFUERA
-    //   if (respuestaSeleccionada !== null && respuestaCorrecta !== undefined) {
- // const fueCorrecta = respuestaSeleccionada === respuestaCorrecta; 
-  //  setResultado(fueCorrecta ? "acierto" : "error");
- //   if (!fueCorrecta) {
-  //    setPenalizado(true);
-   //   setTimeout(() => setPenalizado(false),2000);
-   // }
-   //   }  
-   // }, [respuestaSeleccionada,respuestaCorrecta]);
+
+             // Mostrar resultado y actualizar aciertos locales
+            //if (respuestaSeleccionada !== null && respuestaCorrecta !== undefined) {
+              //  const fueCorrecta = respuestaSeleccionada === respuestaCorrecta;
+               // setResultado(fueCorrecta ? "acierto" : "error");
+
+              //  if (fueCorrecta) setAcierto(prev => prev + 1);
+             //   else setVidasRestantes(prev => prev - 1);
+          //  }
+
+            // TERMINAR PARTIDA si alguien llega a 10 aciertos
+          //  const misAciertos = jugadorActual?.correctAnswers ?? acierto;
+          //  const aciertosRival = otroJugador?.correctAnswers ?? 0;
+
+          //  if (misAciertos >= 10 || aciertosRival >= 10) {
+         //       if (misAciertos >= 10) setGanador(true);
+          //      else setPerdedor(true);
+         //   }
+
+     
+
+       useEffect(() =>{ 
+        if (respuestaSeleccionada !== null && respuestaCorrecta !== undefined) {
+  const fueCorrecta = respuestaSeleccionada === respuestaCorrecta; 
+    setResultado(fueCorrecta ? "acierto" : "error");
+    if (!fueCorrecta) {
+      setPenalizado(true);
+      setTimeout(() => setPenalizado(false),2000);
+    }
+      }  
+    }, [respuestaSeleccionada,respuestaCorrecta]);
 
 
     const conectarJugador = async () => {
@@ -157,33 +162,37 @@ export const MultiplayerGame = () => {
             await connection.invoke("FindMatch", nombreJugador);
             console.log("Buscando partida...", nombreJugador);
         } catch (error) {
+            setErrorConexion(" Erro de conexion... volvamos a intentarlo");
             console.error("Error al buscar partida:", error);
+
         }
     };
+
+     const manejarRespuesta = async (opcion: number) => {
+   setRespuestaSeleccionada(opcion);
+    await  tiempoAgotado(opcion);
+    
+    setTimeout(() => {
+   
+   setRespuestaSeleccionada(null);
+   setResultado(null);
+  }, 3000);
+  };
     const tiempoAgotado = async (respuestaSeleccionada: number | null) => {
         if (ganador || !partidaId || respuestaSeleccionada === null) return;
         try {
-            await connection.invoke("SendAnswer", partidaId, jugadorId, respuestaSeleccionada.toString());
+            await connection.invoke("SendAnswer", partidaId, jugadorId, respuestaSeleccionada);
             console.log("Respuesta enviada:", respuestaSeleccionada);
         } catch (error) {
             console.error("Error al enviar respuesta:", error);
         }
     };
 
-    const manejarRespuesta = (opcion: number) => {
-        setRespuestaSeleccionada(opcion);
-        tiempoAgotado(opcion);
-    };
-   // const manejarRespuesta = async (opcion: number) => {
-   // setRespuestaSeleccionada(opcion);
-    //await  tiempoAgotado(opcion);
-    
-    //setTimeout(() => {
-   
-   // setRespuestaSeleccionada(null);
-    //setResultado(null);
-  //}, 3000);
- // };
+    //const manejarRespuesta = (opcion: number) => {
+    //    setRespuestaSeleccionada(opcion);
+    //    tiempoAgotado(opcion);
+   // };
+  
     return (
 
         <div className="juego w-full h-full bg-black text-white relative">
