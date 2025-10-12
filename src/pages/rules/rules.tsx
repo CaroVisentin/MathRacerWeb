@@ -3,7 +3,7 @@ import fondoReglas from '../../assets/images/fondo-reglas.png';
 import { reglas } from "../../shared/data/reglasData";
 import { useNavigate } from "react-router-dom";
 
-export const ReglasPage = () => {
+export const RulesPage = () => {
     const [step, setStep] = useState(1); // 1 = reglas iniciales, 2 = modos de juego
     const navigate = useNavigate();
 

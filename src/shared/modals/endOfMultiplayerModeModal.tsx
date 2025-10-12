@@ -2,26 +2,25 @@ import React from "react";
 import type { JugadorDto } from "../../models/ui/jugador";
 import medallaOro from "../../assets/images/medalla1.png";
 import medallaPlata from "../../assets/images/medalla2.png";
-
 import auto from "../../assets/images/auto.png";
 
-interface ModalFinMultijugadorProps {
-    jugadores: JugadorDto[];
-    jugadorActual: string;
-    gano: boolean;
+interface EndOfMultiplayerModeModalProps {
+    players: JugadorDto[];
+    currentPlayer: string;
+    won: boolean;
     onClose: () => void;
     onRetry: () => void;
 }
 
-export const ModalFinMultijugador: React.FC<ModalFinMultijugadorProps> = ({
-    jugadores,
-    jugadorActual,
-    gano,
+export const EndOfMultiplayerModeModal: React.FC<EndOfMultiplayerModeModalProps> = ({
+    players,
+    currentPlayer,
+    won,
     onClose,
     onRetry,
 }) => {
     // Ordenar jugadores por puntos
-    const jugadoresOrdenados = [...jugadores].sort((a, b) => b.puntos - a.puntos);
+    const jugadoresOrdenados = [...players].sort((a, b) => b.puntos - a.puntos);
 
     // Medallas por posición
     const medallas = [medallaOro, medallaPlata];
@@ -38,10 +37,10 @@ export const ModalFinMultijugador: React.FC<ModalFinMultijugadorProps> = ({
             <div className="bg-[#484848] text-white rounded-2xl p-6 w-[500px] max-w-full border-4 border-white">
                 {/* Título */}
                 <h2
-                    className={`text-center text-5xl ${gano ? "text-[#A6FF00]" : "text-[#FB2828]"
+                    className={`text-center text-5xl ${won ? "text-[#A6FF00]" : "text-[#FB2828]"
                         }`}
                 >
-                    {gano ? "¡GANASTE!" : "¡PERDISTE!"}
+                    {won ? "¡GANASTE!" : "¡PERDISTE!"}
                 </h2>
 
                 {/* Subtítulo */}
@@ -67,7 +66,7 @@ export const ModalFinMultijugador: React.FC<ModalFinMultijugadorProps> = ({
                             <div className="flex flex-col items-start text-left">
                                 <p className={`${i === 0 ? "text-2xl" : "text-xl"}`}>
                                     {j.nombreJugador}
-                                    {j.nombreJugador === jugadorActual && " (Tú)"}
+                                    {j.nombreJugador === currentPlayer && " (Tú)"}
                                 </p>
                                 <p className={`${i === 0 ? "text-lg" : "text-base"} text-gray-300`}>
                                     Puntos: {j.puntos}

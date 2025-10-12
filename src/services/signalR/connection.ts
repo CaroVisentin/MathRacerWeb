@@ -1,16 +1,8 @@
 import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
-
-const signalRUrl = import.meta.env.VITE_SIGNALR_URL_LOCAL;
-
-
-//const signalRurl = import.meta.env.VITE_SIGNALR_URL;
+import { signalRUrl } from "../api/signalR";
 
 export const connection = new HubConnectionBuilder()
-
-   // .withUrl(signalRurl)
-
     .withUrl(signalRUrl)
-
     .configureLogging(LogLevel.Information)
     .withAutomaticReconnect()
     .build();
@@ -18,7 +10,7 @@ export const connection = new HubConnectionBuilder()
 connection.start().then(() => console.log("Conectado al servidor de SignalR"))
     .catch((err) => {
         console.error("Error al conectar con el servidor de SignalR: ", err);
-        
+
     });
 
 export default connection;

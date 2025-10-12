@@ -4,9 +4,9 @@ import { ProfileSection } from "../../components/profile/sections/profileSection
 import { AmigosSection } from "../../components/profile/sections/friendsSection";
 import { AjustesSection } from "../../components/profile/sections/settingsSection";
 import { useNavigate } from "react-router-dom";
-import { ButtonReglas } from "../../shared/buttons/buttonReglas";
+import { RulesButton } from "../../shared/buttons/buttonReglas";
 
-export const PerfilPage = () => {
+export const ProfilePage = () => {
     const [activeSection, setActiveSection] = useState<"perfil" | "amigos" | "ajustes">("perfil");
     const navigate = useNavigate();
 
@@ -26,7 +26,7 @@ export const PerfilPage = () => {
                 <AjustesSection />
             )}
 
-            <ButtonReglas
+            <RulesButton
                 onClick={() => navigate("/reglas")}
             />
         </div>

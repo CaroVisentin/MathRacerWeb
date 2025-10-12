@@ -2,11 +2,11 @@ import { faQuestion } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useNavigate } from "react-router-dom";
 
-interface ButtonReglasProps {
+interface RulesButtonProps {
     onClick?: () => void;
 }
 
-export const ButtonReglas = ({ onClick }: ButtonReglasProps) => {
+export const RulesButton = ({ onClick }: RulesButtonProps) => {
     const navigate = useNavigate();
     const handleClick = onClick ?? (() => navigate("/reglas"));
 

@@ -2,23 +2,23 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGasPump } from "@fortawesome/free-solid-svg-icons";
 
 interface FuelIndicatorProps {
-    vidasRestantes: number; // número de vidas actuales
+    remainingLives: number; // número de vidas actuales
     iconSize?: string;
     squareSize?: string;
     gap?: string;
 }
 
 export const FuelIndicator = ({
-    vidasRestantes,
+    remainingLives,
     iconSize = "1.5rem",
     squareSize = "1.5rem",
     gap = "0.25rem",
 }: FuelIndicatorProps) => {
-    const cantVidasPorPartida = 3;
+    const livesPerGame = 3;
 
     // array de colores según las vidas restantes
-    const colores = Array.from({ length: cantVidasPorPartida }, (_, i) =>
-        i < vidasRestantes ? "#ffe600" : "#394a59"
+    const colores = Array.from({ length: livesPerGame }, (_, i) =>
+        i < remainingLives ? "#ffe600" : "#394a59"
     );
 
     return (

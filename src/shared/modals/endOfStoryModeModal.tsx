@@ -5,22 +5,22 @@ import grayRectangle from "../../assets/images/gray-rectangle.png";
 import yellowRectangle from "../../assets/images/yellow-rectangle.png";
 import iconoEnergia from "../../assets/images/icono-energia.png";
 
-interface ModalFinHistoriaProps {
-    nivel: number;
-    recompensa: number;
-    gano: boolean;
+interface EndOfStoryModeModalProps {
+    level: number;
+    reward: number;
+    won: boolean;
     onClose: () => void;
     onNext: () => void;
-    vidasRestantes: number;
+    remainingLives: number;
 }
 
-export const ModalFinHistoria: React.FC<ModalFinHistoriaProps> = ({
-    nivel,
-    recompensa,
-    gano,
+export const EndOfStoryModeModal: React.FC<EndOfStoryModeModalProps> = ({
+    level,
+    reward,
+    won,
     onClose,
     onNext,
-    vidasRestantes
+    remainingLives
 }) => {
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black/60 z-50">
@@ -28,16 +28,16 @@ export const ModalFinHistoria: React.FC<ModalFinHistoriaProps> = ({
                 {/* Nivel */}
                 <div className="mt-4 text-center">
                     <span className="inline-block bg-[#5C7339] text-white px-6 rounded text-lg">
-                        Nivel {nivel}
+                        Nivel {level}
                     </span>
                 </div>
 
                 {/* Título */}
                 <h2
-                    className={`text-center text-5xl ${gano ? "text-[#A6FF00]" : "text-[#FB2828]"
+                    className={`text-center text-5xl ${won ? "text-[#A6FF00]" : "text-[#FB2828]"
                         }`}
                 >
-                    {gano ? "¡GANASTE!" : "¡PERDISTE!"}
+                    {won ? "¡GANASTE!" : "¡PERDISTE!"}
                 </h2>
 
                 {/* Contenido */}
@@ -50,12 +50,12 @@ export const ModalFinHistoria: React.FC<ModalFinHistoriaProps> = ({
                         />
                     </div>
 
-                    {gano ? (
+                    {won ? (
                         <>
                             <p className="mt-4 text-xl">Recompensa obtenida</p>
                             <div className="flex items-center justify-center gap-2 mt-2">
                                 <img src={coinImg} alt="moneda" className="w-6 h-6" />
-                                <span className="text-4xl">{recompensa}</span>
+                                <span className="text-4xl">{reward}</span>
                             </div>
                         </>
                     ) : (
@@ -66,7 +66,7 @@ export const ModalFinHistoria: React.FC<ModalFinHistoriaProps> = ({
                                 {Array.from({ length: 3 }).map((_, index) => (
                                     <img
                                         key={index}
-                                        src={index < vidasRestantes ? yellowRectangle : grayRectangle}
+                                        src={index < remainingLives ? yellowRectangle : grayRectangle}
                                         alt="vida"
                                         className="w-6 h-9"
                                     />

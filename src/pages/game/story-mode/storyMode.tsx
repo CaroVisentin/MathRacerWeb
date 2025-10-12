@@ -66,7 +66,7 @@ export default function LevelMap() {
             {/* Bottom UI - Fixed */}
             {/* Pasarle la cantidad de cada comodín del jugador por props */}
             <div className="p-4">
-                <BottomUI matafuegoCant={2} syncCant={3} thunderCant={4} />
+                <BottomUI fireExtinguisherQuant={2} changeEquationQuant={3} dobleCountQuant={4} />
             </div>
         </div>
     )

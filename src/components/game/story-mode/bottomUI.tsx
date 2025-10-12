@@ -1,18 +1,18 @@
-import { ButtonReglas } from "../../../shared/buttons/buttonReglas"
-import { Comodines } from "../../../shared/comodines/comodines"
+import { RulesButton } from "../../../shared/buttons/buttonReglas"
+import { Wildcards } from "../../../shared/wildcards/wildcards";
 
 interface BottomUIProps {
-    matafuegoCant: number;
-    syncCant: number;
-    thunderCant: number;
+    fireExtinguisherQuant: number;
+    changeEquationQuant: number;
+    dobleCountQuant: number;
 }
 
-export const BottomUI = ({ matafuegoCant, syncCant, thunderCant }: BottomUIProps) => {
+export const BottomUI = ({ fireExtinguisherQuant, changeEquationQuant, dobleCountQuant }: BottomUIProps) => {
     return (
         <>
             <div className="flex items-center justify-between">
                 <div>
-                    <Comodines matafuego={matafuegoCant} sync={syncCant} thunder={thunderCant} />
+                    <Wildcards fireExtinguisher={fireExtinguisherQuant} changeEquation={changeEquationQuant} dobleCount={dobleCountQuant} />
                 </div>
 
                 <div>
@@ -22,7 +22,7 @@ export const BottomUI = ({ matafuegoCant, syncCant, thunderCant }: BottomUIProps
                 </div>
 
                 <div>
-                    <ButtonReglas />
+                    <RulesButton />
                 </div>
             </div>
         </>
