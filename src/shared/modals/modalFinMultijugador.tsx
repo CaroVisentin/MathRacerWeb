@@ -1,5 +1,5 @@
 import React from "react";
-import type { JugadorDto } from "../../types/jugador/jugador";
+import type { JugadorDto } from "../../models/ui/jugador";
 import medallaOro from "../../assets/images/medalla1.png";
 import medallaPlata from "../../assets/images/medalla2.png";
 
