@@ -4,7 +4,6 @@ import { ModalFinMultijugador } from "../../../shared/modals/modalFinMultijugado
 import type { JugadorDto } from "../../../types/jugador/jugador";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { FuelIndicator } from "../../../shared/energia/energia";
 import { Comodines } from "../../../shared/comodines/comodines";
 import connection from "../../../signalR/conexion";
 import { ModalBuscandoRival } from "../../../shared/modals/modalBuscandoRival";
@@ -20,7 +19,6 @@ export const JuegoMultijugador = () => {
     const [opciones, setOpciones] = useState<number[]>();
     const [respuestaCorrecta, setRespuestaCorrecta] = useState<number>();
     const [respuestaSeleccionada, setRespuestaSeleccionada] = useState<number | null>(null);
-    const [contador, setContador] = useState<number>(5);
     const [resultado, setResultado] = useState<"acierto" | "error" | null>(null);
     const [posicionAuto1, setPosicionAuto1] = useState<number>(0);
     const [posicionAuto2, setPosicionAuto2] = useState<number>(0);
@@ -35,6 +33,8 @@ export const JuegoMultijugador = () => {
     const [partidaId, setPartidaId] = useState<number| null>(null);
     const [instruccion, setInstruccion] = useState<string>("");
     const [perdedor, setPerdedor]= useState<boolean>(false);
+    const [penalizado, setPenalizado]= useState<boolean>(false);
+    const [errorConexion, setErrorConexion] = useState<string | null>(null);
     const cerrarModal = () => setGanador(false);
 
     const reiniciarJuego = () => {
@@ -43,7 +43,6 @@ export const JuegoMultijugador = () => {
         setAcierto(0);
         setPosicionAuto1(0);
         setPosicionAuto2(0);
-            setContador(5);
         setVidasRestantes(3);
         setResultado(null);
         setRespuestaSeleccionada(null);
@@ -58,9 +57,7 @@ export const JuegoMultijugador = () => {
 
     useEffect(() => {
        connection.on("GameUpdate", (data) => {
-      console.log("GameUpdate recibido:", data);
-      console.log("Jugador recibido:", data.player?.name);
-console.log("Jugador actual:", jugadorId);
+       console.log("GameUpdate recibido:", data);   
 
       const jugadoresActualizados = data.players.map((p: any) => ({
           nombreJugador: p.name,
@@ -80,24 +77,12 @@ if (otroJugador) {
   const avanceOtro = (otroJugador.correctAnswers / 10) * 100;
   setPosicionAuto2(avanceOtro);
 }
-      if(jugadorActual){
+if(jugadorActual){
         setJugadorId(jugadorActual.id);      
-  const avance = (jugadorActual.correctAnswers / 10) * 100; // 100% es la meta
+  const avance = (jugadorActual.correctAnswers / 10) * 100; 
   setPosicionAuto1(avance);
       }
-
-  // Mostrar resultado (correcto/error)
-  if (respuestaSeleccionada !== null && respuestaCorrecta !== undefined) {
-   // const opciones = ecuacion?.options || [];
-  //  const fueCorrecta = opciones.includes(respuestaSeleccionada);
-  const fueCorrecta = respuestaSeleccionada === respuestaCorrecta; 
-    setResultado(fueCorrecta ? "acierto" : "error");
-    if (!fueCorrecta) {
-      setVidasRestantes(prev => prev - 1);
-    }
-      }  
-
-          // Ganador
+         
   if (data.winnerId && jugadorActual) {
     if (data.winnerId === jugadorActual.id){
 setGanador(true);
@@ -107,12 +92,10 @@ setPerdedor(false);
     setGanador(false);
   }
 }
-
-      if(jugadoresActualizados.length >=2){
+if(jugadoresActualizados.length >=2){
          setBuscandoRival(false);
       }      
-
-      if (data.currentQuestion) {
+ if (data.currentQuestion) {
         setPartidaId(data.gameId);      
         setEcuacion({
           equationString: data.currentQuestion.equation,
@@ -121,17 +104,30 @@ setPerdedor(false);
         });
         setOpciones(data.currentQuestion.options);
       setRespuestaCorrecta(data.currentQuestion.correctAnswer);
-        setContador(5);
+        
         setRespuestaSeleccionada(null);
         setResultado(null);    
-        setInstruccion(data.currentQuestion.instruccion)  ;
+        setInstruccion(data.expectedResult)  ;
       }
     });
 
-     return () => {
+ return () => {
             connection.off("GameUpdate");
         };
     }, [nombreJugador]);
+
+    useEffect(() =>{
+     
+  if (respuestaSeleccionada !== null && respuestaCorrecta !== undefined) {
+  const fueCorrecta = respuestaSeleccionada === respuestaCorrecta; 
+    setResultado(fueCorrecta ? "acierto" : "error");
+    if (!fueCorrecta) {
+      setPenalizado(true);
+      setTimeout(() => setPenalizado(false),2000);
+    }
+      }  
+
+    }, [respuestaSeleccionada,respuestaCorrecta]);
 
     
 const conectarJugador = async () => {
@@ -141,42 +137,43 @@ const conectarJugador = async () => {
     await connection.invoke("FindMatch", nombreJugador);
     console.log("Buscando partida...", nombreJugador);
   } catch (error) {
-    console.error("Error al buscar partida:", error);
+    setErrorConexion(" Erro de conexion... volvamos a intentarlo")
   }
 };
+
+const manejarRespuesta = async (opcion: number) => {
+    setRespuestaSeleccionada(opcion);
+    await  tiempoAgotado(opcion);
+    
+ setTimeout(() => {
+   
+    setRespuestaSeleccionada(null);
+    setResultado(null);
+  }, 3000);
+  };
     const tiempoAgotado = async (respuestaSeleccionada: number | null) => {
   if (ganador || !partidaId || respuestaSeleccionada === null) return;
     try {
-    await connection.invoke("SendAnswer",partidaId,jugadorId,respuestaSeleccionada.toString());
+    await connection.invoke("SendAnswer",partidaId,jugadorId,respuestaSeleccionada);
     console.log("Respuesta enviada:", respuestaSeleccionada);
     } catch (error) {
     console.error("Error al enviar respuesta:", error);
     }
 };
 
-const manejarRespuesta = (opcion: number) => {
-    setRespuestaSeleccionada(opcion);
-    tiempoAgotado(opcion);
-  };
+
      return (
         <div className="juego w-full h-full bg-black text-white relative">
 
             {/* HEADER */}
-            <div className="flex justify-between items-center p-4 bg-black absolute top-0 left-0 w-full z-10">
+            <div className="flex justify-between items-center bg-black absolute top-0 left-0 w-full z-10">
                 <button
                     onClick={handleVolver}
                     className="px-3 py-1 rounded"
                 >
                     <FontAwesomeIcon icon={faArrowLeft} />
                 </button>
-
-                <div className="text-white text-6xl">
-                    {contador}s
-                </div>
-
-                {/* Vidas */}
-                <FuelIndicator vidasRestantes={vidasRestantes} />
-            </div>
+                        </div>
             {/*modal de busqueda de rival*/}
             { buscandoRival && (
                 <ModalBuscandoRival
@@ -249,26 +246,49 @@ const manejarRespuesta = (opcion: number) => {
                       {ecuacion?.equationString && <span>{ecuacion.equationString}</span>}
                     </div>
                 </div>
+                {/* si anda mal error de conexion */}
+                {errorConexion && (
+  <div className="text-red-600 text-lg mt-4">
+    {errorConexion}
+  </div>
+)}
 
                 {/* Opciones */}
                 <div className="flex justify-center items-center mt-6 gap-6 opciones">
                     {opciones?.map((opcion, i) => {
-                        let bgColor = "";
-                        if (respuestaSeleccionada === opcion) {
-                            if (resultado === "acierto") bgColor = "#a6ff00";
-                            else if (resultado === "error") bgColor = "#ff0040";
-                        }
+                        let clases = "border-2 border-white px-6 py-3 rounded-lg text-xl transition ";
+
+      if (respuestaSeleccionada !== null) {
+      if (respuestaSeleccionada === opcion) {
+        clases += resultado === "acierto" ? "bg-green-400" : "bg-red-500";
+      } else if (
+        resultado === "error" && opcion === respuestaCorrecta) {
+        clases += "bg-green-400";// mostrar cuál era la correcta
+        
+
+      } else {
+        clases += "bg-transparent";
+      }
+    } else {
+      clases += "bg-transparent hover:bg-blue-500";
+    }                     
                         return (
                             <button
                                 key={i}
                                 onClick={() => manejarRespuesta(opcion)}
-                                className="border-2 border-white px-6 py-3 rounded-lg text-xl transition"
-                                style={{ backgroundColor: bgColor }}
+                                className= {clases}
+                                disabled={!!respuestaSeleccionada}
                             >
                                 {opcion}
                             </button>
                         );
                     })}
+                    {penalizado && (
+  <div className="text-red-500 text-xl mt-4">
+     ¡Respuesta incorrecta! Penalización de 2 segundos.
+  </div>
+)}
+
                 </div>
             </div>
 

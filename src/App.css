@@ -45,6 +45,24 @@ body {
   }
 }
 
+.fondoHome {
+  
+  background-repeat: repeat-x;
+  animation: moverFondoCielo 10s linear infinite;
+  background-size: cover;
+  z-index: 0;
+}
+
+@keyframes moverFondoCielo {
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position-x: -2000px;
+  }
+}
+
 .fondoRuta {
   position: relative;
   background-color: azure;

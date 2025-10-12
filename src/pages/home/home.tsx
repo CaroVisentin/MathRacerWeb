@@ -1,17 +1,18 @@
 import isologo from "/images/isologotipo.png";
 import auto from "../../assets/images/auto.png";
-import fondo from "../../assets/images/garage-bg.png";
+//import fondo from "../../assets/images/garage-bg.png";
+import fondo from "../../assets/images/Math.png"
 import { Link } from "react-router-dom";
 
 export const Home = () => {
   return (
     <div
-      className="relative h-screen w-screen flex flex-col"
+      className="relative h-screen w-screen flex flex-col fondoHome"
       style={{
         backgroundImage: `url(${fondo})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
+        backgroundRepeat: "repeat",
       }}
     >
       {/* Logo Math Racer */}
@@ -65,7 +66,7 @@ export const Home = () => {
       </div>
 
       {/* img auto */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+      <div className="absolute w-80  inset-0 flex items-center justify-center pointer-events-none">
         <img src={auto} alt="Auto" className="w-100 drop-shadow-lg translate-y-16" />
       </div>
     </div>
