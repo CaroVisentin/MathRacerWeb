@@ -1,4 +1,4 @@
-import { api, API_URLS } from "../api/api";
+import { api, API_URLS } from "../network/api";
 
 export const gameService = {
   crearPartida: async (jugadorId: string) => {

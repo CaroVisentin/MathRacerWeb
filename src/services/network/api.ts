@@ -1,3 +1,5 @@
+// Configuración del cliente HTTP (axios/fetch)
+
 import axios from "axios";
 
 // Detectar entorno

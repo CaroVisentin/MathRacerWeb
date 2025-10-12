@@ -1,5 +1,5 @@
 import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
-import { signalRUrl } from "../api/signalR";
+import { signalRUrl } from "../network/signalR";
 
 export const connection = new HubConnectionBuilder()
     .withUrl(signalRUrl)
