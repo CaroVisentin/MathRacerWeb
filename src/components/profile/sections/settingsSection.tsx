@@ -1,4 +1,4 @@
-import { AudioControls } from "../components/controlDeSonido";
+import { AudioControls } from "../components/soundControl";
 
 export const AjustesSection = () => {
     return (
