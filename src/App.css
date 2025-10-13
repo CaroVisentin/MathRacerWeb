@@ -117,3 +117,10 @@ body {
   gap: 10px;
   padding-right: 20px;
 }
+
+.fondo-multijugador {
+  background-image: url('/src/assets/images/multijugador.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
