@@ -83,7 +83,7 @@ export const Home = () => {
             </button>
           </Link>
 
-          <Link to="/mdodo-historia">
+          <Link to="/modo-historia">
             <button className="w-56 h-16 text-[#0f0f0f] text-3xl rounded-2xl shadow bg-[#5df9f9] hover:bg-[#f95ec8] transition-colors">
               Historia
             </button>
