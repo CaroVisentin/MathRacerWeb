@@ -28,7 +28,7 @@ body {
 
 .fondoCielo {
   background-color: aqua;
-  background-image: url('../src/assets/images/fondo2.png');
+  background-image: url('../src/assets/images/dia.png');
   background-repeat: repeat-x;
   animation: moverFondoCielo 10s linear infinite;
   background-size: cover;

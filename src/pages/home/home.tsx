@@ -1,6 +1,6 @@
 import isologo from "/images/isologotipo.png";
 import auto from "../../assets/images/auto.png";
-import fondo from "../../assets/images/garage-bg.png";
+import fondo from "../../assets/images/retro.png";
 
 import { Link } from "react-router-dom";
 
@@ -66,8 +66,9 @@ export const Home = () => {
       </div>
 
       {/* img auto */}
-      <div className="absolute   inset-0 flex items-center justify-center pointer-events-none">
-        <img src={auto} alt="Auto" className="w-100 drop-shadow-lg translate-y-16" />
+      <div className="absolute   inset-0 flex items-center justify-center pointer-events-none left-100 top-30">
+        <img src={auto} alt="Auto" className="w-90  drop-shadow-lg translate-y-16" 
+       />
       </div>
     </div>
   );

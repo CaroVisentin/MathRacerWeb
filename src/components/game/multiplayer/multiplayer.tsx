@@ -249,7 +249,7 @@ export const MultiplayerGame = () => {
 
   {/* Nombre del Jugador 1 (Vos) */}
   <div
-    className="absolute bottom-[120px]  text-green-500 font-bold text-l ml-2"
+    className="absolute bottom-[120px]  text-green-500  text-l ml-2"
     style={{ 
         left: `${posicionAuto1}%`,
         top: '80%',
@@ -268,7 +268,7 @@ export const MultiplayerGame = () => {
 
   {/* Nombre del Jugador 2 (Rival) */}
   <div
-    className="absolute bottom-[180px] text-red-500 letf-2 t-8 font-bold text-l ml-2"
+    className="absolute bottom-[180px] text-red-500 letf-2 t-8  text-l ml-2"
     style={{ left: `${posicionAuto2}%`,
     top: '7%',
         transform: 'translateX(0%)' }}
