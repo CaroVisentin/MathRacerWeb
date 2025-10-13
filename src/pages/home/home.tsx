@@ -66,7 +66,7 @@ export const Home = () => {
       </div>
 
       {/* img auto */}
-      <div className="absolute w-80  inset-0 flex items-center justify-center pointer-events-none">
+      <div className="absolute   inset-0 flex items-center justify-center pointer-events-none">
         <img src={auto} alt="Auto" className="w-100 drop-shadow-lg translate-y-16" />
       </div>
     </div>

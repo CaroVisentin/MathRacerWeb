@@ -7,20 +7,18 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Comodines } from "../../../shared/comodines/comodines";
 import connection from "../../../services/signalR/connection";
 import { ModalBuscandoRival } from "../../../shared/modals/modalBuscandoRival";
+import type { QuestionResponseDto } from "../../../models/domain/questionResponseDto";
+import type { PlayerDto } from "../../../models/domain/playerDto";
 
-interface Equation {
-    equationString: string;
-    options: number[];
-    correctAnswer: number;
-}
 
 export const MultiplayerGame = () => {
-    const [ecuacion, setEcuacion] = useState<Equation>();
+    
+    const [ecuacion, setEcuacion] = useState<QuestionResponseDto>();
     const [opciones, setOpciones] = useState<number[]>();
     const [respuestaCorrecta, setRespuestaCorrecta] = useState<number>();
     const [respuestaSeleccionada, setRespuestaSeleccionada] = useState<number | null>(null);
 
-   // const [contador, setContador] = useState<number>(10);
+  
 
     const [resultado, setResultado] = useState<"acierto" | "error" | null>(null);
     const [posicionAuto1, setPosicionAuto1] = useState<number>(0);
@@ -28,11 +26,12 @@ export const MultiplayerGame = () => {
     const [acierto, setAcierto] = useState<number>(0);
     const [ganador, setGanador] = useState<boolean>(false);
     const [jugadoresConectados, setJugadoresConectados] = useState<number>(0);
-    //const [vidasRestantes, setVidasRestantes] = useState(3);
+   
     const [jugadoresPartida, setJugadoresPartida] = useState<JugadorDto[]>([]);
     const [buscandoRival, setBuscandoRival] = useState(true);
     const [jugadorId, setJugadorId] = useState<number | null>(null);
     const [nombreJugador, setNombreJugador] = useState<string>("");
+    const [nombreRival, setNombreRival] = useState<string>("");
     const [partidaId, setPartidaId] = useState<number | null>(null);
     const [instruccion, setInstruccion] = useState<string>("");
     const [perdedor, setPerdedor]= useState<boolean>(false);
@@ -64,19 +63,21 @@ export const MultiplayerGame = () => {
     useEffect(() => {
 
         connection.on("GameUpdate", (data) => {
-            const jugadoresActualizados = data.players.map((p: any) => ({
-                nombreJugador: p.name,
-                nivelJugador: p.level,
-                autoId: p.carId,
-                puntos: p.score,
+            console.log("GameUpdate recibido:", data);
+            const jugadoresActualizados = data.players.map((p: JugadorDto) => ({
+                nombreJugador: p.nombreJugador,
+                nivelJugador: p.nivelJugador,
+                autoId: p.autoId,
+                puntos: p.puntos,
             }));
 
             setJugadoresPartida(jugadoresActualizados);
             setJugadoresConectados(jugadoresActualizados.length);
 
             const jugadorActual = data.players.find(
-                (p: any) => p.name.trim().toLowerCase() === nombreJugador.trim().toLowerCase() );
-            const otroJugador = data.players.find((p: any) => p.id !== jugadorActual?.id);
+                (p: PlayerDto) => p.name.trim().toLowerCase() === nombreJugador.trim().toLowerCase() );
+            const otroJugador = data.players.find((p: PlayerDto) => p.id !== jugadorActual?.id);
+            
 
             // Actualizar posiciones en porcentaje
             if (jugadorActual) {
@@ -106,7 +107,8 @@ export const MultiplayerGame = () => {
             if (data.currentQuestion) {
                 setPartidaId(data.gameId);
                 setEcuacion({
-                    equationString: data.currentQuestion.equation,
+                    questionId: data.currentQuestion.id,
+                    equation: data.currentQuestion.equation,
                     options: data.currentQuestion.options,
                     correctAnswer: data.currentQuestion.correctAnswer,
                 });
@@ -241,17 +243,48 @@ export const MultiplayerGame = () => {
             {/* Fondo cielo */}
             <div className="flex justify-center items-center fondoCielo w-full"></div>
 
-            {/* Ruta */}
-            <div className="flex justify-center items-center fondoRuta w-full relative mt-20">
-                <img src={auto1}
-                    alt="Auto 1"
-                    className="absolute bottom-[120px] auto transition-all duration-500"
-                    style={{ left: `${posicionAuto1}%` }} />
-                <img src={auto1}
-                    alt="Auto 2"
-                    className="absolute bottom-[180px] auto left-[0%] auto2"
-                    style={{ left: `${posicionAuto2}%` }} />
-            </div>
+
+         {/* Ruta */}
+<div className="flex justify-center items-center fondoRuta w-full relative mt-20">
+
+  {/* Nombre del Jugador 1 (Vos) */}
+  <div
+    className="absolute bottom-[120px]  text-green-500 font-bold text-l ml-2"
+    style={{ 
+        left: `${posicionAuto1}%`,
+        top: '80%',
+        transform: 'translateX(0%)' }}
+  >
+    {nombreJugador}
+  </div>
+
+  {/* Auto 1 */}
+  <img
+    src={auto1}
+    alt="Auto 1"
+    className="absolute bottom-[120px] auto transition-all duration-500"
+    style={{ left: `${posicionAuto1}%` }}
+  />
+
+  {/* Nombre del Jugador 2 (Rival) */}
+  <div
+    className="absolute bottom-[180px] text-red-500 letf-2 t-8 font-bold text-l ml-2"
+    style={{ left: `${posicionAuto2}%`,
+    top: '7%',
+        transform: 'translateX(0%)' }}
+    
+  >
+    rival
+  </div>
+
+  {/* Auto 2 */}
+  <img
+    src={auto1}
+    alt="Auto 2"
+    className="absolute bottom-[180px] auto auto2"
+    style={{ left: `${posicionAuto2}%` }}
+  />
+</div>
 
             {/* Instrucciones y Comodines */}
             <div className="flex justify-center items-center gridComodin mt-4">
@@ -275,7 +308,7 @@ export const MultiplayerGame = () => {
                 <div className="flex justify-center mb-6">
                     <div className="inline-block border-2 border-white rounded-lg text-6xl px-6 py-3">
                         {/* Mostrar ecuación solo si está definida */}
-                        {ecuacion?.equationString && <span>{ecuacion.equationString}</span>}
+                        {ecuacion?.equation && <span>{ecuacion.equation}</span>}
                     </div>
                 </div>
                 {/* si anda mal error de conexion */}

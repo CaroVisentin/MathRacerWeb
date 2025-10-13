@@ -4,4 +4,7 @@ export interface PlayerDto {
     correctAnswers: number;
     indexAnswered: number;
     position: number;
+    isReady: boolean;
+    connectionId: string;
+    
 }
