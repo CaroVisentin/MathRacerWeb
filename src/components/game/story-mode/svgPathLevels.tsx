@@ -1,9 +1,11 @@
+// MAPA DE NIVELES DE CADA MUNDO
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLock } from "@fortawesome/free-solid-svg-icons";
 import React from "react";
 import type { LevelMapProps } from "../../../models/ui/level";
 
-export const SvgPath: React.FC<LevelMapProps> = ({
+export const SvgPathLevels: React.FC<LevelMapProps> = ({
     levels,
     nodePositions,
     onLevelSelect,

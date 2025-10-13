@@ -1,11 +1,11 @@
 import { BackButton } from "../../../shared/buttons/backButton"
 
 interface TopBarProps {
-    world: string;
+    headerText: string;
     remainingLives: number;
 }
 
-export const TopBar = ({ world, remainingLives }: TopBarProps) => {
+export const TopBar = ({ headerText, remainingLives }: TopBarProps) => {
 
     return (
         <div className="relative z-20 flex shrink-0 items-center justify-between px-6 py-4">
@@ -15,7 +15,7 @@ export const TopBar = ({ world, remainingLives }: TopBarProps) => {
             {/* Título del mundo */}
             <div className="relative z-20 w-fit">
                 <div className="rounded-lg border-2 border-cyan-400/70 bg-cyan-950/40 px-8 py-3 backdrop-blur-sm">
-                    <h1 className="text-2xl font-audiowide tracking-wider text-cyan-300">{world}</h1>
+                    <h1 className="text-2xl font-audiowide tracking-wider text-cyan-300">{headerText}</h1>
                 </div>
             </div>
 
@@ -27,8 +27,8 @@ export const TopBar = ({ world, remainingLives }: TopBarProps) => {
                         <div
                             key={i}
                             className={`h-6 w-3 rounded-sm ${i < remainingLives
-                                    ? "bg-yellow-400 shadow-[0_0_10px_rgba(250,204,21,0.5)]"
-                                    : "bg-gray-700/50"
+                                ? "bg-yellow-400 shadow-[0_0_10px_rgba(250,204,21,0.5)]"
+                                : "bg-gray-700/50"
                                 }`}
                         />
                     ))}
