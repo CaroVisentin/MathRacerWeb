@@ -13,12 +13,12 @@ import { Link } from "react-router-dom";
 export const Home = () => {
   return (
     <div
-      className="relative h-screen w-screen flex flex-col fondoHome"
+       className="relative h-screen w-screen flex flex-col"
       style={{
         backgroundImage: `url(${fondo})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
-        backgroundRepeat: "repeat",
+        backgroundRepeat: "no-repeat",
       }}
     >
       {/* Logo Math Racer */}
@@ -83,7 +83,7 @@ export const Home = () => {
             </button>
           </Link>
 
-          <Link to="/historia">
+          <Link to="/mdodo-historia">
             <button className="w-56 h-16 text-[#0f0f0f] text-3xl rounded-2xl shadow bg-[#5df9f9] hover:bg-[#f95ec8] transition-colors">
               Historia
             </button>
@@ -119,7 +119,7 @@ export const Home = () => {
       </div>
 
       {/* img auto */}
-      <div className="absolute w-80  inset-0 flex items-center justify-center pointer-events-none">
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         <img src={auto} alt="Auto" className="w-100 drop-shadow-lg translate-y-16" />
       </div>
     </div>
