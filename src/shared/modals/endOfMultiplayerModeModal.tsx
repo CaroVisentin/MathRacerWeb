@@ -25,8 +25,8 @@ export const EndOfMultiplayerModeModal: React.FC<EndOfMultiplayerModeModalProps>
     // ✅ Buscar al jugador actual
     const jugadorActual = players.find(j => j.name === currentPlayer);
 
-    // ✅ Determinar si ganó (posición = 10)
-    const won = jugadorActual?.position === 10;
+    // ✅ Determinar si ganó (posición = 1)
+    const won = jugadorActual?.position === 1;
 
     // Medallas por posición (solo ejemplo)
     const medallas = [medallaOro, medallaPlata];
@@ -56,7 +56,7 @@ export const EndOfMultiplayerModeModal: React.FC<EndOfMultiplayerModeModalProps>
                                 <img
                                     src={medallas[i]}
                                     alt={`Medalla ${i + 1}`}
-                                    className={`${i === 0 ? "w-20 h-20" : "w-16 h-16"}`}
+                                    className={`${i === 1 ? "w-20 h-20" : "w-16 h-16"}`}
                                 />
                             )}
 

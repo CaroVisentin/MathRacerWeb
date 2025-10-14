@@ -81,7 +81,13 @@ export const MultiplayerGame = () => {
 
     const manejarRespuesta = async (opcion: number) => {
         setRespuestaSeleccionada(opcion);
+        console.log("respuestacorrecta", ecuacion?.correctAnswer);
         await sendAnswer(opcion);
+        if (ecuacion && opcion === ecuacion.correctAnswer) {
+            setResultado("acierto");
+        } else {
+            setResultado("error");
+        }
     };
 
     // ***********************************************

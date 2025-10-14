@@ -89,36 +89,36 @@ export const Home = () => {
         {/* botones izquierdos */}
         <div className="flex flex-col gap-3">
           <Link to="/menu">
-            <button className="w-56 h-16 text-[#0f0f0f] text-3xl rounded-2xl shadow bg-[#5df9f9] hover:bg-[#f95ec8] transition-colors">
+            <button className="botonGral h-20 w-65">
               Menú
             </button>
           </Link>
           <Link to="/modo-historia">
-            <button className="w-56 h-16 text-[#0f0f0f] text-3xl rounded-2xl shadow bg-[#5df9f9] hover:bg-[#f95ec8] transition-colors">
+            <button className="botonGral h-20 w-65">
               Historia
             </button>
           </Link>
           <Link to="/practica">
-            <button className="w-56 h-16 text-[#0f0f0f] text-3xl rounded-2xl shadow bg-[#5df9f9] hover:bg-[#f95ec8] transition-colors">
+            <button className="botonGral h-20 w-65">
               Práctica Libre
             </button>
           </Link>
         </div>
 
         {/* botones derechos */}
-        <div className="flex flex-col gap-3 items-end">
+        <div className="flex flex-col gap-3 items-end ">
           <Link to="/ranking">
-            <button className="w-16 h-16 flex items-center justify-center bg-[#5df9f9] text-[#0f0f0f] rounded-xl shadow hover:bg-[#f95ec8] transition-colors">
+            <button className="botonGral h-20">
               <i className="ri-trophy-fill text-2xl"></i>
             </button>
           </Link>
           <Link to="/garage">
-            <button className="w-16 h-16 flex items-center justify-center bg-[#5df9f9] text-[#0f0f0f] rounded-xl shadow hover:bg-[#f95ec8] transition-colors">
+            <button className="botonGral h-20">
               <i className="ri-store-2-fill text-2xl"></i>
             </button>
           </Link>
           <Link to="/shop">
-            <button className="w-16 h-16 flex items-center justify-center bg-[#5df9f9] text-[#0f0f0f] rounded-xl shadow hover:bg-[#f95ec8] transition-colors">
+            <button className="botonGral h-20">
               <i className="ri-shopping-cart-fill text-2xl"></i>
             </button>
           </Link>
@@ -127,7 +127,7 @@ export const Home = () => {
 
       {/* img auto */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <img src={data.activeItems.car.imageUrl} alt="Auto" className="w-100 drop-shadow-lg translate-y-16" />
+        <img src={data.activeItems.car.imageUrl} alt="Auto" className="w-100 drop-shadow-lg translate-y-20 translate-x-25" />
       </div>
     </div>
   );

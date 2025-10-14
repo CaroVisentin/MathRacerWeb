@@ -1,6 +1,23 @@
 @import "tailwindcss";
 @import "remixicon/fonts/remixicon.css";
 
+
+@font-face {
+  font-family: 'Jersey 10';
+  src: url('./fonts/Jersey10-Regular.woff2') format('woff2'),
+       url('./fonts/Jersey10-Regular.woff') format('woff');
+  font-weight: 400; /* o el peso real de la fuente */
+  font-style: normal;
+  font-display: swap; /* Importante para rendimiento */
+}
+@font-face {
+  font-family: 'Audiowide';
+  src: url('./fonts/Audiowide-Regular.woff2') format('woff2'),
+       url('./fonts/Audiowide-Regular.woff') format('woff');
+  font-weight: 400; /* o el peso real de la fuente */
+  font-style: normal;
+  font-display: swap; /* Importante para rendimiento */
+}
 * {
   margin: 0;
 }
@@ -137,6 +154,8 @@ body {
 .titulo{
   height: 15%;
   align-items: anchor-center;
+  font-family: 'Audiowide', cursive;
+
 }
 
 .contenedorMenu{
@@ -164,3 +183,22 @@ gap: 10%;
 
 }
 
+.botonGral{
+  font-family: 'Audiowide', cursive;
+  text-align: center;
+  background-color: black;
+  color: #5DF9F9;
+  border: 2px solid #5DF9F9;
+  font-size: 1.5rem;
+  padding: 1.5rem;
+  border-radius: 6px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.botonGral:hover {
+  background-color: #F95EC8;
+  transform: scale(1.05);
+  text-decoration: none;
+  color: black;
+}
