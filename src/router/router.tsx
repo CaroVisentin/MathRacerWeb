@@ -2,18 +2,20 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Home } from "../pages/home/home";
 import { RulesPage } from "../pages/rules/rules";
 import { ProfilePage } from "../pages/profile/profile";
-import { Multiplayer } from "../pages/game/multiplayer/multiplayerGame";
+import { Menu } from "../pages/game/multiplayer/multiplayerGame";
 import { StoryMode } from "../pages/game/story-mode/storyMode";
 import {CreateGame} from "../components/game/on-line/create-game";
 import { InviteFriend} from "../components/game/on-line/invite-friend";
 import { JoinGame } from "../components/game/on-line/join-game";
 import { QuickGame } from "../components/game/on-line/quick-game";import { LevelMap } from "../pages/game/story-mode/world/[id]";
 import { StoryModeGame } from "../pages/game/story-mode/level/[id]";
+import { MultiplayerGame } from "../components/game/multiplayer/multiplayer";
 
 
 const router = createBrowserRouter([
   { path: "/", element: <Home /> },
-  { path: "/multijugador", element: <Multiplayer /> },
+  { path: "/multijugador", element: <MultiplayerGame /> },
+  { path: "/menu", element: <Menu /> },
   { path: "/modo-historia", element: <StoryMode /> },
   { path:"/crear", element:<CreateGame/>},
   { path:"/invitar-amigo", element:<InviteFriend/>},

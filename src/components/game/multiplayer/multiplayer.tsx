@@ -103,6 +103,7 @@ export const MultiplayerGame = () => {
                     correctAnswer: data.currentQuestion.correctAnswer,
                 });
                 setOpciones(data.currentQuestion.options);
+                
                 setRespuestaCorrecta(data.currentQuestion.correctAnswer);
                 setRespuestaSeleccionada(null);
                 setResultado(null);
@@ -140,15 +141,10 @@ export const MultiplayerGame = () => {
 
     const manejarRespuesta = async (opcion: number) => {
         setRespuestaSeleccionada(opcion);
-        await tiempoAgotado(opcion);
-
-        setTimeout(() => {
-
-            setRespuestaSeleccionada(null);
-            setResultado(null);
-        }, 3000);
+        await sendAnswer(opcion);
     };
-    const tiempoAgotado = async (respuestaSeleccionada: number | null) => {
+
+    const sendAnswer = async (respuestaSeleccionada: number | null) => {
         if (ganador || !partidaId || respuestaSeleccionada === null) return;
         try {
             await connection.invoke("SendAnswer", partidaId, jugadorId, respuestaSeleccionada);
@@ -158,6 +154,9 @@ export const MultiplayerGame = () => {
         }
     };
 
+    useEffect(() => {
+        console.log("Penalizado cambió: ", penalizado);
+    }, [penalizado])
     return (
 
         <div className="juego w-full h-full bg-black text-white relative">
