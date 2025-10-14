@@ -12,26 +12,21 @@ import type { PlayerDto } from "../../../models/domain/playerDto";
 
 
 export const MultiplayerGame = () => {
-    
+
     const [ecuacion, setEcuacion] = useState<QuestionResponseDto>();
     const [opciones, setOpciones] = useState<number[]>();
     const [respuestaCorrecta, setRespuestaCorrecta] = useState<number>();
     const [respuestaSeleccionada, setRespuestaSeleccionada] = useState<number | null>(null);
 
-  
-
     const [resultado, setResultado] = useState<"acierto" | "error" | null>(null);
     const [posicionAuto1, setPosicionAuto1] = useState<number>(0);
     const [posicionAuto2, setPosicionAuto2] = useState<number>(0);
-    const [acierto, setAcierto] = useState<number>(0);
     const [ganador, setGanador] = useState<boolean>(false);
-    const [jugadoresConectados, setJugadoresConectados] = useState<number>(0);
-   
+
     const [jugadoresPartida, setJugadoresPartida] = useState<JugadorDto[]>([]);
     const [buscandoRival, setBuscandoRival] = useState(true);
     const [jugadorId, setJugadorId] = useState<number | null>(null);
     const [nombreJugador, setNombreJugador] = useState<string>("");
-    const [nombreRival, setNombreRival] = useState<string>("");
     const [partidaId, setPartidaId] = useState<number | null>(null);
     const [instruccion, setInstruccion] = useState<string>("");
     const [perdedor, setPerdedor] = useState<boolean>(false);
@@ -43,7 +38,6 @@ export const MultiplayerGame = () => {
     const reiniciarJuego = () => {
         setGanador(false);
         setPerdedor(false);
-        setAcierto(0);
         setPosicionAuto1(0);
         setPosicionAuto2(0);
         setResultado(null);
@@ -68,12 +62,11 @@ export const MultiplayerGame = () => {
             }));
 
             setJugadoresPartida(jugadoresActualizados);
-            setJugadoresConectados(jugadoresActualizados.length);
 
             const jugadorActual = data.players.find(
-                (p: PlayerDto) => p.name.trim().toLowerCase() === nombreJugador.trim().toLowerCase() );
+                (p: PlayerDto) => p.name.trim().toLowerCase() === nombreJugador.trim().toLowerCase());
             const otroJugador = data.players.find((p: PlayerDto) => p.id !== jugadorActual?.id);
-            
+
 
             // Actualizar posiciones en porcentaje
             if (jugadorActual) {
@@ -81,26 +74,26 @@ export const MultiplayerGame = () => {
                 const avance = (jugadorActual.correctAnswers / 10) * 100;
                 setPosicionAuto1(avance);
             }
-            
+
             if (otroJugador) {
                 const avanceOtro = (otroJugador.correctAnswers / 10) * 100;
                 setPosicionAuto2(avanceOtro);
             }
 
-             
+
             if (data.winnerId && jugadorActual) {
-             if (data.winnerId === jugadorActual.id){
-            setGanador(true);
-            setPerdedor(false);
-             } else{
-            setPerdedor(true);
-            setGanador(false);
-             }
+                if (data.winnerId === jugadorActual.id) {
+                    setGanador(true);
+                    setPerdedor(false);
+                } else {
+                    setPerdedor(true);
+                    setGanador(false);
+                }
             }
 
-             if (jugadoresActualizados.length >= 2) setBuscandoRival(false);
+            if (jugadoresActualizados.length >= 2) setBuscandoRival(false);
 
-                       // Actualizar pregunta
+            // Actualizar pregunta
             if (data.currentQuestion) {
                 setPartidaId(data.gameId);
                 setEcuacion({
@@ -111,7 +104,6 @@ export const MultiplayerGame = () => {
                 });
                 setOpciones(data.currentQuestion.options);
                 setRespuestaCorrecta(data.currentQuestion.correctAnswer);
-                //setContador(10);
                 setRespuestaSeleccionada(null);
                 setResultado(null);
                 setInstruccion(data.expectedResult);
@@ -121,16 +113,16 @@ export const MultiplayerGame = () => {
         return () => connection.off("GameUpdate");
     }, [nombreJugador, respuestaSeleccionada]);
 
-       useEffect(() =>{ 
+    useEffect(() => {
         if (respuestaSeleccionada !== null && respuestaCorrecta !== undefined) {
-  const fueCorrecta = respuestaSeleccionada === respuestaCorrecta; 
-    setResultado(fueCorrecta ? "acierto" : "error");
-    if (!fueCorrecta) {
-      setPenalizado(true);
-      setTimeout(() => setPenalizado(false),2000);
-    }
-      }  
-    }, [respuestaSeleccionada,respuestaCorrecta]);
+            const fueCorrecta = respuestaSeleccionada === respuestaCorrecta;
+            setResultado(fueCorrecta ? "acierto" : "error");
+            if (!fueCorrecta) {
+                setPenalizado(true);
+                setTimeout(() => setPenalizado(false), 2000);
+            }
+        }
+    }, [respuestaSeleccionada, respuestaCorrecta]);
 
 
     const conectarJugador = async () => {
@@ -146,16 +138,16 @@ export const MultiplayerGame = () => {
         }
     };
 
-     const manejarRespuesta = async (opcion: number) => {
-   setRespuestaSeleccionada(opcion);
-    await  tiempoAgotado(opcion);
-    
-    setTimeout(() => {
-   
-   setRespuestaSeleccionada(null);
-   setResultado(null);
-  }, 3000);
-  };
+    const manejarRespuesta = async (opcion: number) => {
+        setRespuestaSeleccionada(opcion);
+        await tiempoAgotado(opcion);
+
+        setTimeout(() => {
+
+            setRespuestaSeleccionada(null);
+            setResultado(null);
+        }, 3000);
+    };
     const tiempoAgotado = async (respuestaSeleccionada: number | null) => {
         if (ganador || !partidaId || respuestaSeleccionada === null) return;
         try {
@@ -165,7 +157,7 @@ export const MultiplayerGame = () => {
             console.error("Error al enviar respuesta:", error);
         }
     };
-    
+
     return (
 
         <div className="juego w-full h-full bg-black text-white relative">
@@ -215,47 +207,50 @@ export const MultiplayerGame = () => {
             <div className="flex justify-center items-center fondoCielo w-full"></div>
 
 
-         {/* Ruta */}
-<div className="flex justify-center items-center fondoRuta w-full relative mt-20">
+            {/* Ruta */}
+            <div className="flex justify-center items-center fondoRuta w-full relative mt-20">
 
-  {/* Nombre del Jugador 1 (Vos) */}
-  <div
-    className="absolute bottom-[120px]  text-green-500  text-l ml-2"
-    style={{ 
-        left: `${posicionAuto1}%`,
-        top: '80%',
-        transform: 'translateX(0%)' }}
-  >
-    {nombreJugador}
-  </div>
+                {/* Nombre del Jugador 1 (Vos) */}
+                <div
+                    className="absolute bottom-[120px]  text-green-500  text-l ml-2"
+                    style={{
+                        left: `${posicionAuto1}%`,
+                        top: '80%',
+                        transform: 'translateX(0%)'
+                    }}
+                >
+                    {nombreJugador}
+                </div>
 
-  {/* Auto 1 */}
-  <img
-    src={auto1}
-    alt="Auto 1"
-    className="absolute bottom-[120px] auto transition-all duration-500"
-    style={{ left: `${posicionAuto1}%` }}
-  />
+                {/* Auto 1 */}
+                <img
+                    src={auto1}
+                    alt="Auto 1"
+                    className="absolute bottom-[120px] auto transition-all duration-500"
+                    style={{ left: `${posicionAuto1}%` }}
+                />
 
-  {/* Nombre del Jugador 2 (Rival) */}
-  <div
-    className="absolute bottom-[180px] text-red-500 letf-2 t-8  text-l ml-2"
-    style={{ left: `${posicionAuto2}%`,
-    top: '7%',
-        transform: 'translateX(0%)' }}
-    
-  >
-    rival
-  </div>
+                {/* Nombre del Jugador 2 (Rival) */}
+                <div
+                    className="absolute bottom-[180px] text-red-500 letf-2 t-8  text-l ml-2"
+                    style={{
+                        left: `${posicionAuto2}%`,
+                        top: '7%',
+                        transform: 'translateX(0%)'
+                    }}
 
-  {/* Auto 2 */}
-  <img
-    src={auto1}
-    alt="Auto 2"
-    className="absolute bottom-[180px] auto auto2"
-    style={{ left: `${posicionAuto2}%` }}
-  />
-</div>
+                >
+                    rival
+                </div>
+
+                {/* Auto 2 */}
+                <img
+                    src={auto1}
+                    alt="Auto 2"
+                    className="absolute bottom-[180px] auto auto2"
+                    style={{ left: `${posicionAuto2}%` }}
+                />
+            </div>
 
             {/* Instrucciones y Comodines */}
             <div className="flex justify-center items-center gridComodin mt-4">
