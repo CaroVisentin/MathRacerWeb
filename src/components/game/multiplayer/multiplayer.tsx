@@ -15,7 +15,7 @@ export const MultiplayerGame = () => {
 
     const [ecuacion, setEcuacion] = useState<QuestionResponseDto>();
     const [opciones, setOpciones] = useState<number[]>();
-    const [respuestaCorrecta, setRespuestaCorrecta] = useState<number>();
+    const [respuestaCorrecta, setRespuestaCorrecta] = useState<boolean>(false);
     const [respuestaSeleccionada, setRespuestaSeleccionada] = useState<number | null>(null);
 
     const [resultado, setResultado] = useState<"acierto" | "error" | null>(null);
@@ -70,9 +70,23 @@ export const MultiplayerGame = () => {
 
             // Actualizar posiciones en porcentaje
             if (jugadorActual) {
+                
                 setJugadorId(jugadorActual.id);
                 const avance = (jugadorActual.correctAnswers / 10) * 100;
                 setPosicionAuto1(avance);
+            }
+
+            if(jugadorActual.penaltyUntil != null){
+                const tiempoAhora = new Date ();
+                const penalizacionHasta = new Date(jugadorActual.penaltyUntil);
+                if(penalizacionHasta > tiempoAhora){
+                    setPenalizado(true);
+                }else{
+                    setPenalizado(false);
+                }
+              
+            } else{
+                setPenalizado(false);
             }
 
             if (otroJugador) {
@@ -104,7 +118,11 @@ export const MultiplayerGame = () => {
                 });
                 setOpciones(data.currentQuestion.options);
                 
-                setRespuestaCorrecta(data.currentQuestion.correctAnswer);
+                if(data.currentQuestion.penaltyUntil == null){
+                     setRespuestaCorrecta(true);
+
+                }
+               
                 setRespuestaSeleccionada(null);
                 setResultado(null);
                 setInstruccion(data.expectedResult);
@@ -114,16 +132,16 @@ export const MultiplayerGame = () => {
         return () => connection.off("GameUpdate");
     }, [nombreJugador, respuestaSeleccionada]);
 
-    useEffect(() => {
-        if (respuestaSeleccionada !== null && respuestaCorrecta !== undefined) {
-            const fueCorrecta = respuestaSeleccionada === respuestaCorrecta;
-            setResultado(fueCorrecta ? "acierto" : "error");
-            if (!fueCorrecta) {
-                setPenalizado(true);
-                setTimeout(() => setPenalizado(false), 2000);
-            }
-        }
-    }, [respuestaSeleccionada, respuestaCorrecta]);
+    // useEffect(() => {
+    //     if (respuestaSeleccionada !== null && respuestaCorrecta !== undefined) {
+    //         const fueCorrecta = respuestaSeleccionada === respuestaCorrecta;
+    //         setResultado(fueCorrecta ? "acierto" : "error");
+    //         if (!fueCorrecta) {
+    //             setPenalizado(true);
+    //             setTimeout(() => setPenalizado(false), 2000);
+    //         }
+    //     }
+    // }, [respuestaSeleccionada, respuestaCorrecta]);
 
 
     const conectarJugador = async () => {
@@ -292,7 +310,7 @@ export const MultiplayerGame = () => {
                             if (respuestaSeleccionada === opcion) {
                                 clases += resultado === "acierto" ? "bg-green-400" : "bg-red-500";
                             } else if (
-                                resultado === "error" && opcion === respuestaCorrecta) {
+                                resultado === "error" &&  respuestaCorrecta) {
                                 clases += "bg-green-400";// mostrar cuál era la correcta
 
 
