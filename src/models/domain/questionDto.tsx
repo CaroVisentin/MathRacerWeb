@@ -1,5 +1,5 @@
-export interface QuestionResponseDto {
-    questionId: number;
+export interface QuestionDto {
+    id: number;
     equation: string;
     options: number[];
     correctAnswer: number;

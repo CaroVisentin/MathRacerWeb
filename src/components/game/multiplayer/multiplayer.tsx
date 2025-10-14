@@ -1,21 +1,23 @@
-import { useState, useEffect } from "react";
-import auto1 from "../../../assets/images/auto.png";
-import { EndOfMultiplayerModeModal } from "../../../shared/modals/endOfMultiplayerModeModal";
-import type { JugadorDto } from "../../../models/ui/jugador";
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { useState, useEffect, useCallback } from 'react';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Wildcards } from "../../../shared/wildcards/wildcards";
-import connection from "../../../services/signalR/connection";
-import { LookingForRivalModal } from "../../../shared/modals/lookingForRivalModal";
-import type { QuestionResponseDto } from "../../../models/domain/questionResponseDto";
-import type { PlayerDto } from "../../../models/domain/playerDto";
-
+import { HubConnection } from "@microsoft/signalr";
+import { buildConnection } from '../../../services/signalR/connection';
+import type { QuestionDto } from '../../../models/domain/questionDto';
+import { LookingForRivalModal } from '../../../shared/modals/lookingForRivalModal';
+import type { PlayerDto } from '../../../models/domain/playerDto';
+import { EndOfMultiplayerModeModal } from '../../../shared/modals/endOfMultiplayerModeModal';
+import { Wildcards } from '../../../shared/wildcards/wildcards';
+import auto1 from "../../../assets/images/auto.png";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import type { GameUpdateDto } from '../../../models/domain/gameUpdateDto';
 
 export const MultiplayerGame = () => {
 
-    const [ecuacion, setEcuacion] = useState<QuestionResponseDto>();
+    const [connection, setConnection] = useState<HubConnection | null>(null); 
+
+    const [ecuacion, setEcuacion] = useState<QuestionDto>();
     const [opciones, setOpciones] = useState<number[]>();
-    const [respuestaCorrecta, setRespuestaCorrecta] = useState<boolean>(false);
+    // const [respuestaCorrecta, setRespuestaCorrecta] = useState<boolean>(false);
     const [respuestaSeleccionada, setRespuestaSeleccionada] = useState<number | null>(null);
 
     const [resultado, setResultado] = useState<"acierto" | "error" | null>(null);
@@ -23,9 +25,10 @@ export const MultiplayerGame = () => {
     const [posicionAuto2, setPosicionAuto2] = useState<number>(0);
     const [ganador, setGanador] = useState<boolean>(false);
 
-    const [jugadoresPartida, setJugadoresPartida] = useState<JugadorDto[]>([]);
+    const [jugadoresPartida, setJugadoresPartida] = useState<PlayerDto[]>([]);
     const [buscandoRival, setBuscandoRival] = useState(true);
     const [jugadorId, setJugadorId] = useState<number | null>(null);
+
     const [nombreJugador, setNombreJugador] = useState<string>("");
     const [partidaId, setPartidaId] = useState<number | null>(null);
     const [instruccion, setInstruccion] = useState<string>("");
@@ -35,6 +38,20 @@ export const MultiplayerGame = () => {
 
     const cerrarModal = () => setGanador(false);
 
+    // useCallback para evitar re-creaciones innecesarias
+    const conectarJugador = useCallback(async () => {
+        if (!nombreJugador.trim() || !connection) return; // Verificar si la conexión está lista
+
+        try {
+            await connection.invoke("FindMatch", nombreJugador);
+            console.log("Buscando partida...", nombreJugador);
+            setErrorConexion(null); // Limpiar error si la conexión es exitosa
+        } catch (error) {
+            setErrorConexion("Error de conexión... volvamos a intentarlo");
+            console.error("Error al buscar partida:", error);
+        }
+    }, [nombreJugador, connection]); // Depende de connection y nombreJugador
+
     const reiniciarJuego = () => {
         setGanador(false);
         setPerdedor(false);
@@ -43,50 +60,93 @@ export const MultiplayerGame = () => {
         setResultado(null);
         setRespuestaSeleccionada(null);
         setBuscandoRival(true);
-        conectarJugador();
+        conectarJugador(); // Llama a la función ahora con useCallback
     }
 
     const handleVolver = () => {
         console.log("Volver");
+        // Agregar lógica para abandonar partida
+        // Detener la conexión manualmente, antes de que se desmonte el componente
     };
 
+    const sendAnswer = useCallback(async (respuestaSeleccionada: number | null) => {
+        if (ganador || !partidaId || respuestaSeleccionada === null || !connection) return;
+        try {
+            await connection.invoke("SendAnswer", partidaId, jugadorId, respuestaSeleccionada);
+            console.log("Respuesta enviada:", respuestaSeleccionada);
+        } catch (error) {
+            console.error("Error al enviar respuesta:", error);
+        }
+    }, [ganador, partidaId, jugadorId, connection]);
+
+    const manejarRespuesta = async (opcion: number) => {
+        setRespuestaSeleccionada(opcion);
+        await sendAnswer(opcion);
+    };
+
+    // ***********************************************
+    // 1. INICIAR CONEXIÓN Y LIMPIEZA AL DESMONTAJE
+    // ***********************************************
     useEffect(() => {
+        const newConnection = buildConnection();
+        setConnection(newConnection);
 
-        connection.on("GameUpdate", (data) => {
+        newConnection.start()
+            .then(() => {
+                console.log("Conectado al servidor de SignalR");
+                setErrorConexion(null);
+            })
+            .catch((err) => {
+                setErrorConexion("Error al iniciar la conexión con SignalR.");
+                console.error("Error al conectar con el servidor de SignalR: ", err);
+            });
+
+        // Función de limpieza: Se ejecuta al desmontar el componente.
+        return () => {
+            console.log("Desconectando la conexión de SignalR.");
+            newConnection.stop();
+        };
+    }, []); // Array vacío para ejecución única al montar/desmontar
+
+    // ***********************************************
+    // 2. CONFIGURAR LISTENERS DE SIGNALR
+    // ***********************************************
+    useEffect(() => {
+        if (!connection) return; // Esperar a que la conexión esté inicializada
+
+        const gameUpdateHandler = (data: GameUpdateDto) => {
             console.log("GameUpdate recibido:", data);
-            const jugadoresActualizados = data.players.map((p: JugadorDto) => ({
-                nombreJugador: p.nombreJugador,
-                nivelJugador: p.nivelJugador,
-                autoId: p.autoId,
-                puntos: p.puntos,
-            }));
 
-            setJugadoresPartida(jugadoresActualizados);
+            setJugadoresPartida(data.players);
 
+            // Comparación de nombres 
             const jugadorActual = data.players.find(
-                (p: PlayerDto) => p.name.trim().toLowerCase() === nombreJugador.trim().toLowerCase());
+                (p: PlayerDto) => p.name?.trim().toLowerCase() === nombreJugador.trim().toLowerCase());
             const otroJugador = data.players.find((p: PlayerDto) => p.id !== jugadorActual?.id);
-
 
             // Actualizar posiciones en porcentaje
             if (jugadorActual) {
-                
+
                 setJugadorId(jugadorActual.id);
                 const avance = (jugadorActual.correctAnswers / 10) * 100;
                 setPosicionAuto1(avance);
-            }
 
-            if(jugadorActual.penaltyUntil != null){
-                const tiempoAhora = new Date ();
-                const penalizacionHasta = new Date(jugadorActual.penaltyUntil);
-                if(penalizacionHasta > tiempoAhora){
-                    setPenalizado(true);
-                }else{
-                    setPenalizado(false);
+                // Lógica de Penalización
+                if (jugadorActual?.penaltyUntil) {
+                    const ahora = new Date();
+                    const penalizacionTermina = new Date(jugadorActual.penaltyUntil);
+
+                    if (penalizacionTermina > ahora) {
+                        setPenalizado(true);
+
+                        const msRestantes = penalizacionTermina.getTime() - ahora.getTime();
+                        setTimeout(() => {
+                            setPenalizado(false);
+                        }, msRestantes);
+                    } else {
+                        setPenalizado(false);
+                    }
                 }
-              
-            } else{
-                setPenalizado(false);
             }
 
             if (otroJugador) {
@@ -94,7 +154,7 @@ export const MultiplayerGame = () => {
                 setPosicionAuto2(avanceOtro);
             }
 
-
+            // Lógica de Ganador
             if (data.winnerId && jugadorActual) {
                 if (data.winnerId === jugadorActual.id) {
                     setGanador(true);
@@ -105,76 +165,36 @@ export const MultiplayerGame = () => {
                 }
             }
 
-            if (jugadoresActualizados.length >= 2) setBuscandoRival(false);
+            // Iniciar juego si hay 2 jugadores
+            if (data.players.length >= 2) setBuscandoRival(false);
 
             // Actualizar pregunta
             if (data.currentQuestion) {
                 setPartidaId(data.gameId);
                 setEcuacion({
-                    questionId: data.currentQuestion.id,
+                    id: data.currentQuestion.id,
                     equation: data.currentQuestion.equation,
                     options: data.currentQuestion.options,
                     correctAnswer: data.currentQuestion.correctAnswer,
                 });
                 setOpciones(data.currentQuestion.options);
-                
-                if(data.currentQuestion.penaltyUntil == null){
-                     setRespuestaCorrecta(true);
-
-                }
-               
                 setRespuestaSeleccionada(null);
                 setResultado(null);
                 setInstruccion(data.expectedResult);
             }
-        });
+        };
 
-        return () => connection.off("GameUpdate");
-    }, [nombreJugador, respuestaSeleccionada]);
+        connection.on("GameUpdate", gameUpdateHandler);
 
-    // useEffect(() => {
-    //     if (respuestaSeleccionada !== null && respuestaCorrecta !== undefined) {
-    //         const fueCorrecta = respuestaSeleccionada === respuestaCorrecta;
-    //         setResultado(fueCorrecta ? "acierto" : "error");
-    //         if (!fueCorrecta) {
-    //             setPenalizado(true);
-    //             setTimeout(() => setPenalizado(false), 2000);
-    //         }
-    //     }
-    // }, [respuestaSeleccionada, respuestaCorrecta]);
+        // Función de limpieza para quitar el listener
+        return () => connection.off("GameUpdate", gameUpdateHandler);
 
-
-    const conectarJugador = async () => {
-        if (!nombreJugador.trim()) return;
-
-        try {
-            await connection.invoke("FindMatch", nombreJugador);
-            console.log("Buscando partida...", nombreJugador);
-        } catch (error) {
-            setErrorConexion(" Erro de conexion... volvamos a intentarlo");
-            console.error("Error al buscar partida:", error);
-
-        }
-    };
-
-    const manejarRespuesta = async (opcion: number) => {
-        setRespuestaSeleccionada(opcion);
-        await sendAnswer(opcion);
-    };
-
-    const sendAnswer = async (respuestaSeleccionada: number | null) => {
-        if (ganador || !partidaId || respuestaSeleccionada === null) return;
-        try {
-            await connection.invoke("SendAnswer", partidaId, jugadorId, respuestaSeleccionada);
-            console.log("Respuesta enviada:", respuestaSeleccionada);
-        } catch (error) {
-            console.error("Error al enviar respuesta:", error);
-        }
-    };
+    }, [connection, nombreJugador]); // Depende de 'connection' y 'nombreJugador'
 
     useEffect(() => {
         console.log("Penalizado cambió: ", penalizado);
     }, [penalizado])
+
     return (
 
         <div className="juego w-full h-full bg-black text-white relative">
@@ -195,7 +215,7 @@ export const MultiplayerGame = () => {
                     setPlayerId={setNombreJugador}
                     onConnection={conectarJugador} />)}
 
-            {/* Modal de fin de partida */}
+            {/* Modal de fin de partida (Ganador) */}
             {ganador && (
                 <div className="absolute inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
                     <EndOfMultiplayerModeModal
@@ -208,6 +228,7 @@ export const MultiplayerGame = () => {
                 </div>
             )}
 
+            {/* Modal de fin de partida (Perdedor) */}
             {perdedor && (
                 <div className="absolute inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
                     <EndOfMultiplayerModeModal
@@ -229,7 +250,7 @@ export const MultiplayerGame = () => {
 
                 {/* Nombre del Jugador 1 (Vos) */}
                 <div
-                    className="absolute bottom-[120px]  text-green-500  text-l ml-2"
+                    className="absolute bottom-[120px]  text-green-500  text-l ml-2"
                     style={{
                         left: `${posicionAuto1}%`,
                         top: '80%',
@@ -249,7 +270,7 @@ export const MultiplayerGame = () => {
 
                 {/* Nombre del Jugador 2 (Rival) */}
                 <div
-                    className="absolute bottom-[180px] text-red-500 letf-2 t-8  text-l ml-2"
+                    className="absolute bottom-[180px] text-red-500 letf-2 t-8  text-l ml-2"
                     style={{
                         left: `${posicionAuto2}%`,
                         top: '7%',
@@ -310,7 +331,7 @@ export const MultiplayerGame = () => {
                             if (respuestaSeleccionada === opcion) {
                                 clases += resultado === "acierto" ? "bg-green-400" : "bg-red-500";
                             } else if (
-                                resultado === "error" &&  respuestaCorrecta) {
+                                resultado === "error") { 
                                 clases += "bg-green-400";// mostrar cuál era la correcta
 
 
@@ -325,7 +346,7 @@ export const MultiplayerGame = () => {
                                 key={i}
                                 onClick={() => manejarRespuesta(opcion)}
                                 className={clases}
-                                disabled={!!respuestaSeleccionada}
+                                disabled={!!respuestaSeleccionada || penalizado} // Deshabilitar si ya respondió o si está penalizado
                             >
                                 {opcion}
                             </button>
