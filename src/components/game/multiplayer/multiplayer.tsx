@@ -7,24 +7,22 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Wildcards } from "../../../shared/wildcards/wildcards";
 import connection from "../../../services/signalR/connection";
 import { LookingForRivalModal } from "../../../shared/modals/lookingForRivalModal";
+import type { QuestionResponseDto } from "../../../models/domain/questionResponseDto";
+import type { PlayerDto } from "../../../models/domain/playerDto";
 
-interface Equation {
-    equationString: string;
-    options: number[];
-    correctAnswer: number;
-}
 
 export const MultiplayerGame = () => {
-    const [ecuacion, setEcuacion] = useState<Equation>();
+
+    const [ecuacion, setEcuacion] = useState<QuestionResponseDto>();
     const [opciones, setOpciones] = useState<number[]>();
-    const [respuestaCorrecta, setRespuestaCorrecta] = useState<number>();
+    const [respuestaCorrecta, setRespuestaCorrecta] = useState<boolean>(false);
     const [respuestaSeleccionada, setRespuestaSeleccionada] = useState<number | null>(null);
+
     const [resultado, setResultado] = useState<"acierto" | "error" | null>(null);
     const [posicionAuto1, setPosicionAuto1] = useState<number>(0);
     const [posicionAuto2, setPosicionAuto2] = useState<number>(0);
-    const [acierto, setAcierto] = useState<number>(0);
     const [ganador, setGanador] = useState<boolean>(false);
-    const [vidasRestantes, setVidasRestantes] = useState(3);
+
     const [jugadoresPartida, setJugadoresPartida] = useState<JugadorDto[]>([]);
     const [buscandoRival, setBuscandoRival] = useState(true);
     const [jugadorId, setJugadorId] = useState<number | null>(null);
@@ -40,10 +38,8 @@ export const MultiplayerGame = () => {
     const reiniciarJuego = () => {
         setGanador(false);
         setPerdedor(false);
-        setAcierto(0);
         setPosicionAuto1(0);
         setPosicionAuto2(0);
-        setVidasRestantes(3);
         setResultado(null);
         setRespuestaSeleccionada(null);
         setBuscandoRival(true);
@@ -57,59 +53,57 @@ export const MultiplayerGame = () => {
     useEffect(() => {
 
         connection.on("GameUpdate", (data) => {
-            const jugadoresActualizados = data.players.map((p: any) => ({
-                nombreJugador: p.name,
-                nivelJugador: p.level,
-                autoId: p.carId,
-                puntos: p.score,
+            console.log("GameUpdate recibido:", data);
+            const jugadoresActualizados = data.players.map((p: JugadorDto) => ({
+                nombreJugador: p.nombreJugador,
+                nivelJugador: p.nivelJugador,
+                autoId: p.autoId,
+                puntos: p.puntos,
             }));
 
             setJugadoresPartida(jugadoresActualizados);
 
             const jugadorActual = data.players.find(
-                (p: any) => p.name.trim().toLowerCase() === nombreJugador.trim().toLowerCase());
+                (p: PlayerDto) => p.name.trim().toLowerCase() === nombreJugador.trim().toLowerCase());
+            const otroJugador = data.players.find((p: PlayerDto) => p.id !== jugadorActual?.id);
 
-            const otroJugador = data.players.find((p: any) => p.id !== jugadorActual?.id);
 
             // Actualizar posiciones en porcentaje
             if (jugadorActual) {
+                
                 setJugadorId(jugadorActual.id);
                 const avance = (jugadorActual.correctAnswers / 10) * 100;
                 setPosicionAuto1(avance);
             }
-            
+
+            if(jugadorActual.penaltyUntil != null){
+                const tiempoAhora = new Date ();
+                const penalizacionHasta = new Date(jugadorActual.penaltyUntil);
+                if(penalizacionHasta > tiempoAhora){
+                    setPenalizado(true);
+                }else{
+                    setPenalizado(false);
+                }
+              
+            } else{
+                setPenalizado(false);
+            }
+
             if (otroJugador) {
                 const avanceOtro = (otroJugador.correctAnswers / 10) * 100;
                 setPosicionAuto2(avanceOtro);
             }
 
-            // Mostrar resultado y actualizar aciertos locales
-            if (respuestaSeleccionada !== null && respuestaCorrecta !== undefined) {
-                const fueCorrecta = respuestaSeleccionada === respuestaCorrecta;
-                setResultado(fueCorrecta ? "acierto" : "error");
 
-                if (fueCorrecta) setAcierto(prev => prev + 1);
-                else setVidasRestantes(prev => prev - 1);
+            if (data.winnerId && jugadorActual) {
+                if (data.winnerId === jugadorActual.id) {
+                    setGanador(true);
+                    setPerdedor(false);
+                } else {
+                    setPerdedor(true);
+                    setGanador(false);
+                }
             }
-
-            // TERMINAR PARTIDA si alguien llega a 10 aciertos
-            const misAciertos = jugadorActual?.correctAnswers ?? acierto;
-            const aciertosRival = otroJugador?.correctAnswers ?? 0;
-
-            if (misAciertos >= 10 || aciertosRival >= 10) {
-                if (misAciertos >= 10) setGanador(true);
-                else setPerdedor(true);
-            }
-
-            //ESTO TENIA PARA VER EL GANADOR 
-            //  if (data.winnerId && jugadorActual) {
-            //if (data.winnerId === jugadorActual.id){
-            //setGanador(true);
-            //setPerdedor(false);
-            // } else{
-            //setPerdedor(true);
-            //setGanador(false);
-            // }
 
             if (jugadoresActualizados.length >= 2) setBuscandoRival(false);
 
@@ -117,32 +111,37 @@ export const MultiplayerGame = () => {
             if (data.currentQuestion) {
                 setPartidaId(data.gameId);
                 setEcuacion({
-                    equationString: data.currentQuestion.equation,
+                    questionId: data.currentQuestion.id,
+                    equation: data.currentQuestion.equation,
                     options: data.currentQuestion.options,
                     correctAnswer: data.currentQuestion.correctAnswer,
                 });
                 setOpciones(data.currentQuestion.options);
-                setRespuestaCorrecta(data.currentQuestion.correctAnswer);
-                //setContador(10);
+                
+                if(data.currentQuestion.penaltyUntil == null){
+                     setRespuestaCorrecta(true);
+
+                }
+               
                 setRespuestaSeleccionada(null);
                 setResultado(null);
-                setInstruccion(data.currentQuestion.instruccion);
+                setInstruccion(data.expectedResult);
             }
         });
 
         return () => connection.off("GameUpdate");
-    }, [nombreJugador, respuestaSeleccionada, acierto]);
+    }, [nombreJugador, respuestaSeleccionada]);
 
-    //  useEffect(() =>{ ESTA ARRIBA ADENTRO DEL OTRO POR LAS DUDAS YO LO TENIA AFUERA
-    //   if (respuestaSeleccionada !== null && respuestaCorrecta !== undefined) {
-    // const fueCorrecta = respuestaSeleccionada === respuestaCorrecta; 
-    //  setResultado(fueCorrecta ? "acierto" : "error");
-    //   if (!fueCorrecta) {
-    //    setPenalizado(true);
-    //   setTimeout(() => setPenalizado(false),2000);
-    // }
-    //   }  
-    // }, [respuestaSeleccionada,respuestaCorrecta]);
+    // useEffect(() => {
+    //     if (respuestaSeleccionada !== null && respuestaCorrecta !== undefined) {
+    //         const fueCorrecta = respuestaSeleccionada === respuestaCorrecta;
+    //         setResultado(fueCorrecta ? "acierto" : "error");
+    //         if (!fueCorrecta) {
+    //             setPenalizado(true);
+    //             setTimeout(() => setPenalizado(false), 2000);
+    //         }
+    //     }
+    // }, [respuestaSeleccionada, respuestaCorrecta]);
 
 
     const conectarJugador = async () => {
@@ -152,33 +151,30 @@ export const MultiplayerGame = () => {
             await connection.invoke("FindMatch", nombreJugador);
             console.log("Buscando partida...", nombreJugador);
         } catch (error) {
+            setErrorConexion(" Erro de conexion... volvamos a intentarlo");
             console.error("Error al buscar partida:", error);
+
         }
     };
-    const tiempoAgotado = async (respuestaSeleccionada: number | null) => {
+
+    const manejarRespuesta = async (opcion: number) => {
+        setRespuestaSeleccionada(opcion);
+        await sendAnswer(opcion);
+    };
+
+    const sendAnswer = async (respuestaSeleccionada: number | null) => {
         if (ganador || !partidaId || respuestaSeleccionada === null) return;
         try {
-            await connection.invoke("SendAnswer", partidaId, jugadorId, respuestaSeleccionada.toString());
+            await connection.invoke("SendAnswer", partidaId, jugadorId, respuestaSeleccionada);
             console.log("Respuesta enviada:", respuestaSeleccionada);
         } catch (error) {
             console.error("Error al enviar respuesta:", error);
         }
     };
 
-    const manejarRespuesta = (opcion: number) => {
-        setRespuestaSeleccionada(opcion);
-        tiempoAgotado(opcion);
-    };
-    // const manejarRespuesta = async (opcion: number) => {
-    // setRespuestaSeleccionada(opcion);
-    //await  tiempoAgotado(opcion);
-
-    //setTimeout(() => {
-
-    // setRespuestaSeleccionada(null);
-    //setResultado(null);
-    //}, 3000);
-    // };
+    useEffect(() => {
+        console.log("Penalizado cambió: ", penalizado);
+    }, [penalizado])
     return (
 
         <div className="juego w-full h-full bg-black text-white relative">
@@ -227,16 +223,50 @@ export const MultiplayerGame = () => {
             {/* Fondo cielo */}
             <div className="flex justify-center items-center fondoCielo w-full"></div>
 
+
             {/* Ruta */}
             <div className="flex justify-center items-center fondoRuta w-full relative mt-20">
-                <img src={auto1}
+
+                {/* Nombre del Jugador 1 (Vos) */}
+                <div
+                    className="absolute bottom-[120px]  text-green-500  text-l ml-2"
+                    style={{
+                        left: `${posicionAuto1}%`,
+                        top: '80%',
+                        transform: 'translateX(0%)'
+                    }}
+                >
+                    {nombreJugador}
+                </div>
+
+                {/* Auto 1 */}
+                <img
+                    src={auto1}
                     alt="Auto 1"
                     className="absolute bottom-[120px] auto transition-all duration-500"
-                    style={{ left: `${posicionAuto1}%` }} />
-                <img src={auto1}
+                    style={{ left: `${posicionAuto1}%` }}
+                />
+
+                {/* Nombre del Jugador 2 (Rival) */}
+                <div
+                    className="absolute bottom-[180px] text-red-500 letf-2 t-8  text-l ml-2"
+                    style={{
+                        left: `${posicionAuto2}%`,
+                        top: '7%',
+                        transform: 'translateX(0%)'
+                    }}
+
+                >
+                    rival
+                </div>
+
+                {/* Auto 2 */}
+                <img
+                    src={auto1}
                     alt="Auto 2"
-                    className="absolute bottom-[180px] auto left-[0%] auto2"
-                    style={{ left: `${posicionAuto2}%` }} />
+                    className="absolute bottom-[180px] auto auto2"
+                    style={{ left: `${posicionAuto2}%` }}
+                />
             </div>
 
             {/* Instrucciones y Comodines */}
@@ -261,7 +291,7 @@ export const MultiplayerGame = () => {
                 <div className="flex justify-center mb-6">
                     <div className="inline-block border-2 border-white rounded-lg text-6xl px-6 py-3">
                         {/* Mostrar ecuación solo si está definida */}
-                        {ecuacion?.equationString && <span>{ecuacion.equationString}</span>}
+                        {ecuacion?.equation && <span>{ecuacion.equation}</span>}
                     </div>
                 </div>
                 {/* si anda mal error de conexion */}
@@ -280,7 +310,7 @@ export const MultiplayerGame = () => {
                             if (respuestaSeleccionada === opcion) {
                                 clases += resultado === "acierto" ? "bg-green-400" : "bg-red-500";
                             } else if (
-                                resultado === "error" && opcion === respuestaCorrecta) {
+                                resultado === "error" &&  respuestaCorrecta) {
                                 clases += "bg-green-400";// mostrar cuál era la correcta
 
 

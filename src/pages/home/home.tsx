@@ -88,9 +88,9 @@ export const Home = () => {
       <div className="flex flex-1 items-end justify-between px-4 pb-8">
         {/* botones izquierdos */}
         <div className="flex flex-col gap-3">
-          <Link to="/multijugador">
+          <Link to="/menu">
             <button className="w-56 h-16 text-[#0f0f0f] text-3xl rounded-2xl shadow bg-[#5df9f9] hover:bg-[#f95ec8] transition-colors">
-              Multijugador
+              Menú
             </button>
           </Link>
           <Link to="/modo-historia">
