@@ -119,8 +119,48 @@ body {
 }
 
 .fondo-multijugador {
-  background-image: url('/src/assets/images/multijugador.png');
+  background-image: url('/src/assets/images/partidas.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  
 }
+
+.multijugadorContenedor{
+  position: relative;
+  
+  gap: 10%;
+   
+
+}
+
+.titulo{
+  height: 15%;
+  align-items: anchor-center;
+}
+
+.contenedorMenu{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 5%;
+justify-content: center;
+background-color: black;
+opacity: 90%;
+height: 75%;
+width: 90%;
+top:20%;
+margin: auto;
+gap: 10%;
+
+}
+
+.menu{
+  
+     width: 100%;
+  row-gap: 15%;
+  justify-content: center;
+  height: max-content;
+  margin-top: 3%;
+
+}
+
