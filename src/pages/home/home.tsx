@@ -90,7 +90,7 @@ export const Home = () => {
         <div className="flex flex-col gap-3">
           <Link to="/menu">
             <button className="botonGral h-20 w-65">
-              Menú
+              Multijugador
             </button>
           </Link>
           <Link to="/modo-historia">

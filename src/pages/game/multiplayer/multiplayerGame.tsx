@@ -20,7 +20,7 @@ export const Menu = () => {
         <Link to="/partida-rapida" className="botonGral">Partida Rápida</Link>
         <Link to="/invitar-amigo" className="botonGral">Invitar a un Amigo</Link>
         <Link to="/ranking" className="botonGral">Ranking</Link>
-        <Link to="/multijugador" className="botonGral">Multijugador</Link>
+        <Link to="/multijugador" className="botonGral">Demo</Link>
 
       </div>
 
