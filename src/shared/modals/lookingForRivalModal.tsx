@@ -1,3 +1,4 @@
+import React, { useEffect } from "react";
 import { motion } from "framer-motion";
 
 interface LookingForRivalModalProps {
@@ -6,13 +7,29 @@ interface LookingForRivalModalProps {
     onConnection: () => void;
 }
 
-export const LookingForRivalModal = ({ playerId, setPlayerId, onConnection }: LookingForRivalModalProps) => {
-    // Configuraciones de opacidad para cada reloj
+export const LookingForRivalModal: React.FC<LookingForRivalModalProps> = ({
+    playerId,
+    setPlayerId,
+    onConnection,
+}) => {
+    // Configuraciones de animación de los relojes
     const relojConfigs = [
         { duration: 1.5, delay: 0 },
         { duration: 1.8, delay: 0.3 },
         { duration: 2.1, delay: 0.6 },
     ];
+
+    // Generar nombre aleatorio y persistirlo
+    useEffect(() => {
+        const storedName = sessionStorage.getItem("playerName");
+        if (storedName) {
+            setPlayerId(storedName);
+        } else {
+            const randomName = `Jugador${Math.floor(Math.random() * 1000)}`;
+            sessionStorage.setItem("playerName", randomName);
+            setPlayerId(randomName);
+        }
+    }, [setPlayerId]);
 
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black/60 z-50">
@@ -23,12 +40,19 @@ export const LookingForRivalModal = ({ playerId, setPlayerId, onConnection }: Lo
 
                     <p className="text-3xl text-[#00F4FF]">Esperando al contrincante</p>
 
-                    <input
+                    {/* <input
                         type="text"
                         value={playerId}
                         onChange={(e) => setPlayerId(e.target.value)}
                         placeholder="Tu nombre"
                         className="px-4 py-2 rounded text-white w-full"
+                    /> */}
+
+                    {/* Input oculto con nombre generado automáticamente */}
+                    <input
+                        type="hidden"
+                        value={playerId}
+                        readOnly
                     />
 
                     <button
@@ -38,12 +62,12 @@ export const LookingForRivalModal = ({ playerId, setPlayerId, onConnection }: Lo
                         Conectar
                     </button>
 
-                    {/* Tres relojes de arena */}
+                    {/* Tres relojes animados */}
                     <div className="flex space-x-4 mt-2">
                         {relojConfigs.map((config, i) => (
                             <motion.div
                                 key={i}
-                                animate={{ opacity: [1, 0.2, 1] }} // 👈 efecto de desvanecimiento
+                                animate={{ opacity: [1, 0.2, 1] }}
                                 transition={{
                                     repeat: Infinity,
                                     duration: config.duration,
