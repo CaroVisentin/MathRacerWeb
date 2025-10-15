@@ -37,30 +37,10 @@ body {
 
 .juego {
   display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: 180px 180px 100px 100px;
   height: 100vh;
   width: 100%;
 }
 
-.fondoCielo {
-  background-color: aqua;
-  background-image: url('../src/assets/images/dia.png');
-  background-repeat: repeat-x;
-  animation: moverFondoCielo 10s linear infinite;
-  background-size: cover;
-  z-index: 0;
-}
-
-@keyframes moverFondoCielo {
-  from {
-    background-position: 0 0;
-  }
-
-  to {
-    background-position-x: -2000px;
-  }
-}
 
 .fondoHome {
   
@@ -70,26 +50,29 @@ body {
   z-index: 0;
 }
 
-@keyframes moverFondoCielo {
-  from {
-    background-position: 0 0;
-  }
 
-  to {
-    background-position-x: -2000px;
-  }
-}
 
 .fondoRuta {
   position: relative;
-  background-color: azure;
-  background-image: url('../src/assets/images/ruta.png');
+  width: 97%;
+  height: 150px;
+  margin: 0 auto;
 
+  overflow: hidden;
+  background-color: #333; 
   background-repeat: repeat-x;
-  height: 180px;
-  animation: moverFondoRuta 10s linear infinite;
   background-size: cover;
+  animation: moverFondoRuta 10s linear infinite;
   z-index: 1;
+}
+
+.auto {
+  position: absolute;
+  bottom: 5px; 
+  width: 100px; 
+  transform: translateY(8%);
+  transition: left 0.5s ease, top 0.5s ease;
+  z-index: 4;
 }
 
 @keyframes moverFondoRuta {
@@ -102,19 +85,7 @@ body {
   }
 }
 
-.auto {
-  position: absolute;
-  top: 70%;
-  bottom: 40px;
-  width: 80px;
-  transform: translateY(-50%);
-  transition: left 0.5s ease, top 0.5s ease;
-  z-index: 4;
-}
 
-.auto2 {
-  top: 30%;
-}
 
 .gridComodin {
   display: grid;

@@ -13,7 +13,7 @@ import type { GameUpdateDto } from '../../../models/domain/gameUpdateDto';
 
 export const MultiplayerGame = () => {
 
-    const [connection, setConnection] = useState<HubConnection | null>(null); 
+    const [connection, setConnection] = useState<HubConnection | null>(null);
 
     const [ecuacion, setEcuacion] = useState<QuestionDto>();
     const [opciones, setOpciones] = useState<number[]>();
@@ -35,6 +35,17 @@ export const MultiplayerGame = () => {
     const [perdedor, setPerdedor] = useState<boolean>(false);
     const [penalizado, setPenalizado] = useState<boolean>(false);
     const [errorConexion, setErrorConexion] = useState<string | null>(null);
+
+    const fondos = [
+
+        'pista-noche.png',
+        'pista-dia.png',
+        'pista-atardecer.png'
+    ];
+
+    const [fondoJugador, setFondoJugador] = useState<string>('');
+    const [fondoRival, setFondoRival] = useState<string>('');
+
 
     const cerrarModal = () => setGanador(false);
 
@@ -201,6 +212,15 @@ export const MultiplayerGame = () => {
         console.log("Penalizado cambió: ", penalizado);
     }, [penalizado])
 
+    //fondos aleatorios para jugadores
+
+    useEffect(() => {
+        const randomFondoJugador = fondos[Math.floor(Math.random() * fondos.length)];
+        const randomFondoRival = fondos[Math.floor(Math.random() * fondos.length)];
+        setFondoJugador(randomFondoJugador);
+        setFondoRival(randomFondoRival);
+    }, []);
+
     return (
 
         <div className="juego w-full h-full bg-black text-white relative">
@@ -248,52 +268,60 @@ export const MultiplayerGame = () => {
             )}
 
             {/* Fondo cielo */}
-            <div className="flex justify-center items-center fondoCielo w-full"></div>
 
 
             {/* Ruta */}
-            <div className="flex justify-center items-center fondoRuta w-full relative mt-20">
-
-                {/* Nombre del Jugador 1 (Vos) */}
-                <div
-                    className="absolute bottom-[120px]  text-green-500  text-l ml-2"
+            <div className="mt-20 flex flex-col gap-3 justify-end">
+                <div className="flex justify-center items-center fondoRuta w-full relative mt-20 border-3 border-[#5df9f9] rounded-lg"
                     style={{
-                        left: `${posicionAuto1}%`,
-                        top: '80%',
-                        transform: 'translateX(0%)'
-                    }}
-                >
-                    {nombreJugador}
+                        backgroundImage: `url('../src/assets/images/${fondoRival}')`,
+                    }}>
+                    {/* Nombre del Jugador 2 (Rival) */}
+                    <div
+                        className="absolute text-[#000000] text-l ml-2 px-2 py-1 rounded bg-[#5df9f9]"
+                        style={{
+                            left: '0px',
+                            top: '-2%',
+
+                        }}
+                    >
+                        Rival
+                    </div>
+
+                    {/* Auto 2 */}
+                    <img
+                        src={auto1}
+                        alt="Auto 2"
+                        className="absolute bottom-[180px] auto auto2"
+                        style={{ left: `${posicionAuto2}%` }}
+                    />
                 </div>
 
-                {/* Auto 1 */}
-                <img
-                    src={auto1}
-                    alt="Auto 1"
-                    className="absolute bottom-[120px] auto transition-all duration-500"
-                    style={{ left: `${posicionAuto1}%` }}
-                />
-
-                {/* Nombre del Jugador 2 (Rival) */}
-                <div
-                    className="absolute bottom-[180px] text-red-500 letf-2 t-8  text-l ml-2"
+                <div className="flex justify-center items-center fondoRuta w-full relative mt-20 border-3 border-[#f95ec8] rounded-lg"
                     style={{
-                        left: `${posicionAuto2}%`,
-                        top: '7%',
-                        transform: 'translateX(0%)'
-                    }}
+                        backgroundImage: `url('../src/assets/images/${fondoJugador}')`,
+                    }}>
 
-                >
-                    rival
+                    {/* Nombre del Jugador 1 (Vos) */}
+                    <div
+                        className="absolute text-white text-l ml-2 px-2 py-1 rounded bg-[#f95ec8]"
+                        style={{
+                            left: '0px',
+                            top: '-2%',
+                        }}
+                    >
+                        {nombreJugador}
+                    </div>
+
+                    {/* Auto 1 */}
+                    <img
+                        src={auto1}
+                        alt="Auto 1"
+                        className="absolute auto transition-all duration-500"
+                        style={{ left: `${posicionAuto1}%` }}
+                    />
+
                 </div>
-
-                {/* Auto 2 */}
-                <img
-                    src={auto1}
-                    alt="Auto 2"
-                    className="absolute bottom-[180px] auto auto2"
-                    style={{ left: `${posicionAuto2}%` }}
-                />
             </div>
 
             {/* Instrucciones y Comodines */}
@@ -337,7 +365,7 @@ export const MultiplayerGame = () => {
                             if (respuestaSeleccionada === opcion) {
                                 clases += resultado === "acierto" ? "bg-green-400" : "bg-red-500";
                             } else if (
-                                resultado === "error") { 
+                                resultado === "error") {
                                 clases += "bg-green-400";// mostrar cuál era la correcta
 
 
