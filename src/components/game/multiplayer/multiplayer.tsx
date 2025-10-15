@@ -10,7 +10,7 @@ import { Wildcards } from '../../../shared/wildcards/wildcards';
 import auto1 from "../../../assets/images/auto.png";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import type { GameUpdateDto } from '../../../models/domain/gameUpdateDto';
-import { delay, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 
     const fondos = [
