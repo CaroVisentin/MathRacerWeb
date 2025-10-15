@@ -131,7 +131,12 @@ body {
 
 .contenedorMenu{
   display: grid;
+  grid-template-areas: 
+    "crear unirse"
+    "invitar ranking"
+    "competitiva competitiva";
   grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto auto;
   padding: 5%;
 justify-content: center;
 background-color: black;
@@ -153,6 +158,14 @@ gap: 10%;
   margin-top: 3%;
 
 }
+
+.arreglo{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1%;
+  
+  width: 100%;}
 
 .botonGral{
   font-family: 'Audiowide', cursive;

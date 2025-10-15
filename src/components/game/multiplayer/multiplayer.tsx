@@ -10,6 +10,7 @@ import { Wildcards } from '../../../shared/wildcards/wildcards';
 import auto1 from "../../../assets/images/auto.png";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import type { GameUpdateDto } from '../../../models/domain/gameUpdateDto';
+import { delay, motion } from 'framer-motion';
 
 
     const fondos = [
@@ -44,6 +45,7 @@ export const MultiplayerGame = () => {
     const [perdedor, setPerdedor] = useState<boolean>(false);
     const [penalizado, setPenalizado] = useState<boolean>(false);
     const [errorConexion, setErrorConexion] = useState<string | null>(null);
+    const [mensajeResultado, setMensajeResultado] = useState<string | null>(null);
 
     const [fondoJugador, setFondoJugador] = useState<string>('');
     const [fondoRival, setFondoRival] = useState<string>('');
@@ -79,6 +81,12 @@ export const MultiplayerGame = () => {
     const handleVolver = () => {
         console.log("Volver");
         // Agregar lógica para abandonar partida
+        
+        setGanador(false);
+        setPerdedor(true);
+        if (connection) connection.stop();
+        
+        
         // Detener la conexión manualmente, antes de que se desmonte el componente
     };
 
@@ -92,15 +100,30 @@ export const MultiplayerGame = () => {
         }
     }, [ganador, partidaId, jugadorId, connection]);
 
-    const manejarRespuesta = async (opcion: number) => {
+    const manejarRespuesta =  async(opcion: number) => {
         setRespuestaSeleccionada(opcion);
-        console.log("respuestacorrecta", ecuacion?.correctAnswer);
-        await sendAnswer(opcion);
+        console.log("respuestacorrecta", ecuacion);
+        console.log("opcion", opcion);
+
         if (ecuacion && opcion === ecuacion.correctAnswer) {
             setResultado("acierto");
+            setPenalizado(false);
+            setMensajeResultado("¡Correcto!");
+            setTimeout(() => setMensajeResultado(null),1500);
+           console.log("acierto");
         } else {
             setResultado("error");
+            setPenalizado(true);
+            setMensajeResultado(" Fallaste!! penalizado por 2 segundos ");
+            console.log("error");
+            setTimeout(() => setMensajeResultado(null),1500);
         }
+          setTimeout(async() => {
+
+             await sendAnswer(opcion);
+        }, 1500); // Espera 2 segundos antes de resetear
+
+
     };
 
     // ***********************************************
@@ -138,7 +161,7 @@ export const MultiplayerGame = () => {
 
             setJugadoresPartida(data.players);
 
-            // Comparación de nombres 
+            // Comparación de nombres
             const jugadorActual = data.players.find(
                 (p: PlayerDto) => p.name?.trim().toLowerCase() === nombreJugador.trim().toLowerCase());
             const otroJugador = data.players.find((p: PlayerDto) => p.id !== jugadorActual?.id);
@@ -190,6 +213,9 @@ export const MultiplayerGame = () => {
             // Actualizar pregunta
             if (data.currentQuestion) {
                 setPartidaId(data.gameId);
+                setRespuestaSeleccionada(null);
+                setResultado(null);
+
                 setEcuacion({
                     id: data.currentQuestion.id,
                     equation: data.currentQuestion.equation,
@@ -197,8 +223,12 @@ export const MultiplayerGame = () => {
                     correctAnswer: data.currentQuestion.correctAnswer,
                 });
                 setOpciones(data.currentQuestion.options);
-                setRespuestaSeleccionada(null);
-                setResultado(null);
+                // setTimeout(()=>{
+                //         setRespuestaSeleccionada(null);
+                // setResultado(null);
+
+                // },3000);
+
                 setInstruccion(data.expectedResult);
             }
         };
@@ -364,15 +394,33 @@ export const MultiplayerGame = () => {
                     {opciones?.map((opcion, i) => {
                         let clases = "border-2 border-white px-6 py-3 rounded-lg text-xl transition ";
 
+
                         if (respuestaSeleccionada !== null) {
-                            if (respuestaSeleccionada === opcion) {
-                                clases += resultado === "acierto" ? "bg-green-400" : "bg-red-500";
+                        //     if (respuestaSeleccionada === opcion) {
+                        //         clases += resultado === "acierto" ? "bg-green-400" : "bg-red-500";
+                        //     } else if (
+                        //         resultado === "error") {
+                        //         clases += "bg-green-400";// mostrar cuál era la correcta
+
+
+                        //     } else {
+                        //         clases += "bg-transparent";
+                        //     }
+                        // } else {
+                        //     clases += "bg-transparent hover:bg-blue-500";
+                        // }
+                          if (resultado === "acierto" && opcion === respuestaSeleccionada) {
+                                clases +=  "bg-green-400" ; //es correcta
+
                             } else if (
-                                resultado === "error") {
-                                clases += "bg-green-400";// mostrar cuál era la correcta
+                                resultado === "error" && opcion === respuestaSeleccionada) {
+                                clases += "bg-red-500";// dice que es incorrecta
 
+                                }
+                                else if (resultado === "error" && opcion === ecuacion?.correctAnswer){
+                                    clases+= "bg-green-400"; // muestra cual seria la correcta
 
-                            } else {
+                              } else {
                                 clases += "bg-transparent";
                             }
                         } else {
@@ -389,11 +437,24 @@ export const MultiplayerGame = () => {
                             </button>
                         );
                     })}
-                    {penalizado && (
+                    {mensajeResultado && (
+    <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.4 }}
+        className={`text-xl mt-6  ${
+            resultado === "acierto" ? "text-green-400" : "text-red-500"
+        }`}
+    >
+        {mensajeResultado}
+    </motion.div>
+)}
+                    {/* {penalizado && (
                         <div className="text-red-500 text-xl mt-4">
                             ¡Respuesta incorrecta! Penalización de 2 segundos.
                         </div>
-                    )}
+                    )} */}
 
                 </div>
             </div>
@@ -401,3 +462,5 @@ export const MultiplayerGame = () => {
         </div>
     );
 };
+
+
