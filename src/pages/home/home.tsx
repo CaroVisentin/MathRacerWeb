@@ -1,9 +1,13 @@
 import isologo from "/images/isologotipo.png";
 
-import { Link } from "react-router-dom";
+import { ActionButton } from "../../shared/buttons/actionButton";
+import { BatteryStatus } from "../../components/home/batteryStatus";
+import { CoinsDisplay } from "../../components/home/coinsDisplay";
+import { ProfileCard } from "../../components/home/profileCard";
+import { InfoBox } from "../../components/home/infoBox";
+import { CarDisplay } from "../../components/home/carDisplay";
+import { type HomeData, homeDataMock,} from "../../models/ui/home-data"; 
 import { useEffect, useState } from "react";
-import { type HomeData, homeDataMock, currencyIcon, batteryIcons } from "../../models/ui/home-data";
-
 
 export const Home = () => {
   const [data, setData] = useState<HomeData | null>(null);
@@ -18,7 +22,6 @@ export const Home = () => {
   if (!data) {
     return <div className="text-white h-screen flex items-center justify-center">Cargando...</div>;
   }
-
   return (
     <div
       className="relative h-screen w-screen flex flex-col"
@@ -29,106 +32,36 @@ export const Home = () => {
         backgroundRepeat: "no-repeat",
       }}
     >
-      {/* Logo */}
       <div className="absolute top-4 left-4">
         <img src={isologo} alt="Math Racer" className="w-100" />
       </div>
 
-      {/* Panel superior derecho */}
       <div className="absolute top-4 right-4 flex flex-col items-end gap-3">
         <div className="flex items-start gap-5">
           <div className="flex flex-col gap-3">
-            {/* Batería */}
-            <div className="flex flex-col items-end justify-left">
-              <div className="flex items-end gap-3">
-                <div className="flex flex-col justify-space-between align-space-between">
-                  <img src={batteryIcons.pilabolt} alt="pila-bolt" className="h-4" />
-                  <span className="text-base font-semibold h-4 text-white">{data.battery.time}</span>
-                </div>
-                <div className="flex items-end gap-1">
-                  {data.battery.levels.map((lvl, i) => (
-                    <img
-                      key={i}
-                      src={lvl === "full" ? batteryIcons.pila : batteryIcons.pilaempty}
-                      alt={lvl}
-                      className="w-4 h-8"
-                    />
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Monedas */}
-            <div className="flex flex-row gap-2 items-center justify-left">
-              <img src={currencyIcon} alt="monedas" className="w-6 h-6" />
-              <span className="text-white font-bold text-3xl">
-                {data.user.coins}
-              </span>
-            </div>
+            <BatteryStatus levels={data.battery.levels} time={data.battery.time} />
+            <CoinsDisplay coins={data.user.coins} />
           </div>
-
-          {/* Perfil */}
-          <div className="w-16 h-16 bg-white rounded-full overflow-hidden border-4 border-[#f95ec8] shadow-lg">
-            <img src={data.activeItems.profile.imageUrl} alt="perfil" className="w-full h-full object-scale-down" />
-          </div>
+          <ProfileCard imageUrl={data.activeItems.profile.imageUrl} />
         </div>
-
-        {/* Caja nivel */}
-        <div className="w-48 h-10 text-2xl bg-white/70 rounded-xl shadow flex items-center justify-center text-black font-bold">
-          Nivel {data.user.level}
-        </div>
-
-        {/* Caja ranking */}
-        <div className="w-48 h-10 text-2xl bg-white/70 rounded-xl shadow flex items-center justify-center text-black font-bold">
-          {data.user.ranking.toLocaleString("es-AR")}
-        </div>
+        <InfoBox>Nivel {data.user.level}</InfoBox>
+        <InfoBox>{data.user.ranking}</InfoBox>
       </div>
 
-      {/* contenedor para los botones */}
       <div className="flex flex-1 items-end justify-between px-4 pb-8">
-        {/* botones izquierdos */}
         <div className="flex flex-col gap-3">
-          <Link to="/menu">
-            <button className="botonGral h-20 w-65">
-              Menú
-            </button>
-          </Link>
-          <Link to="/modo-historia">
-            <button className="botonGral h-20 w-65">
-              Historia
-            </button>
-          </Link>
-          <Link to="/practica">
-            <button className="botonGral h-20 w-65">
-              Práctica Libre
-            </button>
-          </Link>
+          <ActionButton to="/menu">Multijugador</ActionButton>
+          <ActionButton to="/modo-historia">Historia</ActionButton>
+          <ActionButton to="/practica">Práctica Libre</ActionButton>
         </div>
-
-        {/* botones derechos */}
-        <div className="flex flex-col gap-3 items-end ">
-          <Link to="/ranking">
-            <button className="botonGral h-20">
-              <i className="ri-trophy-fill text-2xl"></i>
-            </button>
-          </Link>
-          <Link to="/garage">
-            <button className="botonGral h-20">
-              <i className="ri-store-2-fill text-2xl"></i>
-            </button>
-          </Link>
-          <Link to="/shop">
-            <button className="botonGral h-20">
-              <i className="ri-shopping-cart-fill text-2xl"></i>
-            </button>
-          </Link>
+        <div className="flex flex-col gap-3 items-end">
+          <ActionButton to="/ranking" size="small"><i className="ri-trophy-fill"></i></ActionButton>
+          <ActionButton to="/garage" size="small"><i className="ri-store-2-fill"></i></ActionButton>
+          <ActionButton to="/shop" size="small"><i className="ri-shopping-cart-fill"></i></ActionButton>
         </div>
       </div>
 
-      {/* img auto */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <img src={data.activeItems.car.imageUrl} alt="Auto" className="w-100 drop-shadow-lg translate-y-20 translate-x-25" />
-      </div>
+      <CarDisplay imageUrl={data.activeItems.car.imageUrl} />
     </div>
   );
 };
