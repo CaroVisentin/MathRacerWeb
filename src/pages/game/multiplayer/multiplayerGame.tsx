@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 export const Menu = () => {
 
   
-  const botonVolver = "bg-red-600 text-black text-sm  py-2 px-4 rounded-[6px] hover:bg-red-700 transition duration-300 mx-auto block mt-10";
+  const botonVolver = "bg-red-600 text-black text-xl  py-2 px-4 rounded-[6px] hover:bg-red-700 transition duration-300 mx-auto block mt-10";
 
 
   return (
