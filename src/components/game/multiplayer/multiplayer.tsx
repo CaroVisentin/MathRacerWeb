@@ -92,10 +92,11 @@ export const MultiplayerGame = () => {
 
     const manejarRespuesta = async (opcion: number) => {
         setRespuestaSeleccionada(opcion);
-        console.log("respuestacorrecta", ecuacion?.correctAnswer);
+        console.log("respuestacorrecta", ecuacion);
         await sendAnswer(opcion);
         if (ecuacion && opcion === ecuacion.correctAnswer) {
             setResultado("acierto");
+            console.log("acierto ",resultado);
         } else {
             setResultado("error");
         }
@@ -362,14 +363,30 @@ export const MultiplayerGame = () => {
                         let clases = "border-2 border-white px-6 py-3 rounded-lg text-xl transition ";
 
                         if (respuestaSeleccionada !== null) {
-                            if (respuestaSeleccionada === opcion) {
-                                clases += resultado === "acierto" ? "bg-green-400" : "bg-red-500";
+                        //     if (respuestaSeleccionada === opcion) {
+                        //         clases += resultado === "acierto" ? "bg-green-400" : "bg-red-500";
+                        //     } else if (
+                        //         resultado === "error") {
+                        //         clases += "bg-green-400";// mostrar cuál era la correcta
+
+
+                        //     } else {
+                        //         clases += "bg-transparent";
+                        //     }
+                        // } else {
+                        //     clases += "bg-transparent hover:bg-blue-500";
+                        // }
+                          if (resultado === "acierto" && opcion === respuestaSeleccionada) {
+                                clases +=  "bg-green-400" ; //es correcta
                             } else if (
-                                resultado === "error") {
-                                clases += "bg-green-400";// mostrar cuál era la correcta
-
-
-                            } else {
+                                resultado === "error" && opcion === respuestaSeleccionada) { 
+                                clases += "bg-red-500";// dice que es incorrecta
+                            
+                                }
+                                else if (resultado === "error" && opcion === ecuacion?.correctAnswer){
+                                    clases+= "bg-green-400"; // muestra cual seria la correcta 
+                                
+                              } else {
                                 clases += "bg-transparent";
                             }
                         } else {
