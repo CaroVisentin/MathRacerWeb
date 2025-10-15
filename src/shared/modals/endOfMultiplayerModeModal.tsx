@@ -19,13 +19,13 @@ export const EndOfMultiplayerModeModal: React.FC<EndOfMultiplayerModeModalProps>
     onRetry,
 }) => {
 
-    // ✅ Ordenar jugadores por posición (de mayor a menor)
-    const jugadoresOrdenados = [...players].sort((a, b) => b.position - a.position);
+    // position 1 = ganador
+    const jugadoresOrdenados = [...players].sort((a, b) => a.position - b.position);
 
-    // ✅ Buscar al jugador actual
+    // Buscar al jugador actual
     const jugadorActual = players.find(j => j.name === currentPlayer);
 
-    // ✅ Determinar si ganó (posición = 1)
+    // Determinar si ganó (posición = 1)
     const won = jugadorActual?.position === 1;
 
     // Medallas por posición (solo ejemplo)
@@ -65,9 +65,6 @@ export const EndOfMultiplayerModeModal: React.FC<EndOfMultiplayerModeModalProps>
                                 <p className={`${i === 0 ? "text-2xl" : "text-xl"}`}>
                                     {j.name}
                                     {j.name === currentPlayer && " (Tú)"}
-                                </p>
-                                <p className={`${i === 0 ? "text-lg" : "text-base"} text-gray-300`}>
-                                    Posición: {j.position}
                                 </p>
                             </div>
 
