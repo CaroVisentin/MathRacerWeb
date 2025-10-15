@@ -234,12 +234,15 @@ export const MultiplayerGame = () => {
                     <FontAwesomeIcon icon={faArrowLeft} />
                 </button>
             </div>
+
             {/*modal de busqueda de rival*/}
             {buscandoRival && (
                 <LookingForRivalModal
                     playerId={nombreJugador}
                     setPlayerId={setNombreJugador}
-                    onConnection={conectarJugador} />)}
+                    onConnection={conectarJugador}
+                />
+            )}
 
             {/* Modal de fin de partida (Ganador) */}
             {ganador && (
@@ -266,9 +269,6 @@ export const MultiplayerGame = () => {
                     />
                 </div>
             )}
-
-            {/* Fondo cielo */}
-
 
             {/* Ruta */}
             <div className="mt-20 flex flex-col gap-3 justify-end">
