@@ -13,7 +13,6 @@ import type { GameUpdateDto } from '../../../models/domain/gameUpdateDto';
 
 
     const fondos = [
-
         'pista-noche.png',
         'pista-dia.png',
         'pista-atardecer.png',
