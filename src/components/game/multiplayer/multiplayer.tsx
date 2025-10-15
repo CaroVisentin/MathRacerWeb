@@ -11,6 +11,16 @@ import auto1 from "../../../assets/images/auto.png";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import type { GameUpdateDto } from '../../../models/domain/gameUpdateDto';
 
+
+    const fondos = [
+
+        'pista-noche.png',
+        'pista-dia.png',
+        'pista-atardecer.png',
+        'pista-city.png',
+    ];
+
+
 export const MultiplayerGame = () => {
 
     const [connection, setConnection] = useState<HubConnection | null>(null);
@@ -35,13 +45,6 @@ export const MultiplayerGame = () => {
     const [perdedor, setPerdedor] = useState<boolean>(false);
     const [penalizado, setPenalizado] = useState<boolean>(false);
     const [errorConexion, setErrorConexion] = useState<string | null>(null);
-
-    const fondos = [
-
-        'pista-noche.png',
-        'pista-dia.png',
-        'pista-atardecer.png'
-    ];
 
     const [fondoJugador, setFondoJugador] = useState<string>('');
     const [fondoRival, setFondoRival] = useState<string>('');
@@ -215,11 +218,12 @@ export const MultiplayerGame = () => {
     //fondos aleatorios para jugadores
 
     useEffect(() => {
-        const randomFondoJugador = fondos[Math.floor(Math.random() * fondos.length)];
-        const randomFondoRival = fondos[Math.floor(Math.random() * fondos.length)];
-        setFondoJugador(randomFondoJugador);
-        setFondoRival(randomFondoRival);
-    }, []);
+        const indexJugador = Math.floor(Math.random() * fondos.length);
+        const indexRival = (indexJugador + 1 + Math.floor(Math.random() * (fondos.length - 1))) % fondos.length;
+
+        setFondoJugador(fondos[indexJugador]);
+        setFondoRival(fondos[indexRival]);
+    }, []); 
 
     return (
 
