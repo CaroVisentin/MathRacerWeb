@@ -33,11 +33,6 @@ export const LevelMap = () => {
         { id: 13, worldId: 1, number: 13 },
         { id: 14, worldId: 1, number: 14 },
         { id: 15, worldId: 1, number: 15 },
-        { id: 16, worldId: 1, number: 16 },
-        { id: 17, worldId: 1, number: 17 },
-        { id: 18, worldId: 1, number: 18 },
-        { id: 19, worldId: 1, number: 19 },
-        { id: 20, worldId: 1, number: 20 },
     ];
 
     useEffect(() => {
@@ -67,7 +62,7 @@ export const LevelMap = () => {
             <TopBar headerText="Mundo 1" remainingLives={7} />
 
             {/* Pasarle los niveles por props */}
-            <SvgPathLevels levels={levels} nodePositions={nodePositions} pathRef={pathRef} />
+            <SvgPathLevels levels={levels} nodePositions={nodePositions} pathRef={pathRef} className="flex-1"/>
 
             {/* Bottom UI - Fixed */}
             {/* Pasarle la cantidad de cada comodín del jugador por props */}

@@ -9,4 +9,5 @@ export interface LevelMapProps {
   nodePositions: { x: number; y: number }[];
   onLevelSelect?: (level: Level) => void;
   pathRef: React.Ref<SVGPathElement>;
+  className?: string;
 }
