@@ -79,7 +79,7 @@ export default function SvgPathWorlds() {
             return
         }
         // Navigate to level map
-        navigate(`/story-mode/world/${world.id}`);
+        navigate(`/modo-historia/mundo/${world.id}`);
     }
 
     const worldSpacing = 250 // Space between worlds
