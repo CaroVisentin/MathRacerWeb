@@ -12,16 +12,14 @@ import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import type { GameUpdateDto } from '../../../models/domain/gameUpdateDto';
 import { motion } from 'framer-motion';
 
-
-    const fondos = [
-        'pista-noche.png',
-        'pista-dia.png',
-        'pista-atardecer.png',
-        'pista-city.png',
-        'pista-montana.png',
-         'pista-pastel.png',
-    ];
-
+const fondos = [
+    'pista-noche.png',
+    'pista-dia.png',
+    'pista-atardecer.png',
+    'pista-city.png',
+    'pista-montana.png',
+    'pista-pastel.png',
+];
 
 export const MultiplayerGame = () => {
 
@@ -29,7 +27,6 @@ export const MultiplayerGame = () => {
 
     const [ecuacion, setEcuacion] = useState<QuestionDto>();
     const [opciones, setOpciones] = useState<number[]>();
-    // const [respuestaCorrecta, setRespuestaCorrecta] = useState<boolean>(false);
     const [respuestaSeleccionada, setRespuestaSeleccionada] = useState<number | null>(null);
 
     const [resultado, setResultado] = useState<"acierto" | "error" | null>(null);
@@ -52,22 +49,19 @@ export const MultiplayerGame = () => {
     const [fondoJugador, setFondoJugador] = useState<string>('');
     const [fondoRival, setFondoRival] = useState<string>('');
 
-
     const cerrarModal = () => setGanador(false);
 
-    // useCallback para evitar re-creaciones innecesarias
     const conectarJugador = useCallback(async () => {
-        if (!nombreJugador.trim() || !connection) return; // Verificar si la conexión está lista
+        if (!nombreJugador.trim() || !connection) return;
 
         try {
             await connection.invoke("FindMatch", nombreJugador);
-            console.log("Buscando partida...", nombreJugador);
-            setErrorConexion(null); // Limpiar error si la conexión es exitosa
+            setErrorConexion(null);
         } catch (error) {
             setErrorConexion("Error de conexión... volvamos a intentarlo");
             console.error("Error al buscar partida:", error);
         }
-    }, [nombreJugador, connection]); // Depende de connection y nombreJugador
+    }, [nombreJugador, connection]);
 
     const reiniciarJuego = () => {
         setGanador(false);
@@ -77,53 +71,41 @@ export const MultiplayerGame = () => {
         setResultado(null);
         setRespuestaSeleccionada(null);
         setBuscandoRival(true);
-        conectarJugador(); // Llama a la función ahora con useCallback
+        conectarJugador();
     }
 
     const handleVolver = () => {
-        console.log("Volver");
-        // Agregar lógica para abandonar partida
-        
         setGanador(false);
         setPerdedor(true);
         if (connection) connection.stop();
-        
-        
-        // Detener la conexión manualmente, antes de que se desmonte el componente
     };
 
     const sendAnswer = useCallback(async (respuestaSeleccionada: number | null) => {
         if (ganador || !partidaId || respuestaSeleccionada === null || !connection) return;
         try {
             await connection.invoke("SendAnswer", partidaId, jugadorId, respuestaSeleccionada);
-            console.log("Respuesta enviada:", respuestaSeleccionada);
         } catch (error) {
             console.error("Error al enviar respuesta:", error);
         }
     }, [ganador, partidaId, jugadorId, connection]);
 
-    const manejarRespuesta =  async(opcion: number) => {
+    const manejarRespuesta = async (opcion: number) => {
         setRespuestaSeleccionada(opcion);
-        console.log("respuestacorrecta", ecuacion);
-        console.log("opcion", opcion);
 
         if (ecuacion && opcion === ecuacion.correctAnswer) {
             setResultado("acierto");
             setPenalizado(false);
             setMensajeResultado("¡Correcto!");
-            setTimeout(() => setMensajeResultado(null),1500);
-           console.log("acierto");
+            setTimeout(() => setMensajeResultado(null), 1500);
         } else {
             setResultado("error");
             setPenalizado(true);
-            setMensajeResultado(" Fallaste!! penalizado por 2 segundos ");
-            console.log("error");
-            setTimeout(() => setMensajeResultado(null),1500);
+            setMensajeResultado("¡Fallaste! penalizado por 2 segundos ");
+            setTimeout(() => setMensajeResultado(null), 1500);
         }
-          setTimeout(async() => {
-
-             await sendAnswer(opcion);
-        }, 1500); // Espera 2 segundos antes de resetear
+        setTimeout(async () => {
+            await sendAnswer(opcion);
+        }, 1500);
 
 
     };
@@ -137,7 +119,6 @@ export const MultiplayerGame = () => {
 
         newConnection.start()
             .then(() => {
-                console.log("Conectado al servidor de SignalR");
                 setErrorConexion(null);
             })
             .catch((err) => {
@@ -145,37 +126,30 @@ export const MultiplayerGame = () => {
                 console.error("Error al conectar con el servidor de SignalR: ", err);
             });
 
-        // Función de limpieza: Se ejecuta al desmontar el componente.
         return () => {
-            console.log("Desconectando la conexión de SignalR.");
             newConnection.stop();
         };
-    }, []); // Array vacío para ejecución única al montar/desmontar
+    }, []);
 
     // ***********************************************
     // 2. CONFIGURAR LISTENERS DE SIGNALR
     // ***********************************************
     useEffect(() => {
-        if (!connection) return; // Esperar a que la conexión esté inicializada
+        if (!connection) return;
 
         const gameUpdateHandler = (data: GameUpdateDto) => {
-            console.log("GameUpdate recibido:", data);
-
             setJugadoresPartida(data.players);
 
-            // Comparación de nombres
             const jugadorActual = data.players.find(
                 (p: PlayerDto) => p.name?.trim().toLowerCase() === nombreJugador.trim().toLowerCase());
             const otroJugador = data.players.find((p: PlayerDto) => p.id !== jugadorActual?.id);
 
-            // Actualizar posiciones en porcentaje
             if (jugadorActual) {
 
                 setJugadorId(jugadorActual.id);
                 const avance = (jugadorActual.correctAnswers / 10) * 100;
                 setPosicionAuto1(avance);
 
-                // Lógica de Penalización
                 if (jugadorActual?.penaltyUntil) {
                     const ahora = new Date();
                     const penalizacionTermina = new Date(jugadorActual.penaltyUntil);
@@ -198,7 +172,6 @@ export const MultiplayerGame = () => {
                 setPosicionAuto2(avanceOtro);
             }
 
-            // Lógica de Ganador
             if (data.winnerId && jugadorActual) {
                 if (data.winnerId === jugadorActual.id) {
                     setGanador(true);
@@ -209,15 +182,12 @@ export const MultiplayerGame = () => {
                 }
             }
 
-            // Iniciar juego si hay 2 jugadores
             if (data.players.length >= 2) setBuscandoRival(false);
 
-            // Actualizar pregunta
             if (data.currentQuestion) {
                 setPartidaId(data.gameId);
                 setRespuestaSeleccionada(null);
                 setResultado(null);
-
                 setEcuacion({
                     id: data.currentQuestion.id,
                     equation: data.currentQuestion.equation,
@@ -225,28 +195,18 @@ export const MultiplayerGame = () => {
                     correctAnswer: data.currentQuestion.correctAnswer,
                 });
                 setOpciones(data.currentQuestion.options);
-                // setTimeout(()=>{
-                //         setRespuestaSeleccionada(null);
-                // setResultado(null);
-
-                // },3000);
-
                 setInstruccion(data.expectedResult);
             }
         };
 
         connection.on("GameUpdate", gameUpdateHandler);
 
-        // Función de limpieza para quitar el listener
         return () => connection.off("GameUpdate", gameUpdateHandler);
 
-    }, [connection, nombreJugador]); // Depende de 'connection' y 'nombreJugador'
+    }, [connection, nombreJugador]);
 
     useEffect(() => {
-        console.log("Penalizado cambió: ", penalizado);
     }, [penalizado])
-
-    //fondos aleatorios para jugadores
 
     useEffect(() => {
         const indexJugador = Math.floor(Math.random() * fondos.length);
@@ -254,7 +214,7 @@ export const MultiplayerGame = () => {
 
         setFondoJugador(fondos[indexJugador]);
         setFondoRival(fondos[indexRival]);
-    }, []); 
+    }, []);
 
     return (
 
@@ -398,31 +358,18 @@ export const MultiplayerGame = () => {
 
 
                         if (respuestaSeleccionada !== null) {
-                        //     if (respuestaSeleccionada === opcion) {
-                        //         clases += resultado === "acierto" ? "bg-green-400" : "bg-red-500";
-                        //     } else if (
-                        //         resultado === "error") {
-                        //         clases += "bg-green-400";// mostrar cuál era la correcta
-
-
-                        //     } else {
-                        //         clases += "bg-transparent";
-                        //     }
-                        // } else {
-                        //     clases += "bg-transparent hover:bg-blue-500";
-                        // }
-                          if (resultado === "acierto" && opcion === respuestaSeleccionada) {
-                                clases +=  "bg-green-400" ; //es correcta
+                            if (resultado === "acierto" && opcion === respuestaSeleccionada) {
+                                clases += "bg-green-400";
 
                             } else if (
                                 resultado === "error" && opcion === respuestaSeleccionada) {
-                                clases += "bg-red-500";// dice que es incorrecta
+                                clases += "bg-red-500";
 
-                                }
-                                else if (resultado === "error" && opcion === ecuacion?.correctAnswer){
-                                    clases+= "bg-green-400"; // muestra cual seria la correcta
+                            }
+                            else if (resultado === "error" && opcion === ecuacion?.correctAnswer) {
+                                clases += "bg-green-400";
 
-                              } else {
+                            } else {
                                 clases += "bg-transparent";
                             }
                         } else {
@@ -433,31 +380,24 @@ export const MultiplayerGame = () => {
                                 key={i}
                                 onClick={() => manejarRespuesta(opcion)}
                                 className={clases}
-                                disabled={!!respuestaSeleccionada || penalizado} // Deshabilitar si ya respondió o si está penalizado
+                                disabled={!!respuestaSeleccionada || penalizado}
                             >
                                 {opcion}
                             </button>
                         );
                     })}
-                    {mensajeResultado && (
-    <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.4 }}
-        className={`text-xl mt-6  ${
-            resultado === "acierto" ? "text-green-400" : "text-red-500"
-        }`}
-    >
-        {mensajeResultado}
-    </motion.div>
-)}
-                    {/* {penalizado && (
-                        <div className="text-red-500 text-xl mt-4">
-                            ¡Respuesta incorrecta! Penalización de 2 segundos.
-                        </div>
-                    )} */}
 
+                    {mensajeResultado && (
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.4 }}
+                            className={`text-xl mt-6  ${resultado === "acierto" ? "text-green-400" : "text-red-500"}`}
+                        >
+                            {mensajeResultado}
+                        </motion.div>
+                    )}
                 </div>
             </div>
 

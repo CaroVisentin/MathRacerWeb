@@ -79,7 +79,6 @@ export default function SvgPathWorlds() {
             return
         }
         // Navigate to level map
-        console.log("[v0] Navigating to world:", world.id)
         navigate(`/story-mode/world/${world.id}`);
     }
 
