@@ -1,5 +1,3 @@
-// MAPA DE NIVELES DE CADA MUNDO
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLock } from "@fortawesome/free-solid-svg-icons";
 import React from "react";
@@ -12,17 +10,21 @@ const COLORS = {
     darkBackground: '#1A0033',
 };
 
-const VIEW_BOX_WIDTH = 900;
-const VIEW_BOX_HEIGHT = 2250;
+// --- DIMENSIONES DEL SVG ---
+const VIEW_BOX_WIDTH = 2400;
+const VIEW_BOX_HEIGHT = 1200;
 
-// --- PATH ---
+// --- PATH HORIZONTAL ---
 const NEON_PATH_D = `
-  M 100 ${VIEW_BOX_HEIGHT}
-  C 200 ${VIEW_BOX_HEIGHT - 200}, 700 ${VIEW_BOX_HEIGHT - 400}, 500 ${VIEW_BOX_HEIGHT - 700}
-  S 150 ${VIEW_BOX_HEIGHT - 1100}, 500 ${VIEW_BOX_HEIGHT - 1400}
-  S 800 ${VIEW_BOX_HEIGHT - 1700}, 500 ${VIEW_BOX_HEIGHT - 2000}
-  C 300 ${VIEW_BOX_HEIGHT - 2150}, 400 ${VIEW_BOX_HEIGHT - 2250}, 450 ${VIEW_BOX_HEIGHT - 2300}
+M 0 550
+C 200 600, 400 700, 700 600
+S 1100 400, 1400 600
+S 1700 800, 2000 600
+C 2150 550, 2250 500, 2450 550 
 `;
+
+const PATH_STROKE_WIDTH = 350; // grosor del path principal
+const GLOW_WIDTH = 450; // glow más ancho que el path
 
 export const SvgPathLevels: React.FC<LevelMapProps> = ({ levels, onLevelSelect, className = '' }) => {
     const ultimoNivelCompletado = 4;
@@ -39,24 +41,24 @@ export const SvgPathLevels: React.FC<LevelMapProps> = ({ levels, onLevelSelect, 
         const position = (levelIndex + 1) / (levels.length + 1);
 
         if (pathLength === 0 || !internalPathRef.current) {
-            return { x: VIEW_BOX_WIDTH / 2, y: VIEW_BOX_HEIGHT * position };
+            return { x: VIEW_BOX_WIDTH * position, y: VIEW_BOX_HEIGHT / 2 };
         }
 
         const point = internalPathRef.current.getPointAtLength(position * pathLength);
+
+        // Botón centrado en el grosor del path
         return { x: point.x, y: point.y };
     };
 
     return (
         <div
-            className={`relative z-10 overflow-y-scroll overflow-x-hidden text-white ${className}`}
+            className={`relative overflow-x-auto overflow-y-hidden text-white ${className}`}
             style={{
-                backgroundColor: COLORS.darkBackground
+                backgroundColor: COLORS.darkBackground,
+                height: `${VIEW_BOX_HEIGHT}px`,
             }}
         >
-            <div
-                className="relative mx-auto h-full w-full"
-                style={{ height: `${VIEW_BOX_HEIGHT}px`, overflowY: 'visible' }}
-            >
+            <div className="relative h-full w-[2300px]">
                 <svg
                     className="absolute inset-0 h-full w-full"
                     viewBox={`0 0 ${VIEW_BOX_WIDTH} ${VIEW_BOX_HEIGHT}`}
@@ -70,59 +72,43 @@ export const SvgPathLevels: React.FC<LevelMapProps> = ({ levels, onLevelSelect, 
                                 <feMergeNode in="SourceGraphic" />
                             </feMerge>
                         </filter>
-                        <filter id="neon-glow-pink" x="-50%" y="-50%" width="200%" height="200%">
-                            <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur" />
+                        <filter id="neon-glow-pink" x="-200%" y="-200%" width="500%" height="500%">
+                            <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur" />
                             <feMerge>
                                 <feMergeNode in="blur" />
                                 <feMergeNode in="SourceGraphic" />
                             </feMerge>
                         </filter>
-
-                        <pattern id="checkerboard" width="80" height="80" patternUnits="userSpaceOnUse">
-                            <rect x="0" y="0" width="40" height="40" fill="#00cccc" opacity="0.5" />
-                            <rect x="40" y="40" width="40" height="40" fill="#00cccc" opacity="0.5" />
-                            <rect x="40" y="0" width="40" height="40" fill="#009999" opacity="0.3" />
-                            <rect x="0" y="40" width="40" height="40" fill="#009999" opacity="0.3" />
-                        </pattern>
                     </defs>
 
-
-                    {/* Glow fondo rosa */}
+                    {/* Glow rosa detrás */}
                     <path
                         d={NEON_PATH_D}
                         fill="none"
                         stroke={COLORS.neonPink}
-                        strokeWidth="120"
+                        strokeWidth={GLOW_WIDTH}
                         strokeLinecap="round"
+                        strokeLinejoin="round"
                         filter="url(#neon-glow-pink)"
                         opacity={0.9}
                     />
 
-                    {/* Contorno sólido rosa */}
+                    {/* Path principal cyan */}
                     <path
                         d={NEON_PATH_D}
                         ref={internalPathRef}
                         fill="none"
                         stroke={COLORS.neonCyan}
-                        strokeWidth="90"
+                        strokeWidth={PATH_STROKE_WIDTH}
                         strokeLinecap="round"
                     />
 
-                    {/* Checkerboard */}
-                    <path
-                        d={NEON_PATH_D}
-                        fill="none"
-                        stroke="url(#checkerboard)"
-                        strokeWidth="70"
-                        strokeLinecap="round"
-                    />
-
-                    {/* Borde interior cyan */}
+                    {/* Borde interior cyan glow */}
                     <path
                         d={NEON_PATH_D}
                         fill="none"
                         stroke={COLORS.neonCyan}
-                        strokeWidth="8"
+                        strokeWidth="12"
                         strokeLinecap="round"
                         filter="url(#neon-glow-cyan)"
                     />
@@ -143,24 +129,22 @@ export const SvgPathLevels: React.FC<LevelMapProps> = ({ levels, onLevelSelect, 
                             className="absolute -translate-x-1/2 -translate-y-1/2 transform transition-all duration-200 hover:scale-110 disabled:cursor-not-allowed"
                             style={{ left: `${xPercent}%`, top: `${yPercent}%` }}
                         >
-                            {/* Glow de fondo */}
+                            {/* Glow del botón */}
                             <div
-                                className={`absolute inset-0 rounded-full blur-lg"
-                                    }`}
+                                className="absolute inset-0 rounded-full"
                                 style={{
                                     transform: "scale(1.4)",
                                     filter: `url(#neon-glow-pink)`,
                                     backgroundColor: unlocked ? COLORS.neonPink : 'rgba(31, 41, 55, 0.25)',
                                 }}
                             />
-
-                            {/* Botón principal con borde rosa */}
+                            {/* Botón principal */}
                             <div
                                 className="relative flex h-20 w-20 items-center justify-center rounded-full transition-all border-4"
                                 style={{
                                     borderColor: COLORS.neonPink,
                                     boxShadow: `0 0 10px ${COLORS.neonPink}, inset 0 0 10px ${COLORS.neonPink}`,
-                                    backgroundColor: unlocked ? COLORS.neonCyan : 'bg-gray-800',
+                                    backgroundColor: unlocked ? COLORS.neonCyan : 'rgba(31, 41, 55, 1)',
                                 }}
                             >
                                 <div className="relative z-10 flex items-center justify-center">
@@ -169,10 +153,11 @@ export const SvgPathLevels: React.FC<LevelMapProps> = ({ levels, onLevelSelect, 
                                             className="text-3xl font-extrabold text-white"
                                             style={{
                                                 textShadow: `
-                                                0 0 2px #000,       
-                                                0 0 10px rgba(255,255,255,0.7)
-    `
-                                            }}                                        >
+                                                    0 0 2px #000,
+                                                    0 0 10px rgba(255,255,255,0.7)
+                                                `
+                                            }}
+                                        >
                                             {level.number}
                                         </span>
                                     ) : (
