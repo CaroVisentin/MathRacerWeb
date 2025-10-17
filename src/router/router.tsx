@@ -16,20 +16,19 @@ const router = createBrowserRouter([
   { path: "/", element: <Home /> },
   { path: "/multijugador", element: <MultiplayerGame /> },
   { path: "/menu", element: <Menu /> },
-  { path: "/modo-historia", element: <StoryMode /> },
   { path:"/crear", element:<CreateGame/>},
   { path:"/invitar-amigo", element:<InviteFriend/>},
   { path:"/unirse-partida", element:<JoinGame/>},
   { path: "/partida-rapida", element: <QuickGame />},
   { path: "/reglas", element: <RulesPage /> },
   { path: "/perfil", element: <ProfilePage /> },
-  { path: "/story-mode", element: <StoryMode /> },
+  { path: "/modo-historia", element: <StoryMode /> },
   {
-    path: "/story-mode/world/:id",
+    path: "/modo-historia/mundo/:id",
     element: <LevelMap />,
   },
   {
-    path: "/story-mode/level/:id",
+    path: "/modo-historia/nivel/:id",
     element: <StoryModeGame />,
   },
 ]);

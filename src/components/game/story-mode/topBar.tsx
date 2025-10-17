@@ -1,4 +1,5 @@
 import { BackButton } from "../../../shared/buttons/backButton"
+import { batteryIcons } from "../../../models/ui/home-data";
 
 interface TopBarProps {
     headerText: string;
@@ -6,6 +7,7 @@ interface TopBarProps {
 }
 
 export const TopBar = ({ headerText, remainingLives }: TopBarProps) => {
+    const time = "15:37";
 
     return (
         <div className="relative z-20 flex shrink-0 items-center justify-between px-6 py-4">
@@ -21,25 +23,22 @@ export const TopBar = ({ headerText, remainingLives }: TopBarProps) => {
 
             {/* Vidas + temporizador */}
             <div className="flex items-center gap-3">
+                {/* Temporizador + pila pequeña */}
+                <div className="flex flex-col items-center justify-center h-full">
+                    <img src={batteryIcons.pilabolt} alt="bolt" className="h-4" />
+                    <span className="text-base font-semibold text-white">{time}</span>
+                </div>
+
                 {/* Barras de vidas */}
                 <div className="flex items-center gap-1">
                     {[...Array(10)].map((_, i) => (
-                        <div
+                        <img
                             key={i}
-                            className={`h-6 w-3 rounded-sm ${i < remainingLives
-                                ? "bg-yellow-400 shadow-[0_0_10px_rgba(250,204,21,0.5)]"
-                                : "bg-gray-700/50"
-                                }`}
+                            src={i < remainingLives ? batteryIcons.pila : batteryIcons.pilaempty}
+                            className="w-4 h-8"
                         />
                     ))}
                 </div>
-
-                {/* Temporizador visible solo si faltan vidas */}
-                {/* {vidas < 10 && tiempoRestante !== null && (
-                    <div className="text-sm text-yellow-300 font-mono bg-yellow-900/30 border border-yellow-500/50 px-3 py-1 rounded-md animate-pulse">
-                        +1 ❤️ in {minutos}:{segundos.toString().padStart(2, "0")}
-                    </div>
-                )} */}
             </div>
         </div>
     )

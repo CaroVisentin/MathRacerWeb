@@ -12,7 +12,14 @@ export const BottomUI = ({ fireExtinguisherQuant, changeEquationQuant, dobleCoun
         <>
             <div className="flex items-center justify-between">
                 <div>
-                    <Wildcards fireExtinguisher={fireExtinguisherQuant} changeEquation={changeEquationQuant} dobleCount={dobleCountQuant} />
+                    <Wildcards
+                        fireExtinguisher={fireExtinguisherQuant}
+                        changeEquation={changeEquationQuant}
+                        dobleCount={dobleCountQuant}
+                        size="1rem"
+                        width="3rem"
+                        height="4rem"
+                    />
                 </div>
 
                 <div>
