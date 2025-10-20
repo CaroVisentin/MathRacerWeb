@@ -5,6 +5,7 @@ import type { Level } from "../../../../models/ui/level";
 import { TopBar } from "../../../../components/game/story-mode/topBar";
 import { SvgPathLevels } from "../../../../components/game/story-mode/svgPathLevels";
 import { BottomUI } from "../../../../components/game/story-mode/bottomUI";
+import { worlds } from "../../../../components/game/story-mode/svgPathWorlds";
 // import { useParams } from "react-router-dom";
 
 export const LevelMap = () => {
@@ -65,7 +66,7 @@ export const LevelMap = () => {
             {/* Bottom UI - Fixed */}
             {/* Pasarle la cantidad de cada comodín del jugador por props */}
             <div className="p-4">
-                <BottomUI fireExtinguisherQuant={2} changeEquationQuant={3} dobleCountQuant={4} />
+                <BottomUI world={worlds[0]} fireExtinguisherQuant={2} changeEquationQuant={3} dobleCountQuant={4} />
             </div>
         </div>
     )

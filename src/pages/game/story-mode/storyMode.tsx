@@ -3,7 +3,7 @@
 "use client"
 
 import { BottomUI } from "../../../components/game/story-mode/bottomUI"
-import SvgPathWorlds from "../../../components/game/story-mode/svgPathWorlds"
+import { SvgPathWorlds } from "../../../components/game/story-mode/svgPathWorlds"
 import { TopBar } from "../../../components/game/story-mode/topBar"
 
 export const StoryMode = () => {

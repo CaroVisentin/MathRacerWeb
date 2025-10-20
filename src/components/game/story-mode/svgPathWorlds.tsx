@@ -1,16 +1,9 @@
-// Falta tipar bien el objeto WORLD y LEVEL.
-// Mostrar, según el usuario, hasta el último mundo que desbloqueó
+import { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faLock, faTrophy } from "@fortawesome/free-solid-svg-icons";
+import { useNavigate } from "react-router-dom";
 
-// MAPA DE MUNDOS DEL JUEGO
-
-"use client"
-
-import { faLock, faTrophy } from "@fortawesome/free-solid-svg-icons"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { useState } from "react"
-import { useNavigate } from "react-router-dom"
-
-interface World {
+export interface World {
     id: number
     name: string
     description: string
@@ -22,7 +15,7 @@ interface World {
     completed: boolean
 }
 
-const worlds: World[] = [
+export const worlds: World[] = [
     {
         id: 1,
         name: "Mundo 1",
@@ -69,8 +62,13 @@ const worlds: World[] = [
     },
 ]
 
-export default function SvgPathWorlds() {
-    const [hoveredWorld, setHoveredWorld] = useState<number | null>(null)
+export const SvgPathWorlds = () => {
+    const [hoveredWorld, setHoveredWorld] = useState<number | null>(null);
+
+    const containerWidth = 3000; // ancho total del mapa
+    const worldSpacing = 300; // distancia entre mundos
+    const baseOffset = 150; // margen inicial
+
     const navigate = useNavigate();
 
     const handleWorldClick = (world: World) => {
@@ -82,14 +80,9 @@ export default function SvgPathWorlds() {
         navigate(`/modo-historia/mundo/${world.id}`);
     }
 
-    const worldSpacing = 250 // Space between worlds
-    const baseOffset = 300 // Bottom padding
-    const topPadding = 200 // Top padding for last world
-    const containerHeight = baseOffset + (worlds.length - 1) * worldSpacing + topPadding
-
     return (
-        <div className="relative min-h-screen overflow-y-auto bg-gradient-to-b from-[#0a0a1f] via-[#1a0a2e] to-[#0f0520]">
-            {/* Animated stars background */}
+        <div className="relative min-w-screen overflow-x-auto bg-gradient-to-b from-[#0a0a1f] via-[#1a0a2e] to-[#0f0520] h-screen">
+            {/* Animated stars */}
             <div className="absolute inset-0">
                 {[...Array(50)].map((_, i) => (
                     <div
@@ -106,7 +99,7 @@ export default function SvgPathWorlds() {
             </div>
 
             {/* World map path */}
-            <div className="relative z-10 w-full px-6 py-12" style={{ height: `${containerHeight}px` }}>
+            <div className="relative z-10 w-full h-full px-6 py-12" style={{ minWidth: `${containerWidth}px` }}>
                 <svg className="absolute inset-0 h-full w-full" style={{ zIndex: 0 }}>
                     <defs>
                         <filter id="glow">
@@ -119,10 +112,10 @@ export default function SvgPathWorlds() {
                     </defs>
                     <path
                         d={`
-              M 15% ${containerHeight - 150}
-              Q 50% ${containerHeight - 300}, 75% ${containerHeight - 450}
-              Q 50% ${containerHeight - 600}, 15% ${containerHeight - 750}
-              Q 50% ${containerHeight - 900}, 75% ${containerHeight - 1050}
+              M ${baseOffset} 15%
+              Q ${baseOffset + 400} 50%, ${baseOffset + 800} 75%
+              Q ${baseOffset + 1200} 50%, ${baseOffset + 1600} 25%
+              Q ${baseOffset + 2000} 50%, ${baseOffset + 2400} 75%
             `}
                         fill="none"
                         stroke="rgba(34, 211, 238, 0.6)"
@@ -133,18 +126,18 @@ export default function SvgPathWorlds() {
 
                 {/* World nodes */}
                 {worlds.map((world, index) => {
-                    const isLeft = index % 2 === 0
-                    const bottomPosition = baseOffset + index * worldSpacing
-                    const leftPosition = isLeft ? "15%" : "75%"
+                    const isTop = index % 2 === 0;
+                    const leftPosition = baseOffset + index * worldSpacing;
+                    const topPosition = isTop ? "15%" : "75%";
 
                     return (
                         <div
                             key={world.id}
                             className="absolute"
                             style={{
-                                bottom: `${bottomPosition}px`,
-                                left: leftPosition,
-                                transform: "translate(-50%, 50%)",
+                                left: `${leftPosition}px`,
+                                top: topPosition,
+                                transform: "translate(-50%, -50%)",
                             }}
                         >
                             <button
@@ -154,7 +147,6 @@ export default function SvgPathWorlds() {
                                 disabled={!world.unlocked}
                                 className="group relative flex flex-col items-center transition-transform hover:scale-110 disabled:cursor-not-allowed"
                             >
-                                {/* Planet/World sphere */}
                                 <div
                                     className={`relative flex h-40 w-40 items-center justify-center rounded-full transition-all duration-300 ${!world.unlocked
                                         ? "bg-gray-700"
@@ -172,24 +164,15 @@ export default function SvgPathWorlds() {
                                             : "none",
                                     }}
                                 >
-                                    {/* Lock icon for locked worlds */}
                                     {!world.unlocked && <FontAwesomeIcon icon={faLock} className="h-16 w-16 text-gray-500" />}
-
-                                    {/* World number */}
                                     {world.unlocked && (
-                                        <span
-                                            className="text-6xl font-bold text-white"
-                                            style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}
-                                        >
+                                        <span className="text-6xl font-bold text-white" style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}>
                                             {world.id}
                                         </span>
                                     )}
-
-                                    {/* Completion crown */}
                                     {world.completed && <FontAwesomeIcon icon={faTrophy} className="absolute -top-6 h-12 w-12 text-yellow-300" />}
                                 </div>
 
-                                {/* World info card */}
                                 <div
                                     className={`mt-4 rounded-lg border-2 px-6 py-3 transition-all ${!world.unlocked ? "border-gray-600 bg-gray-800/80" : "border-cyan-400 bg-[#0a0a1f]/90"
                                         }`}
@@ -203,29 +186,20 @@ export default function SvgPathWorlds() {
                                     <p className={`text-center text-sm ${world.unlocked ? "text-cyan-300" : "text-gray-600"}`}>
                                         {world.description}
                                     </p>
-
-                                    {/* Progress indicators */}
                                     {world.unlocked && (
                                         <div className="mt-2 flex items-center justify-center gap-4 text-sm">
-                                            {/* <div className="flex items-center gap-1">
-                                                <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                                                <span className="text-white">
-                                                    {world.stars}/{world.totalStars}
-                                                </span>
-                                            </div> */}
                                             <div className="text-white">
                                                 {world.completedLevels}/{world.totalLevels} niveles
                                             </div>
                                         </div>
                                     )}
-
                                     {!world.unlocked && <p className="mt-2 text-center text-xs text-gray-500">Bloqueado</p>}
                                 </div>
                             </button>
                         </div>
-                    )
+                    );
                 })}
             </div>
         </div>
-    )
-}
+    );
+};

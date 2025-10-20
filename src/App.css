@@ -5,25 +5,28 @@
 @font-face {
   font-family: 'Jersey 10';
   src: url('./fonts/Jersey10-Regular.woff2') format('woff2'),
-       url('./fonts/Jersey10-Regular.woff') format('woff');
-  font-weight: 400; /* o el peso real de la fuente */
+    url('./fonts/Jersey10-Regular.woff') format('woff');
+  font-weight: 400;
+  /* o el peso real de la fuente */
   font-style: normal;
-  font-display: swap; /* Importante para rendimiento */
+  font-display: swap;
+  /* Importante para rendimiento */
 }
+
 @font-face {
   font-family: 'Audiowide';
   src: url('./fonts/Audiowide-Regular.woff2') format('woff2'),
-       url('./fonts/Audiowide-Regular.woff') format('woff');
-  font-weight: 400; /* o el peso real de la fuente */
+    url('./fonts/Audiowide-Regular.woff') format('woff');
+  font-weight: 400;
   font-style: normal;
-  font-display: swap; /* Importante para rendimiento */
+  font-display: swap;
 }
+
 * {
   margin: 0;
 }
 
 body {
-
   font-family: 'Jersey 10', 'sans serif'
 }
 
@@ -41,25 +44,20 @@ body {
   width: 100%;
 }
 
-
 .fondoHome {
-  
   background-repeat: repeat-x;
   animation: moverFondoCielo 10s linear infinite;
   background-size: cover;
   z-index: 0;
 }
 
-
-
 .fondoRuta {
   position: relative;
   width: 97%;
   height: 150px;
   margin: 0 auto;
-
   overflow: hidden;
-  background-color: #333; 
+  background-color: #333;
   background-repeat: repeat-x;
   background-size: cover;
   animation: moverFondoRuta 10s linear infinite;
@@ -68,8 +66,8 @@ body {
 
 .auto {
   position: absolute;
-  bottom: 5px; 
-  width: 100px; 
+  bottom: 5px;
+  width: 100px;
   transform: translateY(8%);
   transition: left 0.5s ease, top 0.5s ease;
   z-index: 4;
@@ -84,8 +82,6 @@ body {
     background-position-x: -2000px;
   }
 }
-
-
 
 .gridComodin {
   display: grid;
@@ -111,63 +107,55 @@ body {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  
 }
 
-.multijugadorContenedor{
+.multijugadorContenedor {
   position: relative;
-  
   gap: 10%;
-   
-
 }
 
-.titulo{
+.titulo {
   height: 15%;
   align-items: anchor-center;
   font-family: 'Audiowide', cursive;
-
 }
 
-.contenedorMenu{
+.contenedorMenu {
   display: grid;
-  grid-template-areas: 
+  grid-template-areas:
     "crear unirse"
     "invitar ranking"
     "competitiva competitiva";
   grid-template-columns: 1fr 1fr;
   grid-template-rows: auto auto auto;
   padding: 5%;
-justify-content: center;
-background-color: black;
-opacity: 90%;
-height: 75%;
-width: 90%;
-top:20%;
-margin: auto;
-gap: 10%;
-
+  justify-content: center;
+  background-color: black;
+  opacity: 90%;
+  height: 75%;
+  width: 90%;
+  top: 20%;
+  margin: auto;
+  gap: 10%;
 }
 
-.menu{
-  
-     width: 100%;
+.menu {
+  width: 100%;
   row-gap: 15%;
   justify-content: center;
   height: max-content;
   margin-top: 3%;
-
 }
 
-.arreglo{
+.arreglo {
   display: flex;
   justify-content: center;
   align-items: center;
   margin-top: 1%;
-  
-  width: 100%;}
+  width: 100%;
+}
 
-.botonGral{
+.botonGral {
   font-family: 'Audiowide', cursive;
   text-align: center;
   background-color: black;

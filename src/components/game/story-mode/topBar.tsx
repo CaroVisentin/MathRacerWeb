@@ -17,7 +17,7 @@ export const TopBar = ({ headerText, remainingLives }: TopBarProps) => {
             {/* Título del mundo centrado */}
             <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
                 <div className="rounded-lg border-2 border-cyan-400/70 bg-cyan-950/40 px-8 py-3 backdrop-blur-sm">
-                    <h1 className="text-2xl font-audiowide tracking-wider text-cyan-300">{headerText}</h1>
+                    <h1 className="text-2xl tracking-wider text-cyan-300">{headerText}</h1>
                 </div>
             </div>
 
