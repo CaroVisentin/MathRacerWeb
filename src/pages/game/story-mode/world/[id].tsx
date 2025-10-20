@@ -5,15 +5,13 @@ import type { Level } from "../../../../models/ui/level";
 import { TopBar } from "../../../../components/game/story-mode/topBar";
 import { SvgPathLevels } from "../../../../components/game/story-mode/svgPathLevels";
 import { BottomUI } from "../../../../components/game/story-mode/bottomUI";
-import { useParams } from "react-router-dom";
+// import { useParams } from "react-router-dom";
 
 export const LevelMap = () => {
     const pathRef = useRef<SVGPathElement>(null)
     const [nodePositions, setNodePositions] = useState<{ x: number; y: number }[]>([])
-    console.log("Llegó a levelmap")
 
-    const { id } = useParams();
-    console.log("ID desde URL: ", id)
+    // const { id } = useParams();
 
     // Se obtiene la cantidad de niveles para el mundo en el que entró,
     // y último nivel completado del jugador

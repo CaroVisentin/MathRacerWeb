@@ -61,7 +61,6 @@ export const MultiplayerGame = () => {
 
         try {
             await connection.invoke("FindMatch", nombreJugador);
-            console.log("Buscando partida...", nombreJugador);
             setErrorConexion(null); // Limpiar error si la conexión es exitosa
         } catch (error) {
             setErrorConexion("Error de conexión... volvamos a intentarlo");
@@ -81,7 +80,6 @@ export const MultiplayerGame = () => {
     }
 
     const handleVolver = () => {
-        console.log("Volver");
         // Agregar lógica para abandonar partida
         
         setGanador(false);
@@ -96,7 +94,6 @@ export const MultiplayerGame = () => {
         if (ganador || !partidaId || respuestaSeleccionada === null || !connection) return;
         try {
             await connection.invoke("SendAnswer", partidaId, jugadorId, respuestaSeleccionada);
-            console.log("Respuesta enviada:", respuestaSeleccionada);
         } catch (error) {
             console.error("Error al enviar respuesta:", error);
         }
@@ -104,20 +101,16 @@ export const MultiplayerGame = () => {
 
     const manejarRespuesta =  async(opcion: number) => {
         setRespuestaSeleccionada(opcion);
-        console.log("respuestacorrecta", ecuacion);
-        console.log("opcion", opcion);
 
         if (ecuacion && opcion === ecuacion.correctAnswer) {
             setResultado("acierto");
             setPenalizado(false);
             setMensajeResultado("¡Correcto!");
             setTimeout(() => setMensajeResultado(null),1500);
-           console.log("acierto");
         } else {
             setResultado("error");
             setPenalizado(true);
             setMensajeResultado(" Fallaste!! penalizado por 2 segundos ");
-            console.log("error");
             setTimeout(() => setMensajeResultado(null),1500);
         }
           setTimeout(async() => {
@@ -137,7 +130,6 @@ export const MultiplayerGame = () => {
 
         newConnection.start()
             .then(() => {
-                console.log("Conectado al servidor de SignalR");
                 setErrorConexion(null);
             })
             .catch((err) => {
@@ -147,7 +139,6 @@ export const MultiplayerGame = () => {
 
         // Función de limpieza: Se ejecuta al desmontar el componente.
         return () => {
-            console.log("Desconectando la conexión de SignalR.");
             newConnection.stop();
         };
     }, []); // Array vacío para ejecución única al montar/desmontar
@@ -159,7 +150,6 @@ export const MultiplayerGame = () => {
         if (!connection) return; // Esperar a que la conexión esté inicializada
 
         const gameUpdateHandler = (data: GameUpdateDto) => {
-            console.log("GameUpdate recibido:", data);
 
             setJugadoresPartida(data.players);
 
@@ -242,12 +232,7 @@ export const MultiplayerGame = () => {
 
     }, [connection, nombreJugador]); // Depende de 'connection' y 'nombreJugador'
 
-    useEffect(() => {
-        console.log("Penalizado cambió: ", penalizado);
-    }, [penalizado])
-
     //fondos aleatorios para jugadores
-
     useEffect(() => {
         const indexJugador = Math.floor(Math.random() * fondos.length);
         const indexRival = (indexJugador + 1 + Math.floor(Math.random() * (fondos.length - 1))) % fondos.length;
