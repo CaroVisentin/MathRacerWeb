@@ -51,7 +51,8 @@ export const Home = () => {
       <div className="flex flex-1 items-end justify-between px-4 pb-8">
         <div className="flex flex-col gap-3">
           <ActionButton to="/menu">Multijugador</ActionButton>
-          <ActionButton to="/modo-historia">Historia</ActionButton>
+          {/* <ActionButton to="/modo-historia">Historia</ActionButton> */}
+          <ActionButton>Historia</ActionButton>
           <ActionButton to="/practica">Práctica Libre</ActionButton>
         </div>
         <div className="flex flex-col gap-3 items-end">

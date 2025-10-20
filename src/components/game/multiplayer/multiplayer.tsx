@@ -56,7 +56,7 @@ export const MultiplayerGame = () => {
 
         try {
             await connection.invoke("FindMatch", nombreJugador);
-            setErrorConexion(null);
+            setErrorConexion(null); // Limpiar error si la conexión es exitosa
         } catch (error) {
             setErrorConexion("Error de conexión... volvamos a intentarlo");
             console.error("Error al buscar partida:", error);
@@ -75,6 +75,8 @@ export const MultiplayerGame = () => {
     }
 
     const handleVolver = () => {
+        // Agregar lógica para abandonar partida
+        
         setGanador(false);
         setPerdedor(true);
         if (connection) connection.stop();
@@ -96,12 +98,12 @@ export const MultiplayerGame = () => {
             setResultado("acierto");
             setPenalizado(false);
             setMensajeResultado("¡Correcto!");
-            setTimeout(() => setMensajeResultado(null), 1500);
+            setTimeout(() => setMensajeResultado(null),1500);
         } else {
             setResultado("error");
             setPenalizado(true);
-            setMensajeResultado("¡Fallaste! penalizado por 2 segundos ");
-            setTimeout(() => setMensajeResultado(null), 1500);
+            setMensajeResultado(" Fallaste!! penalizado por 2 segundos ");
+            setTimeout(() => setMensajeResultado(null),1500);
         }
         setTimeout(async () => {
             await sendAnswer(opcion);
@@ -138,6 +140,7 @@ export const MultiplayerGame = () => {
         if (!connection) return;
 
         const gameUpdateHandler = (data: GameUpdateDto) => {
+
             setJugadoresPartida(data.players);
 
             const jugadorActual = data.players.find(
@@ -203,11 +206,9 @@ export const MultiplayerGame = () => {
 
         return () => connection.off("GameUpdate", gameUpdateHandler);
 
-    }, [connection, nombreJugador]);
+    }, [connection, nombreJugador]); // Depende de 'connection' y 'nombreJugador'
 
-    useEffect(() => {
-    }, [penalizado])
-
+    //fondos aleatorios para jugadores
     useEffect(() => {
         const indexJugador = Math.floor(Math.random() * fondos.length);
         const indexRival = (indexJugador + 1 + Math.floor(Math.random() * (fondos.length - 1))) % fondos.length;
