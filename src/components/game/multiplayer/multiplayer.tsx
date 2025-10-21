@@ -80,8 +80,6 @@ export const MultiplayerGame = () => {
 
     const manejarRespuesta =  async(opcion: number) => {
         setRespuestaSeleccionada(opcion);
-        console.log("respuestacorrecta", ecuacion);
-        console.log("opcion", opcion);
 
         if (ecuacion && opcion === ecuacion.correctAnswer) {
             setResultado("acierto");
@@ -104,7 +102,6 @@ export const MultiplayerGame = () => {
         if (!connection) return; // Esperar a que la conexión esté inicializada
 
         const gameUpdateHandler = (data: GameUpdateDto) => {
-            console.log("GameUpdate recibido:", data);
 
           //nueva implementacion con connection del hook        
             setJugadoresPartida(data.players);
