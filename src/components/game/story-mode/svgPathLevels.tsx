@@ -1,268 +1,138 @@
 "use client"
-
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faLock, faStar } from "@fortawesome/free-solid-svg-icons"
-import React from "react"
+import React, { useState } from "react"
 import type { LevelMapProps } from "../../../models/ui/level"
 
-// --- CONFIGURACIÓN DE COLORES ---
-const COLORS = {
-    neonPink: "#FF00A6",
-    neonCyan: "#00FFFF",
-    darkBackground: "#1A0033",
-    trackBase: "#3f3d56",
-    trackGlow: "#ff00cc",
-    interior: "#fff",
-    gold: "#FFD700",
-}
 
-// --- DIMENSIONES DEL SVG ---
-const VIEW_BOX_WIDTH = 2400
-const VIEW_BOX_HEIGHT = 1200
-
-// --- PATH HORIZONTAL ---
-const NEON_PATH_D = `
-M -70 550
-C 200 600, 400 700, 700 600
-S 1100 400, 1400 600
-S 1700 800, 2000 600
-C 2150 550, 2250 500, 2450 550 
-`;
-
-const PATH_STROKE_WIDTH = 400
-const GLOW_WIDTH = 500
-
-export const SvgPathLevels: React.FC<LevelMapProps> = ({ levels, onLevelSelect, className = "" }) => {
-    const ultimoNivelCompletado = 11;
-    const internalPathRef = React.useRef<SVGPathElement>(null)
-    const [pathLength, setPathLength] = React.useState(0)
-
-    React.useEffect(() => {
-        if (internalPathRef.current) {
-            setPathLength(internalPathRef.current.getTotalLength())
-        }
-    }, [levels])
-
-    const getNodePosition = (levelIndex: number) => {
-        const position = (levelIndex + 1) / (levels.length + 1)
-
-        if (pathLength === 0 || !internalPathRef.current) {
-            return { x: VIEW_BOX_WIDTH * position, y: VIEW_BOX_HEIGHT / 2 }
-        }
-
-        const point = internalPathRef.current.getPointAtLength(position * pathLength)
-
-        return { x: point.x, y: point.y }
-    }
+export const SvgPathLevels: React.FC<LevelMapProps> = ({ levels }) => {
+    const [hoveredLevel, setHoveredLevel] = useState<number | null>(null)
 
     return (
-        <div
-            className={`relative overflow-x-auto overflow-y-hidden text-white ${className}`}
-            style={{
-                backgroundColor: COLORS.darkBackground,
-                height: `${VIEW_BOX_HEIGHT}px`,
-            }}
-        >
-            <div className="relative h-full w-[2300px]">
-                <svg
-                    className="absolute inset-0 h-full w-full"
-                    viewBox={`0 0 ${VIEW_BOX_WIDTH} ${VIEW_BOX_HEIGHT}`}
-                    preserveAspectRatio="none"
-                >
-                    <defs>
-                        {/* Filtro para el borde interior */}
-                        <filter id="neon-glow-cyan" x="-50%" y="-50%" width="200%" height="200%">
-                            <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur" />
-                            <feMerge>
-                                <feMergeNode in="blur" />
-                                <feMergeNode in="SourceGraphic" />
-                            </feMerge>
-                        </filter>
-                        {/* Filtro para el glow principal */}
-                        <filter id="neon-glow-pink" x="-200%" y="-200%" width="500%" height="500%">
-                            <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur" />
-                            <feMerge>
-                                <feMergeNode in="blur" />
-                                <feMergeNode in="SourceGraphic" />
-                            </feMerge>
-                        </filter>
-                        <filter id="current-level-glow" x="-200%" y="-200%" width="500%" height="500%">
-                            <feGaussianBlur in="SourceGraphic" stdDeviation="15" result="blur" />
-                            <feMerge>
-                                <feMergeNode in="blur" />
-                                <feMergeNode in="SourceGraphic" />
-                            </feMerge>
-                        </filter>
-                    </defs>
+        <div className="relative min-h-screen bg-[#1a0a2e] overflow-auto py-8">
+            {/* Scanline effect */}
+            <div className="pointer-events-none absolute inset-0 z-50 opacity-10">
+                <div className="h-full w-full bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,#000_2px,#000_4px)]" />
+            </div>
 
-                    {/* Glow BLANCO detrás */}
-                    <path
-                        d={NEON_PATH_D}
-                        fill="none"
-                        stroke={COLORS.trackGlow}
-                        strokeWidth={GLOW_WIDTH}
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        filter="url(#neon-glow-pink)"
-                        opacity={0.7}
-                    />
+            {/* Animated background stars */}
+            {[...Array(40)].map((_, i) => (
+                <div
+                    key={i}
+                    className="absolute w-1 h-1 bg-white pixel-corners animate-pulse"
+                    style={{
+                        left: `${Math.random() * 100}%`,
+                        top: `${Math.random() * 100}%`,
+                        animationDelay: `${Math.random() * 3}s`,
+                        animationDuration: `${2 + Math.random() * 2}s`,
+                    }}
+                />
+            ))}
 
-                    {/* Path principal GRIS */}
-                    <path
-                        d={NEON_PATH_D}
-                        ref={internalPathRef}
-                        fill="none"
-                        stroke={COLORS.trackBase}
-                        strokeWidth={PATH_STROKE_WIDTH}
-                        strokeLinecap="round"
-                    />
+            {/* Main content - Horizontal grid */}
+            <div className="relative z-30 flex items-center justify-center min-h-[calc(100vh-200px)] px-8">
+                <div className="w-full max-w-6xl">
+                    {/* Decorative top border */}
+                    <div className="mb-8 flex justify-center">
+                        <div className="relative">
+                            <div className="absolute inset-0 bg-yellow-400 blur-md opacity-50" />
+                            <div className="relative flex gap-2 py-4">
+                                {[...Array(9)].map((_, i) => (
+                                    <div key={i} className="w-3 h-3 bg-yellow-400 pixel-corners" />
+                                ))}
+                            </div>
+                        </div>
+                    </div>
 
-                    {/* Borde interior BLANCO */}
-                    <path
-                        d={NEON_PATH_D}
-                        fill="none"
-                        stroke={COLORS.interior}
-                        strokeWidth="12"
-                        strokeLinecap="round"
-                        filter="url(#neon-glow-cyan)"
-                    />
-                </svg>
-
-                {/* Niveles */}
-                {levels.map((level, index) => {
-                    const { x: vx, y: vy } = getNodePosition(index)
-                    const xPercent = (vx / VIEW_BOX_WIDTH) * 100
-                    const yPercent = (vy / VIEW_BOX_HEIGHT) * 100
-                    const unlocked = level.number <= ultimoNivelCompletado + 1
-                    const isCompleted = level.number <= ultimoNivelCompletado
-                    const isCurrent = level.number === ultimoNivelCompletado + 1
-
-                    return (
-                        <div
-                            key={level.id}
-                            className="absolute -translate-x-1/2 -translate-y-1/2"
-                            style={{ left: `${xPercent}%`, top: `${yPercent}%` }}
-                        >
-                            <button
-                                onClick={() => unlocked && onLevelSelect?.(level)}
-                                disabled={!unlocked}
-                                className={`relative transition-all duration-200 hover:scale-110 disabled:cursor-not-allowed ${isCurrent ? "animate-bounce" : ""
-                                    }`}
-                            >
-                                {isCurrent && (
-                                    <>
-                                        <div
-                                            className="absolute inset-0 rounded-full animate-ping"
-                                            style={{
-                                                transform: "scale(1.8)",
-                                                backgroundColor: COLORS.neonCyan,
-                                                opacity: 0.3,
-                                            }}
-                                        />
-                                        <div
-                                            className="absolute inset-0 rounded-full"
-                                            style={{
-                                                transform: "scale(1.6)",
-                                                filter: "url(#current-level-glow)",
-                                                backgroundColor: COLORS.neonCyan,
-                                                opacity: 0.5,
-                                            }}
-                                        />
-                                    </>
-                                )}
-
-                                {/* 'Glow' del botón */}
-                                <div
-                                    className="absolute inset-0 rounded-full"
-                                    style={{
-                                        transform: "scale(1.4)",
-                                        filter: "url(#neon-glow-pink)",
-                                        backgroundColor: unlocked ? COLORS.neonPink : "rgba(31, 41, 55, 0.25)",
-                                    }}
-                                />
-
-                                {/* Contenedor para el efecto 3D */}
-                                <div className="relative w-20 h-20">
-                                    {/* Base lateral (simula el lateral del cilindro) */}
+                    {/* Level grid - 3 rows x 3 columns */}
+                    <div className="grid grid-cols-3 gap-8 mb-8">
+                        {levels.map((level) => (
+                            <div key={level.id} className="flex justify-center">
+                                <button
+                                    className={`relative group ${!level.unlocked && "cursor-not-allowed"}`}
+                                    onMouseEnter={() => setHoveredLevel(level.id)}
+                                    onMouseLeave={() => setHoveredLevel(null)}
+                                    disabled={!level.unlocked}
+                                >
+                                    {/* Outer frame */}
                                     <div
-                                        className="absolute inset-0 rounded-full"
-                                        style={{
-                                            boxShadow: `0 8px 0 0 ${COLORS.neonPink} inset, 0 8px 0 0 ${unlocked ? COLORS.neonPink : "rgba(31, 41, 55, 0.5)"}`,
-                                            backgroundColor: "transparent",
-                                            opacity: unlocked ? 1 : 0.5,
-                                            transform: "translateY(4px)",
-                                        }}
-                                    />
-
-                                    {/* Botón Principal (Tapa superior) */}
-                                    <div
-                                        className="relative flex h-20 w-20 items-center justify-center rounded-full transition-all border-4"
-                                        style={{
-                                            borderColor: COLORS.neonPink,
-                                            boxShadow: `0 0 5px ${COLORS.neonPink}, inset 0 0 5px ${COLORS.neonPink}`,
-                                            backgroundColor: "black",
-                                            transform: "translateY(0)",
-                                        }}
+                                        className={`relative border-8 pixel-corners p-4 transition-all ${!level.unlocked
+                                            ? "border-gray-600 bg-gray-800"
+                                            : level.completed
+                                                ? "border-yellow-400 bg-[#1a0a2e]"
+                                                : "border-cyan-400 bg-[#1a0a2e]"
+                                            } ${hoveredLevel === level.id && level.unlocked ? "scale-110" : "scale-100"}`}
                                     >
-                                        <div className="relative z-10 flex items-center justify-center">
-                                            {unlocked ? (
-                                                <span
-                                                    className="text-3xl font-extrabold"
-                                                    style={{
-                                                        color: COLORS.neonCyan,
-                                                        textShadow: "0 0 2px rgba(0, 0, 0, 0.5)",
-                                                    }}
-                                                >
-                                                    {level.number}
-                                                </span>
-                                            ) : (
-                                                <FontAwesomeIcon icon={faLock} className="h-8 w-8 text-gray-500" />
+                                        {/* Outer container padding extra para la bandera */}
+                                        <div className="relative w-32 h-32 flex flex-col items-center justify-center gap-2 pt-4">
+
+                                            {/* Checkered flag for completed levels */}
+                                            {level.completed && (
+                                                <div className="absolute top-0 right-0 w-8 h-8 grid grid-cols-4 grid-rows-4 gap-0 m-1">
+                                                    {[...Array(16)].map((_, i) => (
+                                                        <div
+                                                            key={i}
+                                                            className={`${(i + Math.floor(i / 4)) % 2 === 0 ? "bg-white" : "bg-black"}`}
+                                                        />
+                                                    ))}
+                                                </div>
+                                            )}
+
+                                            {/* Level number */}
+                                            <div
+                                                className={`text-6xl font-bold retro-text ${level.completed ? "text-yellow-400" : "text-cyan-400"}`}
+                                            >
+                                                {level.id}
+                                            </div>
+
+                                            {/* Stars */}
+                                            {level.completed && (
+                                                <div className="flex gap-1">
+                                                    {[...Array(3)].map((_, i) => (
+                                                        <div
+                                                            key={i}
+                                                            className={`w-5 h-5 pixel-corners ${i < level.stars ? "bg-yellow-400" : "bg-gray-600"}`}
+                                                            style={{
+                                                                clipPath:
+                                                                    "polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)",
+                                                            }}
+                                                        />
+                                                    ))}
+                                                </div>
                                             )}
                                         </div>
-                                    </div>
-                                </div>
-                            </button>
 
-                            {isCompleted && (
-                                <>
-                                    {/* Estrella izquierda */}
-                                    <div className="absolute bottom-0 left-1 -translate-x-1 translate-y-1">
-                                        <FontAwesomeIcon
-                                            icon={faStar}
-                                            className="h-4 w-4"
-                                            style={{
-                                                color: COLORS.gold,
-                                                filter: "drop-shadow(0 0 3px rgba(255, 215, 0, 0.8))",
-                                            }}
-                                        />
+                                        {/* Corner decorations */}
+                                        <div className="absolute top-0 left-0 w-2 h-2 bg-white pixel-corners" />
+                                        <div className="absolute top-0 right-0 w-2 h-2 bg-white pixel-corners" />
+                                        <div className="absolute bottom-0 left-0 w-2 h-2 bg-white pixel-corners" />
+                                        <div className="absolute bottom-0 right-0 w-2 h-2 bg-white pixel-corners" />
                                     </div>
-                                    {/* Estrella centro */}
-                                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-5">
-                                        <FontAwesomeIcon
-                                            icon={faStar}
-                                            className="h-4 w-4"
-                                            style={{
-                                                color: COLORS.gold,
-                                                filter: "drop-shadow(0 0 3px rgba(255, 215, 0, 0.8))",
-                                            }}
-                                        />
-                                    </div>
-                                    {/* Estrella derecha */}
-                                    <div className="absolute bottom-0 right-1 translate-x-1 translate-y-1">
-                                        <FontAwesomeIcon
-                                            icon={faStar}
-                                            className="h-4 w-4"
-                                            style={{
-                                                color: COLORS.gold,
-                                                filter: "drop-shadow(0 0 3px rgba(255, 215, 0, 0.8))",
-                                            }}
-                                        />
-                                    </div>
-                                </>
-                            )}
+
+
+                                    {/* Hover label */}
+                                    {hoveredLevel === level.id && level.unlocked && (
+                                        <div className="absolute -top-12 left-1/2 -translate-x-1/2 whitespace-nowrap animate-bounce-slow">
+                                            <div className="bg-[#1a0a2e] border-4 border-cyan-400 px-4 py-2 pixel-corners">
+                                                <p className="text-cyan-400 font-bold text-sm retro-text">NIVEL {level.id}</p>
+                                            </div>
+                                        </div>
+                                    )}
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Decorative bottom border */}
+                    <div className="flex justify-center">
+                        <div className="relative">
+                            <div className="absolute inset-0 bg-yellow-400 blur-md opacity-50" />
+                            <div className="relative flex gap-2 py-4">
+                                {[...Array(9)].map((_, i) => (
+                                    <div key={i} className="w-3 h-3 bg-yellow-400 pixel-corners" />
+                                ))}
+                            </div>
                         </div>
-                    )
-                })}
+                    </div>
+                </div>
             </div>
         </div>
     )

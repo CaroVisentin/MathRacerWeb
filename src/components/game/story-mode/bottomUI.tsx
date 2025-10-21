@@ -22,14 +22,22 @@ export const BottomUI = ({ world, fireExtinguisherQuant, changeEquationQuant, do
             />
 
             {world && (
-                <>
-                    <div className="absolute left-1/2 -translate-x-1/2">
-                        <div className="rounded-lg border-2 border-cyan-400/70 bg-cyan-950/40 px-6 py-3 text-center backdrop-blur-sm">
-                            {/* Si existe un mundo (estoy en su mapa de niveles) -> pongo la descripción del mundo */}
-                            <p className="text-xl text-cyan-300">Operaciones de suma y resta</p>
-                        </div>
+                <div className="absolute left-1/2 -translate-x-1/2">
+                    {/* Contenedor con fondo translúcido y blur */}
+                    <div className="relative bg-[#1a0a2e]/80 border-4 border-cyan-400 px-6 py-3 pixel-corners backdrop-blur-sm">
+
+                        {/* Texto del mundo */}
+                        <p className="text-xl text-cyan-300 text-center font-jersey">
+                            Operaciones de suma y resta
+                        </p>
+
+                        {/* Corner decorations tipo pixel */}
+                        <div className="absolute -top-1 -left-1 w-3 h-3 bg-[#ff0066]" />
+                        <div className="absolute -top-1 -right-1 w-3 h-3 bg-[#ffff00]" />
+                        <div className="absolute -bottom-1 -left-1 w-3 h-3 bg-[#00ff00]" />
+                        <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-[#ff0066]" />
                     </div>
-                </>
+                </div>
             )}
 
             <RulesButton />

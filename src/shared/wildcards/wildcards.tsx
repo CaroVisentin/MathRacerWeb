@@ -38,7 +38,7 @@ export const FireExtinguisherCard = ({ count, size, width, height }: Omit<Wildca
 
 // Cambia la ecuación actual por otra
 export const ChangeEquationCard = ({ count, size, width, height }: Omit<WildcardProps, "icon" | "color">) => (
-    <Wildcard icon={faSyncAlt} color="gray" count={count} size={size} width={width} height={height} />
+    <Wildcard icon={faSyncAlt} color="#F95EC8" count={count} size={size} width={width} height={height} />
 );
 
 // Hace que la siguiente ecuación cuente x2

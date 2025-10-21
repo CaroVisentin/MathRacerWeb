@@ -2,12 +2,12 @@ export interface Level {
   id: number;
   worldId: number;
   number: number;
+  unlocked: boolean;
+  completed: boolean;
+  stars: number;
 }
 
 export interface LevelMapProps {
   levels: Level[];
-  nodePositions: { x: number; y: number }[];
-  onLevelSelect?: (level: Level) => void;
-  pathRef: React.Ref<SVGPathElement>;
   className?: string;
 }
