@@ -1,3 +1,4 @@
+import type { ActiveEffectDto } from "./ActiveEffectDto";
 import type { PlayerDto } from "./playerDto";
 import type { QuestionDto } from "./questionDto";
 
@@ -11,4 +12,6 @@ export interface GameUpdateDto {
     questionCount: number;
     conditionToWin: number;
     expectedResult: string;
+    activeEffects: ActiveEffectDto[];
+    powerUpsEnabled: boolean;
 }

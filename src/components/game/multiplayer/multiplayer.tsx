@@ -10,6 +10,8 @@ import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import type { GameUpdateDto } from '../../../models/domain/gameUpdateDto';
 import { motion } from 'framer-motion';
 import { connection } from '../../../services/signalR/connection';
+import { PowerUpType } from '../../../models/enums/powerUpType';
+import type { PowerUpDto } from '../../../models/domain/powerUpDto';
     const fondos = [
         'pista-noche.png',
         'pista-dia.png',
@@ -22,7 +24,7 @@ import { connection } from '../../../services/signalR/connection';
 
 export const MultiplayerGame = () => {
   
-    const { conn ,errorConexion , invoke, on, off} = connection();
+    const { errorConexion , invoke, on, off} = connection();
     const [ecuacion, setEcuacion] = useState<QuestionDto>();
     const [opciones, setOpciones] = useState<number[]>();
     const [respuestaSeleccionada, setRespuestaSeleccionada] = useState<number | null>(null);
@@ -42,7 +44,9 @@ export const MultiplayerGame = () => {
     const [fondoJugador, setFondoJugador] = useState<string>('');
     const [fondoRival, setFondoRival] = useState<string>('');
     const cerrarModal = () => setGanador(false);
-
+    const [eliminaOpciones, setEliminaOpciones] = useState(false);
+    
+    
     // useCallback para evitar re-creaciones innecesarias
     const conectarJugador = useCallback(async () => {
         // Nueva implementación usando invoke directamente
@@ -71,6 +75,41 @@ export const MultiplayerGame = () => {
         
         // Detener la conexión manualmente, antes de que se desmonte el componente
     };
+
+    const handleFireExtinguisher = () => {
+    
+    if (eliminaOpciones || !ecuacion) return;
+
+    const opcionesIncorrectas = ecuacion.options.filter(opt => opt !== ecuacion.correctAnswer);
+    // Seleccionar dos opciones incorrectas al azar
+    const unaIncorrecta = opcionesIncorrectas[Math.floor(Math.random() * opcionesIncorrectas.length)];
+
+    setOpciones([ecuacion.correctAnswer, unaIncorrecta].sort(() => Math.random() - 0.5));
+    setEliminaOpciones(true);
+    console.log("Fire extinguisher activated!");
+};
+
+const handleChangeEquation = async() => {
+   if (!partidaId || !jugadorId) return;
+
+    try {
+     await invoke("UsePowerUp", partidaId, jugadorId, PowerUpType.ChangeEquation);
+        console.log("Change equation activated!");  
+    } catch (error) {
+        console.error("Error using Change Equation power-up:", error);
+    }
+};
+
+const handleDobleCount = async() => {
+   if (!partidaId || !jugadorId) return;
+
+    try {
+     await invoke("UsePowerUp", partidaId, jugadorId, PowerUpType.DoublePoints);
+        console.log("Doble count activated!");  
+    } catch (error) {
+        console.error("Error using Doble Count power-up:", error);
+    }
+};
 
     const sendAnswer = useCallback(async (respuestaSeleccionada: number | null) => {
     // Nueva implementación usando invoke directamente
@@ -102,6 +141,7 @@ export const MultiplayerGame = () => {
         if (!connection) return; // Esperar a que la conexión esté inicializada
 
         const gameUpdateHandler = (data: GameUpdateDto) => {
+            console.log("GameUpdate recibido:", data);
 
           //nueva implementacion con connection del hook        
             setJugadoresPartida(data.players);
@@ -171,13 +211,32 @@ export const MultiplayerGame = () => {
              
             };
 
+            const powerUpUsedHandler = (data : PowerUpDto) => {
+                console.log("PowerUp usado:", data);
+
+                if (data.powerUpType === PowerUpType.ShuffleRival) {
+                    // Lógica para mezclar las opciones de la ecuación actual
+                      console.log("Opciones mezcladas debido a ShuffleRival");
+                    } else if (data.powerUpType === PowerUpType.DoublePoints) {
+                        // Lógica para activar doble puntaje en la siguiente respuesta correcta
+                        console.log("Doble puntaje activado para la siguiente respuesta correcta");
+                    }   
+            };
+
+
+
         // Registrar el listener para "GameUpdate"    
        on("GameUpdate", gameUpdateHandler);
+         on("PowerUpUsed", powerUpUsedHandler);
 
         // Función de limpieza para quitar el listener
         return () => off("GameUpdate", gameUpdateHandler);
+        off("PowerUpUsed", powerUpUsedHandler);
 
-   }, [connection, nombreJugador,on,off]); // Depende de 'connection' y 'nombreJugador'
+   }, [ on,off,nombreJugador]); // Depende de 'connection' y 'nombreJugador'
+
+ 
+
 
     useEffect(() => {
         const indexJugador = Math.floor(Math.random() * fondos.length);
@@ -300,9 +359,12 @@ export const MultiplayerGame = () => {
                 </div>
                 <div className="comodin">
                     <Wildcards
-                        fireExtinguisher={3}
+                        fireExtinguisher={eliminaOpciones ? 0 : 1}
                         changeEquation={1}
-                        dobleCount={5}
+                        dobleCount={1}
+                        onFireExtinguisher={handleFireExtinguisher}
+                        onChangeEquation={handleChangeEquation}
+                        onDobleCount={handleDobleCount}
                     />
                 </div>
             </div>
