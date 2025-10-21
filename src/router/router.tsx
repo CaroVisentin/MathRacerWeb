@@ -4,7 +4,7 @@ import { RulesPage } from "../pages/rules/rules";
 import { ProfilePage } from "../pages/profile/profile";
 import { Menu } from "../pages/game/multiplayer/multiplayerGame";
 import { StoryMode } from "../pages/game/story-mode/storyMode";
-import {CreateGame} from "../components/game/on-line/create-game";
+import CreateGame from "../components/game/on-line/create-game";
 import { InviteFriend} from "../components/game/on-line/invite-friend";
 import { JoinGame } from "../components/game/on-line/join-game";
 import { QuickGame } from "../components/game/on-line/quick-game";import { LevelMap } from "../pages/game/story-mode/world/[id]";

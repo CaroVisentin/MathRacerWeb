@@ -4,9 +4,11 @@
 
 import { useState } from "react";
 import fondoPartida from '../../../assets/images/partidas.png';
+import { connection } from '../../../services/signalR/connection';
 
-//export default function CreateGame( {onCreateGame}: {onCreateGame: (gameData: any) => void} ) {
-  export default function CreateGame(){
+
+export default function CreateGame() {
+ // export default function CreateGame(){
 const[formData, setFormData] = useState({
     nombrePartida: '',
     privacidad: 'publico',
@@ -14,20 +16,26 @@ const[formData, setFormData] = useState({
     dificultad: 'Facil',
     tipodeResultado: 'El Mayor',
   });
-  const [connected, setConnected] = useState<any>(null);
-  
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+   // const { invoke, errorConexion } = connection(); 
+    const { conn ,errorConexion , invoke, on, off} = connection();
+      // usar la conexión exportada
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prevState => ({
       ...prevState,
       [name]: value
     }));
   };
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!formData.nombrePartida.trim()) return;
+
+    // Enviar nombre de partida como identificador del jugador
+    await invoke("FindMatch", formData.nombrePartida);
+    console.log("Partida creada con nombre:", formData.nombrePartida);
    // onCreateGame(formData); // Llama a la función pasada por props con los datos del formulario y emitir con signal R
-  console
+  
   };
   return (
 
@@ -108,47 +116,9 @@ const[formData, setFormData] = useState({
           className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded">Crear</button>
 
       </div>
+      {errorConexion && <p style={{ color: 'red' }}>{errorConexion}</p>}
     </form>
     </div>
   );
 }
 
-//el componentte create game seira este 
-{/*// components/game/on-line/create-game.tsx
-export default function CreateGame({ onCreateGame }) {
-  // contiene el formulario
-}}
-
-create game page se va a usar el formulario es 
-donde se maneja la conexion  con signal r y demas
-// este es un create game que debo hacerle pagina 
-
-
-
-
-{/*import { useEffect, useState } from "react";
-import { buildConnection } from "../../utils/connection";
-import CreateGame from "../../components/game/on-line/create-game";
-
-export default function CreateGamePage() {
-  const [connection, setConnection] = useState<any>(null);
-
-  useEffect(() => {
-    const conn = buildConnection();
-    setConnection(conn);
-    conn.start().catch(err => console.error("Error al conectar:", err));
-  }, []);
-
-  const handleCreateGame = async (gameData: any) => {
-    if (connection) {
-      try {
-        await connection.invoke("CrearPartida", gameData);
-        console.log("Partida creada con SignalR:", gameData);
-      } catch (error) {
-        console.error("Error al crear partida:", error);
-      }
-    }
-  };
-
-  return <CreateGame onCreateGame={handleCreateGame} />;
-}*/}
