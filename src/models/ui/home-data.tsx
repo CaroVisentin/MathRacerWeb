@@ -44,7 +44,7 @@ export const homeDataMock: HomeData = {
     id: 1,
     name: "PlayerOne",
     coins: 120000,
-    level: 5,
+    level: 1,
     ranking: 12234,
   },
   activeItems: {

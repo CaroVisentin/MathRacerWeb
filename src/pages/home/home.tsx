@@ -28,7 +28,7 @@ export const Home = () => {
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: `url(${data.activeItems.background.imageUrl})` }}
       >
-        <div className="absolute inset-0 bg-black/60"></div> 
+        <div className="absolute pointer-events-none inset-0 bg-black/60"></div> 
       </div>
 
       <div className="relative z-10 h-full flex flex-col">
@@ -51,10 +51,12 @@ export const Home = () => {
         <div className="flex flex-1 items-end justify-between px-4 pb-8">
           <div className="flex flex-col gap-3">
             <ActionButton to="/menu">Multijugador</ActionButton>
-            <ActionButton>Historia</ActionButton>
-            <ActionButton>Práctica Libre</ActionButton>
+            <ActionButton className="pointer-events-none" >Historia</ActionButton>
+            <ActionButton className="pointer-events-none">Práctica Libre</ActionButton>
+            {/*/sacar pointer-events-none para que funcione el boton} */}
           </div>
-          <div className="flex flex-col gap-3 items-end">
+            {/*/sacar pointer-events-none para que funcione el boton} */}
+          <div className="flex flex-col pointer-events-none gap-3 items-end">
             <ActionButton size="small"><i className="ri-trophy-fill"></i></ActionButton>
             <ActionButton size="small"><i className="ri-store-2-fill"></i></ActionButton>
             <ActionButton size="small"><i className="ri-shopping-cart-fill"></i></ActionButton>
