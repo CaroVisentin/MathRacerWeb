@@ -23,19 +23,12 @@ export const Wildcard = ({
 }: WildcardProps) => {
     return (
         <div
-            className="flex flex-col items-center justify-center rounded-lg border-2 bg-black font-audiowide"
-            style={{ borderColor: color, width, height }}
+            className="flex flex-col items-center justify-center rounded-lg border-2 bg-black font-jersey cursor-pointer hover:scale-105 transition-transform"
+            onClick={onActivate} style={{ borderColor: color, width, height }}
         >
             <FontAwesomeIcon icon={icon} style={{ color, fontSize: size }} />
-            <span className="text-white text-lg mt-1">{count}</span>
-            {count > 0 && (
-                <button
-                    className="mt-2 px-2 py-1 bg-white text-black rounded hover:bg-gray-200 text-sm"
-                  onClick={onActivate}
-                  >
-                    Usar
-                </button>
-            )}
+            <span className="text-white text-2xl mt-1">{count}</span>
+            {count > 0}
         </div>
     );
 };

@@ -5,26 +5,26 @@ import { LookingForRivalModal } from '../../../shared/modals/lookingForRivalModa
 import type { PlayerDto } from '../../../models/domain/playerDto';
 import { EndOfMultiplayerModeModal } from '../../../shared/modals/endOfMultiplayerModeModal';
 import { Wildcards } from '../../../shared/wildcards/wildcards';
-import auto1 from "../../../assets/images/auto.png";
+import auto1 from "../../../assets/images/auto-pista.png";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import type { GameUpdateDto } from '../../../models/domain/gameUpdateDto';
 import { motion } from 'framer-motion';
-import { useConnection } from '../../../services/signalR/connection';
+import { connection } from '../../../services/signalR/connection';
 import { PowerUpType } from '../../../models/enums/powerUpType';
 import type { PowerUpDto } from '../../../models/domain/powerUpDto';
-    const fondos = [
-        'pista-noche.png',
-        'pista-dia.png',
-        'pista-atardecer.png',
-        'pista-city.png',
-        'pista-montana.png',
-        'pista-pastel.png',
-    ];
+const fondos = [
+    'pista-noche.png',
+    'pista-dia.png',
+    'pista-atardecer.png',
+    'pista-city.png',
+    'pista-montana.png',
+    'pista-pastel.png',
+];
 
 
 export const MultiplayerGame = () => {
-  
-    const { errorConexion , invoke, on, off} = useConnection();
+
+    const { errorConexion, invoke, on, off } = connection();
     const [ecuacion, setEcuacion] = useState<QuestionDto>();
     const [opciones, setOpciones] = useState<number[]>();
     const [respuestaSeleccionada, setRespuestaSeleccionada] = useState<number | null>(null);
@@ -39,14 +39,14 @@ export const MultiplayerGame = () => {
     const [partidaId, setPartidaId] = useState<number | null>(null);
     const [instruccion, setInstruccion] = useState<string>("");
     const [perdedor, setPerdedor] = useState<boolean>(false);
-    const [penalizado, setPenalizado] = useState<boolean>(false);   
+    const [penalizado, setPenalizado] = useState<boolean>(false);
     const [mensajeResultado, setMensajeResultado] = useState<string | null>(null);
     const [fondoJugador, setFondoJugador] = useState<string>('');
     const [fondoRival, setFondoRival] = useState<string>('');
     const cerrarModal = () => setGanador(false);
     const [eliminaOpciones, setEliminaOpciones] = useState(false);
-    
-    
+
+
     // useCallback para evitar re-creaciones innecesarias
     const conectarJugador = useCallback(async () => {
         // Nueva implementación usando invoke directamente
@@ -71,79 +71,82 @@ export const MultiplayerGame = () => {
         // Agregar lógica para abandonar partida        
         setGanador(false);
         setPerdedor(true);
-       // if (connection) connection.stop();    
-        
+        // if (connection) connection.stop();    
+
         // Detener la conexión manualmente, antes de que se desmonte el componente
     };
 
     const handleFireExtinguisher = () => {
-    
-    if (eliminaOpciones || !ecuacion) return;
 
-    const opcionesIncorrectas = ecuacion.options.filter(opt => opt !== ecuacion.correctAnswer);
-    // Seleccionar dos opciones incorrectas al azar
-    const unaIncorrecta = opcionesIncorrectas[Math.floor(Math.random() * opcionesIncorrectas.length)];
+        if (eliminaOpciones || !ecuacion) return;
 
-    setOpciones([ecuacion.correctAnswer, unaIncorrecta].sort(() => Math.random() - 0.5));
-    setEliminaOpciones(true);
-    console.log("Fire extinguisher activated!");
-};
+        const opcionesIncorrectas = ecuacion.options.filter(opt => opt !== ecuacion.correctAnswer);
+        // Seleccionar dos opciones incorrectas al azar
+        const unaIncorrecta = opcionesIncorrectas[Math.floor(Math.random() * opcionesIncorrectas.length)];
 
-const handleChangeEquation = async() => {
-   if (!partidaId || !jugadorId) return;
+        setOpciones([ecuacion.correctAnswer, unaIncorrecta].sort(() => Math.random() - 0.5));
+        setEliminaOpciones(true);
+        console.log("Fire extinguisher activated!");
+    };
 
-    try {
-     await invoke("UsePowerUp", partidaId, jugadorId, PowerUpType.ChangeEquation);
-        console.log("Change equation activated!");  
-    } catch (error) {
-        console.error("Error using Change Equation power-up:", error);
-    }
-};
+    const handleChangeEquation = async () => {
+        if (!partidaId || !jugadorId) return;
 
-const handleDobleCount = async() => {
-   if (!partidaId || !jugadorId) return;
+        try {
+            await invoke("UsePowerUp", partidaId, jugadorId, PowerUpType.ChangeEquation);
+            console.log("Change equation activated!");
+        } catch (error) {
+            console.error("Error using Change Equation power-up:", error);
+        }
+    };
 
-    try {
-     await invoke("UsePowerUp", partidaId, jugadorId, PowerUpType.DoublePoints);
-        console.log("Doble count activated!");  
-    } catch (error) {
-        console.error("Error using Doble Count power-up:", error);
-    }
-};
+    const handleDobleCount = async () => {
+        if (!partidaId || !jugadorId) return;
+
+        try {
+            await invoke("UsePowerUp", partidaId, jugadorId, PowerUpType.DoublePoints);
+            console.log("Doble count activated!");
+        } catch (error) {
+            console.error("Error using Doble Count power-up:", error);
+        }
+    };
 
     const sendAnswer = useCallback(async (respuestaSeleccionada: number | null) => {
-    // Nueva implementación usando invoke directamente
+        // Nueva implementación usando invoke directamente
         if (!partidaId || respuestaSeleccionada === null || !jugadorId) return;
         await invoke("SendAnswer", partidaId, jugadorId, respuestaSeleccionada);
     }, [partidaId, jugadorId, invoke]);
 
-    const manejarRespuesta =  async(opcion: number) => {
+    const manejarRespuesta = async (opcion: number) => {
         setRespuestaSeleccionada(opcion);
 
         if (ecuacion && opcion === ecuacion.correctAnswer) {
             setResultado("acierto");
             setPenalizado(false);
-            setMensajeResultado("¡Correcto!");        
-           console.log("acierto");
+            setMensajeResultado("¡Correcto!");
+            console.log("acierto");
         } else {
             setResultado("error");
             setPenalizado(true);
             setMensajeResultado(" Fallaste!! penalizado por 2 segundos ");
-            console.log("error");        
-        }     
-        
+            console.log("error");
+        }
+
         setTimeout(() => setMensajeResultado(null), 1500);
-    setTimeout(() => sendAnswer(opcion), 1500);
+        setTimeout(() => sendAnswer(opcion), 1500);
 
     };
-   
+
+
+
+
     useEffect(() => {
-        if (!useConnection) return; // Esperar a que la conexión esté inicializada
+        if (!connection) return; // Esperar a que la conexión esté inicializada
 
         const gameUpdateHandler = (data: GameUpdateDto) => {
             console.log("GameUpdate recibido:", data);
 
-          //nueva implementacion con connection del hook        
+            //nueva implementacion con connection del hook        
             setJugadoresPartida(data.players);
 
             // Comparación de nombres
@@ -157,29 +160,29 @@ const handleDobleCount = async() => {
                 const avance = (jugadorActual.correctAnswers / 10) * 100;
                 setPosicionAuto1(avance);
             }
-                  if (otroJugador) {
+            if (otroJugador) {
                 const avanceOtro = (otroJugador.correctAnswers / 10) * 100;
                 setPosicionAuto2(avanceOtro);
             }
 
-                // Lógica de Penalización
-                if (jugadorActual?.penaltyUntil) {
-                    const ahora = new Date();
-                    const penalizacionTermina = new Date(jugadorActual.penaltyUntil);
+            // Lógica de Penalización
+            if (jugadorActual?.penaltyUntil) {
+                const ahora = new Date();
+                const penalizacionTermina = new Date(jugadorActual.penaltyUntil);
 
-                    if (penalizacionTermina > ahora) {
-                        setPenalizado(true);
+                if (penalizacionTermina > ahora) {
+                    setPenalizado(true);
 
-                        const msRestantes = penalizacionTermina.getTime() - ahora.getTime();
-                        setTimeout(() => {
-                            setPenalizado(false);
-                        }, msRestantes);
-                    } else {
+                    const msRestantes = penalizacionTermina.getTime() - ahora.getTime();
+                    setTimeout(() => {
                         setPenalizado(false);
-                    }
+                    }, msRestantes);
+                } else {
+                    setPenalizado(false);
                 }
+            }
 
-                    // Lógica de Ganador
+            // Lógica de Ganador
             if (data.winnerId && jugadorActual) {
                 if (data.winnerId === jugadorActual.id) {
                     setGanador(true);
@@ -190,10 +193,10 @@ const handleDobleCount = async() => {
                 }
             }
 
-             // Iniciar juego si hay 2 jugadores
+            // Iniciar juego si hay 2 jugadores
             if (data.players.length >= 2) setBuscandoRival(false);
 
-                // Actualizar pregunta
+            // Actualizar pregunta
             if (data.currentQuestion) {
                 setPartidaId(data.gameId);
                 setRespuestaSeleccionada(null);
@@ -205,37 +208,37 @@ const handleDobleCount = async() => {
                     options: data.currentQuestion.options,
                     correctAnswer: data.currentQuestion.correctAnswer,
                 });
-                setOpciones(data.currentQuestion.options);         
+                setOpciones(data.currentQuestion.options);
                 setInstruccion(data.expectedResult);
-            }          
-             
-            };
+            }
 
-            const powerUpUsedHandler = (data : PowerUpDto) => {
-                console.log("PowerUp usado:", data);
+        };
 
-                if (data.powerUpType === PowerUpType.ShuffleRival) {
-                    // Lógica para mezclar las opciones de la ecuación actual
-                      console.log("Opciones mezcladas debido a ShuffleRival");
-                    } else if (data.powerUpType === PowerUpType.DoublePoints) {
-                        // Lógica para activar doble puntaje en la siguiente respuesta correcta
-                        console.log("Doble puntaje activado para la siguiente respuesta correcta");
-                    }   
-            };
+        const powerUpUsedHandler = (data: PowerUpDto) => {
+            console.log("PowerUp usado:", data);
+
+            if (data.powerUpType === PowerUpType.ShuffleRival) {
+                // Lógica para mezclar las opciones de la ecuación actual
+                console.log("Opciones mezcladas debido a ShuffleRival");
+            } else if (data.powerUpType === PowerUpType.DoublePoints) {
+                // Lógica para activar doble puntaje en la siguiente respuesta correcta
+                console.log("Doble puntaje activado para la siguiente respuesta correcta");
+            }
+        };
 
 
 
         // Registrar el listener para "GameUpdate"    
-       on("GameUpdate", gameUpdateHandler);
-         on("PowerUpUsed", powerUpUsedHandler);
+        on("GameUpdate", gameUpdateHandler);
+        on("PowerUpUsed", powerUpUsedHandler);
 
         // Función de limpieza para quitar el listener
         return () => off("GameUpdate", gameUpdateHandler);
-        off("PowerUpUsed", powerUpUsedHandler);
+        // off("PowerUpUsed", powerUpUsedHandler);
 
-   }, [ on,off,nombreJugador]); // Depende de 'connection' y 'nombreJugador'
+    }, [on, off, nombreJugador]); // Depende de 'connection' y 'nombreJugador'
 
- 
+
 
 
     useEffect(() => {
@@ -244,7 +247,7 @@ const handleDobleCount = async() => {
 
         setFondoJugador(fondos[indexJugador]);
         setFondoRival(fondos[indexRival]);
-    }, []); 
+    }, []);
 
     return (
 
@@ -350,8 +353,8 @@ const handleDobleCount = async() => {
             </div>
 
             {/* Instrucciones y Comodines */}
-            <div className="flex justify-center items-center gridComodin mt-4">
-                <div className="instruccion">
+            <div className="flex justify-center  items-center gridComodin mt-4">
+                <div className="pl-8 text-3xl text-left">
                     {instruccion
                         ? `Elegí la opción para que Y sea ${instruccion.toUpperCase()}`
                         : "esperando instruccion"}
@@ -360,8 +363,8 @@ const handleDobleCount = async() => {
                 <div className="comodin">
                     <Wildcards
                         fireExtinguisher={eliminaOpciones ? 0 : 1}
-                        changeEquation={1}
-                        dobleCount={1}
+                        changeEquation={0}
+                        dobleCount={0}
                         onFireExtinguisher={handleFireExtinguisher}
                         onChangeEquation={handleChangeEquation}
                         onDobleCount={handleDobleCount}
@@ -372,38 +375,52 @@ const handleDobleCount = async() => {
             {/* Ecuación */}
             <div className="flex flex-col justify-center items-center h-full gap-10 mb-10">
                 <div className="flex justify-center mb-6">
-                    <div className="inline-block border-2 border-white rounded-lg text-6xl px-6 py-3">
+                    <div className="inline-block border-2 border-white rounded-lg text-6xl px-24 py-3">
                         {/* Mostrar ecuación solo si está definida */}
                         {ecuacion?.equation && <span>{ecuacion.equation}</span>}
                     </div>
                 </div>
                 {/* si anda mal error de conexion */}
-                 {errorConexion && (
+                {errorConexion && (
                     <div className="text-red-600 text-lg mt-4">
                         {errorConexion}
                     </div>
-                )} 
+                )}
+
+                {/* {mensajeResultado && (
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.4 }}
+                            className={`text-xl mt-2  ${resultado === "acierto" ? "text-green-400" : "text-red-500"
+                                }`}
+                        >
+                            {mensajeResultado}
+                        </motion.div>
+                    )} */}
 
                 {/* Opciones */}
                 <div className="flex justify-center items-center mt-6 gap-6 opciones">
                     {opciones?.map((opcion, i) => {
-                        let clases = "border-2 border-white px-6 py-3 rounded-lg text-xl transition ";
+                        let clases = `border-2 border-white rounded-lg text-4xl transition 
+                        w-20 h-20 `;
 
 
                         if (respuestaSeleccionada !== null) {
-                    
-                          if (resultado === "acierto" && opcion === respuestaSeleccionada) {
-                                clases +=  "bg-green-400" ; //es correcta
+
+                            if (resultado === "acierto" && opcion === respuestaSeleccionada) {
+                                clases += "bg-green-400"; //es correcta
 
                             } else if (
                                 resultado === "error" && opcion === respuestaSeleccionada) {
                                 clases += "bg-red-500";// dice que es incorrecta
 
-                                }
-                                else if (resultado === "error" && opcion === ecuacion?.correctAnswer){
-                                    clases+= "bg-green-400"; // muestra cual seria la correcta
+                            }
+                            else if (resultado === "error" && opcion === ecuacion?.correctAnswer) {
+                                clases += "bg-green-400"; // muestra cual seria la correcta
 
-                              } else {
+                            } else {
                                 clases += "bg-transparent";
                             }
                         } else {
@@ -420,19 +437,7 @@ const handleDobleCount = async() => {
                             </button>
                         );
                     })}
-                    {mensajeResultado && (
-    <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.4 }}
-        className={`text-xl mt-6  ${
-            resultado === "acierto" ? "text-green-400" : "text-red-500"
-        }`}
-    >
-        {mensajeResultado}
-    </motion.div>
-)}             
+
                 </div>
             </div>
 
