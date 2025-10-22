@@ -1,3 +1,4 @@
+import type { PowerUpType } from "../../models/enums/powerUpType";
 import { api, API_URLS } from "../network/api";
 
 export const gameService = {
@@ -25,12 +26,13 @@ export const responderEcuacion = async (partidaId: string, jugadorId: string, re
 };
 
 export const usarPowerUp = async (
-  partidaId: string,
-  jugadorId: string,
-  powerUpId: number) => {
+  partidaId: number,
+  jugadorId: number,
+  powerUpType: PowerUpType) => {
   const res = await api.post(`${API_URLS.games}/${partidaId}/powerup/use`, {
-    playerId: jugadorId,
-    powerUpId: powerUpId,
+    gameId : partidaId,
+    playerId : jugadorId,
+    powerUpType : powerUpType
   });
   return res.data;
 }

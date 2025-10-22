@@ -21,21 +21,18 @@ export const Wildcard = ({
     width = "4rem",      
     height = "5rem"     
 }: WildcardProps) => {
+    const isDisabled = count <= 0;
+    const inactiveColor = "gray";
     return (
         <div
-            className="flex flex-col items-center justify-center rounded-lg border-2 bg-black font-audiowide"
+            className="flex flex-col items-center justify-center rounded-lg border-2 bg-black font-audiowide  transition ${isDisabled ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105 cursor-pointer'} p-2"
             style={{ borderColor: color, width, height }}
+            onClick ={isDisabled ? undefined : onActivate}
         >
-            <FontAwesomeIcon icon={icon} style={{ color, fontSize: size }} />
+            <FontAwesomeIcon icon={icon} style={{ color: isDisabled ? inactiveColor : color, fontSize: size }} />
             <span className="text-white text-lg mt-1">{count}</span>
-            {count > 0 && (
-                <button
-                    className="mt-2 px-2 py-1 bg-white text-black rounded hover:bg-gray-200 text-sm"
-                  onClick={onActivate}
-                  >
-                    Usar
-                </button>
-            )}
+     
+           
         </div>
     );
 };

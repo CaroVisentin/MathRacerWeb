@@ -1,3 +1,5 @@
+import type { PowerUpDto } from "./powerUpDto";
+
 export interface PlayerDto {
     id: number;
     name: string;
@@ -6,4 +8,6 @@ export interface PlayerDto {
     isReady: boolean;
     penaltyUntil: Date;
     finishedAt: Date;
+    availablePowerUps: PowerUpDto[];
+    hasDoublePointsActive: boolean;
 }
