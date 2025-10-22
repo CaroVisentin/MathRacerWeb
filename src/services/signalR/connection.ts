@@ -13,7 +13,7 @@ import { useEffect, useState } from "react";
 //         .build();
 // };
 
-export const connection = () =>{
+export const useConnection = () => {
     const [conn, setConn] = useState<HubConnection | null>(null);
     const [errorConexion, setErrorConexion] = useState<string | null>(null);
 
@@ -42,20 +42,21 @@ export const connection = () =>{
         };
     }, []);
 
-    const invoke = async (method: string, ...args: any[]) => {
+    const invoke = async (method: string, ...args: unknown[]) => {
         if (!conn) return;
         try {
             await conn.invoke(method, ...args);
         } catch (err) {
             console.error(`Error al invocar ${method}:`, err);
-        }   
+        }
     };
 
-    const on = (event: string, callback: (...args: any[]) => void) => {
-        conn?.on(event, callback);
+    const on = <T>(event: string, callback: (args: T) => void): void => {
+        conn?.on(event, callback as (...args: unknown[]) => void);
     };
-    const off = (event: string, callback: (...args: any[]) => void) => {
-        conn?.off(event, callback);
+
+    const off = <T>(event: string, callback: (args: T) => void): void => {
+        conn?.off(event, callback as (...args: unknown[]) => void);
     };
 
     return { conn, errorConexion, invoke, on, off };
