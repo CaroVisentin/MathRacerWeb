@@ -26,12 +26,12 @@ export const Wildcard = ({
     return (
         <div
             className="flex flex-col items-center justify-center rounded-lg border-2 bg-black font-audiowide  transition ${isDisabled ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105 cursor-pointer'} p-2"
-            style={{ borderColor: color, width, height }}
+            style={{ borderColor: isDisabled ? inactiveColor :color, width, height }}
             onClick ={isDisabled ? undefined : onActivate}
         >
             <FontAwesomeIcon icon={icon} style={{ color: isDisabled ? inactiveColor : color, fontSize: size }} />
-            <span className="text-white text-lg mt-1">{count}</span>
-     
+            {/* <span className="text-white text-lg mt-1">{count}</span> */}
+            <span className="hidden">{count}</span>
            
         </div>
     );
@@ -51,7 +51,7 @@ export const FireExtinguisherCard = ({ count, size, width, height,onActivate }: 
 
 // mezcla las opciones de la ecuación
 export const ChangeEquationCard = ({ count, size, width, height,onActivate }: Omit<WildcardProps, "icon" | "color">) => (
-    <Wildcard icon={faSyncAlt} color="gray" count={count} size={size} width={width} height={height} onActivate={onActivate}/>
+    <Wildcard icon={faSyncAlt} color="green" count={count} size={size} width={width} height={height} onActivate={onActivate}/>
 );
 
 // Hace que la siguiente ecuación cuente x2

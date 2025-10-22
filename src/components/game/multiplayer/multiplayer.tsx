@@ -90,7 +90,7 @@ export const MultiplayerGame = () => {
     setOpciones([ecuacion.correctAnswer, unaIncorrecta].sort(() => Math.random() - 0.5));
     setEliminaOpciones(true);
     setMensajeComodin("Se han eliminado dos opciones incorrectas.");
-    setTimeout(() => setMensajeComodin(null), 2000);
+   // setTimeout(() => setMensajeComodin(null), 2000);
     console.log("Fire extinguisher activated!");
 };
 
@@ -223,20 +223,6 @@ const handleDobleCount = async() => {
              
             };
 
-            // const powerUpUsedHandler = (data : PowerUpDto) => {
-            //     console.log("PowerUp usado:", data);
-
-            //     if (data.powerUpType === PowerUpType.ShuffleRival) {
-            //         // Lógica para mezclar las opciones de la ecuación actual
-            //           console.log("Opciones mezcladas debido a ShuffleRival");
-            //         } else if (data.powerUpType === PowerUpType.DoublePoints) {
-            //             // Lógica para activar doble puntaje en la siguiente respuesta correcta
-            //             console.log("Doble puntaje activado para la siguiente respuesta correcta");
-            //         }   
-            // };
-
-
-
         // Registrar el listener para "GameUpdate"    
        on("GameUpdate", gameUpdateHandler);
         // on("PowerUpUsed", powerUpUsedHandler);
@@ -248,8 +234,6 @@ const handleDobleCount = async() => {
    }, [ on,off,nombreJugador]); // Depende de 'connection' y 'nombreJugador'
 
  
-
-
     useEffect(() => {
         const indexJugador = Math.floor(Math.random() * fondos.length);
         const indexRival = (indexJugador + 1 + Math.floor(Math.random() * (fondos.length - 1))) % fondos.length;
@@ -362,8 +346,9 @@ const handleDobleCount = async() => {
             </div>
 
             {/* Instrucciones y Comodines */}
-            <div className="flex justify-center items-center gridComodin mt-4">
-                <div className="instruccion">
+      <div className="flex justify-center items-center gridComodin mt-4"> 
+                
+                <div className="instruccion font-mono text-xl text-center">
                     {instruccion
                         ? `Elegí la opción para que Y sea ${instruccion.toUpperCase()}`
                         : "esperando instruccion"}
@@ -377,24 +362,28 @@ const handleDobleCount = async() => {
                         onFireExtinguisher={handleFireExtinguisher}
                         onChangeEquation={handleChangeEquation}
                         onDobleCount={handleDobleCount}
-                    />
-                    
-{mensajeComodin && (
-            <div className="text-white text-sm mt-2 text-center animate-fade-in">
-                {mensajeComodin}
-            </div>
-        )}
+                    />                 
+
 
                 </div>
             </div>
 
             {/* Ecuación */}
-            <div className="flex flex-col justify-center items-center h-full gap-10 mb-10">
+            <div className="flex flex-col justify-center items-center h-full gap-5 mb-10 mt-4">
+                {mensajeComodin && (
+                    <div className="w-full flex justify-end px-4">
+            <div className="text-cyan-200 font-mono  text-l  text-center animate-fade-in">
+                {mensajeComodin}
+            </div>
+        </div>
+        )}
                 <div className="flex justify-center mb-6">
+                    
                     <div className="inline-block border-2 border-white rounded-lg text-6xl px-6 py-3">
                         {/* Mostrar ecuación solo si está definida */}
                         {ecuacion?.equation && <span>{ecuacion.equation}</span>}
                     </div>
+                    
                 </div>
                 {/* si anda mal error de conexion */}
                  {errorConexion && (
