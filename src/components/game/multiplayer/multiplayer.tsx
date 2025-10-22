@@ -248,6 +248,15 @@ export const MultiplayerGame = () => {
         setFondoRival(fondos[indexRival]);
     }, []);
 
+    // compute opponent name
+    const opponentName =
+        jugadoresPartida.find(
+            (p) =>
+                p.name &&
+                p.name.trim() &&
+                p.name.trim().toLowerCase() !== nombreJugador.trim().toLowerCase()
+        )?.name ?? "Rival";
+
     return (
 
         <div className="juego w-full h-full bg-black text-white relative">
@@ -309,10 +318,9 @@ export const MultiplayerGame = () => {
                         style={{
                             left: '0px',
                             top: '-2%',
-
                         }}
                     >
-                        Rival
+                        {opponentName}
                     </div>
 
                     {/* Auto 2 */}

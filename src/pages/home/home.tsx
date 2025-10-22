@@ -50,7 +50,7 @@ export const Home = () => {
 
         <div className="flex flex-1 items-end justify-between px-4 pb-8">
           <div className="flex flex-col gap-3">
-            <ActionButton to="/menu">Multijugador</ActionButton>
+            <ActionButton to="/multijugador">Multijugador</ActionButton>
             <ActionButton className="pointer-events-none" >Historia</ActionButton>
             <ActionButton className="pointer-events-none">Práctica Libre</ActionButton>
             {/*/sacar pointer-events-none para que funcione el boton} */}
