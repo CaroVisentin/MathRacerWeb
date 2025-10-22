@@ -5,20 +5,22 @@
 
 @font-face {
   font-family: 'Jersey 10';
-  src: url('./fonts/Jersey10-Regular.woff2') format('woff2'),
-       url('./fonts/Jersey10-Regular.woff') format('woff');
+  src: url('../assets/fonts/Jersey10-Regular.ttf') format('truetype');
   font-weight: 400; /* o el peso real de la fuente */
   font-style: normal;
   font-display: swap; /* Importante para rendimiento */
 }
+
+
 @font-face {
   font-family: 'Audiowide';
-  src: url('./fonts/Audiowide-Regular.woff2') format('woff2'),
-       url('./fonts/Audiowide-Regular.woff') format('woff');
+  src: url('../assets/fonts/Audiowide-Regular.ttf') format('truetype');
   font-weight: 400; /* o el peso real de la fuente */
   font-style: normal;
   font-display: swap; /* Importante para rendimiento */
 }
+
+
 * {
   margin: 0;
 }
