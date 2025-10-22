@@ -2,11 +2,7 @@
 import { Link } from "react-router-dom";
 
 export const Menu = () => {
-
-  
   const botonVolver = "bg-red-600 text-black text-xl  py-2 px-4 rounded-[6px] hover:bg-red-700 transition duration-300 mx-auto block mt-10";
-
-
   return (
 
     <div
@@ -17,16 +13,12 @@ export const Menu = () => {
 
         <Link to="/crear" className="botonGral" style={{gridArea:"crear"}}>Crear Partida</Link>
         <Link to="/unirse-partida" className="botonGral" style={{gridArea: "unirse"}}>Unirse a Partida</Link>
-        {/* <Link to="/partida-rapida" className="botonGral">Partida Rápida</Link> */}
         <Link to="/invitar-amigo" className="botonGral" style={{gridArea:"invitar"}}>Invitar a un Amigo</Link>
         <Link to="/ranking" className="botonGral" style={{gridArea:"ranking"}}>Ranking</Link>
         <Link to="/multijugador" className="botonGral" style={{gridArea:"competitiva",
           width:"50%",
           justifySelf:"center",
         }}>Partida Competitiva</Link>
-
-
-
       </div>
       <div className="arreglo">
 

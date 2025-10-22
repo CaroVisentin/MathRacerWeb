@@ -23,3 +23,14 @@ export const responderEcuacion = async (partidaId: string, jugadorId: string, re
   const res = await api.post(`/${partidaId}/answer`, { playerId: jugadorId, answer: respuesta });
   return res.data;
 };
+
+export const usarPowerUp = async (
+  partidaId: string,
+  jugadorId: string,
+  powerUpId: number) => {
+  const res = await api.post(`${API_URLS.games}/${partidaId}/powerup/use`, {
+    playerId: jugadorId,
+    powerUpId: powerUpId,
+  });
+  return res.data;
+}
