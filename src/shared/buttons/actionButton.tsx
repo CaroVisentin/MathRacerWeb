@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 
 interface ActionButtonProps {
     size?: "small" | "large";
@@ -8,6 +7,8 @@ interface ActionButtonProps {
     className?: string;
 }
 
+
+//#0f0f0f 5df9f9
 export const ActionButton = ({ size = "large", to, children, className = "" }: ActionButtonProps) => {
     const sizeClasses =
         size === "large"
@@ -16,13 +17,26 @@ export const ActionButton = ({ size = "large", to, children, className = "" }: A
 
     const button = (
         <button
-            className={`${sizeClasses}
-        flex items-center justify-center rounded-xl shadow bg-[#5df9f9] text-[#0f0f0f] 
-        transition-all duration-300 ease-in-out hover:bg-[#f95ec8] hover:scale-105 active:scale-95
-        ${className} `}>      
-      {children}
+            className={`
+        ${sizeClasses}
+        flex items-center justify-center
+        bg-black/50 rounded-sm border-[4px] border-[#5df9f9]
+        text-[#5df9f9]
+        shadow-[4px_4px_0_#228f8f]
+        uppercase tracking-wider
+        transition-all duration-200
+        ${className}
+
+        hover:text-[#5df9f9] 
+        hover:border-[#5df9f9]
+        hover:shadow-[0_0_3px_rgba(255,255,255,0.5),0_0_20px_rgba(93,249,249,0.5),0_0_11px_rgba(93,249,249,0.5)]
+      `}
+        >
+            {children}
         </button>
     );
 
-    return to ? <Link to={to}>{button}</Link> : button;
+    return to ? <a href={to}>{button}</a> : button;
 };
+
+

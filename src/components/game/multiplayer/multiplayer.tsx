@@ -19,7 +19,7 @@ import { motion } from 'framer-motion';
         'pista-atardecer.png',
         'pista-city.png',
         'pista-montana.png',
-         'pista-pastel.png',
+        'pista-pastel.png',
     ];
 
 
