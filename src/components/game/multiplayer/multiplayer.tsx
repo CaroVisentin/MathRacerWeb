@@ -8,7 +8,6 @@ import { Wildcards } from '../../../shared/wildcards/wildcards';
 import auto1 from "../../../assets/images/auto-pista.png";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import type { GameUpdateDto } from '../../../models/domain/gameUpdateDto';
-import { motion } from 'framer-motion';
 import { connection } from '../../../services/signalR/connection';
 import { PowerUpType } from '../../../models/enums/powerUpType';
 import type { PowerUpDto } from '../../../models/domain/powerUpDto';
@@ -133,7 +132,7 @@ export const MultiplayerGame = () => {
         }
 
         setTimeout(() => setMensajeResultado(null), 1500);
-        setTimeout(() => sendAnswer(opcion), 1500);
+        setTimeout(() => sendAnswer(opcion),200);
 
     };
 
@@ -375,8 +374,8 @@ export const MultiplayerGame = () => {
             {/* Ecuación */}
             <div className="flex flex-col justify-center items-center h-full gap-10 mb-10">
                 <div className="flex justify-center mb-6">
-                    <div className="inline-block border-2 border-white rounded-lg text-6xl px-24 py-3">
-                        {/* Mostrar ecuación solo si está definida */}
+                    <div className={`inline-block border-2 border-white rounded-lg text-6xl w-100 h-20 text-center align-middle py-2
+                    ${penalizado ? 'opacity-50' : 'opacity-100'} transition-opacity`}>
                         {ecuacion?.equation && <span>{ecuacion.equation}</span>}
                     </div>
                 </div>
@@ -406,7 +405,6 @@ export const MultiplayerGame = () => {
                         let clases = `border-2 border-white rounded-lg text-4xl transition 
                         w-20 h-20 `;
 
-
                         if (respuestaSeleccionada !== null) {
 
                             if (resultado === "acierto" && opcion === respuestaSeleccionada) {
@@ -414,15 +412,17 @@ export const MultiplayerGame = () => {
 
                             } else if (
                                 resultado === "error" && opcion === respuestaSeleccionada) {
-                                clases += "bg-red-500";// dice que es incorrecta
+                                clases += "bg-red-500 opacity-50 cursor-not-allowed";// dice que es incorrecta
 
                             }
                             else if (resultado === "error" && opcion === ecuacion?.correctAnswer) {
-                                clases += "bg-green-400"; // muestra cual seria la correcta
+                                clases += "bg-green-400 opacity-50 cursor-not-allowed"; // muestra cual seria la correcta
 
                             } else {
                                 clases += "bg-transparent";
                             }
+                        } else if (penalizado) {
+                            clases += "opacity-50 cursor-not-allowed";
                         } else {
                             clases += "bg-transparent hover:bg-blue-500";
                         }
