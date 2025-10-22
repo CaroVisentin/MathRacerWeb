@@ -115,7 +115,8 @@ const handleDobleCount = async() => {
     try {
      await invoke("UsePowerUp", partidaId, jugadorId, PowerUpType.DoublePoints);
        setPowerUsePosition(true);
-         setMensajeComodin("si contestas bien moves 2 lugares");    
+         setMensajeComodin("si contestas bien moves 2 lugares");  
+         setTimeout(() => setMensajeComodin(null), 2000);  
      console.log("Doble count activated!");  
     } catch (error) {
         console.error("Error using Doble Count power-up:", error);
