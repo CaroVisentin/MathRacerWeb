@@ -8,7 +8,7 @@ import { Wildcards } from '../../../shared/wildcards/wildcards';
 import auto1 from "../../../assets/images/auto-pista.png";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import type { GameUpdateDto } from '../../../models/domain/gameUpdateDto';
-import { connection } from '../../../services/signalR/connection';
+import { useConnection } from '../../../services/signalR/connection';
 import { PowerUpType } from '../../../models/enums/powerUpType';
 import type { PowerUpDto } from '../../../models/domain/powerUpDto';
 const fondos = [
@@ -23,7 +23,7 @@ const fondos = [
 
 export const MultiplayerGame = () => {
 
-    const { errorConexion, invoke, on, off } = connection();
+    const { errorConexion, invoke, on, off } = useConnection();
     const [ecuacion, setEcuacion] = useState<QuestionDto>();
     const [opciones, setOpciones] = useState<number[]>();
     const [respuestaSeleccionada, setRespuestaSeleccionada] = useState<number | null>(null);
@@ -140,7 +140,7 @@ export const MultiplayerGame = () => {
 
 
     useEffect(() => {
-        if (!connection) return; // Esperar a que la conexión esté inicializada
+        if (!useConnection) return; // Esperar a que la conexión esté inicializada
 
         const gameUpdateHandler = (data: GameUpdateDto) => {
             console.log("GameUpdate recibido:", data);

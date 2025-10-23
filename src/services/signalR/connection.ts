@@ -13,7 +13,7 @@ import { useEffect, useState } from "react";
 //         .build();
 // };
 
-export const connection = () => {
+export const useConnection = () => {
     const [conn, setConn] = useState<HubConnection | null>(null);
     const [errorConexion, setErrorConexion] = useState<string | null>(null);
 

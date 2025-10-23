@@ -4,7 +4,7 @@
 
 import { useState } from "react";
 import fondoPartida from '../../../assets/images/partidas.png';
-import { connection } from '../../../services/signalR/connection';
+import { useConnection } from '../../../services/signalR/connection';
 
 
 export default function CreateGame() {
@@ -18,7 +18,7 @@ const[formData, setFormData] = useState({
   });
 
    // const { invoke, errorConexion } = connection(); 
-    const { conn ,errorConexion , invoke, on, off} = connection();
+    const { conn ,errorConexion , invoke, on, off} = useConnection();
       // usar la conexión exportada
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
