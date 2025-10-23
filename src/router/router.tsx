@@ -12,6 +12,7 @@ import { StoryModeGame } from "../pages/game/story-mode/level/[id]";
 import { MultiplayerGame } from "../components/game/multiplayer/multiplayer";
 import { LoginPage } from "../pages/login/logIn";
 import { RegisterPage } from "../pages/register/register";
+import { RankingPage } from "../pages/ranking/ranking";
 
 
 const router = createBrowserRouter([
@@ -35,7 +36,8 @@ const router = createBrowserRouter([
     element: <StoryModeGame />,
   },
   { path: "/login", element: <LoginPage /> },
-  { path: "/register", element: <RegisterPage /> }
+  { path: "/register", element: <RegisterPage /> },
+  { path: "/ranking", element: <RankingPage /> },
 ]);
 
 export function AppRouter() {

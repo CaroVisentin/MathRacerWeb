@@ -186,3 +186,12 @@ gap: 10%;
   text-decoration: none;
   color: black;
 }
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 1; }
+}
+
+.star {
+  animation: twinkle 2s infinite;
+}
