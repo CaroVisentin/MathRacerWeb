@@ -13,6 +13,7 @@ import { MultiplayerGame } from "../components/game/multiplayer/multiplayer";
 import { LoginPage } from "../pages/login/logIn";
 import { RegisterPage } from "../pages/register/register";
 import { RankingPage } from "../pages/ranking/ranking";
+import { GaragePage } from "../pages/garage/garage";
 
 
 const router = createBrowserRouter([
@@ -38,6 +39,7 @@ const router = createBrowserRouter([
   { path: "/login", element: <LoginPage /> },
   { path: "/register", element: <RegisterPage /> },
   { path: "/ranking", element: <RankingPage /> },
+  { path: "/garage", element: <GaragePage /> },
 ]);
 
 export function AppRouter() {
