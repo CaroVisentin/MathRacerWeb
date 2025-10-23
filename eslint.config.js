@@ -20,8 +20,6 @@ export default defineConfig([
       globals: globals.browser,
     },
     rules: {
-      '@typescript-eslint/no-unused-vars': 'off',      // desactiva warnings de variables no usadas
-      'react-hooks/exhaustive-deps': 'off',           // desactiva warnings de useEffect
     }
   },
 ])

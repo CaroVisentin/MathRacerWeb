@@ -1,6 +1,6 @@
 // Muestro el mapa de los niveles de cada mundo, pasándole el ID del mundo por url
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useMemo } from "react";
 import type { Level } from "../../../../models/ui/level";
 import { TopBar } from "../../../../components/game/story-mode/topBar";
 import { SvgPathLevels } from "../../../../components/game/story-mode/svgPathLevels";
@@ -15,7 +15,7 @@ export const LevelMap = () => {
 
     // Se obtiene la cantidad de niveles para el mundo en el que entró,
     // y último nivel completado del jugador
-    const levels: Level[] = [
+    const levels: Level[] = useMemo(() => [
         { id: 1, worldId: 1, number: 1 },
         { id: 2, worldId: 1, number: 2 },
         { id: 3, worldId: 1, number: 3 },
@@ -36,7 +36,7 @@ export const LevelMap = () => {
         { id: 18, worldId: 1, number: 18 },
         { id: 19, worldId: 1, number: 19 },
         { id: 20, worldId: 1, number: 20 },
-    ];
+    ], []);
 
     useEffect(() => {
         if (pathRef.current) {

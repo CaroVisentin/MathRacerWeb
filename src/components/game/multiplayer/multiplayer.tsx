@@ -39,7 +39,6 @@ export const MultiplayerGame = () => {
     const [instruccion, setInstruccion] = useState<string>("");
     const [perdedor, setPerdedor] = useState<boolean>(false);
     const [penalizado, setPenalizado] = useState<boolean>(false);
-    const [mensajeResultado, setMensajeResultado] = useState<string | null>(null);
     const [fondoJugador, setFondoJugador] = useState<string>('');
     const [fondoRival, setFondoRival] = useState<string>('');
     const cerrarModal = () => setGanador(false);
@@ -122,18 +121,14 @@ export const MultiplayerGame = () => {
         if (ecuacion && opcion === ecuacion.correctAnswer) {
             setResultado("acierto");
             setPenalizado(false);
-            setMensajeResultado("¡Correcto!");
             console.log("acierto");
         } else {
             setResultado("error");
             setPenalizado(true);
-            setMensajeResultado(" Fallaste!! penalizado por 2 segundos ");
             console.log("error");
         }
 
-        setTimeout(() => setMensajeResultado(null), 1500);
         setTimeout(() => sendAnswer(opcion),200);
-
     };
 
 
