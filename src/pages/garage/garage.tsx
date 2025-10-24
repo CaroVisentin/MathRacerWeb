@@ -1,21 +1,28 @@
 import { useState } from "react";
 import fondoGarage from "../../assets/images/fondo-garage.png";
-import { AutosSidebar } from "../../components/garage/sidebar";
+import { SelectionSidebar } from "../../components/garage/sidebar";
 import { Topbar } from "../../components/garage/topbar";
-import { autosData } from "../../shared/data/autosSidebarData";
+import { autosData, dataMap } from "../../shared/data/garageData";
 
 export const GaragePage = () => {
-    // Estado del auto seleccionado
-    const [selectedAutoId, setSelectedAutoId] = useState(autosData[0].id);
+    const [activeCategory, setActiveCategory] = useState<"autos" | "personajes" | "fondos">("autos");
+    // Reemplazar por el item seleccionado de cada usuario
+    const [selectedItemId, setSelectedItemId] = useState(autosData[0].id);
 
-    const selectedAuto = autosData.find((auto) => auto.id === selectedAutoId);
+    const selectedData = dataMap[activeCategory];
+    const selectedItem = selectedData.find((item) => item.id === selectedItemId);
 
     return (
         <div className="relative h-screen w-screen flex flex-col p-2">
-            {/* Fondo del Garage */}
+            {/* Fondo dinámico */}
             <div
-                className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-                style={{ backgroundImage: `url(${fondoGarage})` }}
+                className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-700"
+                style={{
+                    backgroundImage: `url(${activeCategory === "fondos" && selectedItem
+                        ? selectedItem.imagen
+                        : fondoGarage
+                        })`,
+                }}
             >
                 <div className="absolute pointer-events-none inset-0 bg-black/60"></div>
             </div>
@@ -23,24 +30,25 @@ export const GaragePage = () => {
             {/* Contenido principal */}
             <div className="relative z-20 h-full flex flex-col">
                 {/* Topbar */}
-                <Topbar />
+                <Topbar activeCategory={activeCategory} setActiveCategory={setActiveCategory} />
 
-                {/* Área principal: sidebar + auto centrado */}
+                {/* Área principal */}
                 <div className="flex flex-1 p-2">
-                    {/* Sidebar a la izquierda */}
-                    <AutosSidebar
-                        autos={autosData}
-                        selectedAutoId={selectedAutoId}
-                        setSelectedAutoId={setSelectedAutoId}
+                    {/* Sidebar */}
+                    <SelectionSidebar
+                        title={activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1)}
+                        items={selectedData}
+                        selectedItemId={selectedItemId}
+                        setSelectedItemId={setSelectedItemId}
                     />
 
-                    {/* Auto en el medio */}
+                    {/* Elemento central */}
                     <div className="flex-1 flex justify-center items-center">
-                        {selectedAuto && (
+                        {activeCategory !== "fondos" && selectedItem && (
                             <img
-                                src={selectedAuto.imagen}
-                                alt={selectedAuto.nombre}
-                                className="w-140 h-100 object-contain"
+                                src={selectedItem.imagen}
+                                alt={selectedItem.nombre}
+                                className="w-140 h-100 object-contain transition-transform duration-500"
                             />
                         )}
                     </div>
