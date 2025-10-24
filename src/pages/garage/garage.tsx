@@ -2,12 +2,12 @@ import { useState } from "react";
 import fondoGarage from "../../assets/images/fondo-garage.png";
 import { SelectionSidebar } from "../../components/garage/sidebar";
 import { Topbar } from "../../components/garage/topbar";
-import { autosData, dataMap } from "../../shared/data/garageData";
+import { carsData, dataMap } from "../../shared/data/garageData";
 
 export const GaragePage = () => {
-    const [activeCategory, setActiveCategory] = useState<"autos" | "personajes" | "fondos">("autos");
+    const [activeCategory, setActiveCategory] = useState<"cars" | "characters" | "backgrounds">("cars");
     // Reemplazar por el item seleccionado de cada usuario
-    const [selectedItemId, setSelectedItemId] = useState(autosData[0].id);
+    const [selectedItemId, setSelectedItemId] = useState(carsData[0].id);
 
     const selectedData = dataMap[activeCategory];
     const selectedItem = selectedData.find((item) => item.id === selectedItemId);
@@ -18,8 +18,8 @@ export const GaragePage = () => {
             <div
                 className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-700"
                 style={{
-                    backgroundImage: `url(${activeCategory === "fondos" && selectedItem
-                        ? selectedItem.imagen
+                    backgroundImage: `url(${activeCategory === "backgrounds" && selectedItem
+                        ? selectedItem.image
                         : fondoGarage
                         })`,
                 }}
@@ -44,10 +44,10 @@ export const GaragePage = () => {
 
                     {/* Elemento central */}
                     <div className="flex-1 flex justify-center items-center">
-                        {activeCategory !== "fondos" && selectedItem && (
+                        {activeCategory !== "backgrounds" && selectedItem && (
                             <img
-                                src={selectedItem.imagen}
-                                alt={selectedItem.nombre}
+                                src={selectedItem.image}
+                                alt={selectedItem.name}
                                 className="w-140 h-100 object-contain transition-transform duration-500"
                             />
                         )}

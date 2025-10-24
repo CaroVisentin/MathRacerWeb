@@ -29,10 +29,10 @@ export const SelectionSidebar = <T extends ItemSelectable>({
                                 ? "bg-[#858686] border-2 border-white scale-105"
                                 : "bg-gray-700 border border-gray-600 hover:ring-2 ring-blue-400"}`}
                     >
-                        <span className="text-white text-lg text-center">{item.nombre}</span>
+                        <span className="text-white text-lg text-center">{item.name}</span>
                         <img
-                            src={item.imagen}
-                            alt={item.nombre}
+                            src={item.image}
+                            alt={item.name}
                             className="w-40 h-20 object-contain"
                         />
                     </div>

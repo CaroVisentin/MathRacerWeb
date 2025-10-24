@@ -10,29 +10,29 @@ import marioBros from "../../assets/images/mario.png";
 import knuckles from "../../assets/images/knuckles.png";
 import amongUs from "../../assets/images/among-us.png";
 
-export const autosData = [
-    { id: 1, nombre: "Camaro SS", imagen: camaross },
-    { id: 2, nombre: "Mitsubishi Lancer EVO X", imagen: mitsubishi },
-    { id: 3, nombre: "Math Racer Especial", imagen: mathRacer },
-    { id: 4, nombre: "Lamborghini Countach", imagen: lamborghini },
+export const carsData = [
+    { id: 1, name: "Camaro SS", image: camaross },
+    { id: 2, name: "Mitsubishi Lancer EVO X", image: mitsubishi },
+    { id: 3, name: "Math Racer Especial", image: mathRacer },
+    { id: 4, name: "Lamborghini Countach", image: lamborghini },
 ];
 
-export const fondosData = [
-    { id: 1, nombre: "Pista de Día", imagen: pistaDia },
-    { id: 2, nombre: "Pista de Noche", imagen: pistaNoche },
-    { id: 3, nombre: "Pista de Atardecer", imagen: pistaAtardecer },
-    { id: 4, nombre: "Pista en Colores Pastel", imagen: pistaPastel },
+export const backgroundsData = [
+    { id: 1, name: "Pista de Día", image: pistaDia },
+    { id: 2, name: "Pista de Noche", image: pistaNoche },
+    { id: 3, name: "Pista de Atardecer", image: pistaAtardecer },
+    { id: 4, name: "Pista en Colores Pastel", image: pistaPastel },
 ]
 
-export const personajesData = [
-    { id: 1, nombre: "Mario Bros", imagen: marioBros },
-    { id: 2, nombre: "Knuckles", imagen: knuckles },
-    { id: 3, nombre: "Among Us", imagen: amongUs },
+export const charactersData = [
+    { id: 1, name: "Mario Bros", image: marioBros },
+    { id: 2, name: "Knuckles", image: knuckles },
+    { id: 3, name: "Among Us", image: amongUs },
 ]
 
 // Mapa de datasets
 export const dataMap = {
-    autos: autosData,
-    personajes: personajesData,
-    fondos: fondosData,
+    cars: carsData,
+    characters: charactersData,
+    backgrounds: backgroundsData,
 };

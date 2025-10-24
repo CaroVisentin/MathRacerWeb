@@ -5,8 +5,8 @@ import { BackButton } from '../../shared/buttons/backButton'
 import { homeDataMock } from '../../models/ui/home-data'
 
 interface TopbarProps {
-    activeCategory: "autos" | "personajes" | "fondos";
-    setActiveCategory: (category: "autos" | "personajes" | "fondos") => void;
+    activeCategory: "cars" | "characters" | "backgrounds";
+    setActiveCategory: (category: "cars" | "characters" | "backgrounds") => void;
 }
 
 export const Topbar = ({ activeCategory, setActiveCategory }: TopbarProps) => {
@@ -17,26 +17,26 @@ export const Topbar = ({ activeCategory, setActiveCategory }: TopbarProps) => {
 
             {/* Center icons */}
             <div className="flex gap-8">
-                <button type="button" onClick={() => setActiveCategory("autos")}>
+                <button type="button" onClick={() => setActiveCategory("cars")}>
                     <FontAwesomeIcon
                         icon={faCar}
-                        className={`text-xl transition ${activeCategory === "autos" ? "text-white scale-110" : "text-gray-400 hover:text-white"
+                        className={`text-xl transition ${activeCategory === "cars" ? "text-white scale-110" : "text-gray-400 hover:text-white"
                             }`}
                     />
                 </button>
 
-                <button type="button" onClick={() => setActiveCategory("personajes")}>
+                <button type="button" onClick={() => setActiveCategory("characters")}>
                     <FontAwesomeIcon
                         icon={faHelmetSafety}
-                        className={`text-xl transition ${activeCategory === "personajes" ? "text-white scale-110" : "text-gray-400 hover:text-white"
+                        className={`text-xl transition ${activeCategory === "characters" ? "text-white scale-110" : "text-gray-400 hover:text-white"
                             }`}
                     />
                 </button>
 
-                <button type="button" onClick={() => setActiveCategory("fondos")}>
+                <button type="button" onClick={() => setActiveCategory("backgrounds")}>
                     <FontAwesomeIcon
                         icon={faImage}
-                        className={`text-xl transition ${activeCategory === "fondos" ? "text-white scale-110" : "text-gray-400 hover:text-white"
+                        className={`text-xl transition ${activeCategory === "backgrounds" ? "text-white scale-110" : "text-gray-400 hover:text-white"
                             }`}
                     />
                 </button>
