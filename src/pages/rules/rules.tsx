@@ -1,6 +1,6 @@
 import { useState } from "react";
 import fondoReglas from '../../assets/images/fondo-reglas.png';
-import { reglas } from "../../shared/data/reglasData";
+import { rules } from "../../shared/data/rulesData";
 import { useNavigate } from "react-router-dom";
 
 export const RulesPage = () => {
@@ -44,13 +44,13 @@ export const RulesPage = () => {
                 <div className="space-y-8 max-w-4xl">
                     {step === 1 && (
                         <>
-                            <p className="text-3xl leading-relaxed">{reglas.descripcion}</p>
+                            <p className="text-3xl leading-relaxed">{rules.description}</p>
 
                             <h2 className="text-4xl mt-8 mb-4">TIPOS DE DESAFÍO</h2>
 
                             <ul className="list-disc list-inside text-3xl space-y-4">
-                                {reglas.tipos_de_desafios.map((desafio) => (
-                                    <li key={desafio.id}>{desafio.titulo}</li>
+                                {rules.challenge_types.map((challenge) => (
+                                    <li key={challenge.id}>{challenge.title}</li>
                                 ))}
                             </ul>
                         </>
@@ -59,16 +59,16 @@ export const RulesPage = () => {
                     {step === 2 && (
                         <>
                             <ul className="list-disc list-inside text-3xl space-y-4">
-                                {reglas.modos_de_juego.map((modo) => (
-                                    <li key={modo.titulo}>
-                                        {modo.titulo}: {modo.descripcion}
+                                {rules.game_modes.map((mode) => (
+                                    <li key={mode.title}>
+                                        {mode.title}: {mode.description}
                                     </li>
                                 ))}
                             </ul>
 
                             <div className="mt-12 space-y-4">
                                 <h2 className="text-4xl">VIDAS</h2>
-                                <p className="text-2xl">{reglas.vidas}</p>
+                                <p className="text-2xl">{rules.lives}</p>
                             </div>
                         </>
                     )}
