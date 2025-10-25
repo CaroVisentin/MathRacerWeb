@@ -9,7 +9,7 @@ import { InviteFriend } from "../components/game/on-line/invite-friend";
 import { JoinGame } from "../components/game/on-line/join-game";
 import { QuickGame } from "../components/game/on-line/quick-game"; import { LevelMap } from "../pages/game/story-mode/world/[id]";
 import { StoryModeGame } from "../pages/game/story-mode/level/[id]";
-import { MultiplayerGame } from "../components/game/multiplayer/multiplayer";
+//import { MultiplayerGame } from "../components/game/multiplayer/multiplayer";
 import { LoginPage } from "../pages/login/logIn";
 import { RegisterPage } from "../pages/register/register";
 import { RankingPage } from "../pages/ranking/ranking";
@@ -20,8 +20,8 @@ import CartPage from "../pages/cart/cart";
 
 const router = createBrowserRouter([
   { path: "/", element: <Home /> },
-  { path: "/multijugador", element: <MultiplayerGame /> },
-  { path: "/menu", element: <Menu /> },
+  { path: "/multijugador", element: <Menu/> },
+ // { path: "/menu", element: <Menu /> },
   { path: "/modo-historia", element: <StoryMode /> },
   { path: "/crear", element: <CreateGame /> },
   { path: "/invitar-amigo", element: <InviteFriend /> },

@@ -3,16 +3,6 @@ import { signalRUrl } from "../network/signalR";
 import { useEffect, useState } from "react";
 
 
-
-// Función para construir la conexión a SignalR
-// export const buildConnection = (): HubConnection => {
-//     return new HubConnectionBuilder()
-//         .withUrl(signalRUrl)
-//         .configureLogging(LogLevel.Information)
-//         .withAutomaticReconnect()
-//         .build();
-// };
-
 export const useConnection = () => {
     const [conn, setConn] = useState<HubConnection | null>(null);
     const [errorConexion, setErrorConexion] = useState<string | null>(null);
