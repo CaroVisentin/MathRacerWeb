@@ -14,6 +14,7 @@ import { LoginPage } from "../pages/login/logIn";
 import { RegisterPage } from "../pages/register/register";
 import { RankingPage } from "../pages/ranking/ranking";
 import { GaragePage } from "../pages/garage/garage";
+import { StorePage } from "../pages/store/store";
 
 
 const router = createBrowserRouter([
@@ -40,6 +41,7 @@ const router = createBrowserRouter([
   { path: "/register", element: <RegisterPage /> },
   { path: "/ranking", element: <RankingPage /> },
   { path: "/garage", element: <GaragePage /> },
+  { path: "/store", element: <StorePage /> },
 ]);
 
 export function AppRouter() {
