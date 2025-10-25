@@ -1,4 +1,4 @@
-import { batteryIcons } from "../../models/ui/home-data";
+import { batteryIcons } from "../../data/mocks/home";
 
 interface BatteryStatusProps {
     levels: ("full" | "empty")[];

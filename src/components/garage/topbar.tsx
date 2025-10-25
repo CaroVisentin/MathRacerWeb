@@ -2,7 +2,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCar, faHelmetSafety, faImage } from '@fortawesome/free-solid-svg-icons'
 import { CoinsDisplay } from '../home/coinsDisplay'
 import { BackButton } from '../../shared/buttons/backButton'
-import { homeDataMock } from '../../models/ui/home-data'
+import { homeDataMock } from '../../data/mocks/home'
 
 interface TopbarProps {
     activeCategory: "cars" | "characters" | "backgrounds";

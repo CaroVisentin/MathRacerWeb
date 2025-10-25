@@ -1,14 +1,4 @@
-export interface World {
-    id: number
-    name: string
-    description: string
-    totalLevels: number
-    completedLevels: number
-    stars: number
-    totalStars: number
-    unlocked: boolean
-    completed: boolean
-}
+import type { World } from "../../models/ui/storyModeGame";
 
 export const worlds: World[] = [
     {

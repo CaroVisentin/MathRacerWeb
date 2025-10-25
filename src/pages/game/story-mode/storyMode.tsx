@@ -6,7 +6,7 @@ import { BottomUI } from "../../../components/game/story-mode/bottomUI"
 import { SvgPathWorlds } from "../../../components/game/story-mode/svgPathWorlds"
 import { TopBar } from "../../../components/game/story-mode/topBar"
 
-export const StoryMode = () => {
+export const StoryMode = () => {    
     return (
         <>
             <div className="relative flex h-screen w-full flex-col overflow-hidden bg-gradient-to-br from-[#0a0520] via-[#1a0f3a] to-[#0f0828]">

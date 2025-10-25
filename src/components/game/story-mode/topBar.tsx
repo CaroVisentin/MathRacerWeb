@@ -1,13 +1,12 @@
 import { BackButton } from "../../../shared/buttons/backButton"
-import { batteryIcons } from "../../../models/ui/home-data";
+import { LivesAndTimer } from "./livesAndTimer";
 
 interface TopBarProps {
     headerText: string;
     remainingLives: number;
 }
 
-export const TopBar = ({ headerText, remainingLives }: TopBarProps) => {
-    const time = "15:37";
+export const TopBar = ({ headerText}: TopBarProps) => {
 
     return (
         <div className="relative z-20 flex shrink-0 items-center justify-between px-6 py-6">
@@ -31,22 +30,7 @@ export const TopBar = ({ headerText, remainingLives }: TopBarProps) => {
 
 
             {/* Vidas + temporizador */}
-            <div className="flex items-center gap-3">
-                <div className="flex flex-col items-center justify-center h-full">
-                    <img src={batteryIcons.pilabolt} alt="bolt" className="h-4" />
-                    <span className="text-base font-semibold text-white">{time}</span>
-                </div>
-
-                <div className="flex items-center gap-1">
-                    {[...Array(10)].map((_, i) => (
-                        <img
-                            key={i}
-                            src={i < remainingLives ? batteryIcons.pila : batteryIcons.pilaempty}
-                            className="w-4 h-8"
-                        />
-                    ))}
-                </div>
-            </div>
+            <LivesAndTimer />
         </div>
 
     )

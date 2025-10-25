@@ -1,10 +1,10 @@
 // Muestro el mapa de los niveles de cada mundo, pasándole el ID del mundo por url
 
-import type { Level } from "../../../../models/ui/level";
+import type { Level } from "../../../../models/ui/storyModeGame";
 import { TopBar } from "../../../../components/game/story-mode/topBar";
 import { SvgPathLevels } from "../../../../components/game/story-mode/svgPathLevels";
 import { BottomUI } from "../../../../components/game/story-mode/bottomUI";
-import { worlds } from "../../../../components/game/story-mode/svgPathWorlds";
+import { worlds } from "../../../../data/mocks/storyModeGame";
 // import { useParams } from "react-router-dom";
 
 export const LevelMap = () => {

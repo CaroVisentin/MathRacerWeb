@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { worlds, type World } from "../../../models/ui/world";
+import type { World } from "../../../models/ui/storyModeGame";
+import { worlds } from "../../../data/mocks/storyModeGame";
 
 export const SvgPathWorlds = () => {
 

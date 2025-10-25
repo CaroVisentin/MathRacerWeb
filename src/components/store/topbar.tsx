@@ -1,6 +1,6 @@
 import { BackButton } from "../../shared/buttons/backButton";
 import { CoinsDisplay } from "../home/coinsDisplay";
-import { homeDataMock } from "../../models/ui/home-data";
+import { homeDataMock } from "../../data/mocks/home";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faShoppingCart } from "@fortawesome/free-solid-svg-icons";
 import { useCart } from "../../hooks/useCart";

@@ -6,8 +6,10 @@ import { CoinsDisplay } from "../../components/home/coinsDisplay";
 import { ProfileCard } from "../../components/home/profileCard";
 import { InfoBox } from "../../components/home/infoBox";
 import { CarDisplay } from "../../components/home/carDisplay";
-import { type HomeData, homeDataMock,} from "../../models/ui/home-data"; 
+import { type HomeData } from "../../models/ui/home-data";
 import { useEffect, useState } from "react";
+import { homeDataMock } from "../../data/mocks/home";
+
 export const Home = () => {
   const [data, setData] = useState<HomeData | null>(null);
 
