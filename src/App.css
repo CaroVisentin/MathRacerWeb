@@ -1,11 +1,9 @@
 @import "tailwindcss";
 @import "remixicon/fonts/remixicon.css";
 
-
-
 @font-face {
   font-family: 'Jersey 10';
-  src: url('../assets/fonts/Jersey10-Regular.ttf') format('truetype');
+  src: url('/fonts/Jersey10-Regular.ttf') format('truetype');
   font-weight: 400; /* o el peso real de la fuente */
   font-style: normal;
   font-display: swap;
@@ -15,7 +13,7 @@
 
 @font-face {
   font-family: 'Audiowide';
-  src: url('../assets/fonts/Audiowide-Regular.ttf') format('truetype');
+  src: url('/fonts/Audiowide-Regular.ttf') format('truetype');
   font-weight: 400; /* o el peso real de la fuente */
   font-style: normal;
   font-display: swap;

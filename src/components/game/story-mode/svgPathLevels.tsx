@@ -1,6 +1,6 @@
 "use client"
 import React, { useState } from "react"
-import type { LevelMapProps } from "../../../models/ui/level"
+import type { Level, LevelMapProps } from "../../../models/ui/storyModeGame"
 
 
 export const SvgPathLevels: React.FC<LevelMapProps> = ({ levels }) => {
@@ -44,7 +44,7 @@ export const SvgPathLevels: React.FC<LevelMapProps> = ({ levels }) => {
 
                     {/* Level grid - 3 rows x 3 columns */}
                     <div className="grid grid-cols-3 gap-8 mb-8">
-                        {levels.map((level) => (
+                        {levels.map((level: Level) => (
                             <div key={level.id} className="flex justify-center">
                                 <button
                                     className={`relative group ${!level.unlocked && "cursor-not-allowed"}`}

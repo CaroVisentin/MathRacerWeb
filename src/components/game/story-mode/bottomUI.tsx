@@ -1,6 +1,6 @@
 import { RulesButton } from "../../../shared/buttons/buttonReglas"
 import { Wildcards } from "../../../shared/wildcards/wildcards";
-import type { World } from "./svgPathWorlds";
+import type { World } from "../../../models/ui/storyModeGame";
 
 interface BottomUIProps {
     world?: World;
