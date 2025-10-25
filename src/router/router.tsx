@@ -16,6 +16,7 @@ import { RankingPage } from "../pages/ranking/ranking";
 import { GaragePage } from "../pages/garage/garage";
 import { StorePage } from "../pages/store/store";
 import { ProductDetailsPage } from "../pages/store/product/[id]";
+import CartPage from "../pages/cart/cart";
 
 const router = createBrowserRouter([
   { path: "/", element: <Home /> },
@@ -42,7 +43,8 @@ const router = createBrowserRouter([
   { path: "/ranking", element: <RankingPage /> },
   { path: "/garage", element: <GaragePage /> },
   { path: "/store", element: <StorePage /> },
-  { path: "/store/product/:id", element: <ProductDetailsPage />},
+  { path: "/store/product/:id", element: <ProductDetailsPage /> },
+  { path: "/cart", element: <CartPage /> }
 ]);
 
 export function AppRouter() {

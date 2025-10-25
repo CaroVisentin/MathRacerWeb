@@ -1,5 +1,4 @@
 import { useParams } from "react-router-dom"
-
 import { useState, useEffect } from "react";
 import { faPlus, faMinus, faShoppingCart } from "@fortawesome/free-solid-svg-icons";
 import { productsSectionData } from "../../../shared/data/productsSectionData";
@@ -8,6 +7,7 @@ import { Topbar } from "../../../components/store/topbar";
 import coinImg from "../../../assets/images/coin.png";
 import { categoryLabels } from "../../../models/ui/store";
 import type { ProductDto } from "../../../models/domain/productDto";
+import { useCart } from "../../../hooks/useCart";
 
 export const ProductDetailsPage = () => {
     const params = useParams();
@@ -16,11 +16,11 @@ export const ProductDetailsPage = () => {
     const [producto, setProducto] = useState<ProductDto>();
     const [cantidad, setCantidad] = useState(1);
     const [agregado, setAgregado] = useState(false);
+    const { addToCart } = useCart();
 
     useEffect(() => {
         if (!id) return;
 
-        // Convertimos id a número porque router.query devuelve string | string[]
         const productId = Array.isArray(id) ? parseInt(id[0], 10) : parseInt(id, 10);
 
         // Buscamos el producto en los distintos sections
@@ -37,7 +37,16 @@ export const ProductDetailsPage = () => {
 
     const incrementar = () => setCantidad(cantidad + 1);
     const decrementar = () => cantidad > 1 && setCantidad(cantidad - 1);
+
     const agregarAlCarrito = () => {
+        addToCart({
+            id: producto.id,
+            name: producto.name,
+            price: producto.price,
+            image: producto.image,
+            typeProduct: producto.typeProduct,
+            quantity: cantidad,
+        });
         setAgregado(true);
         setTimeout(() => setAgregado(false), 2000);
     };
