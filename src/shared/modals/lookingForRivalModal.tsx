@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
 
 interface LookingForRivalModalProps {
@@ -12,15 +12,13 @@ export const LookingForRivalModal: React.FC<LookingForRivalModalProps> = ({
     setPlayerId,
     onConnection,
 }) => {
-    // Configuraciones de animación de los relojes
-    const relojConfigs = [
-        { duration: 1.5, delay: 0 },
-        { duration: 1.8, delay: 0.3 },
-        { duration: 2.1, delay: 0.6 },
-    ];
+    // prevent double notify in StrictMode (if used)
+    const notifiedRef = useRef(false);
+    const [connecting, setConnecting] = useState(false);
 
     // Generar nombre aleatorio y persistirlo
     useEffect(() => {
+        if (notifiedRef.current) return;
         const storedName = sessionStorage.getItem("playerName");
         if (storedName) {
             setPlayerId(storedName);
@@ -29,7 +27,14 @@ export const LookingForRivalModal: React.FC<LookingForRivalModalProps> = ({
             sessionStorage.setItem("playerName", randomName);
             setPlayerId(randomName);
         }
+        notifiedRef.current = true;
     }, [setPlayerId]);
+
+    const relojConfigs = [
+        { duration: 1.5, delay: 0 },
+        { duration: 1.8, delay: 0.3 },
+        { duration: 2.1, delay: 0.6 },
+    ];
 
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black/60 z-50">
@@ -55,12 +60,18 @@ export const LookingForRivalModal: React.FC<LookingForRivalModalProps> = ({
                         readOnly
                     />
 
-                    <button
-                        onClick={onConnection}
-                        className="bg-[#00F4FF] text-black px-4 py-2 rounded mt-2 hover:bg-[#00d0d0]"
-                    >
-                        Conectar
-                    </button>
+                    {/* Conectar button: disappears after click */}
+                    {!connecting && (
+                        <button
+                            onClick={() => {
+                                setConnecting(true);
+                                onConnection?.();
+                            }}
+                            className="bg-[#00F4FF] text-black px-4 py-2 rounded mt-2 hover:bg-[#00d0d0]"
+                        >
+                            Conectar
+                        </button>
+                    )}
 
                     {/* Tres relojes animados */}
                     <div className="flex space-x-4 mt-2">

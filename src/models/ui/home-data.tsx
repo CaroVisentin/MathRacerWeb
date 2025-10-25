@@ -1,5 +1,5 @@
 import auto from "../../assets/images/auto.png";
-import fondo from "../../assets/images/garage-bg.png";
+import fondo from "../../assets/images/fondocity.png";
 import perfil from "../../assets/images/jugador.png";
 import pila from "../../assets/images/pila-full.png";
 import pilaempty from "../../assets/images/pila-empty.png";
@@ -44,7 +44,7 @@ export const homeDataMock: HomeData = {
     id: 1,
     name: "PlayerOne",
     coins: 120000,
-    level: 5,
+    level: 1,
     ranking: 12234,
   },
   activeItems: {
