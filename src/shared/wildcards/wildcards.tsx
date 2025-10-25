@@ -58,34 +58,35 @@ export const DobleCountCard = ({ count, size, width, height,onActivate }: Omit<W
 // Componente que recibe los 3 juntos
 interface WildcardsProps {
     fireExtinguisher: number;
-    changeEquation: number;
-    dobleCount: number;
+    // changeEquation: number;
+    // dobleCount: number;
     size?: string;
     width?: string;
     height?: string;
     onFireExtinguisher?: () => void;
-    onChangeEquation?: () => void;
-    onDobleCount?: () => void;
+    // onChangeEquation?: () => void;
+    // onDobleCount?: () => void;
 }
 
 export const Wildcards = ({ 
     fireExtinguisher, 
-    changeEquation, 
-    dobleCount, 
+    // changeEquation, 
+    // dobleCount, 
     size, 
     width, 
     height, 
     onFireExtinguisher, 
-    onChangeEquation, 
-    onDobleCount }: WildcardsProps)  => {
+    // onChangeEquation, 
+    // onDobleCount 
+}: WildcardsProps)  => {
     return (
         <div className="flex gap-4">
             <FireExtinguisherCard count={fireExtinguisher} size={size} width={width} height={height} 
             onActivate={onFireExtinguisher} />
-            <ChangeEquationCard count={changeEquation} size={size} width={width} height={height}
+            {/* <ChangeEquationCard count={changeEquation} size={size} width={width} height={height}
             onActivate={onChangeEquation} />
             <DobleCountCard count={dobleCount} size={size} width={width} height={height} 
-            onActivate={onDobleCount}/>
+            onActivate={onDobleCount}/> */}
         </div>
     );
 };

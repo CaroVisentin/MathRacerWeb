@@ -370,11 +370,11 @@ export const MultiplayerGame = () => {
                 <div className="comodin">
                     <Wildcards
                         fireExtinguisher={eliminaOpciones ? 0 : 1}
-                        changeEquation={0}
-                        dobleCount={0}
+                        // changeEquation={0}
+                        // dobleCount={0}
                         onFireExtinguisher={handleFireExtinguisher}
-                        onChangeEquation={handleChangeEquation}
-                        onDobleCount={handleDobleCount}
+                        // onChangeEquation={handleChangeEquation}
+                        // onDobleCount={handleDobleCount}
                     />
                 </div>
             </div>
