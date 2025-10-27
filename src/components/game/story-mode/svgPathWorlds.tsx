@@ -60,6 +60,8 @@ export const SvgPathWorlds = () => {
             {/* Pista */}
             <div className="relative h-full px-6 py-24 overflow-x-auto" style={{ scrollBehavior: "smooth" }}>
                 <div className="relative h-full" style={{ width: `${containerWidth}px` }}>
+                    <svg ref={svgRef} className="absolute inset-0 w-full h-full" />
+
                     {/* Mundos */}
                     {worlds.map((world, index) => {
                         const isTop = index % 2 === 0
