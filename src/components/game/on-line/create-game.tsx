@@ -17,8 +17,8 @@ export default function CreateGame() {
     tipodeResultado: 'El Mayor',
   });
 
-   const { invoke, errorConexion } = useConnection(); 
-  //const { errorConexion, invoke } = useConnection();
+   //const { invoke, errorConexion } = useConnection(); 
+  const { errorConexion, invoke } = useConnection();
   // usar la conexión exportada
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;

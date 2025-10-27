@@ -15,7 +15,7 @@ export const Menu = () => {
         <Link to="/unirse-partida" className="botonGral hover:drop-shadow-[0_0_10px_#00ffff]" style={{gridArea: "unirse"}}>Unirse a Partida</Link>
         <Link to="/invitar-amigo" className="botonGral hover:drop-shadow-[0_0_10px_#00ffff]" style={{gridArea:"invitar"}}>Invitar a un Amigo</Link>
         <Link to="/ranking" className="botonGral hover:drop-shadow-[0_0_10px_#00ffff]" style={{gridArea:"ranking"}}>Ranking</Link>
-        <Link to="/multijugador" className="botonGral hover:drop-shadow-[0_0_10px_#00ffff]" style={{gridArea:"competitiva",
+        <Link to="/partida-rapida" className="botonGral hover:drop-shadow-[0_0_10px_#00ffff]" style={{gridArea:"competitiva",
           width:"50%",
           justifySelf:"center",
         }}>Partida Competitiva</Link>

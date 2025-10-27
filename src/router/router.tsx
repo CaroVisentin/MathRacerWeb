@@ -7,7 +7,8 @@ import { StoryMode } from "../pages/game/story-mode/storyMode";
 import CreateGame from "../components/game/on-line/create-game";
 import { InviteFriend } from "../components/game/on-line/invite-friend";
 import { JoinGame } from "../components/game/on-line/join-game";
-import { QuickGame } from "../components/game/on-line/quick-game"; import { LevelMap } from "../pages/game/story-mode/world/[id]";
+//import { QuickGame } from "../components/game/on-line/quick-game"; 
+import { LevelMap } from "../pages/game/story-mode/world/[id]";
 import { StoryModeGame } from "../pages/game/story-mode/level/[id]";
 //import { MultiplayerGame } from "../components/game/multiplayer/multiplayer";
 import { LoginPage } from "../pages/login/logIn";
@@ -17,6 +18,7 @@ import { GaragePage } from "../pages/garage/garage";
 import { StorePage } from "../pages/store/store";
 import { ProductDetailsPage } from "../pages/store/product/[id]";
 import CartPage from "../pages/cart/cart";
+import { MultiplayerGame } from "../components/game/multiplayer/multiplayer";
 
 const router = createBrowserRouter([
   { path: "/", element: <Home /> },
@@ -26,7 +28,7 @@ const router = createBrowserRouter([
   { path: "/crear", element: <CreateGame /> },
   { path: "/invitar-amigo", element: <InviteFriend /> },
   { path: "/unirse-partida", element: <JoinGame /> },
-  { path: "/partida-rapida", element: <QuickGame /> },
+  { path: "/partida-rapida", element: <MultiplayerGame /> },
   { path: "/reglas", element: <RulesPage /> },
   { path: "/perfil", element: <ProfilePage /> },
   { path: "/story-mode", element: <StoryMode /> },
