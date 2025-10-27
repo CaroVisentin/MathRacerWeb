@@ -7,16 +7,30 @@ import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import isologo from "/images/mathi_racer_logo.png";
 import fondo from "../../assets/images/fhome.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { loginUser } from "../../services/firebase/authServise";
 
 export const LoginPage = () => {
     const [showPassword, setShowPassword] = useState(false)
-    const [username, setUsername] = useState("")
+    //const [username, setUsername] = useState("")
+    const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
+    const navigate = useNavigate();
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        console.log("Login attempt:", { username, password })
+       // console.log("Login attempt:", { username, password })
+
+       try {
+        // Llamar al servicio de login (a implementar)
+        const user = await loginUser(email, password);
+         console.log("Usuario logueado:", user.uid);
+        // Redirigir o mostrar mensaje de éxito
+        navigate("/"); // Ejemplo de redirección
+       } catch (error) {
+        console.error("Error al loguear el usuario:", error);
+        alert("Error al loguear el usuario: " + (error as Error).message);
+       };
     }
 
     return (
@@ -47,14 +61,14 @@ export const LoginPage = () => {
                     <div className="flex flex-col !space-y-6">
                         <div>
                             <input
-                                id="username"
+                                id="email"
                                 type="text"
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
                                 className="w-full px-4 py-3 bg-[#04121E] border-2 border-cyan-400 
                                 text-white placeholder-[#00FCFC] focus:outline-none focus:ring-2 focus:ring-cyan-400 
                                 focus:border-transparent transition-all"
-                                placeholder="Usuario"
+                                placeholder="Email"
                             />
                         </div>
 

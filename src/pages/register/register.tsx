@@ -1,12 +1,14 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
+import {  useState } from "react"
 import isologo from "/images/mathi_racer_logo.png";
 import fondo from "../../assets/images/fhome.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { registerUser } from "../../services/firebase/authServise";
+
 
 export const RegisterPage = () => {
     const [showPassword, setShowPassword] = useState(false)
@@ -15,10 +17,33 @@ export const RegisterPage = () => {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [confirmPassword, setConfirmPassword] = useState("")
+    const navigate = useNavigate();
+    
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        console.log("Register attempt:", { username, email, password, confirmPassword })
+        
+        //console.log("Register attempt:", { username, email, password, confirmPassword })
+        if (password !== confirmPassword) {
+            alert("Las contraseñas no coinciden")
+            return
+        }
+        try{
+            // Llamar al servicio de registro (a implementar)
+            const user = await registerUser(email, password, username);
+            //ver el id del usuario registrado
+            //falta logica de unir uid con la base de datos de usuarios
+            console.log("Usuario registrado:", user.uid);
+            // Redirigir o mostrar mensaje de éxito
+            navigate("/login");
+        } catch (error) {
+            console.error("Error al registrar el usuario:", error);
+            console.log(error);
+            console.log((error as Error).message);         
+
+
+            alert("Error al registrar el usuario: " + (error as Error).message);
+        };
     }
 
     return (
