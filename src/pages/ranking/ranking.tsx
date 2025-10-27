@@ -4,7 +4,7 @@ import { BackButton } from "../../shared/buttons/backButton"
 import jugador1 from "../../assets/images/jugador1.png";
 import jugador2 from "../../assets/images/jugador2.png";
 import jugador3 from "../../assets/images/jugador3.png";
-import type { RankingPlayer } from "../../models/ui/rankingPlayer";
+import type { RankingPlayer } from "../../models/ui/ranking";
 import { StarsBackground } from "../../shared/backgrounds/starBackground";
 
 export const RankingPage = () => {

@@ -31,13 +31,13 @@ const router = createBrowserRouter([
   { path: "/partida-rapida", element: <MultiplayerGame /> },
   { path: "/reglas", element: <RulesPage /> },
   { path: "/perfil", element: <ProfilePage /> },
-  { path: "/story-mode", element: <StoryMode /> },
+  { path: "/modo-historia", element: <StoryMode /> },
   {
-    path: "/story-mode/world/:id",
+    path: "/modo-historia/mundo/:id",
     element: <LevelMap />,
   },
   {
-    path: "/story-mode/level/:id",
+    path: "/modo-historia/nivel/:id",
     element: <StoryModeGame />,
   },
   { path: "/login", element: <LoginPage /> },

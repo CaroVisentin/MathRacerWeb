@@ -20,7 +20,6 @@ const fondos = [
     'pista-pastel.png',
 ];
 
-
 export const MultiplayerGame = () => {
 
     const { errorConexion, invoke, on, off } = useConnection();
@@ -64,7 +63,7 @@ export const MultiplayerGame = () => {
         setResultado(null);
         setRespuestaSeleccionada(null);
         setBuscandoRival(true);
-        conectarJugador(); // Llama a la función ahora con useCallback
+        conectarJugador();
     }
 
     const handleVolver = () => {
@@ -155,12 +154,10 @@ export const MultiplayerGame = () => {
             //nueva implementacion con connection del hook        
             setJugadoresPartida(data.players);
 
-            // Comparación de nombres
             const jugadorActual = data.players.find(
                 (p: PlayerDto) => p.name?.trim().toLowerCase() === nombreJugador.trim().toLowerCase());
             const otroJugador = data.players.find((p: PlayerDto) => p.id !== jugadorActual?.id);
 
-            // Actualizar posiciones en porcentaje
             if (jugadorActual) {
                 setJugadorId(jugadorActual.id);
                 const avance = (jugadorActual.correctAnswers / 10) * 100;
@@ -188,7 +185,6 @@ export const MultiplayerGame = () => {
                 }
             }
 
-            // Lógica de Ganador
             if (data.winnerId && jugadorActual) {
                 if (data.winnerId === jugadorActual.id) {
                     setGanador(true);
@@ -199,15 +195,12 @@ export const MultiplayerGame = () => {
                 }
             }
 
-            // Iniciar juego si hay 2 jugadores
             if (data.players.length >= 2) setBuscandoRival(false);
 
-            // Actualizar pregunta
             if (data.currentQuestion) {
                 setPartidaId(data.gameId);
                 setRespuestaSeleccionada(null);
                 setResultado(null);
-
                 setEcuacion({
                     id: data.currentQuestion.id,
                     equation: data.currentQuestion.equation,
@@ -230,7 +223,9 @@ export const MultiplayerGame = () => {
 
     }, [on, off, nombreJugador]); // Depende de 'connection' y 'nombreJugador'
 
- 
+
+
+     
     useEffect(() => {
         const indexJugador = Math.floor(Math.random() * fondos.length);
         const indexRival = (indexJugador + 1 + Math.floor(Math.random() * (fondos.length - 1))) % fondos.length;
@@ -444,7 +439,7 @@ export const MultiplayerGame = () => {
                                 key={i}
                                 onClick={() => manejarRespuesta(opcion)}
                                 className={clases}
-                                disabled={!!respuestaSeleccionada || penalizado} // Deshabilitar si ya respondió o si está penalizado
+                                disabled={!!respuestaSeleccionada || penalizado}
                             >
                                 {opcion}
                             </button>

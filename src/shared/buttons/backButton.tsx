@@ -13,7 +13,7 @@ export const BackButton = ({onClick}: BackButtonProps) => {
     return (
         <button
             onClick={handleClick} // -1 significa "una página atrás"
-            className="text-white text-xl px-2 py-1 hover:text-[#f95ec8] transition border-2 border-[#00f0ff] rounded"
+            className="text-white text-xl px-2 py-1 hover:text-[#f95ec8] transition border-2 border-[#00f0ff]"
         >
             <FontAwesomeIcon icon={faArrowLeft} />
         </button>

@@ -1,54 +1,34 @@
 // Muestro el mapa de los niveles de cada mundo, pasándole el ID del mundo por url
 
-import { useRef, useState, useEffect, useMemo } from "react";
-import type { Level } from "../../../../models/ui/level";
+import type { Level } from "../../../../models/ui/storyModeGame";
 import { TopBar } from "../../../../components/game/story-mode/topBar";
 import { SvgPathLevels } from "../../../../components/game/story-mode/svgPathLevels";
 import { BottomUI } from "../../../../components/game/story-mode/bottomUI";
+import { worlds } from "../../../../data/mocks/storyModeGame";
 // import { useParams } from "react-router-dom";
 
 export const LevelMap = () => {
-    const pathRef = useRef<SVGPathElement>(null)
-    const [nodePositions, setNodePositions] = useState<{ x: number; y: number }[]>([])
-
     // const { id } = useParams();
 
     // Se obtiene la cantidad de niveles para el mundo en el que entró,
     // y último nivel completado del jugador
-    const levels: Level[] = useMemo(() => [
-        { id: 1, worldId: 1, number: 1 },
-        { id: 2, worldId: 1, number: 2 },
-        { id: 3, worldId: 1, number: 3 },
-        { id: 4, worldId: 1, number: 4 },
-        { id: 5, worldId: 1, number: 5 },
-        { id: 6, worldId: 1, number: 6 },
-        { id: 7, worldId: 1, number: 7 },
-        { id: 8, worldId: 1, number: 8 },
-        { id: 9, worldId: 1, number: 9 },
-        { id: 10, worldId: 1, number: 10 },
-        { id: 11, worldId: 1, number: 11 },
-        { id: 12, worldId: 1, number: 12 },
-        { id: 13, worldId: 1, number: 13 },
-        { id: 14, worldId: 1, number: 14 },
-        { id: 15, worldId: 1, number: 15 },
-        { id: 16, worldId: 1, number: 16 },
-        { id: 17, worldId: 1, number: 17 },
-        { id: 18, worldId: 1, number: 18 },
-        { id: 19, worldId: 1, number: 19 },
-        { id: 20, worldId: 1, number: 20 },
-    ], []);
-
-    useEffect(() => {
-        if (pathRef.current) {
-            const path = pathRef.current
-            const length = path.getTotalLength()
-            const positions = levels.map((_, i) => {
-                const point = path.getPointAtLength((length / (levels.length - 1)) * i)
-                return { x: point.x, y: point.y }
-            })
-            setNodePositions(positions)
-        }
-    }, [levels])
+    const levels: Level[] = [
+        { id: 1, unlocked: true, completed: true, stars: 3, worldId: 1, number: 1 },
+        { id: 2, unlocked: true, completed: true, stars: 3, worldId: 1, number: 2 },
+        { id: 3, unlocked: true, completed: true, stars: 3, worldId: 1, number: 3 },
+        { id: 4, unlocked: true, completed: true, stars: 3, worldId: 1, number: 4 },
+        { id: 5, unlocked: true, completed: true, stars: 3, worldId: 1, number: 5 },
+        { id: 6, unlocked: true, completed: true, stars: 3, worldId: 1, number: 6 },
+        { id: 7, unlocked: true, completed: true, stars: 3, worldId: 1, number: 7 },
+        { id: 8, unlocked: true, completed: true, stars: 3, worldId: 1, number: 8 },
+        { id: 9, unlocked: true, completed: true, stars: 3, worldId: 1, number: 9 },
+        { id: 10, unlocked: true, completed: true, stars: 3, worldId: 1, number: 10 },
+        { id: 11, unlocked: true, completed: false, stars: 0, worldId: 1, number: 11 },
+        { id: 12, unlocked: false, completed: false, stars: 0, worldId: 1, number: 12 },
+        { id: 13, unlocked: false, completed: false, stars: 0, worldId: 1, number: 13 },
+        { id: 14, unlocked: false, completed: false, stars: 0, worldId: 1, number: 14 },
+        { id: 15, unlocked: false, completed: false, stars: 0, worldId: 1, number: 15 },
+    ];
 
     return (
         <div className="relative flex h-screen w-full flex-col overflow-hidden bg-gradient-to-br from-[#0a0520] via-[#1a0f3a] to-[#0f0828]">
@@ -65,12 +45,14 @@ export const LevelMap = () => {
             <TopBar headerText="Mundo 1" remainingLives={7} />
 
             {/* Pasarle los niveles por props */}
-            <SvgPathLevels levels={levels} nodePositions={nodePositions} pathRef={pathRef} />
+            <div className="flex-1 overflow-auto">
+                <SvgPathLevels levels={levels} />
+            </div>
 
             {/* Bottom UI - Fixed */}
             {/* Pasarle la cantidad de cada comodín del jugador por props */}
-            <div className="p-4">
-                <BottomUI fireExtinguisherQuant={2} changeEquationQuant={3} dobleCountQuant={4} />
+            <div className="p-4 sticky bottom-0 z-20">
+                <BottomUI world={worlds[0]} fireExtinguisherQuant={2} changeEquationQuant={3} dobleCountQuant={4} />
             </div>
         </div>
     )

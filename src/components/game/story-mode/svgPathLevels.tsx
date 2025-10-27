@@ -1,131 +1,139 @@
-// MAPA DE NIVELES DE CADA MUNDO
+"use client"
+import React, { useState } from "react"
+import type { Level, LevelMapProps } from "../../../models/ui/storyModeGame"
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faLock } from "@fortawesome/free-solid-svg-icons";
-import React from "react";
-import type { LevelMapProps } from "../../../models/ui/level";
 
-export const SvgPathLevels: React.FC<LevelMapProps> = ({
-    levels,
-    nodePositions,
-    onLevelSelect,
-    pathRef,
-}) => {
-    // Por ahora hardcodeado (después puede venir del context del usuario)
-    const ultimoNivelCompletado = 4;
+export const SvgPathLevels: React.FC<LevelMapProps> = ({ levels }) => {
+    const [hoveredLevel, setHoveredLevel] = useState<number | null>(null)
 
     return (
-        <div className="relative z-10 flex-1 overflow-y-auto overflow-x-hidden px-4 pt-12 text-white">
-            <div className="relative mx-auto" style={{ height: "2000px" }}>
-                {/* SVG Path */}
-                <svg
-                    className="absolute inset-0 h-full w-full"
-                    viewBox="0 0 100 100"
-                    preserveAspectRatio="none"
-                >
-                    <defs>
-                        <linearGradient id="pathGradient" x1="0%" y1="100%" x2="0%" y2="0%">
-                            <stop offset="0%" stopColor="#00ffff" stopOpacity="0.8" />
-                            <stop offset="50%" stopColor="#ff00ff" stopOpacity="0.8" />
-                            <stop offset="100%" stopColor="#00ffff" stopOpacity="0.8" />
-                        </linearGradient>
-                        <filter id="glow">
-                            <feGaussianBlur stdDeviation="2" result="coloredBlur" />
-                            <feMerge>
-                                <feMergeNode in="coloredBlur" />
-                                <feMergeNode in="SourceGraphic" />
-                            </feMerge>
-                        </filter>
-                    </defs>
+        <div className="relative min-h-screen bg-[#1a0a2e] overflow-auto py-8">
+            {/* Scanline effect */}
+            <div className="pointer-events-none absolute inset-0 z-50 opacity-10">
+                <div className="h-full w-full bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,#000_2px,#000_4px)]" />
+            </div>
 
-                    <path
-                        ref={pathRef}
-                        id="mainPath"
-                        d="M 10 98 C 10 96, 15 94, 25 92 C 40 89, 60 87, 80 85 C 92 84, 96 82, 95 79 C 94 76, 88 74, 75 72 C 55 69, 35 67, 20 65 C 10 64, 6 62, 5 59 C 4 56, 8 54, 20 52 C 40 49, 60 47, 80 45 C 92 44, 96 42, 95 39 C 94 36, 88 34, 75 32 C 55 29, 35 27, 20 25 C 10 24, 6 22, 5 19 C 4 16, 8 14, 20 12 C 40 9, 60 7, 80 5 C 92 4, 96 2, 90 1 C 80 0, 60 0, 50 0"
-                        fill="none"
-                        stroke="url(#pathGradient)"
-                        strokeWidth="1"
-                        filter="url(#glow)"
-                        opacity="0.9"
-                    />
+            {/* Animated background stars */}
+            {[...Array(40)].map((_, i) => (
+                <div
+                    key={i}
+                    className="absolute w-1 h-1 bg-white pixel-corners animate-pulse"
+                    style={{
+                        left: `${Math.random() * 100}%`,
+                        top: `${Math.random() * 100}%`,
+                        animationDelay: `${Math.random() * 3}s`,
+                        animationDuration: `${2 + Math.random() * 2}s`,
+                    }}
+                />
+            ))}
 
-                    <path
-                        d="M 10 98 C 10 96, 15 94, 25 92 C 40 89, 60 87, 80 85 C 92 84, 96 82, 95 79 C 94 76, 88 74, 75 72 C 55 69, 35 67, 20 65 C 10 64, 6 62, 5 59 C 4 56, 8 54, 20 52 C 40 49, 60 47, 80 45 C 92 44, 96 42, 95 39 C 94 36, 88 34, 75 32 C 55 29, 35 27, 20 25 C 10 24, 6 22, 5 19 C 4 16, 8 14, 20 12 C 40 9, 60 7, 80 5 C 92 4, 96 2, 90 1 C 80 0, 60 0, 50 0"
-                        fill="none"
-                        stroke="url(#pathGradient)"
-                        strokeWidth="2"
-                        opacity="0.3"
-                        filter="url(#glow)"
-                    />
-                </svg>
-
-                {/* Niveles */}
-                {levels.map((level, index) => {
-                    const pos = nodePositions[index] || { x: 0, y: 0 };
-                    const unlocked = level.number <= ultimoNivelCompletado + 1; // el siguiente al último completado también está desbloqueado
-                    const isCyan = level.number % 2 === 1; // alterna colores entre niveles
-
-                    return (
-                        <button
-                            key={level.id}
-                            onClick={() => unlocked && onLevelSelect?.(level)}
-                            disabled={!unlocked}
-                            className="absolute -translate-x-1/2 -translate-y-1/2 transform transition-all duration-200 hover:scale-105 disabled:cursor-not-allowed"
-                            style={{
-                                left: `${pos.x}%`,
-                                top: `${pos.y}%`,
-                            }}
-                        >
-                            {/* Outer glow */}
-                            <div
-                                className={`absolute inset-0 rounded-full blur-md ${unlocked
-                                        ? isCyan
-                                            ? "bg-cyan-400/50"
-                                            : "bg-fuchsia-400/50"
-                                        : "bg-gray-600/30"
-                                    }`}
-                                style={{ transform: "scale(1.2)" }}
-                            />
-
-                            {/* Main button */}
-                            <div
-                                className={`relative flex h-20 w-20 items-center justify-center rounded-full transition-all ${unlocked
-                                        ? isCyan
-                                            ? "bg-gradient-to-b from-cyan-400 to-cyan-600"
-                                            : "bg-gradient-to-b from-fuchsia-400 to-fuchsia-600"
-                                        : "bg-gradient-to-b from-gray-600 to-gray-800"
-                                    }`}
-                                style={{
-                                    boxShadow: unlocked
-                                        ? isCyan
-                                            ? "0 6px 0 #0891b2, 0 8px 15px rgba(6, 182, 212, 0.4)"
-                                            : "0 6px 0 #a21caf, 0 8px 15px rgba(217, 70, 239, 0.4)"
-                                        : "0 4px 0 #374151, 0 6px 10px rgba(0, 0, 0, 0.3)",
-                                }}
-                            >
-                                <div className="relative z-10 flex items-center justify-center">
-                                    {unlocked ? (
-                                        <span
-                                            className={`text-3xl font-bold ${isCyan ? "text-cyan-950" : "text-fuchsia-950"
-                                                }`}
-                                            style={{
-                                                textShadow: "0 1px 2px rgba(255, 255, 255, 0.3)",
-                                            }}
-                                        >
-                                            {level.number}
-                                        </span>
-                                    ) : (
-                                        <FontAwesomeIcon
-                                            icon={faLock}
-                                            className="h-8 w-8 text-gray-400"
-                                        />
-                                    )}
-                                </div>
+            {/* Main content - Horizontal grid */}
+            <div className="relative z-30 flex items-center justify-center min-h-[calc(100vh-200px)] px-8">
+                <div className="w-full max-w-6xl">
+                    {/* Decorative top border */}
+                    <div className="mb-8 flex justify-center">
+                        <div className="relative">
+                            <div className="absolute inset-0 bg-yellow-400 blur-md opacity-50" />
+                            <div className="relative flex gap-2 py-4">
+                                {[...Array(9)].map((_, i) => (
+                                    <div key={i} className="w-3 h-3 bg-yellow-400 pixel-corners" />
+                                ))}
                             </div>
-                        </button>
-                    );
-                })}
+                        </div>
+                    </div>
+
+                    {/* Level grid - 3 rows x 3 columns */}
+                    <div className="grid grid-cols-3 gap-8 mb-8">
+                        {levels.map((level: Level) => (
+                            <div key={level.id} className="flex justify-center">
+                                <button
+                                    className={`relative group ${!level.unlocked && "cursor-not-allowed"}`}
+                                    onMouseEnter={() => setHoveredLevel(level.id)}
+                                    onMouseLeave={() => setHoveredLevel(null)}
+                                    disabled={!level.unlocked}
+                                >
+                                    {/* Outer frame */}
+                                    <div
+                                        className={`relative border-8 pixel-corners p-4 transition-all ${!level.unlocked
+                                            ? "border-gray-600 bg-gray-800"
+                                            : level.completed
+                                                ? "border-yellow-400 bg-[#1a0a2e]"
+                                                : "border-cyan-400 bg-[#1a0a2e]"
+                                            } ${hoveredLevel === level.id && level.unlocked ? "scale-110" : "scale-100"}`}
+                                    >
+                                        {/* Outer container padding extra para la bandera */}
+                                        <div className="relative w-32 h-32 flex flex-col items-center justify-center gap-2 pt-4">
+
+                                            {/* Checkered flag for completed levels */}
+                                            {level.completed && (
+                                                <div className="absolute top-0 right-0 w-8 h-8 grid grid-cols-4 grid-rows-4 gap-0 m-1">
+                                                    {[...Array(16)].map((_, i) => (
+                                                        <div
+                                                            key={i}
+                                                            className={`${(i + Math.floor(i / 4)) % 2 === 0 ? "bg-white" : "bg-black"}`}
+                                                        />
+                                                    ))}
+                                                </div>
+                                            )}
+
+                                            {/* Level number */}
+                                            <div
+                                                className={`text-6xl font-bold retro-text ${level.completed ? "text-yellow-400" : "text-cyan-400"}`}
+                                            >
+                                                {level.id}
+                                            </div>
+
+                                            {/* Stars */}
+                                            {level.completed && (
+                                                <div className="flex gap-1">
+                                                    {[...Array(3)].map((_, i) => (
+                                                        <div
+                                                            key={i}
+                                                            className={`w-5 h-5 pixel-corners ${i < level.stars ? "bg-yellow-400" : "bg-gray-600"}`}
+                                                            style={{
+                                                                clipPath:
+                                                                    "polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)",
+                                                            }}
+                                                        />
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {/* Corner decorations */}
+                                        <div className="absolute top-0 left-0 w-2 h-2 bg-white pixel-corners" />
+                                        <div className="absolute top-0 right-0 w-2 h-2 bg-white pixel-corners" />
+                                        <div className="absolute bottom-0 left-0 w-2 h-2 bg-white pixel-corners" />
+                                        <div className="absolute bottom-0 right-0 w-2 h-2 bg-white pixel-corners" />
+                                    </div>
+
+
+                                    {/* Hover label */}
+                                    {hoveredLevel === level.id && level.unlocked && (
+                                        <div className="absolute -top-12 left-1/2 -translate-x-1/2 whitespace-nowrap animate-bounce-slow">
+                                            <div className="bg-[#1a0a2e] border-4 border-cyan-400 px-4 py-2 pixel-corners">
+                                                <p className="text-cyan-400 font-bold text-sm retro-text">NIVEL {level.id}</p>
+                                            </div>
+                                        </div>
+                                    )}
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Decorative bottom border */}
+                    <div className="flex justify-center">
+                        <div className="relative">
+                            <div className="absolute inset-0 bg-yellow-400 blur-md opacity-50" />
+                            <div className="relative flex gap-2 py-4">
+                                {[...Array(9)].map((_, i) => (
+                                    <div key={i} className="w-3 h-3 bg-yellow-400 pixel-corners" />
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-    );
-};
+    )
+}
