@@ -60,46 +60,6 @@ export const SvgPathWorlds = () => {
             {/* Pista */}
             <div className="relative h-full px-6 py-24 overflow-x-auto" style={{ scrollBehavior: "smooth" }}>
                 <div className="relative h-full" style={{ width: `${containerWidth}px` }}>
-                    {/* SVG de la carretera */}
-                    <svg ref={svgRef} className="absolute inset-0 w-full h-full" style={{ zIndex: 1 }}>
-                        <defs>
-                            <pattern id="asphalt" x="0" y="0" width="8" height="8" patternUnits="userSpaceOnUse">
-                                <rect width="8" height="8" fill="#333344" />
-                                <rect x="0" y="0" width="2" height="2" fill="#ffff" />
-                                <rect x="4" y="4" width="2" height="2" fill="#ffff" />
-                            </pattern>
-                        </defs>
-
-                        {/* Camino principal */}
-                        <path
-                            d={`
-                                M ${baseOffset} ${yTop}
-                                L ${baseOffset + worldSpacing} ${yBottom}
-                                L ${baseOffset + worldSpacing * 2} ${yTop}
-                                L ${baseOffset + worldSpacing * 3} ${yBottom}
-                            `}
-                            fill="none"
-                            stroke="url(#asphalt)"
-                            strokeWidth="120"
-                            strokeLinecap="square"
-                        />
-
-                        {/* Línea amarilla central */}
-                        <path
-                            d={`
-                                M ${baseOffset} ${yTop}
-                                L ${baseOffset + worldSpacing} ${yBottom}
-                                L ${baseOffset + worldSpacing * 2} ${yTop}
-                                L ${baseOffset + worldSpacing * 3} ${yBottom}
-                            `}
-                            fill="none"
-                            stroke="#ffff00"
-                            strokeWidth="4"
-                            strokeDasharray="20,20"
-                            strokeLinecap="square"
-                        />
-                    </svg>
-
                     {/* Mundos */}
                     {worlds.map((world, index) => {
                         const isTop = index % 2 === 0
