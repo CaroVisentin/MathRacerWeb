@@ -19,6 +19,7 @@ import { StorePage } from "../pages/store/store";
 import { ProductDetailsPage } from "../pages/store/product/[id]";
 import CartPage from "../pages/cart/cart";
 import { MultiplayerGame } from "../components/game/multiplayer/multiplayer";
+import { TutorialPage } from "../pages/tutorial/tutorial";
 
 const router = createBrowserRouter([
   { path: "/", element: <Home /> },
@@ -46,7 +47,8 @@ const router = createBrowserRouter([
   { path: "/garage", element: <GaragePage /> },
   { path: "/store", element: <StorePage /> },
   { path: "/store/product/:id", element: <ProductDetailsPage /> },
-  { path: "/cart", element: <CartPage /> }
+  { path: "/cart", element: <CartPage /> },
+  { path: "/tutorial", element: <TutorialPage /> },
 ]);
 
 export function AppRouter() {
