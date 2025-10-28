@@ -3,7 +3,7 @@ import { useConnection } from "../signalR/connection";
 import { gameService } from "./gameAPI";
 
 export const useGameActions = () => {
-    // Aquí puedes definir las acciones relacionadas con el juego
+    //  definir las acciones relacionadas con el juego
     const {invoke} = useConnection();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);

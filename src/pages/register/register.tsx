@@ -31,6 +31,7 @@ export const RegisterPage = () => {
         try{
             // Llamar al servicio de registro (a implementar)
             const user = await registerUser(email, password, username);
+            const uid = user.uid;   
             //ver el id del usuario registrado
             //falta logica de unir uid con la base de datos de usuarios
             console.log("Usuario registrado:", user.uid);
