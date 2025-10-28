@@ -1,14 +1,11 @@
-// export const CreateGame: React.FC = () => {
-//   return <div className="text-white text-2xl p-8">Crear Partida 🛠️</div>;
-// };
 
 import { useState } from "react";
 import fondoPartida from '../../../assets/images/partidas.png';
 import { useConnection } from '../../../services/signalR/connection';
-
+import ErrorConnection from "../../../shared/modals/errorConnection";
 
 export default function CreateGame() {
-  // export default function CreateGame(){
+ 
   const [formData, setFormData] = useState({
     nombrePartida: '',
     privacidad: 'publico',
@@ -19,6 +16,7 @@ export default function CreateGame() {
 
    //const { invoke, errorConexion } = useConnection(); 
   const { errorConexion, invoke } = useConnection();
+  const [showModal, setShowModal] = useState(false);
   // usar la conexión exportada
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -31,93 +29,111 @@ export default function CreateGame() {
     e.preventDefault();
     if (!formData.nombrePartida.trim()) return;
 
+    try{
+
     // Enviar nombre de partida como identificador del jugador
     await invoke("FindMatch", formData.nombrePartida);
     console.log("Partida creada con nombre:", formData.nombrePartida);
     // onCreateGame(formData); // Llama a la función pasada por props con los datos del formulario y emitir con signal R
+    } catch (error) {
+      setShowModal(true);
+    }
+    };
+
+    const handleRetry = () => {
+      setShowModal(false);
+      handleSubmit(new Event('submit') as unknown as React.FormEvent);
 
   };
+
   return (
 
     <div
-      className="min-h-screen bg-cover bg-center bg-no-repeat"
+      className="min-h-screen flex items-center justify-center bg-cover bg-center bg-no-repeat px-2"
       style={{ backgroundImage: `url(${fondoPartida})` }}
     >
 
-      <form onSubmit={handleSubmit} className="max-w-md mx-auto bg-gray-900 text-white p-6 rounded-lg shadow-lg space-y-4">
-        <h2 className="text-2xl font-bold text-center mb-4">Crear Partida</h2>
+      <form onSubmit={handleSubmit} 
+      className="w-full max-w-2xl mx-auto bg-black/90 text-[#5df9f9] p-6 pb-2 rounded-lg shadow-lg ">
+        <h2 className="text-5xl text-[#f95ec8] uppercase text-center mb-10 pb-5 drop-shadow-[0_0_10px_#00ffff] font-audiowide">Crear Partida</h2>
 
-        <label className="block">
+        <label className="block text-3xl font-normal ">
           Nombre de la Partida:
           <input
             type="text"
             name="nombrePartida"
             value={formData.nombrePartida}
             onChange={handleChange}
-            className="w-full mt-1 p-2 rounded bg-gray-800 border border-gray-600"
+            className="w-full mt-1 p-2 rounded bg-black/90 border border-gray-600"
           />
         </label>
-        <label className="block">
+        <label className="block text-3xl font-normal">
           Privacidad:
           <select
             name="privacidad"
             value={formData.privacidad}
             onChange={handleChange}
-            className="w-full mt-1 p-2 rounded bg-gray-800 border border-gray-600"
+            className="w-full mt-1 p-2 rounded bg-black/90 border border-gray-600"
           >
             <option value="publica">Pública</option>
             <option value="privada">Privada</option>
           </select>
         </label>
         {formData.privacidad === 'privada' && (
-          <label className="block">
+          <label className="block text-3xl">
             Contraseña:
             <input
               type="password"
               name="contraseña"
               value={formData.contraseña}
               onChange={handleChange}
-              className="w-full mt-1 p-2 rounded bg-gray-800 border border-gray-600"
+              className="w-full mt-1 p-2 rounded bg-black/90 border border-gray-600"
             />
           </label>
         )}
-        <label className="block">
+        <label className="block text-3xl">
           Dificultad:
           <select
             name="dificultad"
             value={formData.dificultad}
             onChange={handleChange}
-            className="w-full mt-1 p-2 rounded bg-gray-800 border border-gray-600"
+            className="w-full mt-1 p-2 rounded bg-black/90 border border-gray-600"
           >
             <option value="Facil">Fácil</option>
             <option value="Medio">Medio</option>
             <option value="Dificil">Difícil</option>
           </select>
         </label>
-        <label className="block">
+        <label className="block text-3xl">
           Tipo de Resultado:
           <select
             name="tipodeResultado"
             value={formData.tipodeResultado}
             onChange={handleChange}
-            className="w-full mt-1 p-2 rounded bg-gray-800 border border-gray-600"
+            className="w-full mt-1 p-2 rounded bg-black/90 border border-gray-600"
           >
             <option value="El Mayor">El Mayor</option>
             <option value="El Menor">El Menor</option>
             <option value="Igual">Igual</option>
           </select>
         </label>
-        <div className="flex justify-center mt-6">
+        <div className="flex justify-between mt-6 pt-5 border-t border-gray-700">
           <button
             type="button"
-            className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded">← Volver</button>
+            className="bg-[#5df9f9] text-black font-extralight hover:bg-red-700 w-30 h-10 px-4  rounded text-2xl hover:drop-shadow-[0_0_10px_#00ffff]">← Volver</button>
           <button
             type="submit"
-            className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded">Crear</button>
+            className="bg-[#5df9f9] text-black font-extralight hover:bg-[#f95ec8] w-30 h-10 px-4  rounded text-2xl leading-relaxed hover:drop-shadow-[0_0_10px_#00ffff]">Crear</button>
 
         </div>
-        {errorConexion && <p style={{ color: 'red' }}>{errorConexion}</p>}
       </form>
+      {showModal && (
+        <ErrorConnection
+          message={errorConexion || "No se pudo conectar al servidor. Por favor, inténtalo de nuevo."}
+          onRetry={handleRetry}
+          onClose={() => setShowModal(false)}
+        />  
+      )}
     </div>
   );
 }
