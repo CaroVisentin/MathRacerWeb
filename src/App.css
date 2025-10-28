@@ -157,7 +157,7 @@ body {
   text-align: center;
   background-color: black;
   color: #5DF9F9;
-  border: 2px solid #5DF9F9; 
+  border: 4px solid #5DF9F9; 
   font-size: 2.5rem;
   padding: 1rem;
   border-radius: 6px;
@@ -167,10 +167,11 @@ body {
 
 
 .botonGral:hover {
-  background-color: #F95EC8;
+  /* background-color: #F95EC8; */
   transform: scale(1.05);
   text-decoration: none;
-  color: black;
+  color:#f95ec8;
+  border: 5px solid #f95ec8;
   
   
 }
