@@ -10,7 +10,6 @@ import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import type { GameUpdateDto } from '../../../models/domain/gameUpdateDto';
 import { useConnection } from '../../../services/signalR/connection';
 import { PowerUpType } from '../../../models/enums/powerUpType';
-import type { PowerUpDto } from '../../../models/domain/powerUpDto';
 const fondos = [
     'pista-noche.png',
     'pista-dia.png',

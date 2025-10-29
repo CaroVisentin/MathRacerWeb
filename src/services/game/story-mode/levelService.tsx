@@ -11,7 +11,7 @@ export async function getWorldLevels(worldId: number, playerId: number): Promise
         )
 
         return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error("Error al obtener los niveles del mundo:", error);
         throw error;
     }

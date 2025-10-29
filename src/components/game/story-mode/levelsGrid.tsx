@@ -1,9 +1,12 @@
-"use client"
 import React, { useState } from "react"
-import type { Level, LevelMapProps } from "../../../models/ui/storyModeGame"
+import type { LevelDtoUi } from "../../../models/ui/levelDtoUi";
 
+interface LevelsGridProps {
+    levels: LevelDtoUi[];
+    className?: string;
+}
 
-export const SvgPathLevels: React.FC<LevelMapProps> = ({ levels }) => {
+export const LevelsGrid: React.FC<LevelsGridProps> = ({ levels }: LevelsGridProps) => {
     const [hoveredLevel, setHoveredLevel] = useState<number | null>(null)
 
     return (
@@ -44,7 +47,7 @@ export const SvgPathLevels: React.FC<LevelMapProps> = ({ levels }) => {
 
                     {/* Level grid - 3 rows x 3 columns */}
                     <div className="grid grid-cols-3 gap-8 mb-8">
-                        {levels.map((level: Level) => (
+                        {levels.map((level: LevelDtoUi) => (
                             <div key={level.id} className="flex justify-center">
                                 <button
                                     className={`relative group ${!level.unlocked && "cursor-not-allowed"}`}
@@ -54,14 +57,17 @@ export const SvgPathLevels: React.FC<LevelMapProps> = ({ levels }) => {
                                 >
                                     {/* Outer frame */}
                                     <div
-                                        className={`relative border-8 pixel-corners p-4 transition-all ${!level.unlocked
-                                            ? "border-gray-600 bg-gray-800"
-                                            : level.completed
-                                                ? "border-yellow-400 bg-[#1a0a2e]"
-                                                : "border-cyan-400 bg-[#1a0a2e]"
-                                            } ${hoveredLevel === level.id && level.unlocked ? "scale-110" : "scale-100"}`}
+                                        className={`relative border-8 pixel-corners p-4 transition-all
+                                            ${!level.unlocked
+                                                ? "border-gray-600 bg-gray-800" // Bloqueado
+                                                : level.completed
+                                                    ? "border-yellow-400 bg-yellow-400/20" // Completado
+                                                    : "border-cyan-400 bg-[#1a0a2e]" // Desbloqueado
+                                            }
+                                                ${hoveredLevel === level.id && level.unlocked ? "scale-110" : "scale-100"}
+                                            `}
                                     >
-                                        {/* Outer container padding extra para la bandera */}
+                                        {/* Contenedor principal */}
                                         <div className="relative w-32 h-32 flex flex-col items-center justify-center gap-2 pt-4">
 
                                             {/* Checkered flag for completed levels */}
@@ -78,26 +84,16 @@ export const SvgPathLevels: React.FC<LevelMapProps> = ({ levels }) => {
 
                                             {/* Level number */}
                                             <div
-                                                className={`text-6xl font-bold retro-text ${level.completed ? "text-yellow-400" : "text-cyan-400"}`}
+                                                className={`text-6xl font-bold retro-text
+                                                    ${!level.unlocked
+                                                        ? "text-gray-500"
+                                                        : level.completed
+                                                            ? "text-yellow-400"
+                                                            : "text-cyan-400"
+                                                    }`}
                                             >
                                                 {level.id}
                                             </div>
-
-                                            {/* Stars */}
-                                            {level.completed && (
-                                                <div className="flex gap-1">
-                                                    {[...Array(3)].map((_, i) => (
-                                                        <div
-                                                            key={i}
-                                                            className={`w-5 h-5 pixel-corners ${i < level.stars ? "bg-yellow-400" : "bg-gray-600"}`}
-                                                            style={{
-                                                                clipPath:
-                                                                    "polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)",
-                                                            }}
-                                                        />
-                                                    ))}
-                                                </div>
-                                            )}
                                         </div>
 
                                         {/* Corner decorations */}
@@ -106,7 +102,6 @@ export const SvgPathLevels: React.FC<LevelMapProps> = ({ levels }) => {
                                         <div className="absolute bottom-0 left-0 w-2 h-2 bg-white pixel-corners" />
                                         <div className="absolute bottom-0 right-0 w-2 h-2 bg-white pixel-corners" />
                                     </div>
-
 
                                     {/* Hover label */}
                                     {hoveredLevel === level.id && level.unlocked && (

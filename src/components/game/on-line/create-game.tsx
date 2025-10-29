@@ -5,7 +5,7 @@ import { useConnection } from '../../../services/signalR/connection';
 import ErrorConnection from "../../../shared/modals/errorConnection";
 
 export default function CreateGame() {
- 
+
   const [formData, setFormData] = useState({
     nombrePartida: '',
     privacidad: 'publico',
@@ -14,7 +14,6 @@ export default function CreateGame() {
     tipodeResultado: 'El Mayor',
   });
 
-   //const { invoke, errorConexion } = useConnection(); 
   const { errorConexion, invoke } = useConnection();
   const [showModal, setShowModal] = useState(false);
   // usar la conexión exportada
@@ -29,20 +28,20 @@ export default function CreateGame() {
     e.preventDefault();
     if (!formData.nombrePartida.trim()) return;
 
-    try{
+    try {
 
-    // Enviar nombre de partida como identificador del jugador
-    await invoke("FindMatch", formData.nombrePartida);
-    console.log("Partida creada con nombre:", formData.nombrePartida);
-    // onCreateGame(formData); // Llama a la función pasada por props con los datos del formulario y emitir con signal R
-    } catch (error) {
+      // Enviar nombre de partida como identificador del jugador
+      await invoke("FindMatch", formData.nombrePartida);
+      console.log("Partida creada con nombre:", formData.nombrePartida);
+      // onCreateGame(formData); // Llama a la función pasada por props con los datos del formulario y emitir con signal R
+    } catch {
       setShowModal(true);
     }
-    };
+  };
 
-    const handleRetry = () => {
-      setShowModal(false);
-      handleSubmit(new Event('submit') as unknown as React.FormEvent);
+  const handleRetry = () => {
+    setShowModal(false);
+    handleSubmit(new Event('submit') as unknown as React.FormEvent);
 
   };
 
@@ -53,8 +52,8 @@ export default function CreateGame() {
       style={{ backgroundImage: `url(${fondoPartida})` }}
     >
 
-      <form onSubmit={handleSubmit} 
-      className="w-full max-w-2xl mx-auto bg-black/90 text-[#5df9f9] p-6 pb-2 rounded-lg shadow-lg ">
+      <form onSubmit={handleSubmit}
+        className="w-full max-w-2xl mx-auto bg-black/90 text-[#5df9f9] p-6 pb-2 rounded-lg shadow-lg ">
         <h2 className="text-5xl text-[#f95ec8] uppercase text-center mb-10 pb-5 drop-shadow-[0_0_10px_#00ffff] font-audiowide">Crear Partida</h2>
 
         <label className="block text-3xl font-normal ">
@@ -132,7 +131,7 @@ export default function CreateGame() {
           message={errorConexion || "No se pudo conectar al servidor. Por favor, inténtalo de nuevo."}
           onRetry={handleRetry}
           onClose={() => setShowModal(false)}
-        />  
+        />
       )}
     </div>
   );

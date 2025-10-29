@@ -32,7 +32,7 @@ export const WorldMap = ({ mappedWorlds }: WorldMapProps) => {
 
     const handleWorldClick = (world: WorldDtoUi) => {
         if (world.unlocked) {
-            navigate(`/modo-historia/mundo/${world.id}`);
+            navigate(`/modo-historia/mundo/${world.id}`, { state: { worldOperations: world.operations } });
         }
     };
 
@@ -182,8 +182,8 @@ export const WorldMap = ({ mappedWorlds }: WorldMapProps) => {
                                                         <div
                                                             key={i}
                                                             className={`w-4 h-6 border-2 ${i < world.completedLevels
-                                                                    ? "bg-[#FFE50C] border-white"
-                                                                    : "bg-[#2a2a3e] border-[#666688]"
+                                                                ? "bg-[#FFE50C] border-white"
+                                                                : "bg-[#2a2a3e] border-[#666688]"
                                                                 }`}
                                                         />
                                                     ))}

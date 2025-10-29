@@ -10,11 +10,8 @@ export async function getPlayerWorlds(playerId: number): Promise<PlayerWorldsRes
             `${API_URLS.worlds}/player/${playerId}`
         );
 
-        console.log("Respuesta: ", response)
-
         return response.data;
-
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error("Error al obtener los mundos del jugador:", error);
         throw error;
     }

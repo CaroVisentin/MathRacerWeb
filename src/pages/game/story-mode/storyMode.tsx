@@ -14,10 +14,8 @@ export const StoryMode = () => {
     useEffect(() => {
         async function fetchPlayerWorldsAndLevels() {
             try {
-                // 1️⃣ Traigo los mundos del jugador
                 const playerWorldsResponse: PlayerWorldsResponseDto = await getPlayerWorlds(playerId);
 
-                // 2️⃣ Para cada mundo, traigo los niveles completados
                 const enrichedWorlds: WorldDtoUi[] = await Promise.all(
                     playerWorldsResponse.worlds.map(async (world) => {
                         let completedLevels = 0;
@@ -28,25 +26,35 @@ export const StoryMode = () => {
                             completedLevels = worldLevelsResponse.lastCompletedLevelId || 0;
                         }
 
+                        const completed = completedLevels >= 15;
+
                         return {
                             ...world,
                             unlocked: world.id <= playerWorldsResponse.lastAvailableWorldId,
                             completedLevels,
-                            totalLevels: 15, // total por mundo
-                            completed: completedLevels >= 15,
+                            totalLevels: 15,
+                            completed,
                         };
                     })
                 );
 
+                // Desbloquear el siguiente mundo si el anterior está completo
+                for (let i = 0; i < enrichedWorlds.length - 1; i++) {
+                    if (enrichedWorlds[i].completed) {
+                        enrichedWorlds[i + 1].unlocked = true;
+                    }
+                }
+
                 setMappedWorlds(enrichedWorlds);
 
-            } catch (error: any) {
+            } catch (error: unknown) {
                 console.error("Error cargando mundos y niveles:", error);
             }
         }
 
         fetchPlayerWorldsAndLevels();
     }, []);
+
 
     return (
         <div className="relative flex h-screen w-full flex-col overflow-hidden bg-gradient-to-br from-[#0a0520] via-[#1a0f3a] to-[#0f0828]">

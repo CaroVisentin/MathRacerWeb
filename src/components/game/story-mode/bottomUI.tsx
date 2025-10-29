@@ -1,15 +1,14 @@
 import { RulesButton } from "../../../shared/buttons/buttonReglas"
 import { Wildcards } from "../../../shared/wildcards/wildcards";
-import type { World } from "../../../models/ui/storyModeGame";
 
 interface BottomUIProps {
-    world?: World;
+    operations?: string;
     fireExtinguisherQuant: number;
     changeEquationQuant: number;
     dobleCountQuant: number;
 }
 
-export const BottomUI = ({ world, fireExtinguisherQuant, changeEquationQuant, dobleCountQuant }: BottomUIProps) => {
+export const BottomUI = ({ operations, fireExtinguisherQuant, changeEquationQuant, dobleCountQuant }: BottomUIProps) => {
     return (
         <div className="flex items-center justify-between">
             <Wildcards
@@ -21,7 +20,7 @@ export const BottomUI = ({ world, fireExtinguisherQuant, changeEquationQuant, do
                 height="4rem"
             />
 
-            {world && (
+            {operations && (
                 <div className="absolute left-1/2 -translate-x-1/2">
                     {/* Contenedor con fondo translúcido y blur */}
                     <div className="relative bg-[#1a0a2e]/80 border-4 border-cyan-400 px-6 py-3 pixel-corners backdrop-blur-sm">

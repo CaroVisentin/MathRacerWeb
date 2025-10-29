@@ -43,11 +43,8 @@ export const StoryModeGameProvider = ({ children }: { children: ReactNode }) => 
                     setLastLifeAddedAt(new Date(now.getTime() - remainder * 1000));
                 }
 
-                console.log("Cargado desde sessionStorage ✅");
             } else {
                 // Simulamos backend solo la primera vez
-                console.log("Inicializando datos simulados 🕹️");
-
                 const simulatedResponse = await new Promise<{ remainingLives: number; lastLifeAddedAt: string }>(
                     (resolve) => {
                         setTimeout(() => {
@@ -84,7 +81,7 @@ export const StoryModeGameProvider = ({ children }: { children: ReactNode }) => 
         init();
     }, []);
 
-    // --- 🔹 Temporizador que corre cada segundo ---
+    // ---  Temporizador que corre cada segundo ---
     useEffect(() => {
         if (isLoading) return;
 
@@ -115,7 +112,7 @@ export const StoryModeGameProvider = ({ children }: { children: ReactNode }) => 
         return () => clearInterval(interval);
     }, [isLoading, lastLifeAddedAt, remainingLives]);
 
-    // --- 🔹 Guardar datos en sessionStorage cada vez que cambian ---
+    // --- Guardar datos en sessionStorage cada vez que cambian ---
     useEffect(() => {
         if (!isLoading && lastLifeAddedAt) {
             sessionStorage.setItem("remainingLives", remainingLives.toString());
@@ -123,7 +120,7 @@ export const StoryModeGameProvider = ({ children }: { children: ReactNode }) => 
         }
     }, [remainingLives, lastLifeAddedAt, isLoading]);
 
-    // --- 🔹 Gastar una vida ---
+    // --- Gastar una vida ---
     const spendLife = () => {
         setRemainingLives((prev) => {
             if (prev > 0) {
