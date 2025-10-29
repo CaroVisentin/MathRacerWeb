@@ -1,7 +1,7 @@
 "use client"
 
 import { createContext, useEffect, useMemo, useState, type ReactNode } from "react"
-import type { StoryModeContextType } from "../models/ui/storyModeGame"
+import type { StoryModeContextType } from "../models/ui/storyModeGame";
 
 const StoryModeGameContext = createContext<StoryModeContextType | undefined>(undefined)
 
