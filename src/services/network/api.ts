@@ -12,4 +12,7 @@ export const api = axios.create({
 // Exportar los endpoints organizados por módulo
 export const API_URLS = {
     games: "/games",
+    player: "/player",
+    worlds: "/worlds",
+    levels: "/levels",
 };
