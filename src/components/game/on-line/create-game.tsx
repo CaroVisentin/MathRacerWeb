@@ -39,13 +39,7 @@ export default function CreateGame() {
     } catch (error) {
       setShowModal(true);
     }
-    };
-
-    const handleRetry = () => {
-      setShowModal(false);
-      handleSubmit(new Event('submit') as unknown as React.FormEvent);
-
-  };
+    }; 
 
   return (
 
@@ -131,7 +125,6 @@ export default function CreateGame() {
       {showModal && (
         <ErrorConnection
           message={errorConexion || "No se pudo conectar al servidor. Por favor, inténtalo de nuevo."}
-          onRetry={handleRetry}
           onClose={() => setShowModal(false)}
         />  
       )}

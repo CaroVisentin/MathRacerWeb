@@ -7,12 +7,12 @@ import { sessionService } from "../services/game/sessionAPI";
 type AuthContextType = {
     firebaseUser: User | null;
     playerProfile: PlayerProfile | null;
-    singOut: () => Promise<void>;
+    signOut: () => Promise<void>;
 };
 export const AuthContext = createContext<AuthContextType>({
     firebaseUser: null,
     playerProfile: null,
-    singOut: async () => {},
+    signOut: async () => {},
 });
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
@@ -20,14 +20,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const [playerProfile, setPlayerProfile] = useState<PlayerProfile | null>(null);
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, async user => {
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
             setFirebaseUser(user);
             if (user) {
                 try {
-                    const profile = await sessionService.getPlayerProfileByUid(user.uid);
+                    const profile = await sessionService.obtenerPerfil(user.uid);
                     setPlayerProfile(profile);
                 } catch (error) {
-                    console.error("Error fetching player profile:", error);
+                    //sacar el console
+                    console.error("Error para obtener el perfil del jugador:", error);
                 }
             } else {
                 setPlayerProfile(null);
@@ -37,8 +38,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         return () => unsubscribe();
     }, []);
 
+    const handleSignOut = async() =>{
+        await signOut(auth);
+        setFirebaseUser(null);
+        setPlayerProfile(null);
+    }
+
     return (
-        <AuthContext.Provider value={{ firebaseUser,playerProfile, singOut: async () => { await signOut(auth); } }}>
+        <AuthContext.Provider value={{ firebaseUser,playerProfile, signOut: handleSignOut }}>
             {children}
         </AuthContext.Provider>
     );
