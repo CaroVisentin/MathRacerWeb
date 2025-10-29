@@ -26,7 +26,7 @@ export const LoginPage = () => {
 
        try {
         // Llamar al servicio de login (a implementar)
-       await sessionService.login(email, password);
+       await sessionService.loguearUsuario(email, password);
      
         navigate("/"); 
        } catch (error) {
@@ -35,10 +35,11 @@ export const LoginPage = () => {
         setShowErrorModal(true);
        };
     }
-    const handleRetry =()=>{
-        Modal(false); // esta mal !!!!!
+
+    // const handleRetry =()=>{
+    //     Modal(false); // esta mal !!!!!
         
-    };
+    // };
 
     const handleCloseModal = ()=>{
         setShowErrorModal(false);
@@ -148,7 +149,7 @@ export const LoginPage = () => {
                 {showErrorModal && (
                     <ErrorConnection
                     message ={errorMessage}
-                    onRetry= {handleRetry}
+                    // onRetry= {handleRetry}
                     onClose={handleCloseModal}
                     />
                 )}
@@ -156,7 +157,3 @@ export const LoginPage = () => {
         </div>
     )
 }
-function Modal(arg0: boolean) {
-    throw new Error("Function not implemented.");
-}
-
