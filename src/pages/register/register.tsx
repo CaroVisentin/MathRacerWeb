@@ -1,6 +1,6 @@
 "use client"
 
-import type React from "react"
+import React from "react"
 import {  useState } from "react"
 import isologo from "/images/mathi_racer_logo.png";
 import fondo from "../../assets/images/fhome.png";
@@ -8,6 +8,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { Link, useNavigate } from "react-router-dom";
 import { registerUser } from "../../services/firebase/authServise";
+import ErrorConnection from "../../shared/modals/errorConnection";
+import { sessionService } from "../../services/game/sessionAPI";
 
 
 export const RegisterPage = () => {
@@ -17,6 +19,8 @@ export const RegisterPage = () => {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [confirmPassword, setConfirmPassword] = useState("")
+    const [showErrorModal,setShowErrorModal] = useState(false)
+    const [errorMessage,setErrorMessage] = useState("")
     const navigate = useNavigate();
     
 
@@ -25,27 +29,34 @@ export const RegisterPage = () => {
         
         //console.log("Register attempt:", { username, email, password, confirmPassword })
         if (password !== confirmPassword) {
-            alert("Las contraseñas no coinciden")
-            return
+            setErrorMessage("las contraseñas no coinciden");
+            setShowErrorModal(true);
+            return;
         }
         try{
             // Llamar al servicio de registro (a implementar)
-            const user = await registerUser(email, password, username);
-            const uid = user.uid;   
-            //ver el id del usuario registrado
-            //falta logica de unir uid con la base de datos de usuarios
-            console.log("Usuario registrado:", user.uid);
-            // Redirigir o mostrar mensaje de éxito
+            const user = await sessionService.register(username,email,password);
+            
             navigate("/login");
         } catch (error) {
-            console.error("Error al registrar el usuario:", error);
-            console.log(error);
-            console.log((error as Error).message);         
+            
+            setErrorMessage((error as Error).message || "Error desconocido");
+            setShowErrorModal(true);       
 
-
-            alert("Error al registrar el usuario: " + (error as Error).message);
         };
-    }
+
+        
+const handleRetry = () => {
+   //Modal(false);
+  // handleSubmit(new Event("submit")= React.FormEvent);
+  };
+
+  const handleCloseModal = () => {
+    setShowErrorModal(false);
+  };
+
+   
+
 
     return (
         <div className="min-h-screen relative flex items-center justify-center overflow-hidden">
@@ -182,7 +193,19 @@ export const RegisterPage = () => {
                         Inicia sesión acá
                     </Link>
                 </p>
+                
+   {showErrorModal && (
+        <ErrorConnection
+          message={errorMessage}
+          onRetry={handleRetry}
+          onClose={handleCloseModal}
+        />
+      )}
+
             </div>
         </div>
     )
-}
+    }
+};
+    
+

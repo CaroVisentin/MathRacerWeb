@@ -8,29 +8,40 @@ import isologo from "/images/mathi_racer_logo.png";
 import fondo from "../../assets/images/fhome.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link, useNavigate } from "react-router-dom";
-import { loginUser } from "../../services/firebase/authServise";
+import ErrorConnection from "../../shared/modals/errorConnection"
+
+import { sessionService } from "../../services/game/sessionAPI";
 
 export const LoginPage = () => {
     const [showPassword, setShowPassword] = useState(false)
-    //const [username, setUsername] = useState("")
+    const [showErrorModal, setShowErrorModal] = useState(false)
+    const [errorMessage, setErrorMessage] = useState("")
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const navigate = useNavigate();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-       // console.log("Login attempt:", { username, password })
+      
 
        try {
         // Llamar al servicio de login (a implementar)
-        const user = await loginUser(email, password);
-         console.log("Usuario logueado:", user.uid);
-        // Redirigir o mostrar mensaje de éxito
-        navigate("/"); // Ejemplo de redirección
+       await sessionService.login(email, password);
+     
+        navigate("/"); 
        } catch (error) {
         console.error("Error al loguear el usuario:", error);
-        alert("Error al loguear el usuario: " + (error as Error).message);
+        setErrorMessage("No se pudo iniciar sesión. Por favor, verifica tus credenciales e intenta nuevamente.");
+        setShowErrorModal(true);
        };
+    }
+    const handleRetry =()=>{
+        Modal(false); // esta mal !!!!!
+        
+    };
+
+    const handleCloseModal = ()=>{
+        setShowErrorModal(false);
     }
 
     return (
@@ -134,7 +145,18 @@ export const LoginPage = () => {
                         Registrate acá
                     </Link>
                 </p>
+                {showErrorModal && (
+                    <ErrorConnection
+                    message ={errorMessage}
+                    onRetry= {handleRetry}
+                    onClose={handleCloseModal}
+                    />
+                )}
             </div>
         </div>
     )
 }
+function Modal(arg0: boolean) {
+    throw new Error("Function not implemented.");
+}
+
