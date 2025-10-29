@@ -42,8 +42,12 @@ export const MultiplayerGame = () => {
     const [fondoRival, setFondoRival] = useState<string>('');
     const cerrarModal = () => setGanador(false);
     const [eliminaOpciones, setEliminaOpciones] = useState(false);
-
-
+    const [powerUsePosition, setPowerUsePosition] = useState(false);  
+    const [powerUseOrden, setPowerUseOrden] = useState(false);
+    const [mensajeComodin, setMensajeComodin] = useState<string | null>(null);
+    
+    
+    // useCallback para evitar re-creaciones innecesarias
     const conectarJugador = useCallback(async () => {
         // Nueva implementación usando invoke directamente
         if (!nombreJugador.trim()) return;
@@ -80,32 +84,41 @@ export const MultiplayerGame = () => {
         // Seleccionar dos opciones incorrectas al azar
         const unaIncorrecta = opcionesIncorrectas[Math.floor(Math.random() * opcionesIncorrectas.length)];
 
-        setOpciones([ecuacion.correctAnswer, unaIncorrecta].sort(() => Math.random() - 0.5));
-        setEliminaOpciones(true);
-        console.log("Fire extinguisher activated!");
-    };
+    setOpciones([ecuacion.correctAnswer, unaIncorrecta].sort(() => Math.random() - 0.5));
+    setEliminaOpciones(true);
+    setMensajeComodin("Se han eliminado dos opciones incorrectas.");
+   // setTimeout(() => setMensajeComodin(null), 2000);
+    console.log("Fire extinguisher activated!");
+};
 
     const handleChangeEquation = async () => {
         if (!partidaId || !jugadorId) return;
 
-        try {
-            await invoke("UsePowerUp", partidaId, jugadorId, PowerUpType.ChangeEquation);
-            console.log("Change equation activated!");
-        } catch (error) {
-            console.error("Error using Change Equation power-up:", error);
-        }
-    };
+    try {
+     await invoke("UsePowerUp", partidaId, jugadorId, PowerUpType.ShuffleRival);
+       setPowerUseOrden(true); 
+       setMensajeComodin("Se han mezclado las opciones de la ecuación del rival.");
+       setTimeout(() => setMensajeComodin(null), 2000);
+       console.log(powerUseOrden);
+     console.log("Change equation activated!");  
+    } catch (error) {
+        console.error("Error using Change Equation power-up:", error);
+    }
+};
 
     const handleDobleCount = async () => {
         if (!partidaId || !jugadorId) return;
 
-        try {
-            await invoke("UsePowerUp", partidaId, jugadorId, PowerUpType.DoublePoints);
-            console.log("Doble count activated!");
-        } catch (error) {
-            console.error("Error using Doble Count power-up:", error);
-        }
-    };
+    try {
+     await invoke("UsePowerUp", partidaId, jugadorId, PowerUpType.DoublePoints);
+       setPowerUsePosition(true);
+         setMensajeComodin("si contestas bien moves 2 lugares");  
+         setTimeout(() => setMensajeComodin(null), 2000);  
+     console.log("Doble count activated!");  
+    } catch (error) {
+        console.error("Error using Doble Count power-up:", error);
+    }
+};
 
     const sendAnswer = useCallback(async (respuestaSeleccionada: number | null) => {
         // Nueva implementación usando invoke directamente
@@ -196,39 +209,23 @@ export const MultiplayerGame = () => {
                 });
                 setOpciones(data.currentQuestion.options);
                 setInstruccion(data.expectedResult);
-            }
-
-        };
-
-        const powerUpUsedHandler = (data: PowerUpDto) => {
-            console.log("PowerUp usado:", data);
-
-            if (data.powerUpType === PowerUpType.ShuffleRival) {
-                // Lógica para mezclar las opciones de la ecuación actual
-                console.log("Opciones mezcladas debido a ShuffleRival");
-            } else if (data.powerUpType === PowerUpType.DoublePoints) {
-                // Lógica para activar doble puntaje en la siguiente respuesta correcta
-                console.log("Doble puntaje activado para la siguiente respuesta correcta");
-            }
-        };
-
-
+            }          
+             
+            };
 
         // Registrar el listener para "GameUpdate"    
-        on("GameUpdate", gameUpdateHandler);
-        on("PowerUpUsed", powerUpUsedHandler);
+       on("GameUpdate", gameUpdateHandler);
+        // on("PowerUpUsed", powerUpUsedHandler);
 
         // Función de limpieza para quitar el listener
         return () => off("GameUpdate", gameUpdateHandler);
-        // off("PowerUpUsed", powerUpUsedHandler);
+      //  off("PowerUpUsed", powerUpUsedHandler);
 
     }, [on, off, nombreJugador]); // Depende de 'connection' y 'nombreJugador'
 
 
 
-
-
-    
+     
     useEffect(() => {
         const indexJugador = Math.floor(Math.random() * fondos.length);
         const indexRival = (indexJugador + 1 + Math.floor(Math.random() * (fondos.length - 1))) % fondos.length;
@@ -349,8 +346,9 @@ export const MultiplayerGame = () => {
             </div>
 
             {/* Instrucciones y Comodines */}
-            <div className="flex justify-center  items-center gridComodin mt-4">
-                <div className="pl-8 text-3xl text-left">
+      <div className="flex justify-center items-center gridComodin mt-4"> 
+                
+                <div className="instruccion font-mono text-xl text-center">
                     {instruccion
                         ? `Elegí la opción para que Y sea ${instruccion.toUpperCase()}`
                         : "esperando instruccion"}
@@ -359,22 +357,35 @@ export const MultiplayerGame = () => {
                 <div className="comodin">
                     <Wildcards
                         fireExtinguisher={eliminaOpciones ? 0 : 1}
-                        changeEquation={0}
-                        dobleCount={0}
+                        changeEquation={powerUseOrden ? 0 : 1}
+                        dobleCount={powerUsePosition ? 0 : 1}
                         onFireExtinguisher={handleFireExtinguisher}
                         onChangeEquation={handleChangeEquation}
                         onDobleCount={handleDobleCount}
-                    />
+                    />                 
+
+
                 </div>
             </div>
 
             {/* Ecuación */}
-            <div className="flex flex-col justify-center items-center h-full gap-10 mb-10">
+            <div className="flex flex-col justify-center items-center h-full gap-5 mb-10 mt-4">
+                {mensajeComodin && (
+                    <div className="w-full flex justify-end px-4">
+            <div className="text-cyan-200 font-mono  text-l  text-center animate-fade-in">
+                {mensajeComodin}
+            </div>
+        </div>
+        )}
                 <div className="flex justify-center mb-6">
-                    <div className={`inline-block border-2 border-white rounded-lg text-6xl w-100 h-20 text-center align-middle py-2
-                    ${penalizado ? 'opacity-50' : 'opacity-100'} transition-opacity`}>
+                    
+                    <div className="inline-block border-2 border-white rounded-lg text-6xl px-6 py-3">
+                        {/* <div className={`inline-block border-2 border-white rounded-lg text-6xl w-100 h-20 text-center align-middle py-2
+                    ${penalizado ? 'opacity-50' : 'opacity-100'} transition-opacity`}> */}
+                        {/* Mostrar ecuación solo si está definida */}
                         {ecuacion?.equation && <span>{ecuacion.equation}</span>}
                     </div>
+                    
                 </div>
                 {/* si anda mal error de conexion */}
                 {errorConexion && (

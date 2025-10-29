@@ -34,11 +34,12 @@ export const Home = () => {
       </div>
 
       <div className="relative z-10 h-full flex flex-col">
-        <div className="absolute top-4 left-4">
-          <img src={isologo} alt="Math Racer" className="w-100" />
-        </div>
-
-        <div className="absolute top-4 right-4 flex flex-col items-end gap-3">
+         <div className="absolute top-4 left-10">
+        
+          <img src={isologo} alt="Math Racer" className=" drop-shadow-[0_0_10px_#00ffff]" />
+        </div> 
+        
+          <div className="absolute top-4 right-4 flex flex-col items-end gap-3">
           <div className="flex items-start gap-5">
             <div className="flex flex-col gap-3">
               <BatteryStatus levels={data.battery.levels} time={data.battery.time} />
