@@ -1,43 +1,40 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import type { World } from "../../../models/ui/storyModeGame";
-import { worlds } from "../../../data/mocks/storyModeGame";
+import { type WorldDtoUi } from "../../../models/ui/worldDtoUi";
+import { mapOperations } from "../../../models/mappers/operationMapper";
 
-export const SvgPathWorlds = () => {
-    const navigate = useNavigate()
-    const [hoveredWorld, setHoveredWorld] = useState<number | null>(null)
-    const [svgHeight, setSvgHeight] = useState(0)
-    const svgRef = useRef<SVGSVGElement>(null)
+interface WorldMapProps {
+    mappedWorlds: WorldDtoUi[];
+}
 
-    const worldSpacing = 400
-    const baseOffset = 200
-    const containerWidth = baseOffset * 2 + worldSpacing * (worlds.length - 1)
+export const WorldMap = ({ mappedWorlds }: WorldMapProps) => {
+    const navigate = useNavigate();
+    const [hoveredWorld, setHoveredWorld] = useState<number | null>(null);
+    const [svgHeight, setSvgHeight] = useState(0);
+    const svgRef = useRef<SVGSVGElement>(null);
+
+    const levelsPerWorld = 15;
+    const worldSpacing = 400;
+    const baseOffset = 200;
+    const containerWidth = baseOffset * 2 + worldSpacing * (mappedWorlds.length - 1);
+    const yTop = svgHeight * 0.3;
+    const yBottom = svgHeight * 0.7;
 
     useEffect(() => {
-        // Calcula la altura del SVG una vez que se renderiza
-        if (svgRef.current) {
-            setSvgHeight(svgRef.current.clientHeight)
-        }
+        if (svgRef.current) setSvgHeight(svgRef.current.clientHeight);
 
-        // Si querés que se actualice al redimensionar
         const handleResize = () => {
-            if (svgRef.current) {
-                setSvgHeight(svgRef.current.clientHeight)
-            }
-        }
-        window.addEventListener("resize", handleResize)
-        return () => window.removeEventListener("resize", handleResize)
-    }, [])
+            if (svgRef.current) setSvgHeight(svgRef.current.clientHeight);
+        };
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
 
-    const handleWorldClick = (world: World) => {
+    const handleWorldClick = (world: WorldDtoUi) => {
         if (world.unlocked) {
-            navigate(`/modo-historia/mundo/${world.id}`)
+            navigate(`/modo-historia/mundo/${world.id}`);
         }
-    }
-
-    // Calculamos coordenadas verticales proporcionales
-    const yTop = svgHeight * 0.3
-    const yBottom = svgHeight * 0.7
+    };
 
     return (
         <div className="relative h-screen w-screen overflow-hidden bg-[#1C092D] crt-scanlines">
@@ -63,10 +60,10 @@ export const SvgPathWorlds = () => {
                     <svg ref={svgRef} className="absolute inset-0 w-full h-full" />
 
                     {/* Mundos */}
-                    {worlds.map((world, index) => {
-                        const isTop = index % 2 === 0
-                        const leftPosition = baseOffset + index * worldSpacing
-                        const topPosition = isTop ? yTop : yBottom
+                    {mappedWorlds.map((world, index) => {
+                        const isTop = index % 2 === 0;
+                        const leftPosition = baseOffset + index * worldSpacing;
+                        const topPosition = isTop ? yTop : yBottom;
 
                         return (
                             <div
@@ -85,7 +82,7 @@ export const SvgPathWorlds = () => {
                                     disabled={!world.unlocked}
                                     className="group relative flex flex-col items-center disabled:cursor-not-allowed"
                                 >
-                                    {/* Coche o mundo */}
+                                    {/* Mundo */}
                                     <div className="relative mb-6">
                                         <div
                                             className={`relative w-32 h-32 transition-transform ${hoveredWorld === world.id ? "scale-110 animate-bounce-pixel" : ""
@@ -148,29 +145,45 @@ export const SvgPathWorlds = () => {
 
                                     {/* Tarjeta info */}
                                     <div
-                                        className={`relative border-4 px-6 py-4 min-w-[240px] ${world.unlocked ? "bg-[#1a1a3e]" : "border-[#666688] bg-[#2a2a3e]"}`}
+                                        className={`relative border-4 px-6 py-4 min-w-[240px] ${world.unlocked ? "bg-[#1a1a3e]" : "border-[#666688] bg-[#2a2a3e]"
+                                            }`}
                                     >
-                                        <div className={`absolute -top-2 -left-2 w-4 h-4 ${world.unlocked ? "bg-[#F95EC8]" : "bg-[#666688]"}`} />
-                                        <div className={`absolute -top-2 -right-2 w-4 h-4 ${world.unlocked ? "bg-[#F95EC8]" : "bg-[#666688]"}`} />
-                                        <div className={`absolute -bottom-2 -left-2 w-4 h-4 ${world.unlocked ? "bg-[#F95EC8]" : "bg-[#666688]"}`} />
-                                        <div className={`absolute -bottom-2 -right-2 w-4 h-4 ${world.unlocked ? "bg-[#F95EC8]" : "bg-[#666688]"}`} />
+                                        <div
+                                            className={`absolute -top-2 -left-2 w-4 h-4 ${world.unlocked ? "bg-[#F95EC8]" : "bg-[#666688]"
+                                                }`}
+                                        />
+                                        <div
+                                            className={`absolute -top-2 -right-2 w-4 h-4 ${world.unlocked ? "bg-[#F95EC8]" : "bg-[#666688]"
+                                                }`}
+                                        />
+                                        <div
+                                            className={`absolute -bottom-2 -left-2 w-4 h-4 ${world.unlocked ? "bg-[#F95EC8]" : "bg-[#666688]"
+                                                }`}
+                                        />
+                                        <div
+                                            className={`absolute -bottom-2 -right-2 w-4 h-4 ${world.unlocked ? "bg-[#F95EC8]" : "bg-[#666688]"
+                                                }`}
+                                        />
 
-                                        <h2 className={`text-center text-2xl mb-2 retro-text-shadow ${world.unlocked ? "text-[#F95EC8]" : "text-[#666688]"}`}>
+                                        <h2
+                                            className={`text-center text-2xl mb-2 retro-text-shadow ${world.unlocked ? "text-[#F95EC8]" : "text-[#666688]"
+                                                }`}
+                                        >
                                             {world.name}
                                         </h2>
                                         <p className={`text-center text-lg mb-3 ${world.unlocked ? "text-white" : "text-[#666688]"}`}>
-                                            {world.description}
+                                            {mapOperations(world.operations)}
                                         </p>
 
                                         {world.unlocked && (
                                             <div className="flex items-center justify-center gap-2">
                                                 <div className="flex gap-1">
-                                                    {[...Array(world.totalLevels)].map((_, i) => (
+                                                    {[...Array(levelsPerWorld)].map((_, i) => (
                                                         <div
                                                             key={i}
                                                             className={`w-4 h-6 border-2 ${i < world.completedLevels
-                                                                ? "bg-[#FFE50C] border-white"
-                                                                : "bg-[#2a2a3e] border-[#666688]"
+                                                                    ? "bg-[#FFE50C] border-white"
+                                                                    : "bg-[#2a2a3e] border-[#666688]"
                                                                 }`}
                                                         />
                                                     ))}
@@ -184,10 +197,10 @@ export const SvgPathWorlds = () => {
                                     </div>
                                 </button>
                             </div>
-                        )
+                        );
                     })}
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};

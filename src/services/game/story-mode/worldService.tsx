@@ -10,6 +10,8 @@ export async function getPlayerWorlds(playerId: number): Promise<PlayerWorldsRes
             `${API_URLS.worlds}/player/${playerId}`
         );
 
+        console.log("Respuesta: ", response)
+
         return response.data;
 
     } catch (error: any) {

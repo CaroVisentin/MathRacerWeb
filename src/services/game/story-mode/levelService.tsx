@@ -7,8 +7,8 @@ import { api, API_URLS } from "../../network/api";
 export async function getWorldLevels(worldId: number, playerId: number): Promise<PlayerWorldLevelsResponseDto> {
     try {
         const response = await api.get<PlayerWorldLevelsResponseDto>(
-            `${API_URLS.worlds}/world/${worldId}/player/${playerId}`
-        );
+            `${API_URLS.levels}/world/${worldId}/player/${playerId}`
+        )
 
         return response.data;
     } catch (error: any) {
