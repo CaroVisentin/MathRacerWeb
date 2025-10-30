@@ -8,7 +8,7 @@ import fondo from "../../assets/images/fhome.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link, useNavigate } from "react-router-dom";
 import ErrorConnection from "../../shared/modals/errorConnection"
-import { useAuth } from "../../context/auth/useAuth";
+import { useAuth } from "../../hooks/useAuth";
 
 //import { sessionService } from "../../services/game/sessionAPI";
 

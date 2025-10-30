@@ -1,5 +1,5 @@
 import { AudioControls } from "../components/soundControl";
-import { useAuth } from "../../../context/auth/useAuth";
+import { useAuth } from "../../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 
 export const AjustesSection = () => {

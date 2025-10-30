@@ -1,5 +1,5 @@
 import { Navigate } from 'react-router-dom';
-import { useAuth } from '../../context/auth/useAuth';
+import { useAuth } from '../../hooks/useAuth';
 
 interface PublicRouteProps {
     children: React.ReactNode;
@@ -17,7 +17,8 @@ export const PublicRoute = ({ children }: PublicRouteProps) => {
     }
 
     if (user) {
-        return <Navigate to="/" />;
+        // Si hay un usuario logueado lo redirige a home
+        return <Navigate to="/home" />;
     }
 
     return <>{children}</>;

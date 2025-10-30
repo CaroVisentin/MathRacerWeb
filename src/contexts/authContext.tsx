@@ -1,8 +1,8 @@
 import { createContext, useState, useEffect, type ReactNode } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '../../config/firebase';
-import type { AuthUser } from '../../models/domain/authTypes';
-import { authService } from '../../services/auth/authService';
+import { auth } from '../config/firebase';
+import type { AuthUser } from '../models/domain/authTypes';
+import { authService } from '../services/auth/authService';
 
 interface AuthContextType {
   user: AuthUser | null;
@@ -45,6 +45,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       setLoading(true);
       const userData = await authService.loginWithEmail(email, password);
       setUser(userData);
+      console.log('Respuesta del backend en login manual:', userData);
     } catch (err) {
       setError('Error al iniciar sesión');
       throw err;
@@ -59,8 +60,8 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       setError(null);
       setLoading(true);
       const userData = await authService.registerWithEmail(email, password, username);
-      console.log('Respuesta del backend en register:', userData);
       setUser(userData);
+      console.log('Respuesta del backend en registro manual:', userData);
     } catch (err) {
       setError('Error al registrar usuario');
       console.error('Error en register:', err);
@@ -76,6 +77,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       setLoading(true);
       const userData = await authService.loginWithGoogle();
       setUser(userData);
+      console.log("Usuario logueado con google: ", userData)
     } catch (err) {
       setError('Error al iniciar sesión con Google');
       throw err;
@@ -88,6 +90,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       await authService.logout();
       setUser(null);
+      console.log("Usuario cerró sesión")
     } catch (err) {
       setError('Error al cerrar sesión');
       throw err;

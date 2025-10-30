@@ -11,7 +11,7 @@ import ErrorConnection from "../../shared/modals/errorConnection";
 //import { sessionService } from "../../services/game/sessionAPI";
 //import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useAuth } from "../../context/auth/useAuth";
+import { useAuth } from "../../hooks/useAuth";
 
 
 export const RegisterPage: FC = () => {

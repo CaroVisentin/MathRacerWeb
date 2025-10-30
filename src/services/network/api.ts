@@ -2,7 +2,7 @@
 import axios from "axios";
 
 // Detectar entorno
-const baseURL = import.meta.env.VITE_API_URL_LOCAL;
+const baseURL = import.meta.env.VITE_API_URL;
 
 // Validar que la URL base esté definida
 if (!baseURL) {
