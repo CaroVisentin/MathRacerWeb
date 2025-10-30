@@ -30,9 +30,7 @@ export const Wildcard = ({
             onClick ={isDisabled ? undefined : onActivate}
         >
             <FontAwesomeIcon icon={icon} style={{ color: isDisabled ? inactiveColor : color, fontSize: size }} />
-            {/* <span className="text-white text-lg mt-1">{count}</span> */}
-            <span className="hidden">{count}</span>
-           
+            <span className="text-white text-lg mt-1">{count}</span>           
         </div>
     );
 };

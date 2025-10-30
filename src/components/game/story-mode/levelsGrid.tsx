@@ -1,5 +1,6 @@
 import React, { useState } from "react"
 import type { LevelDtoUi } from "../../../models/ui/levelDtoUi";
+import { useNavigate } from "react-router-dom";
 
 interface LevelsGridProps {
     levels: LevelDtoUi[];
@@ -7,7 +8,12 @@ interface LevelsGridProps {
 }
 
 export const LevelsGrid: React.FC<LevelsGridProps> = ({ levels }: LevelsGridProps) => {
+    const navigate = useNavigate();
     const [hoveredLevel, setHoveredLevel] = useState<number | null>(null)
+
+    const handleLevelClick = (levelId: number) => {
+        navigate(`/modo-historia/nivel/${levelId}`)
+    }
 
     return (
         <div className="relative min-h-screen bg-[#1a0a2e] overflow-auto py-8">
@@ -50,6 +56,7 @@ export const LevelsGrid: React.FC<LevelsGridProps> = ({ levels }: LevelsGridProp
                         {levels.map((level: LevelDtoUi) => (
                             <div key={level.id} className="flex justify-center">
                                 <button
+                                    onClick={() => handleLevelClick(level.id)}
                                     className={`relative group ${!level.unlocked && "cursor-not-allowed"}`}
                                     onMouseEnter={() => setHoveredLevel(level.id)}
                                     onMouseLeave={() => setHoveredLevel(null)}

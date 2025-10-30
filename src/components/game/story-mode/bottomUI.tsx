@@ -27,7 +27,7 @@ export const BottomUI = ({ operations, fireExtinguisherQuant, changeEquationQuan
 
                         {/* Texto del mundo */}
                         <p className="text-xl text-cyan-300 text-center font-jersey">
-                            Operaciones de suma y resta
+                            {operations}
                         </p>
 
                         {/* Corner decorations tipo pixel */}

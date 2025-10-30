@@ -10,7 +10,7 @@ import { mapLevels } from "../../../../models/mappers/levelMapper";
 import type { LevelDtoUi } from "../../../../models/ui/levelDtoUi";
 
 export const LevelMap = () => {
-    const playerId = 1; // Sacar del auth
+    const playerId = 1; // Sacar del auth cuando ande el inicio de sesión
     const { id } = useParams();
     const worldId = Number(id);
     const location = useLocation();
