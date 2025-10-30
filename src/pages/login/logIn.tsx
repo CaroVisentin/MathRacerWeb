@@ -33,7 +33,7 @@ export const LoginPage: FC = () => {
         await login(email,password)
       // await sessionService.loguearUsuario(email, password);
      
-        navigate("/"); 
+        navigate("/home"); 
        } catch (error) {
         console.error("Error al loguear el usuario:", error);
         setErrorMessage("No se pudo iniciar sesión. Por favor, verifica tus credenciales e intenta nuevamente.");

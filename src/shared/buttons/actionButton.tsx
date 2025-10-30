@@ -5,11 +5,12 @@ interface ActionButtonProps {
     to?: string;
     children: React.ReactNode;
     className?: string;
+    onClick?: () => void;
 }
 
 
 //#0f0f0f 5df9f9
-export const ActionButton = ({ size = "large", to, children, className = "" }: ActionButtonProps) => {
+export const ActionButton = ({ size = "large", to, children, className = "", onClick }: ActionButtonProps) => {
   const sizeClasses =
     size === "large"
       ? "w-56 h-16 text-3xl"
@@ -34,6 +35,7 @@ export const ActionButton = ({ size = "large", to, children, className = "" }: A
         hover:shadow-[0_0_3px_rgba(255,255,255,0.5),0_0_20px_rgba(93,249,249,0.5),0_0_11px_rgba(93,249,249,0.5)]
         active:scale-95
       `}
+      onClick={onClick}
     >
       {children}
     </button>

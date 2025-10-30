@@ -17,8 +17,8 @@ import { StorePage } from "../pages/store/store";
 import { ProductDetailsPage } from "../pages/store/product/[id]";
 import CartPage from "../pages/cart/cart";
 import { MultiplayerGame } from "../components/game/multiplayer/multiplayer";
-import { ProtectedRoute } from "../components/auth/protectedRoute";
-import { PublicRoute } from "../components/auth/publicRoute";
+import { ProtectedRoute}  from "../components/auth/ProtectedRoute";
+import { PublicRoute } from "../components/auth/PublicRoute";
 import { TutorialPage } from "../pages/tutorial/tutorial";
 
 const router = createBrowserRouter([
