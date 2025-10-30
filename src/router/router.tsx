@@ -11,38 +11,79 @@ import  JoinGame  from "../components/game/on-line/join-game";
 import { LevelMap } from "../pages/game/story-mode/world/[id]";
 import { StoryModeGame } from "../pages/game/story-mode/level/[id]";
 //import { MultiplayerGame } from "../components/game/multiplayer/multiplayer";
-import { LoginPage } from "../pages/login/logIn";
-import { RegisterPage } from "../pages/register/register";
+import  LoginPage  from "../pages/login/logIn";
+import  RegisterPage  from "../pages/register/register";
 import { RankingPage } from "../pages/ranking/ranking";
 import { GaragePage } from "../pages/garage/garage";
 import { StorePage } from "../pages/store/store";
 import { ProductDetailsPage } from "../pages/store/product/[id]";
 import CartPage from "../pages/cart/cart";
 import { MultiplayerGame } from "../components/game/multiplayer/multiplayer";
+import { ProtectedRoute } from "../components/auth/ProtectedRoute";
+import { PublicRoute } from "../components/auth/PublicRoute";
 
 const router = createBrowserRouter([
-  { path: "/", element: <Home /> },
-  { path: "/multijugador", element: <Menu/> },
- // { path: "/menu", element: <Menu /> },
-  { path: "/modo-historia", element: <StoryMode /> },
-  { path: "/crear", element: <CreateGame /> },
-  { path: "/invitar-amigo", element: <InviteFriend /> },
-  { path: "/unirse-partida", element: <JoinGame /> },
-  { path: "/partida-rapida", element: <MultiplayerGame /> },
-  { path: "/reglas", element: <RulesPage /> },
-  { path: "/perfil", element: <ProfilePage /> },
-  { path: "/modo-historia", element: <StoryMode /> },
-  {
-    path: "/modo-historia/mundo/:id",
-    element: <LevelMap />,
+  { 
+    path: "/", 
+    element: <ProtectedRoute><Home /></ProtectedRoute> 
+  },
+  { 
+    path: "/multijugador", 
+    element: <ProtectedRoute><MultiplayerGame /></ProtectedRoute> 
+  },
+  { 
+    path: "/menu", 
+    element: <ProtectedRoute><Menu /></ProtectedRoute> 
+  },
+  { 
+    path: "/modo-historia", 
+    element: <ProtectedRoute><StoryMode /></ProtectedRoute> 
+  },
+  { 
+    path: "/crear", 
+    element: <ProtectedRoute><CreateGame /></ProtectedRoute> 
+  },
+  { 
+    path: "/invitar-amigo", 
+    element: <ProtectedRoute><InviteFriend /></ProtectedRoute> 
+  },
+  { 
+    path: "/unirse-partida", 
+    element: <ProtectedRoute><JoinGame /></ProtectedRoute> 
+  },
+  { 
+    path: "/partida-rapida", 
+    element: <ProtectedRoute><MultiplayerGame /></ProtectedRoute> 
+  },
+  { 
+    path: "/reglas", 
+    element: <ProtectedRoute><RulesPage /></ProtectedRoute> 
+  },
+  { 
+    path: "/perfil", 
+    element: <ProtectedRoute><ProfilePage /></ProtectedRoute> 
+  },
+  { 
+    path: "/story-mode", 
+    element: <ProtectedRoute><StoryMode /></ProtectedRoute> 
   },
   {
-    path: "/modo-historia/nivel/:id",
-    element: <StoryModeGame />,
+    path: "/story-mode/world/:id",
+    element: <ProtectedRoute><LevelMap /></ProtectedRoute>,
   },
-  { path: "/login", element: <LoginPage /> },
-  { path: "/register", element: <RegisterPage /> },
-  { path: "/ranking", element: <RankingPage /> },
+  {
+    path: "/story-mode/level/:id",
+    element: <ProtectedRoute><StoryModeGame /></ProtectedRoute>,
+  },
+  { 
+    path: "/login", 
+    element: <PublicRoute><LoginPage /></PublicRoute> 
+  },
+  { 
+    path: "/register", 
+    element: <PublicRoute><RegisterPage /></PublicRoute> 
+  },
+   { path: "/ranking", element: <RankingPage /> },
   { path: "/garage", element: <GaragePage /> },
   { path: "/store", element: <StorePage /> },
   { path: "/store/product/:id", element: <ProductDetailsPage /> },

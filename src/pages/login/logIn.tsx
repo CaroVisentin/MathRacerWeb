@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import isologo from "/images/mathi_racer_logo.png";
@@ -18,14 +17,18 @@ export const LoginPage = () => {
     const [errorMessage, setErrorMessage] = useState("")
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
-    const navigate = useNavigate();
+    const [error, setError] = useState<string | null>(null)
+    const { login, loginWithGoogle } = useAuth()
+    const navigate = useNavigate()
 
+   
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
       
 
        try {
         // Llamar al servicio de login (a implementar)
+        //await login(email,password)
        await sessionService.loguearUsuario(email, password);
      
         navigate("/"); 
@@ -40,6 +43,14 @@ export const LoginPage = () => {
     //     Modal(false); // esta mal !!!!!
         
     // };
+     const handleGoogleLogin = async () => {
+        try {
+            await loginWithGoogle()
+            // Redirigir al home después del login exitoso
+            navigate('/')
+        } catch (err) {
+            setError('Error al iniciar sesión con Google.')
+        }
 
     const handleCloseModal = ()=>{
         setShowErrorModal(false);
@@ -123,6 +134,7 @@ export const LoginPage = () => {
 
                         <button
                             type="button"
+                            onClick={handleGoogleLogin}
                             className="w-full py-2 bg-white hover:bg-gray-100 text-gray-800 transition-all flex items-center justify-center !gap-3 shadow-lg
                             text-lg"
                         >

@@ -11,6 +11,7 @@ import ErrorConnection from "../../shared/modals/errorConnection";
 import { sessionService } from "../../services/game/sessionAPI";
 //import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useAuth } from "../../context/auth/useAuth";
 
 
 export const RegisterPage = () => {
@@ -23,6 +24,9 @@ export const RegisterPage = () => {
     const [showErrorModal,setShowErrorModal] = useState(false)
     const [errorMessage,setErrorMessage] = useState("")
     const navigate = useNavigate();
+    const { register, loginWithGoogle } = useAuth()
+   
+    const [error, setError] = useState<string | null>(null)
     
 
     const validateInputs = () => {
@@ -62,6 +66,7 @@ export const RegisterPage = () => {
         try{
             // Llamar al servicio de registro (a implementar)
              await sessionService.registrarUsuario(username,email,password);
+             //await register(email, password, username)
              //toast.success("¡Registro Exitoso!! Ya sos un corredor!")
              
             navigate("/login");
@@ -71,7 +76,14 @@ export const RegisterPage = () => {
             setShowErrorModal(true);       
 
         }  
-    };  
+         const handleGoogleLogin = async () => {
+        try {
+            await loginWithGoogle()
+            navigate('/')
+        } catch (err) {
+            setError('Error al iniciar sesión con Google')
+        }
+    } 
        
 
     return (
@@ -186,6 +198,7 @@ export const RegisterPage = () => {
 
                         <button
                             type="button"
+                            onClick={handleGoogleLogin}
                             className="w-full py-2 bg-white hover:bg-gray-100 text-gray-800 transition-all flex items-center justify-center !gap-3 shadow-lg
                             text-lg"
                         >
@@ -221,6 +234,6 @@ export const RegisterPage = () => {
      
     ) };
 
-
+}
     
 

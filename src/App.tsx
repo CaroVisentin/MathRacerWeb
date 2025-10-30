@@ -4,8 +4,8 @@ import { CartProvider } from './contexts/cartContext'
 import { StoryModeGameProvider } from './contexts/storyModeGameContext'
 import { AppRouter } from './router/router'
 
-function App() {
 
+function App() {
   return (
     <AuthProvider>
     <CartProvider>
