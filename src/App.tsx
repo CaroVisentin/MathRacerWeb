@@ -1,5 +1,6 @@
 import './App.css'
-import { AuthProvider } from './contexts/authContext'
+import { AuthProvider } from './context/auth/AuthContext'
+
 import { CartProvider } from './contexts/cartContext'
 import { StoryModeGameProvider } from './contexts/storyModeGameContext'
 import { AppRouter } from './router/router'

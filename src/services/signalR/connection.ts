@@ -22,7 +22,7 @@ export const useConnection = () => {
                 //console.log("Conectado al servidor de SignalR");
                 setErrorConexion(null);
             })
-            .catch((err) => {
+            .catch(() => {
                 setErrorConexion("Error al iniciar la conexión con SignalR.");
               //  console.error("Error al conectar con el servidor de SignalR: ", err);
             });

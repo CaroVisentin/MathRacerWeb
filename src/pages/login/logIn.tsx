@@ -1,23 +1,25 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
+import { useState, type FC } from "react"
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import isologo from "/images/mathi_racer_logo.png";
 import fondo from "../../assets/images/fhome.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link, useNavigate } from "react-router-dom";
 import ErrorConnection from "../../shared/modals/errorConnection"
+import { useAuth } from "../../context/auth/useAuth";
 
-import { sessionService } from "../../services/game/sessionAPI";
+//import { sessionService } from "../../services/game/sessionAPI";
 
-export const LoginPage = () => {
+
+export const LoginPage: FC = () => {
     const [showPassword, setShowPassword] = useState(false)
     const [showErrorModal, setShowErrorModal] = useState(false)
     const [errorMessage, setErrorMessage] = useState("")
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
-    const [error, setError] = useState<string | null>(null)
+    //const [error, setError] = useState<string | null>(null)
     const { login, loginWithGoogle } = useAuth()
     const navigate = useNavigate()
 
@@ -28,8 +30,8 @@ export const LoginPage = () => {
 
        try {
         // Llamar al servicio de login (a implementar)
-        //await login(email,password)
-       await sessionService.loguearUsuario(email, password);
+        await login(email,password)
+      // await sessionService.loguearUsuario(email, password);
      
         navigate("/"); 
        } catch (error) {
@@ -48,13 +50,15 @@ export const LoginPage = () => {
             await loginWithGoogle()
             // Redirigir al home después del login exitoso
             navigate('/')
-        } catch (err) {
-            setError('Error al iniciar sesión con Google.')
+        } catch (error) {
+            setErrorMessage('Error al iniciar sesión con Google.');
+            setShowErrorModal(true);
         }
+    };
 
     const handleCloseModal = ()=>{
         setShowErrorModal(false);
-    }
+    };
 
     return (
         <div className="min-h-screen relative flex items-center justify-center overflow-hidden">
@@ -167,5 +171,5 @@ export const LoginPage = () => {
                 )}
             </div>
         </div>
-    )
-}
+    );
+};

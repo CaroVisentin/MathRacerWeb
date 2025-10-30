@@ -1,6 +1,6 @@
 "use client"
 
-import React from "react"
+import React, { type FC } from "react"
 import {  useState } from "react"
 import isologo from "/images/mathi_racer_logo.png";
 import fondo from "../../assets/images/fhome.png";
@@ -8,13 +8,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { Link, useNavigate } from "react-router-dom";
 import ErrorConnection from "../../shared/modals/errorConnection";
-import { sessionService } from "../../services/game/sessionAPI";
+//import { sessionService } from "../../services/game/sessionAPI";
 //import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useAuth } from "../../context/auth/useAuth";
 
 
-export const RegisterPage = () => {
+export const RegisterPage: FC = () => {
     const [showPassword, setShowPassword] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
     const [username, setUsername] = useState("")
@@ -26,7 +26,7 @@ export const RegisterPage = () => {
     const navigate = useNavigate();
     const { register, loginWithGoogle } = useAuth()
    
-    const [error, setError] = useState<string | null>(null)
+  //  const [error, setError] = useState<string | null>(null)
     
 
     const validateInputs = () => {
@@ -65,8 +65,8 @@ export const RegisterPage = () => {
 
         try{
             // Llamar al servicio de registro (a implementar)
-             await sessionService.registrarUsuario(username,email,password);
-             //await register(email, password, username)
+            // await sessionService.registrarUsuario(username,email,password);
+             await register(email, password, username)
              //toast.success("¡Registro Exitoso!! Ya sos un corredor!")
              
             navigate("/login");
@@ -76,14 +76,16 @@ export const RegisterPage = () => {
             setShowErrorModal(true);       
 
         }  
+    };
          const handleGoogleLogin = async () => {
         try {
             await loginWithGoogle()
             navigate('/')
-        } catch (err) {
-            setError('Error al iniciar sesión con Google')
+        } catch (error) {
+            setErrorMessage('Error al iniciar sesión con Google')
+            setShowErrorModal(true)
         }
-    } 
+    }; 
        
 
     return (
@@ -232,8 +234,8 @@ export const RegisterPage = () => {
                 )}
                 </div>
      
-    ) };
+    );
 
-}
+};
     
 

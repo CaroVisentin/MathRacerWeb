@@ -11,8 +11,8 @@ import  JoinGame  from "../components/game/on-line/join-game";
 import { LevelMap } from "../pages/game/story-mode/world/[id]";
 import { StoryModeGame } from "../pages/game/story-mode/level/[id]";
 //import { MultiplayerGame } from "../components/game/multiplayer/multiplayer";
-import  LoginPage  from "../pages/login/logIn";
-import  RegisterPage  from "../pages/register/register";
+import { LoginPage}  from "../pages/login/logIn";
+import  {RegisterPage}  from "../pages/register/register";
 import { RankingPage } from "../pages/ranking/ranking";
 import { GaragePage } from "../pages/garage/garage";
 import { StorePage } from "../pages/store/store";
@@ -26,11 +26,15 @@ import { TutorialPage } from "../pages/tutorial/tutorial";
 const router = createBrowserRouter([
   { 
     path: "/", 
+    element: <ProtectedRoute><LoginPage /></ProtectedRoute> 
+  },
+  { 
+    path: "/home", 
     element: <ProtectedRoute><Home /></ProtectedRoute> 
   },
   { 
     path: "/multijugador", 
-    element: <ProtectedRoute><MultiplayerGame /></ProtectedRoute> 
+    element: <ProtectedRoute><Menu/></ProtectedRoute> 
   },
   { 
     path: "/menu", 
