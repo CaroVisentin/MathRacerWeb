@@ -94,7 +94,7 @@ export default function  JoinGame()  {
       </div>
 
          <div className="flex justify-between mt-3 pt-2 ">
-            <Link to="/multijugador" className="bg-[#5df9f9] text-black font-extralight hover:bg-red-700 w-20 h-10 px-4 content-center rounded text-2xl  hover:drop-shadow-[0_0_10px_#00ffff]"style={{ marginTop: '20px',marginBottom:'20px' }}>Volver</Link>
+            <Link to="/menu" className="bg-[#5df9f9] text-black font-extralight hover:bg-red-700 w-20 h-10 px-4 content-center rounded text-2xl  hover:drop-shadow-[0_0_10px_#00ffff]"style={{ marginTop: '20px',marginBottom:'20px' }}>Volver</Link>
           </div>
     </div>
     </div>

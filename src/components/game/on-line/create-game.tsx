@@ -113,7 +113,7 @@ export default function CreateGame() {
           </select>
         </label>
         <div className="flex justify-between mt-6 pt-5 border-t border-gray-700">
-          <Link to="/multijugador"
+          <Link to="/menu"
             
             className="bg-[#5df9f9] text-black font-extralight hover:bg-red-700 w-30 h-10 px-4 content-center rounded text-2xl hover:drop-shadow-[0_0_10px_#00ffff]">← Volver</Link>
           <button

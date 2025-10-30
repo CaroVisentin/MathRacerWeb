@@ -24,9 +24,13 @@ import { PublicRoute } from "../components/auth/PublicRoute";
 import { TutorialPage } from "../pages/tutorial/tutorial";
 
 const router = createBrowserRouter([
+  // { 
+  //   path: "/", 
+  //   element: <ProtectedRoute><LoginPage /></ProtectedRoute> 
+  // },
   { 
     path: "/", 
-    element: <ProtectedRoute><LoginPage /></ProtectedRoute> 
+    element: <LoginPage />
   },
   { 
     path: "/home", 
@@ -34,7 +38,7 @@ const router = createBrowserRouter([
   },
   { 
     path: "/multijugador", 
-    element: <ProtectedRoute><Menu/></ProtectedRoute> 
+    element: <ProtectedRoute><MultiplayerGame/></ProtectedRoute> 
   },
   { 
     path: "/menu", 

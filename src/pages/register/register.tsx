@@ -69,7 +69,7 @@ export const RegisterPage: FC = () => {
              await register(email, password, username)
              //toast.success("¡Registro Exitoso!! Ya sos un corredor!")
              
-            navigate("/login");
+            navigate("/tutorial");
         } catch (error) {
             
             setErrorMessage((error as Error).message || "Error desconocido");

@@ -130,7 +130,7 @@ export const TutorialPage = () => {
 
                                         {/* Botón debajo y centrado */}
                                         <button
-                                            onClick={() => navigate("/garage")}
+                                            onClick={() => navigate("/home")}
                                             className="bg-[#0F7079] border-2 border-white rounded-lg text-3xl transition w-32 h-12 text-white"
                                         >
                                             Siguiente

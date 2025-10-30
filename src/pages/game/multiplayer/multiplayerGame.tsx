@@ -29,7 +29,7 @@ export const Menu = () => {
       <div className="arreglo">
 
 
-      <Link to="/" className={botonVolver}>Volver al Menú</Link>
+      <Link to="/home" className={botonVolver}>Volver </Link>
 </div>
     </div>
 
