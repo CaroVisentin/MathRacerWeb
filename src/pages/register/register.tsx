@@ -6,7 +6,8 @@ import isologo from "/images/mathi_racer_logo.png";
 import fondo from "../../assets/images/fhome.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/auth/useAuth";
 
 export const RegisterPage = () => {
     const [showPassword, setShowPassword] = useState(false)
@@ -16,9 +17,33 @@ export const RegisterPage = () => {
     const [password, setPassword] = useState("")
     const [confirmPassword, setConfirmPassword] = useState("")
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const { register, loginWithGoogle } = useAuth()
+    const navigate = useNavigate()
+    const [error, setError] = useState<string | null>(null)
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        console.log("Register attempt:", { username, email, password, confirmPassword })
+        console.log('Submit del formulario ejecutado', { email, password, username, confirmPassword })
+        if (password !== confirmPassword) {
+            setError('Las contraseñas no coinciden')
+            return
+        }
+        try {
+            await register(email, password, username)
+            navigate('/')
+        } catch (err) {
+            setError('Error al registrar usuario')
+            console.error('Error en handleSubmit:', err)
+        }
+    }
+
+    const handleGoogleLogin = async () => {
+        try {
+            await loginWithGoogle()
+            navigate('/')
+        } catch (err) {
+            setError('Error al iniciar sesión con Google')
+        }
     }
 
     return (
@@ -133,6 +158,7 @@ export const RegisterPage = () => {
 
                         <button
                             type="button"
+                            onClick={handleGoogleLogin}
                             className="w-full py-2 bg-white hover:bg-gray-100 text-gray-800 transition-all flex items-center justify-center !gap-3 shadow-lg
                             text-lg"
                         >

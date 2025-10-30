@@ -1,0 +1,25 @@
+import { Navigate } from 'react-router-dom';
+import { useAuth } from '../../context/auth/useAuth';
+
+interface ProtectedRouteProps {
+    children: React.ReactNode;
+}
+
+export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
+    const { user, loading } = useAuth();
+
+    if (loading) {
+        // Puedes mostrar un spinner o loading screen aquí
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-black">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-cyan-400"></div>
+            </div>
+        );
+    }
+
+    if (!user) {
+        return <Navigate to="/login" />;
+    }
+
+    return <>{children}</>;
+};

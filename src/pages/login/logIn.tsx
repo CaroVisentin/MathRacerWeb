@@ -1,22 +1,41 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import isologo from "/images/mathi_racer_logo.png";
 import fondo from "../../assets/images/fhome.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/auth/useAuth";
 
 export const LoginPage = () => {
     const [showPassword, setShowPassword] = useState(false)
-    const [username, setUsername] = useState("")
+    const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
+    const [error, setError] = useState<string | null>(null)
+    const { login, loginWithGoogle } = useAuth()
+    const navigate = useNavigate()
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        console.log("Login attempt:", { username, password })
+        try {
+            await login(email, password)
+            // Redirigir al home después del login exitoso
+            navigate('/')
+        } catch (err) {
+            setError('Error al iniciar sesión. Verifica tus credenciales.')
+        }
+    }
+
+    const handleGoogleLogin = async () => {
+        try {
+            await loginWithGoogle()
+            // Redirigir al home después del login exitoso
+            navigate('/')
+        } catch (err) {
+            setError('Error al iniciar sesión con Google.')
+        }
     }
 
     return (
@@ -47,14 +66,14 @@ export const LoginPage = () => {
                     <div className="flex flex-col !space-y-6">
                         <div>
                             <input
-                                id="username"
-                                type="text"
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
+                                id="email"
+                                type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
                                 className="w-full px-4 py-3 bg-[#04121E] border-2 border-cyan-400 
                                 text-white placeholder-[#00FCFC] focus:outline-none focus:ring-2 focus:ring-cyan-400 
                                 focus:border-transparent transition-all"
-                                placeholder="Usuario"
+                                placeholder="Email"
                             />
                         </div>
 
@@ -97,6 +116,7 @@ export const LoginPage = () => {
 
                         <button
                             type="button"
+                            onClick={handleGoogleLogin}
                             className="w-full py-2 bg-white hover:bg-gray-100 text-gray-800 transition-all flex items-center justify-center !gap-3 shadow-lg
                             text-lg"
                         >
