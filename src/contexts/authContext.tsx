@@ -3,6 +3,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../config/firebase';
 import type { AuthUser } from '../models/domain/authTypes';
 import { authService } from '../services/auth/authService';
+import { setAuthToken } from '../services/network/api';
 
 interface AuthContextType {
   user: AuthUser | null;
@@ -21,16 +22,20 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Mantener token actualizado en Axios
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
-        // Ya no es necesario validar con el backend aquí
+        const token = await firebaseUser.getIdToken(); // token válido y renovado
+        setAuthToken(token);
+
         setUser({
-          id: 0, // Si tienes el id del backend, puedes actualizarlo aquí
-          email: firebaseUser.email || '',
-          username: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || '',
+          id: 0, // actualizalo si tenés el id del backend
+          email: firebaseUser.email || "",
+          username: firebaseUser.displayName || firebaseUser.email?.split("@")[0] || "",
         });
       } else {
+        setAuthToken(null);
         setUser(null);
       }
       setLoading(false);

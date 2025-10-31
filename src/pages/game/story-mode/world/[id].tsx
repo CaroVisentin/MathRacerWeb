@@ -22,7 +22,7 @@ export const LevelMap = () => {
         async function fetchLevels() {
             // setLoading(true);
             try {
-                const playerWorldLevelsResponse: PlayerWorldLevelsResponseDto = await getWorldLevels(worldId, playerId);
+                const playerWorldLevelsResponse: PlayerWorldLevelsResponseDto = await getWorldLevels(worldId);
                 setPlayerWorldLevels(playerWorldLevelsResponse);
 
                 const mappedLevels = mapLevels(playerWorldLevelsResponse.levels, playerWorldLevelsResponse.lastCompletedLevelId);

@@ -8,13 +8,12 @@ import { getWorldLevels } from "../../../services/game/story-mode/levelService"
 import type { WorldDtoUi } from "../../../models/ui/worldDtoUi"
 
 export const StoryMode = () => {
-    const playerId = 1;
     const [mappedWorlds, setMappedWorlds] = useState<WorldDtoUi[]>([]);
 
     useEffect(() => {
         async function fetchPlayerWorldsAndLevels() {
             try {
-                const playerWorldsResponse: PlayerWorldsResponseDto = await getPlayerWorlds(playerId);
+                const playerWorldsResponse: PlayerWorldsResponseDto = await getPlayerWorlds();
 
                 const enrichedWorlds: WorldDtoUi[] = await Promise.all(
                     playerWorldsResponse.worlds.map(async (world) => {
@@ -22,7 +21,7 @@ export const StoryMode = () => {
 
                         // Solo traemos niveles si el mundo está desbloqueado
                         if (world.id <= playerWorldsResponse.lastAvailableWorldId) {
-                            const worldLevelsResponse = await getWorldLevels(world.id, playerId);
+                            const worldLevelsResponse = await getWorldLevels(world.id);
                             completedLevels = worldLevelsResponse.lastCompletedLevelId || 0;
                         }
 
