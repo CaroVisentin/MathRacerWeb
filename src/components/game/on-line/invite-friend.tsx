@@ -1,5 +1,4 @@
 
-import React from 'react';
 import fondoPartida from '../../../assets/images/partidas.png';
 import { Link } from 'react-router-dom';
 export default function InviteFriends ()  {
