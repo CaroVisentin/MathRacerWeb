@@ -29,6 +29,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
           id: 0, // Si tienes el id del backend, puedes actualizarlo aquí
           email: firebaseUser.email || '',
           username: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || '',
+          uid: firebaseUser?.uid || firebaseUser.uid,
         });
       } else {
         setUser(null);
