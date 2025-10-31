@@ -10,8 +10,8 @@ export function mapPlayerProfileToHomeData(profile: PlayerProfileDto): HomeData 
       id: profile.id,
       name: profile.name,
       coins: profile.coins,
-      level: profile.lastLevelId, // asumimos que este campo representa el nivel alcanzado
-      ranking: profile.points, // en tu DTO es "points", pero lo usás como ranking
+      level: profile.lastLevelId, 
+      ranking: profile.points, 
     },
     activeItems: {
       car: {
