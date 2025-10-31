@@ -1,5 +1,3 @@
-"use client"
-
 import { BackButton } from "../../shared/buttons/backButton"
 import jugador1 from "../../assets/images/jugador1.png";
 import jugador2 from "../../assets/images/jugador2.png";

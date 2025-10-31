@@ -1,4 +1,4 @@
-import React, { type FC } from "react"
+import React from "react"
 import { useState } from "react"
 import isologo from "/images/mathi_racer_logo.png";
 import fondo from "../../assets/images/fhome.png";
@@ -9,7 +9,7 @@ import ErrorConnection from "../../shared/modals/errorConnection";
 import "react-toastify/dist/ReactToastify.css";
 import { useAuth } from "../../hooks/useAuth";
 
-export const RegisterPage: FC = () => {
+export const RegisterPage = () => {
     const [showPassword, setShowPassword] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
     const [username, setUsername] = useState("")

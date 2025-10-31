@@ -6,7 +6,7 @@ import {
   signOut
 } from 'firebase/auth';
 import { FirebaseError } from 'firebase/app';
-import { auth } from '../../config/firebase';
+import { auth } from '../network/firebase';
 import { api, setAuthToken } from '../network/api';
 
 class AuthService {

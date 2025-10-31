@@ -1,5 +1,5 @@
 import type React from "react"
-import { useState, type FC } from "react"
+import { useState } from "react"
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import isologo from "/images/mathi_racer_logo.png";
 import fondo from "../../assets/images/fhome.png";
@@ -8,7 +8,7 @@ import { Link, useNavigate } from "react-router-dom";
 import ErrorConnection from "../../shared/modals/errorConnection"
 import { useAuth } from "../../hooks/useAuth";
 
-export const LoginPage: FC = () => {
+export const LoginPage = () => {
     const [showPassword, setShowPassword] = useState(false)
     const [showErrorModal, setShowErrorModal] = useState(false)
     const [errorMessage, setErrorMessage] = useState("")

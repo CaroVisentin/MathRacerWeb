@@ -10,7 +10,6 @@ import { mapLevels } from "../../../../models/mappers/levelMapper";
 import type { LevelDtoUi } from "../../../../models/ui/levelDtoUi";
 
 export const LevelMap = () => {
-    const playerId = 1; // Sacar del auth cuando ande el inicio de sesión
     const { id } = useParams();
     const worldId = Number(id);
     const location = useLocation();
@@ -35,7 +34,7 @@ export const LevelMap = () => {
         }
 
         fetchLevels();
-    }, [worldId, playerId]);
+    }, [worldId]);
 
     return (
         <div className="relative flex h-screen w-full flex-col overflow-hidden bg-gradient-to-br from-[#0a0520] via-[#1a0f3a] to-[#0f0828]">
