@@ -16,7 +16,6 @@ class AuthService {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const idToken = await userCredential.user.getIdToken();
       setAuthToken(idToken);
-      console.log("ID Token: ", idToken)
       // 2. Login en el backend
       const response = await api.post('/player/login', {
         email,
@@ -52,7 +51,6 @@ class AuthService {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const idToken = await userCredential.user.getIdToken();
       setAuthToken(idToken);
-            console.log("ID Token: ", idToken)
       const uid = userCredential.user.uid;
       // 2. Crear el usuario en el backend con todos los datos requeridos
       const response = await api.post('/player/register', {
@@ -86,7 +84,6 @@ class AuthService {
       const userCredential = await signInWithPopup(auth, provider);
       const idToken = await userCredential.user.getIdToken();
       setAuthToken(idToken);
-            console.log("ID Token: ", idToken)
 
       const username = userCredential.user.displayName || userCredential.user.email?.split('@')[0] || 'user';
       const email = userCredential.user.email;
@@ -111,7 +108,7 @@ class AuthService {
       throw error;
     }
   }
-  
+
   async logout() {
     try {
       await signOut(auth);

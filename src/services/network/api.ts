@@ -17,7 +17,6 @@ export const api = axios.create({
 // Interceptor para añadir el token a las peticiones
 export const setAuthToken = (token: string | null) => {
     if (token) {
-        console.log("Token: ", token)
         api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     } else {
         delete api.defaults.headers.common['Authorization'];

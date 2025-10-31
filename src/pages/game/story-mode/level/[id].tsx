@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import type { QuestionDto } from "../../../../models/domain/questionDto";
 import { FuelIndicator } from "../../../../shared/energy/energy";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -11,11 +11,11 @@ import fondoJugador from "../../../../assets/images/pista-noche.png";
 import auto1 from "../../../../assets/images/auto.png";
 
 export const StoryModeGame = () => {
-    const { id } = useParams();
-    const levelId = id;
+    // const { id } = useParams();
+    // const levelId = id;
 
-    const [posicionAuto1, setPosicionAuto1] = useState<number>(0);
-    const [posicionAuto2, setPosicionAuto2] = useState<number>(0);
+    // const [posicionAuto1, setPosicionAuto1] = useState<number>(0);
+    // const [posicionAuto2, setPosicionAuto2] = useState<number>(0);
     const [modalGanador, setModalGanador] = useState(false);
     const opciones = [3, 6, 8, 10];
     const ecuacion: QuestionDto = {
@@ -27,13 +27,13 @@ export const StoryModeGame = () => {
     const instruccion = "Elegí la opción para que la Y sea mayor";
     const navigate = useNavigate();
 
-    const handleFireExtinguisher = () => {
-        console.log("Used fire extinguisher")
-    };
+    // const handleFireExtinguisher = () => {
+    //     console.log("Used fire extinguisher")
+    // };
 
-    const handleDobleCount = async () => {
-        console.log("Used double count")
-    };
+    // const handleDobleCount = async () => {
+    //     console.log("Used double count")
+    // };
 
     return (
         <>
@@ -82,7 +82,8 @@ export const StoryModeGame = () => {
                             src={auto1}
                             alt="Auto 2"
                             className="absolute bottom-[180px] auto auto2"
-                            style={{ left: `${posicionAuto2}%` }}
+                            // style={{ left: `${posicionAuto2}%` }}
+                            style={{ left: `${0}%` }}
                         />
                     </div>
 
@@ -107,7 +108,8 @@ export const StoryModeGame = () => {
                             src={auto1}
                             alt="Auto 1"
                             className="absolute auto transition-all duration-500"
-                            style={{ left: `${posicionAuto1}%` }}
+                            // style={{ left: `${posicionAuto1}%` }}
+                            style={{ left: `${0}%` }}
                         />
 
                     </div>
@@ -127,8 +129,6 @@ export const StoryModeGame = () => {
                             fireExtinguisher={3}
                             changeEquation={3}
                             dobleCount={3}
-                            onFireExtinguisher={handleFireExtinguisher}
-                            onDobleCount={handleDobleCount}
                         />
                     </div>
                 </div>

@@ -33,7 +33,6 @@ export default function CreateGame() {
 
       // Enviar nombre de partida como identificador del jugador
       await invoke("FindMatch", formData.nombrePartida);
-      console.log("Partida creada con nombre:", formData.nombrePartida);
       // onCreateGame(formData); // Llama a la función pasada por props con los datos del formulario y emitir con signal R
     } catch {
       setShowModal(true);

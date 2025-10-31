@@ -45,18 +45,6 @@ export const TutorialPage = () => {
     const [isCofreOpen, setIsCofreOpen] = useState(false);
     const [recompensas, setRecompensas] = useState(false);
 
-    const handleFireExtinguisher = () => {
-        console.log("Used fire extinguisher")
-    };
-
-    const handleChangeEquation = async () => {
-        console.log("Used change equation")
-    };
-
-    const handleDobleCount = async () => {
-        console.log("Used double count")
-    };
-
     const handleFinalizarTutorial = () => {
         setMostrarCofre(true);
     }
@@ -525,9 +513,6 @@ export const TutorialPage = () => {
                                     fireExtinguisher={3}
                                     changeEquation={3}
                                     dobleCount={3}
-                                    onFireExtinguisher={handleFireExtinguisher}
-                                    onChangeEquation={handleChangeEquation}
-                                    onDobleCount={handleDobleCount}
                                 />
                             </div>
                         </div>

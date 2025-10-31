@@ -50,7 +50,6 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       setLoading(true);
       const userData = await authService.loginWithEmail(email, password);
       setUser(userData);
-      console.log('Respuesta del backend en login manual:', userData);
     } catch (err) {
       setError('Error al iniciar sesión');
       throw err;
@@ -61,12 +60,10 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const register = async (email: string, password: string, username: string) => {
     try {
-      console.log('Register handler ejecutado', { email, password, username });
       setError(null);
       setLoading(true);
       const userData = await authService.registerWithEmail(email, password, username);
       setUser(userData);
-      console.log('Respuesta del backend en registro manual:', userData);
     } catch (err) {
       setError('Error al registrar usuario');
       console.error('Error en register:', err);
@@ -82,7 +79,6 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       setLoading(true);
       const userData = await authService.loginWithGoogle();
       setUser(userData);
-      console.log("Usuario logueado con google: ", userData)
     } catch (err) {
       setError('Error al iniciar sesión con Google');
       throw err;
@@ -95,7 +91,6 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       await authService.logout();
       setUser(null);
-      console.log("Usuario cerró sesión")
     } catch (err) {
       setError('Error al cerrar sesión');
       throw err;

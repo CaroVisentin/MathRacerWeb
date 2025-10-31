@@ -9,8 +9,6 @@ export async function getPlayerWorlds(): Promise<PlayerWorldsResponseDto> {
         const response = await api.get<PlayerWorldsResponseDto>(
             `${API_URLS.worlds}`
         );
-
-        console.log("Respuesta API: ", response);
         return response.data;
     } catch (error: unknown) {
         console.error("Error al obtener los mundos del jugador:", error);

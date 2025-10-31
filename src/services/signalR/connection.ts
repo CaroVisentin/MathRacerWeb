@@ -19,15 +19,12 @@ export const useConnection = () => {
 
         newConnection.start()
             .then(() => {
-                //console.log("Conectado al servidor de SignalR");
                 setErrorConexion(null);
             })
             .catch(() => {
                 setErrorConexion("Error al iniciar la conexión con SignalR.");
-              //  console.error("Error al conectar con el servidor de SignalR: ", err);
             });
         return () => {
-           // console.log("Desconectando la conexión de SignalR.");
             newConnection.stop();
         };
     }, []);
