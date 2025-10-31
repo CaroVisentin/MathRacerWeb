@@ -1,5 +1,3 @@
-"use client"
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useCart } from "../../hooks/useCart";
 import { faMinus, faPlus, faShoppingCart, faTrash } from "@fortawesome/free-solid-svg-icons";
