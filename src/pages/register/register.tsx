@@ -1,50 +1,92 @@
 "use client"
 
-import type React from "react"
+import React, { type FC } from "react"
 import {  useState } from "react"
 import isologo from "/images/mathi_racer_logo.png";
 import fondo from "../../assets/images/fhome.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { Link, useNavigate } from "react-router-dom";
-import { registerUser } from "../../services/firebase/authServise";
+import ErrorConnection from "../../shared/modals/errorConnection";
+//import { sessionService } from "../../services/game/sessionAPI";
+//import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useAuth } from "../../hooks/useAuth";
 
 
-export const RegisterPage = () => {
+export const RegisterPage: FC = () => {
     const [showPassword, setShowPassword] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
     const [username, setUsername] = useState("")
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [confirmPassword, setConfirmPassword] = useState("")
+    const [showErrorModal,setShowErrorModal] = useState(false)
+    const [errorMessage,setErrorMessage] = useState("")
     const navigate = useNavigate();
+    const { register, loginWithGoogle } = useAuth()
+   
+  //  const [error, setError] = useState<string | null>(null)
     
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()
-        
-        //console.log("Register attempt:", { username, email, password, confirmPassword })
-        if (password !== confirmPassword) {
-            alert("Las contraseñas no coinciden")
-            return
+    const validateInputs = () => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,}$/;
+
+  if (!username.trim()) {
+    setErrorMessage("El nombre de usuario es obligatorio");
+    return false;
+  }
+
+  if (!emailRegex.test(email)) {
+    setErrorMessage("El email no tiene un formato válido");
+    return false;
+  }
+
+  if (!passwordRegex.test(password)) {
+    setErrorMessage("La contraseña debe tener al menos 8 caracteres, una mayúscula y un símbolo");
+    return false;
+  }
+
+  if (password !== confirmPassword) {
+    setErrorMessage("Las contraseñas no coinciden");
+    return false;
+  }
+  return true;
+};
+
+
+ const handleSubmit = async (e: React.FormEvent) =>{
+            e.preventDefault();           
+              if (!validateInputs()) {
+            setShowErrorModal(true);
+            return;
         }
+
         try{
             // Llamar al servicio de registro (a implementar)
-            const user = await registerUser(email, password, username);
-            //ver el id del usuario registrado
-            //falta logica de unir uid con la base de datos de usuarios
-            console.log("Usuario registrado:", user.uid);
-            // Redirigir o mostrar mensaje de éxito
-            navigate("/login");
+            // await sessionService.registrarUsuario(username,email,password);
+             await register(email, password, username)
+             //toast.success("¡Registro Exitoso!! Ya sos un corredor!")
+             
+            navigate("/tutorial");
         } catch (error) {
-            console.error("Error al registrar el usuario:", error);
-            console.log(error);
-            console.log((error as Error).message);         
+            
+            setErrorMessage((error as Error).message || "Error desconocido");
+            setShowErrorModal(true);       
 
-
-            alert("Error al registrar el usuario: " + (error as Error).message);
-        };
-    }
+        }  
+    };
+         const handleGoogleLogin = async () => {
+        try {
+            await loginWithGoogle()
+            navigate('/')
+        } catch (error) {
+            setErrorMessage('Error al iniciar sesión con Google')
+            setShowErrorModal(true)
+        }
+    }; 
+       
 
     return (
         <div className="min-h-screen relative flex items-center justify-center overflow-hidden">
@@ -158,6 +200,7 @@ export const RegisterPage = () => {
 
                         <button
                             type="button"
+                            onClick={handleGoogleLogin}
                             className="w-full py-2 bg-white hover:bg-gray-100 text-gray-800 transition-all flex items-center justify-center !gap-3 shadow-lg
                             text-lg"
                         >
@@ -181,7 +224,18 @@ export const RegisterPage = () => {
                         Inicia sesión acá
                     </Link>
                 </p>
-            </div>
-        </div>
-    )
-}
+                </div>
+                {showErrorModal && (
+                    <ErrorConnection
+                    message={errorMessage}
+                  
+                    onClose={()=> setShowErrorModal(false)}
+                    />
+                )}
+                </div>
+     
+    );
+
+};
+    
+

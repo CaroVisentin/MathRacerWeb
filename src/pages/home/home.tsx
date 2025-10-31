@@ -9,9 +9,29 @@ import { CarDisplay } from "../../components/home/carDisplay";
 import { type HomeData } from "../../models/ui/home-data";
 import { useEffect, useState } from "react";
 import { homeDataMock } from "../../data/mocks/home";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
+import ErrorConnection from "../../shared/modals/errorConnection";
+
 
 export const Home = () => {
   const [data, setData] = useState<HomeData | null>(null);
+  const navigate = useNavigate();
+  const {logout} = useAuth();
+  const [errorMessage,setErrorMessage] = useState("");
+  const [showErrorModal, setShowErrorModal] = useState(false)
+
+  const handleLogout = async () => {
+    try{
+      await logout();
+      navigate("/login");
+
+    } catch(error){
+      setErrorMessage("no se pudo cerrar sesión");
+      setShowErrorModal(true);
+
+    }
+  };
 
   useEffect(() => {
     // simulo llamada a la api
@@ -19,6 +39,10 @@ export const Home = () => {
       setData(homeDataMock);
     }, 500);
   }, []);
+
+  const handleCloseModal = ()=>{
+        setShowErrorModal(false);
+    };
 
   if (!data) {
     return <div className="text-white h-screen flex items-center justify-center">Cargando...</div>;
@@ -50,11 +74,14 @@ export const Home = () => {
           <InfoBox>Nivel {data.user.level}</InfoBox>
           <InfoBox>{data.user.ranking}</InfoBox>
         </div>
+        <ActionButton size="small" onClick={handleLogout}>
+  <i className="ri-logout-box-r-line"></i> Cerrar sesión
+</ActionButton>
 
         <div className="flex flex-1 items-end justify-between px-4 pb-8">
           <div className="flex flex-col gap-3">
-            <ActionButton to="/multijugador">Multijugador</ActionButton>
-            <ActionButton className="pointer-events-none" >Historia</ActionButton>
+            <ActionButton to="/menu">Multijugador</ActionButton>
+            <ActionButton to="/story-mode" >Historia</ActionButton>
             <ActionButton className="pointer-events-none">Práctica Libre</ActionButton>
             {/*/sacar pointer-events-none para que funcione el boton} */}
           </div>
@@ -68,6 +95,15 @@ export const Home = () => {
 
         <CarDisplay imageUrl={data.activeItems.car.imageUrl} />
       </div>
+        
+                {showErrorModal && (
+                    <ErrorConnection
+                    message ={errorMessage}
+                    // onRetry= {handleRetry}
+                    onClose={handleCloseModal}
+                    />
+                )}
     </div>
   );
 };
+

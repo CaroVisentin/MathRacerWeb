@@ -3,6 +3,7 @@ import { useState } from "react";
 import fondoPartida from '../../../assets/images/partidas.png';
 import { useConnection } from '../../../services/signalR/connection';
 import ErrorConnection from "../../../shared/modals/errorConnection";
+import { Link } from "react-router-dom";
 
 export default function CreateGame() {
 
@@ -37,13 +38,7 @@ export default function CreateGame() {
     } catch {
       setShowModal(true);
     }
-  };
-
-  const handleRetry = () => {
-    setShowModal(false);
-    handleSubmit(new Event('submit') as unknown as React.FormEvent);
-
-  };
+    }; 
 
   return (
 
@@ -117,9 +112,9 @@ export default function CreateGame() {
           </select>
         </label>
         <div className="flex justify-between mt-6 pt-5 border-t border-gray-700">
-          <button
-            type="button"
-            className="bg-[#5df9f9] text-black font-extralight hover:bg-red-700 w-30 h-10 px-4  rounded text-2xl hover:drop-shadow-[0_0_10px_#00ffff]">← Volver</button>
+          <Link to="/menu"
+            
+            className="bg-[#5df9f9] text-black font-extralight hover:bg-red-700 w-30 h-10 px-4 content-center rounded text-2xl hover:drop-shadow-[0_0_10px_#00ffff]">← Volver</Link>
           <button
             type="submit"
             className="bg-[#5df9f9] text-black font-extralight hover:bg-[#f95ec8] w-30 h-10 px-4  rounded text-2xl leading-relaxed hover:drop-shadow-[0_0_10px_#00ffff]">Crear</button>
@@ -129,7 +124,6 @@ export default function CreateGame() {
       {showModal && (
         <ErrorConnection
           message={errorConexion || "No se pudo conectar al servidor. Por favor, inténtalo de nuevo."}
-          onRetry={handleRetry}
           onClose={() => setShowModal(false)}
         />
       )}

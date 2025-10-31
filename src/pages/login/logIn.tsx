@@ -1,37 +1,64 @@
 "use client"
 
 import type React from "react"
-
-import { useState } from "react"
+import { useState, type FC } from "react"
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import isologo from "/images/mathi_racer_logo.png";
 import fondo from "../../assets/images/fhome.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link, useNavigate } from "react-router-dom";
-import { loginUser } from "../../services/firebase/authServise";
+import ErrorConnection from "../../shared/modals/errorConnection"
+import { useAuth } from "../../hooks/useAuth";
 
-export const LoginPage = () => {
+//import { sessionService } from "../../services/game/sessionAPI";
+
+
+export const LoginPage: FC = () => {
     const [showPassword, setShowPassword] = useState(false)
-    //const [username, setUsername] = useState("")
+    const [showErrorModal, setShowErrorModal] = useState(false)
+    const [errorMessage, setErrorMessage] = useState("")
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
-    const navigate = useNavigate();
+    //const [error, setError] = useState<string | null>(null)
+    const { login, loginWithGoogle } = useAuth()
+    const navigate = useNavigate()
 
+   
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-       // console.log("Login attempt:", { username, password })
+      
 
        try {
         // Llamar al servicio de login (a implementar)
-        const user = await loginUser(email, password);
-         console.log("Usuario logueado:", user.uid);
-        // Redirigir o mostrar mensaje de éxito
-        navigate("/"); // Ejemplo de redirección
+        await login(email,password)
+      // await sessionService.loguearUsuario(email, password);
+     
+        navigate("/home"); 
        } catch (error) {
         console.error("Error al loguear el usuario:", error);
-        alert("Error al loguear el usuario: " + (error as Error).message);
+        setErrorMessage("No se pudo iniciar sesión. Por favor, verifica tus credenciales e intenta nuevamente.");
+        setShowErrorModal(true);
        };
     }
+
+    // const handleRetry =()=>{
+    //     Modal(false); // esta mal !!!!!
+        
+    // };
+     const handleGoogleLogin = async () => {
+        try {
+            await loginWithGoogle()
+            // Redirigir al home después del login exitoso
+            navigate('/')
+        } catch (error) {
+            setErrorMessage('Error al iniciar sesión con Google.');
+            setShowErrorModal(true);
+        }
+    };
+
+    const handleCloseModal = ()=>{
+        setShowErrorModal(false);
+    };
 
     return (
         <div className="min-h-screen relative flex items-center justify-center overflow-hidden">
@@ -111,6 +138,7 @@ export const LoginPage = () => {
 
                         <button
                             type="button"
+                            onClick={handleGoogleLogin}
                             className="w-full py-2 bg-white hover:bg-gray-100 text-gray-800 transition-all flex items-center justify-center !gap-3 shadow-lg
                             text-lg"
                         >
@@ -134,7 +162,14 @@ export const LoginPage = () => {
                         Registrate acá
                     </Link>
                 </p>
+                {showErrorModal && (
+                    <ErrorConnection
+                    message ={errorMessage}
+                    // onRetry= {handleRetry}
+                    onClose={handleCloseModal}
+                    />
+                )}
             </div>
         </div>
-    )
-}
+    );
+};

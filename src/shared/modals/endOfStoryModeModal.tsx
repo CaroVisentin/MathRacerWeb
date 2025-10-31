@@ -24,7 +24,7 @@ export const EndOfStoryModeModal: React.FC<EndOfStoryModeModalProps> = ({
 }) => {
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black/60 z-50">
-            <div className="bg-[#484848] text-white rounded-lg p-6 w-[400px] max-w-full">
+            <div className="bg-[#484848] text-white border-4 border-white p-6 w-[400px] max-w-full">
                 {/* Nivel */}
                 <div className="mt-4 text-center">
                     <span className="inline-block bg-[#5C7339] text-white px-6 rounded text-lg">
@@ -41,7 +41,7 @@ export const EndOfStoryModeModal: React.FC<EndOfStoryModeModalProps> = ({
                 </h2>
 
                 {/* Contenido */}
-                <div className="mt-4 text-center">
+                <div className="mt-4 flex flex-col items-center text-center">
                     <div className="mt-4">
                         <img
                             src={carImg}
