@@ -122,14 +122,14 @@ export const Home = () => {
             </ActionButton>
           </div>
 
-          <div className="flex flex-col pointer-events-none gap-3 items-end">
-            <ActionButton size="small">
+          <div className="flex flex-col gap-3 items-end">
+            <ActionButton to="/ranking" size="small">
               <i className="ri-trophy-fill"></i>
             </ActionButton>
-            <ActionButton size="small">
+            <ActionButton to="/garage" size="small">
               <i className="ri-store-2-fill"></i>
             </ActionButton>
-            <ActionButton size="small">
+            <ActionButton to="/store" size="small">
               <i className="ri-shopping-cart-fill"></i>
             </ActionButton>
           </div>
