@@ -1,3 +1,11 @@
+export interface UserInfo {
+  id: number;
+  name: string;
+  coins: number;
+  level: number;
+  ranking: number;
+}
+
 export interface Battery {
   time: string;
   levels: ("full" | "empty")[];
@@ -15,16 +23,8 @@ export interface ActiveItems {
   profile: Item;
 }
 
-export interface UserInfo {
-  id: number;
-  name: string;
-  coins: number;
-  level: number;
-  ranking: number;
-}
-
-export interface HomeData {
-  user: UserInfo;
+export interface HomeData { 
   activeItems: ActiveItems;
   battery: Battery;
+  user: UserInfo;
 }
