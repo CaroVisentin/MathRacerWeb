@@ -38,9 +38,10 @@ api.interceptors.response.use(
 
 // Exportar los endpoints organizados por módulo
 export const API_URLS = {
-    games: "/games",
+    games: "/games", 
     player: "/player",
     worlds: "/worlds",
     levels: "/levels",
-    online:"/online",
+    online: "/online",
+    storyModeGame: "/solo",
 };
