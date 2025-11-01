@@ -5,9 +5,9 @@ import { CoinsDisplay } from "../../components/home/coinsDisplay";
 import { ProfileCard } from "../../components/home/profileCard";
 import { InfoBox } from "../../components/home/infoBox";
 import { CarDisplay } from "../../components/home/carDisplay";
-//import { type HomeData } from "../../models/ui/home-data";
-import {  useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { homeDataMock } from "../../data/mocks/home";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import ErrorConnection from "../../shared/modals/errorConnection";
 //import { homeDataMock } from "../../data/mocks/home";
@@ -50,6 +50,8 @@ export const Home = () => {
     );
   }
 
+
+
   return (
     <div className="relative h-screen w-screen flex flex-col">
       <div
@@ -71,26 +73,38 @@ export const Home = () => {
               <BatteryStatus levels={homeData.battery.levels} time={homeData.battery.time} />
               <CoinsDisplay coins={homeData.user.coins} />
             </div>
-            <ProfileCard imageUrl={homeData.activeItems.profile.imageUrl} />
+            <Link to="/perfil">
+              <ProfileCard imageUrl={homeData.activeItems.profile.imageUrl} />
+            </Link>
           </div>
           <InfoBox>Nivel {homeData.user.level}</InfoBox>
           <InfoBox>{homeData.user.ranking}</InfoBox>
           <p className="font-audiowide text-[#5df9f9] drop-shadow-[0_0_10px_#00ffff] text-3xl mt-2">Hola, {homeData.user.name} 👋</p>
         </div>
+
         <ActionButton size="small" onClick={handleLogout}>
-          <i className="ri-logout-box-r-line"></i> Cerrar sesión
-        </ActionButton>
+                  <i className="ri-logout-box-r-line"></i> Cerrar sesión
+                </ActionButton>
 
         <div className="flex flex-1 items-end justify-between px-4 pb-8">
           <div className="flex flex-col gap-3">
             <ActionButton to="/menu">Multijugador</ActionButton>
-            <ActionButton to="/modo-historia" >Historia</ActionButton>
-            <ActionButton className="pointer-events-none">Práctica Libre</ActionButton>
+            <ActionButton to="/story-mode">Historia</ActionButton>
+            <ActionButton className="pointer-events-none">
+              Práctica Libre
+            </ActionButton>
           </div>
-          <div className="flex flex-col  gap-3 items-end">
-            <ActionButton to="/ranking" size="small"><i className="ri-trophy-fill"></i></ActionButton>
-            <ActionButton size="small" to="/garage"><i className="ri-store-2-fill"></i></ActionButton>
-            <ActionButton size="small" to="/cart"><i className="ri-shopping-cart-fill"></i></ActionButton>
+
+          <div className="flex flex-col gap-3 items-end">
+            <ActionButton to="/ranking" size="small">
+              <i className="ri-trophy-fill"></i>
+            </ActionButton>
+            <ActionButton to="/garage" size="small">
+              <i className="ri-store-2-fill"></i>
+            </ActionButton>
+            <ActionButton to="/store" size="small">
+              <i className="ri-shopping-cart-fill"></i>
+            </ActionButton>
           </div>
         </div>
 
@@ -103,7 +117,13 @@ export const Home = () => {
           onClose={handleCloseModal}
         />
       )}
+
+      {showErrorModal && (
+        <ErrorConnection
+          message={errorMessage}
+          onClose={handleCloseModal}
+        />
+      )}
     </div>
   );
 };
-

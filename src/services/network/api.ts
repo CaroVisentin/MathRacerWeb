@@ -1,5 +1,6 @@
 // Configuración del cliente HTTP (axios/fetch)
 import axios from "axios";
+import { getAuth } from "firebase/auth";
 
 // Detectar entorno
 const baseURL = import.meta.env.VITE_API_URL;
@@ -22,6 +23,16 @@ export const setAuthToken = (token: string | null) => {
         delete api.defaults.headers.common['Authorization'];
     }
 };
+
+
+export const getAuthToken = async () => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    if (user) {
+        const token = await user.getIdToken();
+        setAuthToken(token);
+    }
+}
 
 // Interceptor para manejar errores de autenticación
 api.interceptors.response.use(

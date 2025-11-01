@@ -10,6 +10,8 @@ export const ProfilePage = () => {
     const [activeSection, setActiveSection] = useState<"perfil" | "amigos" | "ajustes">("perfil");
     const navigate = useNavigate();
 
+
+
     return (
         <div className="bg-black mb-2">
             <TabPanel activeSection={activeSection} setActiveSection={setActiveSection} />
