@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import type { LevelDtoUi } from "../../../models/ui/levelDtoUi";
+import type { LevelDtoUi } from "../../../models/ui/story-mode/levelDtoUi";
 import { useNavigate } from "react-router-dom";
 
 interface LevelsGridProps {
