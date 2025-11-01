@@ -32,6 +32,17 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 };
 
 
+  // Mapear respuesta del backend al modelo UI Player
+  const toUiPlayer = (data: any): Player => ({
+    id: data?.id ?? 0,
+    name: data?.name ?? '',
+    email: data?.email ?? '',
+    lastlevelId: data?.lastlevelId ?? data?.lastLevelId ?? 1,
+    points: data?.points ?? 0,
+    coins: data?.coins ?? 0,
+  });
+
+
   // Mantener token actualizado en Axios
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
@@ -44,9 +55,23 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
           email: firebaseUser.email || "",
           username: firebaseUser.displayName || firebaseUser.email?.split("@")[0] || "",
         });
+
+        // Restaurar el player desde almacenamiento local (si existe)
+        try {
+          const stored = localStorage.getItem('player');
+          if (stored) {
+            const parsed = JSON.parse(stored);
+            setPlayer(toUiPlayer(parsed));
+          }
+        } catch (e) {
+          console.warn('No se pudo restaurar el player del storage:', e);
+        }
       } else {
         setAuthToken(null);
         setUser(null);
+        // limpiar player también si no hay usuario
+        setPlayer(null);
+        try { localStorage.removeItem('player'); } catch {}
       }
       setLoading(false);
     });
@@ -58,10 +83,12 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       setError(null);
       setLoading(true);
-      const userData = await authService.loginWithEmail(email, password);
-      setUser(userData);
-      //agregue
-      setPlayer(userData);
+  const userData = await authService.loginWithEmail(email, password);
+  setUser(userData);
+  //agregue
+  const uiPlayer = toUiPlayer(userData);
+  setPlayer(uiPlayer);
+  try { localStorage.setItem('player', JSON.stringify(uiPlayer)); } catch {}
     } catch (err) {
       setError('Error al iniciar sesión');
       throw err;
@@ -74,9 +101,11 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       setError(null);
       setLoading(true);
-      const userData = await authService.registerWithEmail(email, password, username);
-      setUser(userData);
-      setPlayer(userData);
+  const userData = await authService.registerWithEmail(email, password, username);
+  setUser(userData);
+  const uiPlayer = toUiPlayer(userData);
+  setPlayer(uiPlayer);
+  try { localStorage.setItem('player', JSON.stringify(uiPlayer)); } catch {}
     } catch (err) {
       setError('Error al registrar usuario');
       console.error('Error en register:', err);
@@ -90,9 +119,11 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       setError(null);
       setLoading(true);
-      const userData = await authService.loginWithGoogle();
-      setUser(userData);
-      setPlayer(userData);
+  const userData = await authService.loginWithGoogle();
+  setUser(userData);
+  const uiPlayer = toUiPlayer(userData);
+  setPlayer(uiPlayer);
+  try { localStorage.setItem('player', JSON.stringify(uiPlayer)); } catch {}
     } catch (err) {
       setError('Error al iniciar sesión con Google');
       throw err;
@@ -107,6 +138,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(null);
       //agreuge
       setPlayer(null);
+      try { localStorage.removeItem('player'); } catch {}
     } catch (err) {
       setError('Error al cerrar sesión');
       throw err;
