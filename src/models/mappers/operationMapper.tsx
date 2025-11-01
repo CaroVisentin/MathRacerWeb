@@ -5,6 +5,10 @@ export const operationNamesMap: Record<string, string> = {
     "/": "División",
 };
 
+/**
+ * Mapear las operaciones de un mundo a una frase legible
+ * @param operations Operaciones de un mundo
+ */
 export function mapOperations(operations: string[]): string {
     const mapped = operations.map(op => operationNamesMap[op] || op);
 

@@ -1,5 +1,5 @@
 
-import type { PowerUpDto } from "./powerUpDto";
+import type { PowerUpDto } from "./powerUpDto"; 
 
 export interface ActiveEffectDto {
     id: number;

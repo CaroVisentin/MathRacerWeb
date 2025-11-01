@@ -1,6 +1,11 @@
 import type { LevelDto } from "../domain/levelDto";
 import type { LevelDtoUi } from "../ui/levelDtoUi";
 
+/**
+ * Mapear los niveles agregando info de desbloqueo, completado y estrellas
+ * @param levelsFromApi Lista de todos los niveles que viene del backend
+ * @param lastCompletedLevel Id del último nivel desbloqueado por el jugador
+ */
 export function mapLevels(levelsFromApi: LevelDto[], lastCompletedLevel: number): LevelDtoUi[] {
     return levelsFromApi.map((level) => {
         const completed = level.id <= lastCompletedLevel;

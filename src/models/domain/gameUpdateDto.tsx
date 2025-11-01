@@ -1,4 +1,4 @@
-import type { ActiveEffectDto } from "./activeEffectDto";
+import type { ActiveEffectDto } from "./ActiveEffectDto"; 
 import type { PlayerDto } from "./playerDto";
 import type { QuestionDto } from "./questionDto";
 
