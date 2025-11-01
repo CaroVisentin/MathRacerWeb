@@ -17,7 +17,7 @@ import { StorePage } from "../pages/store/store";
 import { ProductDetailsPage } from "../pages/store/product/[id]";
 import CartPage from "../pages/cart/cart";
 import { MultiplayerGame } from "../components/game/multiplayer/multiplayer";
-import { ProtectedRoute}  from "../components/auth/ProtectedRoute";
+import { ProtectedRoute } from "../components/auth/ProtectedRoute";
 import { PublicRoute } from "../components/auth/PublicRoute";
 import { TutorialPage } from "../pages/tutorial/tutorial";
 
@@ -43,6 +43,14 @@ const router = createBrowserRouter([
     element: <ProtectedRoute><StoryMode /></ProtectedRoute>
   },
   {
+    path: "/modo-historia/mundo/:id",
+    element: <ProtectedRoute><LevelMap /></ProtectedRoute>,
+  },
+  {
+    path: "/modo-historia/nivel/:id",
+    element: <ProtectedRoute><StoryModeGame /></ProtectedRoute>,
+  },
+  {
     path: "/crear",
     element: <ProtectedRoute><CreateGame /></ProtectedRoute>
   },
@@ -66,18 +74,7 @@ const router = createBrowserRouter([
     path: "/perfil",
     element: <ProtectedRoute><ProfilePage /></ProtectedRoute>
   },
-  {
-    path: "/story-mode",
-    element: <ProtectedRoute><StoryMode /></ProtectedRoute>
-  },
-  {
-    path: "/story-mode/world/:id",
-    element: <ProtectedRoute><LevelMap /></ProtectedRoute>,
-  },
-  {
-    path: "/story-mode/level/:id",
-    element: <ProtectedRoute><StoryModeGame /></ProtectedRoute>,
-  },
+
   {
     path: "/login",
     element: <PublicRoute><LoginPage /></PublicRoute>
@@ -86,7 +83,8 @@ const router = createBrowserRouter([
     path: "/register",
     element: <PublicRoute><RegisterPage /></PublicRoute>
   },
-  { path: "/ranking", element: <RankingPage /> },
+  { path: "/ranking", 
+    element: <RankingPage />},
   { path: "/garage", element: <GaragePage /> },
   { path: "/store", element: <StorePage /> },
   { path: "/store/product/:id", element: <ProductDetailsPage /> },

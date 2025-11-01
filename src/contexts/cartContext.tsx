@@ -1,5 +1,3 @@
-"use client"
-
 import { createContext, useState, type ReactNode, useEffect } from "react"
 import type { CartContextType, CartItem } from "../models/ui/cart"
 

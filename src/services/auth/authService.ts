@@ -6,7 +6,7 @@ import {
   signOut
 } from 'firebase/auth';
 import { FirebaseError } from 'firebase/app';
-import { auth } from '../../config/firebase';
+import { auth } from '../network/firebase';
 import { api, setAuthToken } from '../network/api';
 
 class AuthService {
@@ -84,6 +84,7 @@ class AuthService {
       const userCredential = await signInWithPopup(auth, provider);
       const idToken = await userCredential.user.getIdToken();
       setAuthToken(idToken);
+
       const username = userCredential.user.displayName || userCredential.user.email?.split('@')[0] || 'user';
       const email = userCredential.user.email;
       // Login/registro en el backend
@@ -107,6 +108,7 @@ class AuthService {
       throw error;
     }
   }
+
   async logout() {
     try {
       await signOut(auth);

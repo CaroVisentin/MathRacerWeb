@@ -1,8 +1,10 @@
 import { createContext, useState, useEffect, type ReactNode } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '../config/firebase';
+import { auth } from '../services/network/firebase';
 import type { AuthUser } from '../models/domain/authTypes';
 import { authService } from '../services/auth/authService';
+import { setAuthToken } from '../services/network/api';
+import type { Player } from '../models/ui/player';
 
 interface AuthContextType {
   user: AuthUser | null;
@@ -12,6 +14,9 @@ interface AuthContextType {
   register: (email: string, password: string, username: string) => Promise<void>;
   loginWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
+  //agrego
+  player: Player |null;
+  setPlayer: (player:Player | null) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -20,18 +25,27 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  //agrego
+  const[player,setPlayerState] = useState<Player |null>(null);
+  const setPlayer = (updatedPlayer: Player |null) => {
+  setPlayerState(updatedPlayer); 
+};
 
+
+  // Mantener token actualizado en Axios
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
-        // Ya no es necesario validar con el backend aquí
+        const token = await firebaseUser.getIdToken(); // token válido y renovado
+        setAuthToken(token);
+
         setUser({
-          id: 0, // Si tienes el id del backend, puedes actualizarlo aquí
-          email: firebaseUser.email || '',
-          username: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || '',
-          uid: firebaseUser?.uid || firebaseUser.uid,
+          id: 0, // actualizalo si tenés el id del backend
+          email: firebaseUser.email || "",
+          username: firebaseUser.displayName || firebaseUser.email?.split("@")[0] || "",
         });
       } else {
+        setAuthToken(null);
         setUser(null);
       }
       setLoading(false);
@@ -46,7 +60,8 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       setLoading(true);
       const userData = await authService.loginWithEmail(email, password);
       setUser(userData);
-      console.log('Respuesta del backend en login manual:', userData);
+      //agregue
+      setPlayer(userData);
     } catch (err) {
       setError('Error al iniciar sesión');
       throw err;
@@ -57,12 +72,11 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const register = async (email: string, password: string, username: string) => {
     try {
-      console.log('Register handler ejecutado', { email, password, username });
       setError(null);
       setLoading(true);
       const userData = await authService.registerWithEmail(email, password, username);
       setUser(userData);
-      console.log('Respuesta del backend en registro manual:', userData);
+      setPlayer(userData);
     } catch (err) {
       setError('Error al registrar usuario');
       console.error('Error en register:', err);
@@ -78,7 +92,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       setLoading(true);
       const userData = await authService.loginWithGoogle();
       setUser(userData);
-      console.log("Usuario logueado con google: ", userData)
+      setPlayer(userData);
     } catch (err) {
       setError('Error al iniciar sesión con Google');
       throw err;
@@ -91,7 +105,8 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       await authService.logout();
       setUser(null);
-      console.log("Usuario cerró sesión")
+      //agreuge
+      setPlayer(null);
     } catch (err) {
       setError('Error al cerrar sesión');
       throw err;
@@ -108,6 +123,9 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         register,
         loginWithGoogle,
         logout,
+        //agrego
+        player,
+        setPlayer,
       }}
     >
       {children}

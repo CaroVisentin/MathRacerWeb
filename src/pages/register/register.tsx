@@ -1,92 +1,77 @@
-"use client"
-
-import React, { type FC } from "react"
-import {  useState } from "react"
+import React from "react"
+import { useState } from "react"
 import isologo from "/images/mathi_racer_logo.png";
 import fondo from "../../assets/images/fhome.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { Link, useNavigate } from "react-router-dom";
 import ErrorConnection from "../../shared/modals/errorConnection";
-//import { sessionService } from "../../services/game/sessionAPI";
-//import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useAuth } from "../../hooks/useAuth";
 
-
-export const RegisterPage: FC = () => {
+export const RegisterPage = () => {
     const [showPassword, setShowPassword] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
     const [username, setUsername] = useState("")
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [confirmPassword, setConfirmPassword] = useState("")
-    const [showErrorModal,setShowErrorModal] = useState(false)
-    const [errorMessage,setErrorMessage] = useState("")
+    const [showErrorModal, setShowErrorModal] = useState(false)
+    const [errorMessage, setErrorMessage] = useState("")
     const navigate = useNavigate();
     const { register, loginWithGoogle } = useAuth()
-   
-  //  const [error, setError] = useState<string | null>(null)
-    
 
     const validateInputs = () => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,}$/;
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,}$/;
 
-  if (!username.trim()) {
-    setErrorMessage("El nombre de usuario es obligatorio");
-    return false;
-  }
+        if (!username.trim()) {
+            setErrorMessage("El nombre de usuario es obligatorio");
+            return false;
+        }
 
-  if (!emailRegex.test(email)) {
-    setErrorMessage("El email no tiene un formato válido");
-    return false;
-  }
+        if (!emailRegex.test(email)) {
+            setErrorMessage("El email no tiene un formato válido");
+            return false;
+        }
 
-  if (!passwordRegex.test(password)) {
-    setErrorMessage("La contraseña debe tener al menos 8 caracteres, una mayúscula y un símbolo");
-    return false;
-  }
+        if (!passwordRegex.test(password)) {
+            setErrorMessage("La contraseña debe tener al menos 8 caracteres, una mayúscula y un símbolo");
+            return false;
+        }
 
-  if (password !== confirmPassword) {
-    setErrorMessage("Las contraseñas no coinciden");
-    return false;
-  }
-  return true;
-};
+        if (password !== confirmPassword) {
+            setErrorMessage("Las contraseñas no coinciden");
+            return false;
+        }
+        return true;
+    };
 
-
- const handleSubmit = async (e: React.FormEvent) =>{
-            e.preventDefault();           
-              if (!validateInputs()) {
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!validateInputs()) {
             setShowErrorModal(true);
             return;
         }
 
-        try{
-            // Llamar al servicio de registro (a implementar)
-            // await sessionService.registrarUsuario(username,email,password);
-             await register(email, password, username)
-             //toast.success("¡Registro Exitoso!! Ya sos un corredor!")
-             
+        try {
+            await register(email, password, username)
             navigate("/tutorial");
         } catch (error) {
-            
             setErrorMessage((error as Error).message || "Error desconocido");
-            setShowErrorModal(true);       
-
-        }  
+            setShowErrorModal(true);
+        }
     };
-         const handleGoogleLogin = async () => {
+
+    const handleGoogleLogin = async () => {
         try {
             await loginWithGoogle()
             navigate('/')
-        } catch (error) {
+        } catch {
             setErrorMessage('Error al iniciar sesión con Google')
             setShowErrorModal(true)
         }
-    }; 
-       
+    };
 
     return (
         <div className="min-h-screen relative flex items-center justify-center overflow-hidden">
@@ -224,18 +209,14 @@ export const RegisterPage: FC = () => {
                         Inicia sesión acá
                     </Link>
                 </p>
-                </div>
-                {showErrorModal && (
-                    <ErrorConnection
+            </div>
+
+            {showErrorModal && (
+                <ErrorConnection
                     message={errorMessage}
-                  
-                    onClose={()=> setShowErrorModal(false)}
-                    />
-                )}
-                </div>
-     
+                    onClose={() => setShowErrorModal(false)}
+                />
+            )}
+        </div>
     );
-
 };
-    
-

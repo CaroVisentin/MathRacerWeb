@@ -1,7 +1,5 @@
-"use client"
-
 import type React from "react"
-import { useState, type FC } from "react"
+import { useState } from "react"
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import isologo from "/images/mathi_racer_logo.png";
 import fondo from "../../assets/images/fhome.png";
@@ -10,53 +8,41 @@ import { Link, useNavigate } from "react-router-dom";
 import ErrorConnection from "../../shared/modals/errorConnection"
 import { useAuth } from "../../hooks/useAuth";
 
-//import { sessionService } from "../../services/game/sessionAPI";
-
-
-export const LoginPage: FC = () => {
+export const LoginPage = () => {
     const [showPassword, setShowPassword] = useState(false)
     const [showErrorModal, setShowErrorModal] = useState(false)
     const [errorMessage, setErrorMessage] = useState("")
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
-    //const [error, setError] = useState<string | null>(null)
     const { login, loginWithGoogle } = useAuth()
     const navigate = useNavigate()
 
-   
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-      
 
-       try {
-        // Llamar al servicio de login (a implementar)
-        await login(email,password)
-      // await sessionService.loguearUsuario(email, password);
-     
-        navigate("/home"); 
-       } catch (error) {
-        console.error("Error al loguear el usuario:", error);
-        setErrorMessage("No se pudo iniciar sesión. Por favor, verifica tus credenciales e intenta nuevamente.");
-        setShowErrorModal(true);
-       };
+        try {
+            // Llamar al servicio de login 
+            await login(email, password)
+            navigate("/home");
+        } catch (error) {
+            console.error("Error al loguear el usuario:", error);
+            setErrorMessage("No se pudo iniciar sesión. Por favor, verifica tus credenciales e intenta nuevamente.");
+            setShowErrorModal(true);
+        };
     }
 
-    // const handleRetry =()=>{
-    //     Modal(false); // esta mal !!!!!
-        
-    // };
-     const handleGoogleLogin = async () => {
+    const handleGoogleLogin = async () => {
         try {
             await loginWithGoogle()
             // Redirigir al home después del login exitoso
-            navigate('/')
-        } catch (error) {
+            navigate('/home')
+        } catch {
             setErrorMessage('Error al iniciar sesión con Google.');
             setShowErrorModal(true);
         }
     };
 
-    const handleCloseModal = ()=>{
+    const handleCloseModal = () => {
         setShowErrorModal(false);
     };
 
@@ -164,9 +150,8 @@ export const LoginPage: FC = () => {
                 </p>
                 {showErrorModal && (
                     <ErrorConnection
-                    message ={errorMessage}
-                    // onRetry= {handleRetry}
-                    onClose={handleCloseModal}
+                        message={errorMessage}
+                        onClose={handleCloseModal}
                     />
                 )}
             </div>

@@ -7,9 +7,6 @@ interface ProductImageProps {
 }
 
 export const ProductImage = ({ product }: ProductImageProps) => {
-
-    console.log("Llegó a productimage: ", product);
-
     // Elegimos la clase según el tipo
     const imageClass = product.typeProduct === 'car' 
         ? 'w-full h-32 object-contain rounded-md mb-2'

@@ -8,13 +8,7 @@ import pilabolt from "../../assets/images/pila-bolt.png";
 import moneda from "../../assets/images/coin.png";
 
 export const homeDataMock: HomeData = {
-  user: {
-    id: 1,
-    name: "PlayerOne",
-    coins: 120000,
-    level: 1,
-    ranking: 12234,
-  },
+
   activeItems: {
     car: {
       id: 1,

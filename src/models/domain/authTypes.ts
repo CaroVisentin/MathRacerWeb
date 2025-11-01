@@ -4,7 +4,7 @@ export interface AuthUser {
     email: string;
     uid: string;
     // Añadir otros campos necesarios
-}
+    }
 
 export interface LoginCredentials {
     email: string;

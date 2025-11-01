@@ -10,7 +10,6 @@ import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import type { GameUpdateDto } from '../../../models/domain/gameUpdateDto';
 import { useConnection } from '../../../services/signalR/connection';
 import { PowerUpType } from '../../../models/enums/powerUpType';
-import type { PowerUpDto } from '../../../models/domain/powerUpDto';
 const fondos = [
     'pista-noche.png',
     'pista-dia.png',
@@ -21,7 +20,6 @@ const fondos = [
 ];
 
 export const MultiplayerGame = () => {
-
     const { errorConexion, invoke, on, off } = useConnection();
     const [ecuacion, setEcuacion] = useState<QuestionDto>();
     const [opciones, setOpciones] = useState<number[]>();
@@ -42,18 +40,14 @@ export const MultiplayerGame = () => {
     const [fondoRival, setFondoRival] = useState<string>('');
     const cerrarModal = () => setGanador(false);
     const [eliminaOpciones, setEliminaOpciones] = useState(false);
-    const [powerUsePosition, setPowerUsePosition] = useState(false);  
+    const [powerUsePosition, setPowerUsePosition] = useState(false);
     const [powerUseOrden, setPowerUseOrden] = useState(false);
     const [mensajeComodin, setMensajeComodin] = useState<string | null>(null);
-    
-    
-    // useCallback para evitar re-creaciones innecesarias
+
     const conectarJugador = useCallback(async () => {
-        // Nueva implementación usando invoke directamente
         if (!nombreJugador.trim()) return;
         await invoke("FindMatch", nombreJugador);
     }, [nombreJugador, invoke]);
-
 
     const reiniciarJuego = () => {
         setGanador(false);
@@ -67,13 +61,9 @@ export const MultiplayerGame = () => {
     }
 
     const handleVolver = () => {
-        console.log("Volver");
         // Agregar lógica para abandonar partida        
         setGanador(false);
         setPerdedor(true);
-        // if (connection) connection.stop();    
-
-        // Detener la conexión manualmente, antes de que se desmonte el componente
     };
 
     const handleFireExtinguisher = () => {
@@ -84,44 +74,38 @@ export const MultiplayerGame = () => {
         // Seleccionar dos opciones incorrectas al azar
         const unaIncorrecta = opcionesIncorrectas[Math.floor(Math.random() * opcionesIncorrectas.length)];
 
-    setOpciones([ecuacion.correctAnswer, unaIncorrecta].sort(() => Math.random() - 0.5));
-    setEliminaOpciones(true);
-    setMensajeComodin("Se han eliminado dos opciones incorrectas.");
-   // setTimeout(() => setMensajeComodin(null), 2000);
-    console.log("Fire extinguisher activated!");
-};
+        setOpciones([ecuacion.correctAnswer, unaIncorrecta].sort(() => Math.random() - 0.5));
+        setEliminaOpciones(true);
+        setMensajeComodin("Se han eliminado dos opciones incorrectas.");
+    };
 
     const handleChangeEquation = async () => {
         if (!partidaId || !jugadorId) return;
 
-    try {
-     await invoke("UsePowerUp", partidaId, jugadorId, PowerUpType.ShuffleRival);
-       setPowerUseOrden(true); 
-       setMensajeComodin("Se han mezclado las opciones de la ecuación del rival.");
-       setTimeout(() => setMensajeComodin(null), 2000);
-       console.log(powerUseOrden);
-     console.log("Change equation activated!");  
-    } catch (error) {
-        console.error("Error using Change Equation power-up:", error);
-    }
-};
+        try {
+            await invoke("UsePowerUp", partidaId, jugadorId, PowerUpType.ShuffleRival);
+            setPowerUseOrden(true);
+            setMensajeComodin("Se han mezclado las opciones de la ecuación del rival.");
+            setTimeout(() => setMensajeComodin(null), 2000);
+        } catch (error) {
+            console.error("Error using Change Equation power-up:", error);
+        }
+    };
 
     const handleDobleCount = async () => {
         if (!partidaId || !jugadorId) return;
 
-    try {
-     await invoke("UsePowerUp", partidaId, jugadorId, PowerUpType.DoublePoints);
-       setPowerUsePosition(true);
-         setMensajeComodin("si contestas bien moves 2 lugares");  
-         setTimeout(() => setMensajeComodin(null), 2000);  
-     console.log("Doble count activated!");  
-    } catch (error) {
-        console.error("Error using Doble Count power-up:", error);
-    }
-};
+        try {
+            await invoke("UsePowerUp", partidaId, jugadorId, PowerUpType.DoublePoints);
+            setPowerUsePosition(true);
+            setMensajeComodin("si contestas bien moves 2 lugares");
+            setTimeout(() => setMensajeComodin(null), 2000);
+        } catch (error) {
+            console.error("Error using Doble Count power-up:", error);
+        }
+    };
 
     const sendAnswer = useCallback(async (respuestaSeleccionada: number | null) => {
-        // Nueva implementación usando invoke directamente
         if (!partidaId || respuestaSeleccionada === null || !jugadorId) return;
         await invoke("SendAnswer", partidaId, jugadorId, respuestaSeleccionada);
     }, [partidaId, jugadorId, invoke]);
@@ -132,26 +116,18 @@ export const MultiplayerGame = () => {
         if (ecuacion && opcion === ecuacion.correctAnswer) {
             setResultado("acierto");
             setPenalizado(false);
-            console.log("acierto");
         } else {
             setResultado("error");
             setPenalizado(true);
-            console.log("error");
         }
 
-        setTimeout(() => sendAnswer(opcion),200);
+        setTimeout(() => sendAnswer(opcion), 200);
     };
-
-
-
 
     useEffect(() => {
         if (!useConnection) return; // Esperar a que la conexión esté inicializada
 
         const gameUpdateHandler = (data: GameUpdateDto) => {
-            console.log("GameUpdate recibido:", data);
-
-            //nueva implementacion con connection del hook        
             setJugadoresPartida(data.players);
 
             const jugadorActual = data.players.find(
@@ -209,23 +185,23 @@ export const MultiplayerGame = () => {
                 });
                 setOpciones(data.currentQuestion.options);
                 setInstruccion(data.expectedResult);
-            }          
-             
-            };
+            }
+
+        };
 
         // Registrar el listener para "GameUpdate"    
-       on("GameUpdate", gameUpdateHandler);
+        on("GameUpdate", gameUpdateHandler);
         // on("PowerUpUsed", powerUpUsedHandler);
 
         // Función de limpieza para quitar el listener
         return () => off("GameUpdate", gameUpdateHandler);
-      //  off("PowerUpUsed", powerUpUsedHandler);
+        //  off("PowerUpUsed", powerUpUsedHandler);
 
     }, [on, off, nombreJugador]); // Depende de 'connection' y 'nombreJugador'
 
 
 
-     
+
     useEffect(() => {
         const indexJugador = Math.floor(Math.random() * fondos.length);
         const indexRival = (indexJugador + 1 + Math.floor(Math.random() * (fondos.length - 1))) % fondos.length;
@@ -346,8 +322,8 @@ export const MultiplayerGame = () => {
             </div>
 
             {/* Instrucciones y Comodines */}
-      <div className="flex justify-center items-center gridComodin mt-4"> 
-                
+            <div className="flex justify-center items-center gridComodin mt-4">
+
                 <div className="instruccion font-mono text-xl text-center">
                     {instruccion
                         ? `Elegí la opción para que Y sea ${instruccion.toUpperCase()}`
@@ -362,7 +338,7 @@ export const MultiplayerGame = () => {
                         onFireExtinguisher={handleFireExtinguisher}
                         onChangeEquation={handleChangeEquation}
                         onDobleCount={handleDobleCount}
-                    />                 
+                    />
 
 
                 </div>
@@ -372,20 +348,20 @@ export const MultiplayerGame = () => {
             <div className="flex flex-col justify-center items-center h-full gap-5 mb-10 mt-4">
                 {mensajeComodin && (
                     <div className="w-full flex justify-end px-4">
-            <div className="text-cyan-200 font-mono  text-l  text-center animate-fade-in">
-                {mensajeComodin}
-            </div>
-        </div>
-        )}
+                        <div className="text-cyan-200 font-mono  text-l  text-center animate-fade-in">
+                            {mensajeComodin}
+                        </div>
+                    </div>
+                )}
                 <div className="flex justify-center mb-6">
-                    
+
                     <div className="inline-block border-2 border-white rounded-lg text-6xl px-6 py-3">
                         {/* <div className={`inline-block border-2 border-white rounded-lg text-6xl w-100 h-20 text-center align-middle py-2
                     ${penalizado ? 'opacity-50' : 'opacity-100'} transition-opacity`}> */}
                         {/* Mostrar ecuación solo si está definida */}
                         {ecuacion?.equation && <span>{ecuacion.equation}</span>}
                     </div>
-                    
+
                 </div>
                 {/* si anda mal error de conexion */}
                 {errorConexion && (

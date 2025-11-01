@@ -19,27 +19,22 @@ export const useConnection = () => {
 
         newConnection.start()
             .then(() => {
-                //console.log("Conectado al servidor de SignalR");
                 setErrorConexion(null);
             })
             .catch(() => {
                 setErrorConexion("Error al iniciar la conexión con SignalR.");
-              //  console.error("Error al conectar con el servidor de SignalR: ", err);
             });
         return () => {
-           // console.log("Desconectando la conexión de SignalR.");
             newConnection.stop();
         };
     }, []);
 
     const invoke = async <T extends unknown[]>(method: string, ...args: T) => {
-        if (!conn || conn.state !== "Connected" ){
+        if (!conn || conn.state !== "Connected") {
             throw new Error("No hay conexión activa con el servidor.");
-        } 
+        }
 
-        
-            return conn.invoke(method, ...args);
-       
+        return conn.invoke(method, ...args);
     };
 
     const on = <T extends unknown[]>(event: string, callback: (...args: T) => void) => {
