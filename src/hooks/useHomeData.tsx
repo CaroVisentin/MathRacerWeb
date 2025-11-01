@@ -13,10 +13,7 @@ export const useHomeData = () => {
 
     const mapped = mapPlayerToHomeData(
       player,
-      homeDataMock.activeItems.car,
-      homeDataMock.activeItems.background,
-      homeDataMock.activeItems.profile,
-      homeDataMock.battery
+      homeDataMock.battery,
     );
 
     setHomeData(mapped);

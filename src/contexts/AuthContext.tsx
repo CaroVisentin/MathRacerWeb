@@ -40,6 +40,9 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     lastlevelId: data?.lastlevelId ?? data?.lastLevelId ?? 1,
     points: data?.points ?? 0,
     coins: data?.coins ?? 0,
+    background: data?.background || null,
+    car: data?.car || null,
+    character: data?.character || null,
   });
 
 
@@ -87,6 +90,8 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   setUser(userData);
   //agregue
   const uiPlayer = toUiPlayer(userData);
+  console.log("Usuario logueado:", uiPlayer);
+  console.log("jugador", userData);
   setPlayer(uiPlayer);
   try { localStorage.setItem('player', JSON.stringify(uiPlayer)); } catch {}
     } catch (err) {
@@ -105,6 +110,8 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   setUser(userData);
   const uiPlayer = toUiPlayer(userData);
   setPlayer(uiPlayer);
+  console.log("Usuario logueado:", uiPlayer);
+  console.log("jugador", userData);
   try { localStorage.setItem('player', JSON.stringify(uiPlayer)); } catch {}
     } catch (err) {
       setError('Error al registrar usuario');
@@ -123,6 +130,8 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   setUser(userData);
   const uiPlayer = toUiPlayer(userData);
   setPlayer(uiPlayer);
+  console.log("Usuario logueado:", uiPlayer);
+  console.log("jugador", userData);
   try { localStorage.setItem('player', JSON.stringify(uiPlayer)); } catch {}
     } catch (err) {
       setError('Error al iniciar sesión con Google');

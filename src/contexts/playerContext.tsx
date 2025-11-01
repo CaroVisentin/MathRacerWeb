@@ -1,10 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react';
-import { profileService } from '../services/profile/profileService';
-import { useAuth } from '../hooks/useAuth';
-import { type PlayerProfileDto } from '../models/domain/playerProfileDto';
-import type { PlayerContextValue } from '../models/ui/playerProfile';
-
-
+// import React, { createContext, useContext, useEffect, useState } from 'react';
 // const PlayerContext = createContext<PlayerContextValue>({
 //   profile: null,
 //   loading: true,

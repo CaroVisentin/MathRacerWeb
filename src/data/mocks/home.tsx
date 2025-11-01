@@ -1,4 +1,4 @@
-import type { HomeData } from "../../models/ui/home-data";
+//import type { HomeData } from "../../models/ui/home-data";
 import auto from "../../assets/images/auto.png";
 import fondo from "../../assets/images/fondocity.png";
 import perfil from "../../assets/images/jugador.png";
@@ -7,7 +7,7 @@ import pilaempty from "../../assets/images/pila-empty.png";
 import pilabolt from "../../assets/images/pila-bolt.png";
 import moneda from "../../assets/images/coin.png";
 
-export const homeDataMock: HomeData = {
+export const homeDataMock = {
 
   activeItems: {
     car: {
@@ -28,9 +28,8 @@ export const homeDataMock: HomeData = {
   },
   battery: {
     time: "02:35",
-    levels: ["full", "full", "empty"],
-  },
-};
+    levels: ["full", "full", "empty"] as ("full" | "empty")[],
+  }};
 
 export const batteryIcons = { pila, pilaempty, pilabolt };
 export const currencyIcon = moneda;

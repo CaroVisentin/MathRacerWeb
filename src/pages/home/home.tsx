@@ -6,7 +6,7 @@ import { ProfileCard } from "../../components/home/profileCard";
 import { InfoBox } from "../../components/home/infoBox";
 import { CarDisplay } from "../../components/home/carDisplay";
 import { useState } from "react";
-import { homeDataMock } from "../../data/mocks/home";
+//import { homeDataMock } from "../../data/mocks/home";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import ErrorConnection from "../../shared/modals/errorConnection";
@@ -22,7 +22,7 @@ export const Home = () => {
   const { logout } = useAuth();
   const [errorMessage, setErrorMessage] = useState("");
   const [showErrorModal, setShowErrorModal] = useState(false);
-  //agregru
+  
  
   const {homeData} = useHomeData();
 
@@ -89,7 +89,7 @@ export const Home = () => {
         <div className="flex flex-1 items-end justify-between px-4 pb-8">
           <div className="flex flex-col gap-3">
             <ActionButton to="/menu">Multijugador</ActionButton>
-            <ActionButton to="/story-mode">Historia</ActionButton>
+            <ActionButton to="/modo-historia">Historia</ActionButton>
             <ActionButton className="pointer-events-none">
               Práctica Libre
             </ActionButton>

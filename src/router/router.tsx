@@ -83,13 +83,18 @@ const router = createBrowserRouter([
     path: "/register",
     element: <PublicRoute><RegisterPage /></PublicRoute>
   },
-  { path: "/ranking", 
-    element: <RankingPage />},
-  { path: "/garage", element: <GaragePage /> },
-  { path: "/store", element: <StorePage /> },
-  { path: "/store/product/:id", element: <ProductDetailsPage /> },
-  { path: "/cart", element: <CartPage /> },
-  { path: "/tutorial", element: <TutorialPage /> },
+  { path: "/ranking",
+    element: <ProtectedRoute><RankingPage /></ProtectedRoute> },
+  { path: "/garage",
+     element: <ProtectedRoute><GaragePage /></ProtectedRoute> },
+  { path: "/store", 
+    element: <ProtectedRoute><StorePage /></ProtectedRoute> },
+  { path: "/store/product/:id",
+    element: <ProtectedRoute><ProductDetailsPage /></ProtectedRoute> },
+  { path: "/cart", 
+    element: <ProtectedRoute><CartPage /></ProtectedRoute> },
+  { path: "/tutorial",
+     element: <ProtectedRoute><TutorialPage /></ProtectedRoute> },
 ]);
 
 export function AppRouter() {
