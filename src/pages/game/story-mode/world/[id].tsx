@@ -9,18 +9,22 @@ import { mapOperations } from "../../../../models/mappers/operationMapper";
 import { mapLevels } from "../../../../models/mappers/levelMapper";
 import type { LevelDtoUi } from "../../../../models/ui/story-mode/levelDtoUi";
 import { StarsBackground } from "../../../../components/game/story-mode/starsBackground";
+import Spinner from "../../../../shared/spinners/spinner";
 
 export const LevelMap = () => {
     const { id } = useParams();
     const worldId = Number(id);
     const location = useLocation();
     const worldOperations: string[] = location.state?.worldOperations ?? [];
+
     const [levels, setLevels] = useState<LevelDtoUi[]>([]);
     const [playerWorldLevels, setPlayerWorldLevels] = useState<PlayerWorldLevelsResponseDto>();
 
+    const [isLoading, setIsLoading] = useState(false);
+
     useEffect(() => {
         async function fetchLevels() {
-            // setLoading(true);
+            setIsLoading(true);
             try {
                 const playerWorldLevelsResponse: PlayerWorldLevelsResponseDto = await getWorldLevels(worldId);
                 setPlayerWorldLevels(playerWorldLevelsResponse);
@@ -30,7 +34,7 @@ export const LevelMap = () => {
             } catch (error) {
                 console.error("Error fetching levels:", error);
             } finally {
-                // setLoading(false);
+                setIsLoading(false);
             }
         }
 
@@ -39,6 +43,9 @@ export const LevelMap = () => {
 
     return (
         <div className="relative flex h-screen w-full flex-col overflow-hidden bg-gradient-to-br from-[#0a0520] via-[#1a0f3a] to-[#0f0828]">
+
+            {isLoading && <Spinner />}
+
             {/* Fondo de estrellas */}
             <StarsBackground />
 

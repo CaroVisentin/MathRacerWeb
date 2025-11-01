@@ -15,6 +15,8 @@ import { WildcardsAndInstructions } from "../../../../components/game/story-mode
 import { RaceTrack } from "../../../../components/game/story-mode/raceTrack";
 import { QuestionSection } from "../../../../components/game/story-mode/questionSection";
 import { StoryModeGameHeader } from "../../../../components/game/story-mode/storyModeGameHeader";
+import ErrorModal from "../../../../shared/modals/errorModal";
+import Spinner from "../../../../shared/spinners/spinner";
 
 export const StoryModeGame = () => {
     const { id } = useParams();
@@ -39,6 +41,10 @@ export const StoryModeGame = () => {
     const [answerResult, setAnswerResult] = useState<"correct" | "wrong" | null>(null);
     const [isAnswering, setIsAnswering] = useState(false);
     const [timeLeft, setTimeLeft] = useState<number>(10);
+
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         if (!stateLevel) {
@@ -65,12 +71,20 @@ export const StoryModeGame = () => {
     useEffect(() => {
         if (startMatch) {
             const iniciarPartida = async () => {
+                setIsLoading(true);
                 try {
                     // Crear la partida
                     const response: StartSoloGameResponseDto = await startGame(levelId);
                     setGameData(response);
-                } catch (error) {
-                    console.error(error)
+                } catch (error: any) {
+                    const message =
+                        error.response?.data?.message ||
+                        error.message ||
+                        "Ocurrió un error desconocido";
+                    setErrorMessage(message);
+                    console.error("Error al iniciar partida:", message);
+                } finally {
+                    setIsLoading(false);
                 }
             }
 
@@ -198,6 +212,8 @@ export const StoryModeGame = () => {
 
     return (
         <>
+            {isLoading && <Spinner />}
+
             <div className="juego w-full h-full bg-black text-white relative">
                 {/* Header */}
                 <StoryModeGameHeader
@@ -211,6 +227,16 @@ export const StoryModeGame = () => {
                 {/* Contador */}
                 {showCountdown && (
                     <Countdown countdown={countdown} />
+                )}
+
+                {/* Modal de Error */}
+                {errorMessage && (
+                    <ErrorModal
+                        title="¡Oops!"
+                        message={errorMessage}
+                        onClose={() => setErrorMessage(null)}
+                        onReturn={() => navigate("/home")}
+                    />
                 )}
 
                 {/* Modal de Resultados */}

@@ -21,8 +21,8 @@ export async function startGame(levelId: number): Promise<StartSoloGameResponseD
         )
         return response.data;
     } catch (error: any) {
-        console.error("Error al iniciar la partida:", error.response?.data?.message || error.message);
-        throw error;
+        const message = error.response?.data?.message || error.message || "Error desconocido";
+        throw new Error(message); 
     }
 }
 
