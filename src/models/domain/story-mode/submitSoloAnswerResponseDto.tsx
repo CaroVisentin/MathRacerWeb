@@ -1,24 +1,23 @@
-import type { QuestionDto } from "./questionDto";
 
 /*
-* Respuesta al enviar una respuesta - Contiene TODO lo necesario para continuar
+* Respuesta al enviar una respuesta en partida individual
 */
 export interface SubmitSoloAnswerResponseDto {
+    // Feedback de la respuesta
     isCorrect: number;
     correctAnswer: number;
     playerAnswer: number;
 
-    // Estado crítico del juego
+    // Estado del juego
     status: string;
     livesRemaining: number;
     playerPosition: number;
     machinePosition: number;
     correctAnswers: number;
 
-    nextQuestion: QuestionDto
-    currentQuestionIndex: number;
+    // Control de tiempo
+    waitTimeSeconds: number;
+    answeredAt: Date;
 
-    // Ganador (sólo si terminó)
-    winnerId?: number;
-    winnerName?: string;
+    currentQuestionIndex: number;
 }

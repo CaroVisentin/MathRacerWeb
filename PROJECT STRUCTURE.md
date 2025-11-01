@@ -21,6 +21,9 @@ public/               # Archivos públicos
 src/                  # Código fuente de la aplicación
   assets/             # Recursos como imágenes, fuentes, íconos, audios
   components/         # UI reutilizable, separada por vistas
+  contexts/           # Herramientas que permiten compartir datos entre componentes 
+  data/mocks          # Arrays de información hardcodeada para las vistas
+  hooks/              # Lógica que se va a usar en distintos lugares de la aplicación
   models/             # Definición de entidades
     domain/           # Entidades reflejo del backend
     enums/            # Enums o type unions (pueden ser compartidos entre DTO y UI)
@@ -31,7 +34,9 @@ src/                  # Código fuente de la aplicación
   services/           # Llamadas a la API
   utils/              # Funciones auxiliares
   shared/             # Componentes reutilizables del layout, ej. sidebar, navbar, modals, buttons
-  hooks/              # Lógica que se va a usar en distintos lugares de la aplicación
+    data/             # Arrays de información fija para las vistas
+    utils/            # Funciones auxiliares
+  tests/              # Pruebas unitarias o de integración
 
 # Librerías utilizadas
 tailwindcss         # Framework de diseño

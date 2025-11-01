@@ -3,6 +3,13 @@ import type { StartSoloGameResponseDto } from "../../../models/domain/story-mode
 import type { SubmitSoloAnswerResponseDto } from "../../../models/domain/story-mode/submitSoloAnswerResponseDto";
 import { api, API_URLS } from "../../network/api";
 
+/* Flujo del juego 
+1. startGame
+2. submitAnswer 
+3. espera 3 segundos para mostrar rta correcta
+4. getGameStatus
+5. vuelve a repetirse desde el paso 2
+
 /** 
 * Inicia una nueva partida individual
 * @param levelId Id del nivel para empezar la partida
@@ -13,8 +20,8 @@ export async function startGame(levelId: number): Promise<StartSoloGameResponseD
             `${API_URLS.storyModeGame}/start/${levelId}/`
         )
         return response.data;
-    } catch (error: unknown) {
-        console.error("Error al iniciar una partida individual:", error);
+    } catch (error: any) {
+        console.error("Error al iniciar la partida:", error.response?.data?.message || error.message);
         throw error;
     }
 }

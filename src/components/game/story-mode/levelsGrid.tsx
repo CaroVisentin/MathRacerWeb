@@ -12,8 +12,12 @@ export const LevelsGrid: React.FC<LevelsGridProps> = ({ levels }: LevelsGridProp
     const [hoveredLevel, setHoveredLevel] = useState<number | null>(null)
 
     const handleLevelClick = (levelId: number) => {
-        navigate(`/modo-historia/nivel/${levelId}`)
-    }
+        const selectedLevel = levels.find(level => level.id === levelId);
+        if (selectedLevel) {
+            sessionStorage.setItem("selectedLevel", JSON.stringify(selectedLevel));
+            navigate(`/modo-historia/nivel/${levelId}`, { state: { level: selectedLevel } });
+        }
+    };
 
     return (
         <div className="relative min-h-screen bg-[#1a0a2e] overflow-auto py-8">
