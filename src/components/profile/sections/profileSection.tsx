@@ -1,19 +1,21 @@
-import { usePlayer } from "../../../contexts/playerContext";
+import { usePlayer } from "../../../hooks/usePlayer";
 import { UserInfoSection } from "../components/userInfo"
 
 
 // Acá se pasaría mediante props el usuario con sesión activa
 export const ProfileSection = () => {
 
-  const { profile, loading: profileLoading } = usePlayer();
-    if (profileLoading) {   
+  const { player } = usePlayer();
+
+
+    if (!player) {
         return (
         <div className="text-black h-screen flex items-center justify-center">
             Cargando perfil...
         </div>
         );
     }
-    if (!profile) {
+    if (!player) {
         return (
         <div className="text-black h-screen flex items-center justify-center">
 
@@ -24,10 +26,10 @@ export const ProfileSection = () => {
     return (
         <>
             <UserInfoSection
-                username={profile.name}
-                email={profile.email}
-                partidas={profile.points}
-                puntuacion={profile.points}
+                username={player.name}
+                email={player.email}
+                partidas={player.points}
+                puntuacion={player .points}
             />
         </>
     )

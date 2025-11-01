@@ -46,38 +46,7 @@ export const Home = () => {
     return <div className="text-white h-screen flex items-center justify-center">Cargando...</div>;
   }
 
-  if (!profile) {
-    return (
-      <div className="text-black h-screen flex items-center justify-center">
-        No se pudo cargar el perfil
-      </div>
-    );
-  }
 
-  const data = {
-  user: {
-    id: profile.id,
-    name: profile.name,
-    coins: profile.coins,
-    level: profile.lastLevelId,
-    ranking: profile.points,
-  },
-  activeItems: {
-    car: {
-      ...homeDataMock.activeItems.car,
-      imageUrl:  homeDataMock.activeItems.car.imageUrl,
-    },
-    background: {
-      ...homeDataMock.activeItems.background,
-      imageUrl: homeDataMock.activeItems.background.imageUrl,
-    },
-    profile: {
-      ...homeDataMock.activeItems.profile,
-      imageUrl: homeDataMock.activeItems.profile.imageUrl,
-    },
-  },
-  battery: homeDataMock.battery,
-};
 
   return (
     <div className="relative h-screen w-screen flex flex-col">
