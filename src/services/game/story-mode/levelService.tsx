@@ -1,4 +1,4 @@
-import type { PlayerWorldLevelsResponseDto } from "../../../models/domain/playerWorldLevelsResponseDto";
+import type { PlayerWorldLevelsResponseDto } from "../../../models/domain/story-mode/playerWorldLevelsResponseDto";
 import { api, API_URLS } from "../../network/api";
 
 /**

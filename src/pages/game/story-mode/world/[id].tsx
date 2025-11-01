@@ -4,10 +4,10 @@ import { BottomUI } from "../../../../components/game/story-mode/bottomUI";
 import { useLocation, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getWorldLevels } from "../../../../services/game/story-mode/levelService";
-import type { PlayerWorldLevelsResponseDto } from "../../../../models/domain/playerWorldLevelsResponseDto";
+import type { PlayerWorldLevelsResponseDto } from "../../../../models/domain/story-mode/playerWorldLevelsResponseDto";
 import { mapOperations } from "../../../../models/mappers/operationMapper";
 import { mapLevels } from "../../../../models/mappers/levelMapper";
-import type { LevelDtoUi } from "../../../../models/ui/levelDtoUi";
+import type { LevelDtoUi } from "../../../../models/ui/story-mode/levelDtoUi";
 
 export const LevelMap = () => {
     const { id } = useParams();

@@ -2,10 +2,10 @@ import { useEffect, useState } from "react"
 import { BottomUI } from "../../../components/game/story-mode/bottomUI"
 import { WorldMap } from "../../../components/game/story-mode/worldMap"
 import { TopBar } from "../../../components/game/story-mode/topBar"
-import { type PlayerWorldsResponseDto } from "../../../models/domain/playerWorldsResponseDto"
+import { type PlayerWorldsResponseDto } from "../../../models/domain/story-mode/playerWorldsResponseDto"
 import { getPlayerWorlds } from "../../../services/game/story-mode/worldService"
 import { getWorldLevels } from "../../../services/game/story-mode/levelService"
-import type { WorldDtoUi } from "../../../models/ui/worldDtoUi"
+import type { WorldDtoUi } from "../../../models/ui/story-mode/worldDtoUi"
 
 export const StoryMode = () => {
     const [mappedWorlds, setMappedWorlds] = useState<WorldDtoUi[]>([]);

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { type WorldDtoUi } from "../../../models/ui/worldDtoUi";
+import { type WorldDtoUi } from "../../../models/ui/story-mode/worldDtoUi";
 import { mapOperations } from "../../../models/mappers/operationMapper";
 
 interface WorldMapProps {

@@ -1,6 +1,5 @@
-import type { LevelDto } from "../domain/levelDto";
-import type { LevelDtoUi } from "../ui/levelDtoUi";
-
+import type { LevelDto } from "../domain/story-mode/levelDto";
+import type { LevelDtoUi } from "../ui/story-mode/levelDtoUi";
 /**
  * Mapear los niveles agregando info de desbloqueo, completado y estrellas
  * @param levelsFromApi Lista de todos los niveles que viene del backend

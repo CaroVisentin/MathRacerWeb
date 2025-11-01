@@ -1,5 +1,5 @@
-import type { WorldDto } from "../domain/worldDto";
-import type { WorldDtoUi } from "../ui/worldDtoUi";
+import type { WorldDto } from "../domain/story-mode/worldDto";
+import type { WorldDtoUi } from "../ui/story-mode/worldDtoUi";
 
 /**
  * Mapear los mundos agregando info de desbloqueo y niveles completados

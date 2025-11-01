@@ -1,4 +1,4 @@
-import type { WorldDto } from "../domain/worldDto";
+import type { WorldDto } from "../../domain/story-mode/worldDto";
 
 /*
 * Interfaz utilizada en el modo historia para guardar datos calculados

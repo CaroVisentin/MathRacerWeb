@@ -1,3 +1,4 @@
+import type { ProductDto } from "./productDto";
 import type { QuestionDto } from "./questionDto";
 
 /*
@@ -9,13 +10,12 @@ export interface StartSoloGameResponseDto {
     playerName: string;
     levelId: number;
 
-    // Configuración del juego
     totalQuestions: number;
     timePerEquation: number;
     livesRemaining: number;
-
-    // Primera pregunta
+    gameStartedAt: Date;
     currentQuestion: QuestionDto;
 
-    gameStartedAt: Date;
+    playerProducts: ProductDto;
+    machineProducts: ProductDto;
 }
