@@ -1,6 +1,6 @@
 export enum SoloGameStatus {
-    InProgress = "In Progress",
-    PlayerWon = "Player Won",
-    MachineWon = "Machine Won",
-    PlayerLost = "Player Lost"
+    InProgress = "InProgress",
+    PlayerWon = "PlayerWon",
+    MachineWon = "MachineWon",
+    PlayerLost = "PlayerLost"
 }

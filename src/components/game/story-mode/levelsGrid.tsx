@@ -13,9 +13,11 @@ export const LevelsGrid: React.FC<LevelsGridProps> = ({ levels }: LevelsGridProp
 
     const handleLevelClick = (levelId: number) => {
         const selectedLevel = levels.find(level => level.id === levelId);
-
-        navigate(`/modo-historia/nivel/${levelId}`, { state: { resultType: selectedLevel?.resultType } })
-    }
+        if (selectedLevel) {
+            sessionStorage.setItem("selectedLevel", JSON.stringify(selectedLevel));
+            navigate(`/modo-historia/nivel/${levelId}`, { state: { level: selectedLevel } });
+        }
+    };
 
     return (
         <div className="relative min-h-screen bg-[#1a0a2e] overflow-auto py-8">
