@@ -46,9 +46,10 @@ class AuthService {
   }
 
   async registerWithEmail(email: string, password: string, username: string) {
+    let userCredential = null;
     try {
       // 1. Crear usuario en Firebase
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const idToken = await userCredential.user.getIdToken();
       setAuthToken(idToken);
       const uid = userCredential.user.uid;
@@ -56,12 +57,22 @@ class AuthService {
       const response = await api.post('/player/register', {
         username,
         email,
-        password,
         uid
       });
       return response.data;
     } catch (error) {
       console.error('Error en registro:', error);
+      
+      // Si el usuario de Firebase se creó pero falló el backend, eliminarlo
+      if (userCredential?.user) {
+        try {
+          await userCredential.user.delete();
+          setAuthToken(null);
+        } catch (deleteError) {
+          console.error('Error al eliminar usuario de Firebase:', deleteError);
+        }
+      }
+      
       if (error instanceof FirebaseError) {
         switch (error.code) {
           case 'auth/email-already-in-use':
