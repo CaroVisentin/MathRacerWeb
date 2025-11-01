@@ -54,7 +54,6 @@ export const StoryMode = () => {
         fetchPlayerWorldsAndLevels();
     }, []);
 
-
     return (
         <div className="relative flex h-screen w-full flex-col overflow-hidden bg-gradient-to-br from-[#0a0520] via-[#1a0f3a] to-[#0f0828]">
             <TopBar headerText="Mundos" remainingLives={7} />
