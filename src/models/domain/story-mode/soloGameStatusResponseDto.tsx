@@ -14,18 +14,13 @@ export interface SoloGameStatusResponseDto {
     correctAnswers: number;
 
     // Pregunta actual
-    currentQuestion: QuestionDto;
+    currentQuestion?: QuestionDto;
     currentQuestionIndex: number;
     totalQuestions: number;
     timePerEquation: number;
-
-    // Ganador (sólo si terminó)
-    winnerId?: number;
-    winnerName?: string;
-
+    
     // Tiempos
     gameStartedAt: number;
-    gameFinishedAt: number;
+    gameFinishedAt?: number;
     elapsedTime: number;
-    remainingTimeForQuestion: number;
 }
