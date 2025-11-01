@@ -83,7 +83,8 @@ const router = createBrowserRouter([
     path: "/register",
     element: <PublicRoute><RegisterPage /></PublicRoute>
   },
-  { path: "/ranking", element: <RankingPage /> },
+  { path: "/ranking", 
+    element: <RankingPage />},
   { path: "/garage", element: <GaragePage /> },
   { path: "/store", element: <StorePage /> },
   { path: "/store/product/:id", element: <ProductDetailsPage /> },

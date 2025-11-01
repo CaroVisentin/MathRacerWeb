@@ -4,6 +4,7 @@ import { auth } from '../services/network/firebase';
 import type { AuthUser } from '../models/domain/authTypes';
 import { authService } from '../services/auth/authService';
 import { setAuthToken } from '../services/network/api';
+import type { Player } from '../models/ui/player';
 
 interface AuthContextType {
   user: AuthUser | null;
@@ -13,6 +14,9 @@ interface AuthContextType {
   register: (email: string, password: string, username: string) => Promise<void>;
   loginWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
+  //agrego
+  player: Player |null;
+  setPlayer: (player:Player | null) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -21,6 +25,23 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  //agrego
+  const[player,setPlayerState] = useState<Player |null>(null);
+  const setPlayer = (updatedPlayer: Player |null) => {
+  setPlayerState(updatedPlayer); 
+};
+
+
+  // Mapear respuesta del backend al modelo UI Player
+  const toUiPlayer = (data: any): Player => ({
+    id: data?.id ?? 0,
+    name: data?.name ?? '',
+    email: data?.email ?? '',
+    lastlevelId: data?.lastlevelId ?? data?.lastLevelId ?? 1,
+    points: data?.points ?? 0,
+    coins: data?.coins ?? 0,
+  });
+
 
   // Mantener token actualizado en Axios
   useEffect(() => {
@@ -34,9 +55,23 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
           email: firebaseUser.email || "",
           username: firebaseUser.displayName || firebaseUser.email?.split("@")[0] || "",
         });
+
+        // Restaurar el player desde almacenamiento local (si existe)
+        try {
+          const stored = localStorage.getItem('player');
+          if (stored) {
+            const parsed = JSON.parse(stored);
+            setPlayer(toUiPlayer(parsed));
+          }
+        } catch (e) {
+          console.warn('No se pudo restaurar el player del storage:', e);
+        }
       } else {
         setAuthToken(null);
         setUser(null);
+        // limpiar player también si no hay usuario
+        setPlayer(null);
+        try { localStorage.removeItem('player'); } catch {}
       }
       setLoading(false);
     });
@@ -48,8 +83,12 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       setError(null);
       setLoading(true);
-      const userData = await authService.loginWithEmail(email, password);
-      setUser(userData);
+  const userData = await authService.loginWithEmail(email, password);
+  setUser(userData);
+  //agregue
+  const uiPlayer = toUiPlayer(userData);
+  setPlayer(uiPlayer);
+  try { localStorage.setItem('player', JSON.stringify(uiPlayer)); } catch {}
     } catch (err) {
       setError('Error al iniciar sesión');
       throw err;
@@ -62,8 +101,11 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       setError(null);
       setLoading(true);
-      const userData = await authService.registerWithEmail(email, password, username);
-      setUser(userData);
+  const userData = await authService.registerWithEmail(email, password, username);
+  setUser(userData);
+  const uiPlayer = toUiPlayer(userData);
+  setPlayer(uiPlayer);
+  try { localStorage.setItem('player', JSON.stringify(uiPlayer)); } catch {}
     } catch (err) {
       setError('Error al registrar usuario');
       console.error('Error en register:', err);
@@ -77,8 +119,11 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       setError(null);
       setLoading(true);
-      const userData = await authService.loginWithGoogle();
-      setUser(userData);
+  const userData = await authService.loginWithGoogle();
+  setUser(userData);
+  const uiPlayer = toUiPlayer(userData);
+  setPlayer(uiPlayer);
+  try { localStorage.setItem('player', JSON.stringify(uiPlayer)); } catch {}
     } catch (err) {
       setError('Error al iniciar sesión con Google');
       throw err;
@@ -91,6 +136,9 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       await authService.logout();
       setUser(null);
+      //agreuge
+      setPlayer(null);
+      try { localStorage.removeItem('player'); } catch {}
     } catch (err) {
       setError('Error al cerrar sesión');
       throw err;
@@ -107,6 +155,9 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         register,
         loginWithGoogle,
         logout,
+        //agrego
+        player,
+        setPlayer,
       }}
     >
       {children}

@@ -3,7 +3,7 @@ export interface AuthUser {
     username: string;
     email: string;
     // Añadir otros campos necesarios
-}
+    }
 
 export interface LoginCredentials {
     email: string;
