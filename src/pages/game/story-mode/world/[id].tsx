@@ -8,18 +8,23 @@ import type { PlayerWorldLevelsResponseDto } from "../../../../models/domain/sto
 import { mapOperations } from "../../../../models/mappers/operationMapper";
 import { mapLevels } from "../../../../models/mappers/levelMapper";
 import type { LevelDtoUi } from "../../../../models/ui/story-mode/levelDtoUi";
+import { StarsBackground } from "../../../../components/game/story-mode/starsBackground";
+import Spinner from "../../../../shared/spinners/spinner";
 
 export const LevelMap = () => {
     const { id } = useParams();
     const worldId = Number(id);
     const location = useLocation();
-    const worldOperations: string[] = location.state?.worldOperations ?? []; 
+    const worldOperations: string[] = location.state?.worldOperations ?? [];
+
     const [levels, setLevels] = useState<LevelDtoUi[]>([]);
     const [playerWorldLevels, setPlayerWorldLevels] = useState<PlayerWorldLevelsResponseDto>();
 
+    const [isLoading, setIsLoading] = useState(false);
+
     useEffect(() => {
         async function fetchLevels() {
-            // setLoading(true);
+            setIsLoading(true);
             try {
                 const playerWorldLevelsResponse: PlayerWorldLevelsResponseDto = await getWorldLevels(worldId);
                 setPlayerWorldLevels(playerWorldLevelsResponse);
@@ -29,7 +34,7 @@ export const LevelMap = () => {
             } catch (error) {
                 console.error("Error fetching levels:", error);
             } finally {
-                // setLoading(false);
+                setIsLoading(false);
             }
         }
 
@@ -38,20 +43,21 @@ export const LevelMap = () => {
 
     return (
         <div className="relative flex h-screen w-full flex-col overflow-hidden bg-gradient-to-br from-[#0a0520] via-[#1a0f3a] to-[#0f0828]">
-            <div className="pointer-events-none absolute inset-0 opacity-20">
-                <div className="absolute left-[5%] top-[10%] h-32 w-24 -skew-y-12 transform bg-gradient-to-b from-purple-900/50 to-purple-700/30" />
-                <div className="absolute left-[15%] top-[5%] h-40 w-20 skew-y-6 transform bg-gradient-to-b from-fuchsia-900/50 to-fuchsia-700/30" />
-                <div className="absolute right-[10%] top-[8%] h-48 w-28 -skew-y-6 transform bg-gradient-to-b from-purple-900/50 to-purple-700/30" />
-                <div className="absolute right-[25%] top-[12%] h-36 w-22 skew-y-12 transform bg-gradient-to-b from-fuchsia-900/50 to-fuchsia-700/30" />
-            </div>
 
+            {isLoading && <Spinner />}
+
+            {/* Fondo de estrellas */}
+            <StarsBackground />
+
+            {/* Top br que contiene el nombre del mundo y las vidas del jugador */}
             <TopBar headerText={playerWorldLevels?.worldName || ""} remainingLives={7} />
 
+            {/* Grilla de niveles */}
             <div className="flex-1 overflow-auto">
                 <LevelsGrid levels={levels} />
             </div>
 
-            {/* Bottom UI - Fixed */}
+            {/* Bottom bar que contiene las operaciones y la cantidad de comodines */}
             <div className="p-4 sticky bottom-0 z-20">
                 <BottomUI operations={mapOperations(worldOperations)} fireExtinguisherQuant={2} changeEquationQuant={3} dobleCountQuant={4} />
             </div>
