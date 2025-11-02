@@ -29,7 +29,8 @@ export const ProfileSection = () => {
                 username={player.name}
                 email={player.email}
                 partidas={player.points}
-                puntuacion={player .points}
+                puntuacion={player.points}
+                avatarUrlId={player.character?.id}
             />
         </>
     )
