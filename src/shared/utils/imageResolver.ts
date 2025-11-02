@@ -1,14 +1,14 @@
-import autoDefault from "../assets/images/auto.png";
-import autoAlt from "../assets/images/auto3.png";
-import autoRojo from "../assets/images/auto_rojo.png";
-import fondoCity from "../assets/images/fondocity.png";
-import fondoGarage from "../assets/images/garage-bg.png";
-import pistaDia from "../assets/images/pista-dia.png";
-import pistaNoche from "../assets/images/pista-noche.png";
-import jugadorDefault from "../assets/images/jugador.png";
-import jugador1 from "../assets/images/jugador1.png";
-import jugador2 from "../assets/images/jugador2.png";
-import jugador3 from "../assets/images/jugador3.png";
+import autoDefault from "../../assets/images/auto.png";
+import autoAlt from "../../assets/images/auto3.png";
+import autoRojo from "../../assets/images/auto_rojo.png";
+import fondoCity from "../../assets/images/fondocity.png";
+import fondoGarage from "../../assets/images/garage-bg.png";
+import pistaDia from "../../assets/images/pista-dia.png";
+import pistaNoche from "../../assets/images/pista-noche.png";
+import jugadorDefault from "../../assets/images/jugador.png";
+import jugador1 from "../../assets/images/jugador1.png";
+import jugador2 from "../../assets/images/jugador2.png";
+import jugador3 from "../../assets/images/jugador3.png";
 
 // Maps por tipo -> id numérico a asset local
 const carImages: Record<number, string> = {

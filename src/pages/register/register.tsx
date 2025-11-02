@@ -95,7 +95,7 @@ export const RegisterPage = () => {
                 </div>
 
                 {/* Formulario con dos columnas */}
-                <form onSubmit={handleSubmit} className="flex flex-col !space-y-8">
+                <form onSubmit={handleSubmit} className="flex flex-col !space-y-8 text-2xl">
 
                     <div className="grid grid-cols-2 gap-6">
                         {/* Columna izquierda */}
@@ -178,7 +178,7 @@ export const RegisterPage = () => {
                             type="submit"
                             className="w-full py-2 bg-cyan-400 hover:bg-cyan-300 text-black 
                             transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-cyan-400/50
-                            text-lg"
+                            text-2xl"
                         >
                             Registrarse
                         </button>
@@ -187,7 +187,7 @@ export const RegisterPage = () => {
                             type="button"
                             onClick={handleGoogleLogin}
                             className="w-full py-2 bg-white hover:bg-gray-100 text-gray-800 transition-all flex items-center justify-center !gap-3 shadow-lg
-                            text-lg"
+                            text-2xl"
                         >
                             <svg className="w-5 h-5" viewBox="0 0 24 24">
                                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -201,10 +201,10 @@ export const RegisterPage = () => {
                 </form>
 
                 {/* Registro */}
-                <p className="!mt-5 text-center text-white text-lg">
+                <p className="!mt-5 text-center font-audiowide text-white text-xl">
                     ¿Ya tenés cuenta?{" "}
                     <Link to="/login"
-                        className="text-[#FFE50C] hover:text-orange-300 transition-colors"
+                        className="text-[#FFE50C]  hover:text-orange-300 transition-colors hover:drop-shadow-[0_0_10px_#00ffff]"
                     >
                         Inicia sesión acá
                     </Link>

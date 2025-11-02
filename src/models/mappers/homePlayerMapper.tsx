@@ -4,7 +4,7 @@ import type { HomeData, Battery, Item } from '../ui/home-data';
 import autoDefault from "../../assets/images/auto.png";
 import fondoDefault from "../../assets/images/fondocity.png";
 import perfilDefault from "../../assets/images/jugador.png";
-import { resolveImageUrl } from "../../utils/imageResolver";
+import { resolveImageUrl } from "../../shared/utils/imageResolver";
 
 export const mapPlayerToHomeData = (
   player: Player,

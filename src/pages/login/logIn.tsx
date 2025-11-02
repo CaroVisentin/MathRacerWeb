@@ -55,7 +55,7 @@ export const LoginPage = () => {
             </div>
 
             {/* Formulario */}
-            <div className="relative z-10 w-full max-w-md px-6">
+            <div className="relative text-2xl z-10 w-full max-w-md px-6">
                 {/* Logo con bloque detrás */}
                 <div className="!mb-6 flex justify-center">
                     <div className="bg-black/50 px-6 py-3 rounded-lg drop-shadow-lg">
@@ -115,9 +115,9 @@ export const LoginPage = () => {
                     <div className="flex flex-col !space-y-4">
                         <button
                             type="submit"
-                            className="w-full py-2 bg-cyan-400 hover:bg-cyan-300 text-black 
+                            className="w-full  py-2 bg-cyan-400 hover:bg-cyan-300 text-black 
                             transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-cyan-400/50
-                            text-lg"
+                            text-2xl"
                         >
                             Iniciar sesión
                         </button>
@@ -126,7 +126,7 @@ export const LoginPage = () => {
                             type="button"
                             onClick={handleGoogleLogin}
                             className="w-full py-2 bg-white hover:bg-gray-100 text-gray-800 transition-all flex items-center justify-center !gap-3 shadow-lg
-                            text-lg"
+                            text-xl"
                         >
                             <svg className="w-5 h-5" viewBox="0 0 24 24">
                                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -140,10 +140,10 @@ export const LoginPage = () => {
                 </form>
 
                 {/* Registro */}
-                <p className="!mt-5 text-center text-white text-lg">
+                <p className="!mt-5 text-center text-white text-xl font-audiowide">
                     ¿No tenés cuenta?{" "}
                     <Link to="/register"
-                        className="text-[#FFE50C] hover:text-orange-300 transition-colors"
+                        className="text-[#FFE50C] hover:text-orange-300 transition-colors hover:drop-shadow-[0_0_10px_#00ffff]"
                     >
                         Registrate acá
                     </Link>

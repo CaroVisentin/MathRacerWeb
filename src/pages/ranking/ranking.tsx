@@ -1,34 +1,68 @@
-import { BackButton } from "../../shared/buttons/backButton"
+import { useEffect, useMemo, useState } from "react";
+import { BackButton } from "../../shared/buttons/backButton";
 import jugador1 from "../../assets/images/jugador1.png";
 import jugador2 from "../../assets/images/jugador2.png";
 import jugador3 from "../../assets/images/jugador3.png";
 import type { RankingPlayer } from "../../models/ui/ranking";
 import { StarsBackground } from "../../shared/backgrounds/starBackground";
+import { getRankingTop10 } from "../../services/player/rankingService";
+import { usePlayer } from "../../hooks/usePlayer";
+import ErrorConnection from "../../shared/modals/errorConnection";
 
 export const RankingPage = () => {
-    // Hardcodeamos los datos del backend
-    const players: RankingPlayer[] = [
-        { id: 1, username: "Jugador3309", score: 15900, image: jugador2, },
-        { id: 2, username: "Jugador3348", score: 14677, image: jugador1, },
-        { id: 3, username: "Jugador3360", score: 14500, image: jugador3, },
-        { id: 4, username: "Jugador3380", score: 13000, image: jugador3, },
-    ]
+    const { player } = usePlayer();
+    const [players, setPlayers] = useState<RankingPlayer[]>([]);
+    const [currentPlayerPosition, setCurrentPlayerPosition] = useState<number>(0);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
-    // Ordenamos los jugadores por score descendente
-    const rankings = players.sort((a, b) => b.score - a.score)
+    useEffect(() => {
+        const fetchRanking = async () => {
+            if (!player?.id) return;
+            try {
+                setLoading(true);
+                setError(null);
+                const data = await getRankingTop10(player.id);
+                // Mapear DTO del backend a UI RankingPlayer
+                const avatars = [jugador1, jugador2, jugador3];
+                const mapped: RankingPlayer[] = (data.top10 || []).map((p, idx) => ({
+                    id: p.playerId,
+                    username: p.name,
+                    score: p.points,
+                    image: avatars[idx % avatars.length],
+                }));
+                setPlayers(mapped);
+                setCurrentPlayerPosition(data.currentPlayerPosition);
+            } catch (e: any) {
+                if (e?.response?.status === 404) {
+                    setError(e.response.data?.message || 'Jugador no encontrado en el ranking');
+                } else {
+                    setError('No se pudo cargar el ranking');
+                }
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchRanking();
+    }, [player?.id]);
 
-    // Para el podio: posición visual 2-1-3
-    const podiumOrder = [
-        rankings[1], // segundo puesto a la izquierda
-        rankings[0], // primer puesto en el centro
-        rankings[2], // tercer puesto a la derecha
-    ]
+    // Ordenamos por puntaje desc si hiciera falta y construimos podio visual 2-1-3
+    const rankings = useMemo(() => [...players].sort((a, b) => b.score - a.score), [players]);
+    const podiumOrder = useMemo(() => rankings.slice(0, 3).length === 3 ? [rankings[1], rankings[0], rankings[2]] : rankings, [rankings]);
 
     // Definimos colores por posición
     const getColor = (position: number) => {
         if (position === 1) return "cyan"
         if (position === 2) return "yellow"
         return "red"
+    }
+
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-black">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-cyan-400" />
+            </div>
+        );
     }
 
     return (
@@ -44,7 +78,10 @@ export const RankingPage = () => {
             {/* Ranking Header */}
             <div className="relative mb-12">
                 <div className="px-12 py-3 rounded-lg">
-                    <h1 className="text-white text-5xl tracking-wider">RANKING</h1>
+                    <h1 className="text-white text-9xl tracking-wider drop-shadow-[0_0_10px_#00ffff]">RANKING</h1>
+                    {currentPlayerPosition > 0 && (
+                        <p className="mt-2 text-4xl text-cyan-400 text-center">Tu posición: #{currentPlayerPosition}</p>
+                    )}
                 </div>
             </div>
 
@@ -82,7 +119,7 @@ export const RankingPage = () => {
                                     : color === "yellow"
                                         ? "border-yellow-400 bg-yellow-950"
                                         : "border-red-500 bg-red-950"
-                                    } flex items-center justify-center`}
+                                    } flex items-center drop-shadow-[0_0_10px_#00ffff] justify-center`}
                             >
                                 <span
                                     className={`text-4xl ${color === "cyan"
@@ -101,7 +138,7 @@ export const RankingPage = () => {
             </div>
 
             {/* Rankings List */}
-            <div className="w-full max-w-2xl space-y-3">
+            <div className="w-full max-w-2xl text-3xl space-y-3">
                 {rankings.map((player, index) => (
                     <div
                         key={player.id}
@@ -155,6 +192,10 @@ export const RankingPage = () => {
                     </div>
                 ))}
             </div>
+
+            {error && (
+                <ErrorConnection message={error} onClose={() => setError(null)} />
+            )}
         </div>
     )
 }
