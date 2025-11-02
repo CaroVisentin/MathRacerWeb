@@ -2,7 +2,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCar, faHelmetSafety, faImage } from '@fortawesome/free-solid-svg-icons'
 import { CoinsDisplay } from '../home/coinsDisplay'
 import { BackButton } from '../../shared/buttons/backButton'
-import { homeDataMock } from '../../data/mocks/home'
+import { usePlayer } from '../../hooks/usePlayer'
 
 interface TopbarProps {
     activeCategory: "cars" | "characters" | "backgrounds";
@@ -10,6 +10,8 @@ interface TopbarProps {
 }
 
 export const Topbar = ({ activeCategory, setActiveCategory }: TopbarProps) => {
+    const { player } = usePlayer();
+    const coins = player?.coins ?? 0;
     return (
         <div className="w-full h-16 flex items-center justify-between px-4 bg-black/70 relative z-30">
             {/* Left: Back button */}
@@ -44,7 +46,7 @@ export const Topbar = ({ activeCategory, setActiveCategory }: TopbarProps) => {
 
             {/* Right: Coins */}
             <div className="flex flex-col items-end">
-                <CoinsDisplay coins={homeDataMock.user.coins} />
+                <CoinsDisplay coins={coins} />
             </div>
         </div>
     );

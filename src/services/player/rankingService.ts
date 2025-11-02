@@ -13,6 +13,6 @@ export interface RankingTop10ResponseDto {
 }
 
 export async function getRankingTop10(playerId: number): Promise<RankingTop10ResponseDto> {
-  const { data } = await api.get<RankingTop10ResponseDto>(`/ranking`, { params: { playerId } });
+  const { data } = await api.get(`/ranking`, { params: { playerId } });
   return data;
 }
