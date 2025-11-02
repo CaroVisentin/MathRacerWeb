@@ -6,15 +6,12 @@ import { ProfileCard } from "../../components/home/profileCard";
 import { InfoBox } from "../../components/home/infoBox";
 import { CarDisplay } from "../../components/home/carDisplay";
 import { useState } from "react";
-//import { homeDataMock } from "../../data/mocks/home";
+
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import ErrorConnection from "../../shared/modals/errorConnection";
-//import { homeDataMock } from "../../data/mocks/home";
-//agrego
-
 import { useHomeData } from "../../hooks/useHomeData";
-//import { mapPlayerToHomeData } from "../../models/mappers/homePlayerMapper";
+
 
 export const Home = () => {
  

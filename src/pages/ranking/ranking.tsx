@@ -24,7 +24,7 @@ export const RankingPage = () => {
                 setLoading(true);
                 setError(null);
                 const data = await getRankingTop10(player.id);
-                // Mapear DTO del backend a UI RankingPlayer
+                
                 const avatars = [jugador1, jugador2, jugador3];
                 const mapped: RankingPlayer[] = (data.top10 || []).map((p, idx) => ({
                     id: p.playerId,
