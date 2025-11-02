@@ -6,6 +6,8 @@ import type { Friend } from "../../../models/ui/friend";
 import { friendshipService } from "../../../services/friendship/friendshipService";
 import { friendMapper } from "../../../models/mappers/friendMapper";
 import { AddFriendModal } from "../components/addFriendModal";
+import Spinner from "../../../shared/spinners/spinner";
+
 
 
 
@@ -50,7 +52,7 @@ export const AmigosSection = () => {
             <span className="text-white text-xl">Lista de amigos</span>
 
             <div className="w-full">
-                {loading && <div className="text-white p-4">Cargando amigos...</div>}
+                {loading &&  <Spinner />}
                 {error && <div className="text-red-400 p-4">Error: {error}</div>}
                 {!loading && !error && (
                     <FriendList friends={friends} onRemove={handleRemove} />
