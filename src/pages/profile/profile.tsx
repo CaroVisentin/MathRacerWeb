@@ -13,7 +13,7 @@ export const ProfilePage = () => {
 
 
     return (
-        <div className="bg-black mb-2">
+        <div className="h-full bg-black mb-2">
             <TabPanel activeSection={activeSection} setActiveSection={setActiveSection} />
 
             {activeSection === "perfil" && (
