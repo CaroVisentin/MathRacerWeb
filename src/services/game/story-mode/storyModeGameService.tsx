@@ -1,14 +1,8 @@
+import { AxiosError } from "axios";
 import type { SoloGameStatusResponseDto } from "../../../models/domain/story-mode/soloGameStatusResponseDto";
 import type { StartSoloGameResponseDto } from "../../../models/domain/story-mode/startSoloGameResponseDto";
 import type { SubmitSoloAnswerResponseDto } from "../../../models/domain/story-mode/submitSoloAnswerResponseDto";
 import { api, API_URLS } from "../../network/api";
-
-/* Flujo del juego 
-1. startGame
-2. submitAnswer 
-3. espera 3 segundos para mostrar rta correcta
-4. getGameStatus
-5. vuelve a repetirse desde el paso 2
 
 /** 
 * Inicia una nueva partida individual
@@ -20,9 +14,19 @@ export async function startGame(levelId: number): Promise<StartSoloGameResponseD
             `${API_URLS.storyModeGame}/start/${levelId}/`
         )
         return response.data;
-    } catch (error: any) {
-        const message = error.response?.data?.message || error.message || "Error desconocido";
-        throw new Error(message); 
+    } catch (error: unknown) {
+        let message = "Error desconocido";
+
+        // Si es un error de Axios
+        if (error instanceof AxiosError) {
+            message = error.response?.data?.message || error.message || message;
+        }
+        // Si es un Error normal de JS
+        else if (error instanceof Error) {
+            message = error.message;
+        }
+
+        throw new Error(message);
     }
 }
 

@@ -14,9 +14,8 @@ interface AuthContextType {
   register: (email: string, password: string, username: string) => Promise<void>;
   loginWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
-  //agrego
-  player: Player |null;
-  setPlayer: (player:Player | null) => void;
+  player: Player | null;
+  setPlayer: (player: Player | null) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -25,11 +24,10 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  //agrego
-  const[player,setPlayerState] = useState<Player |null>(null);
-  const setPlayer = (updatedPlayer: Player |null) => {
-  setPlayerState(updatedPlayer); 
-};
+  const [player, setPlayerState] = useState<Player | null>(null);
+  const setPlayer = (updatedPlayer: Player | null) => {
+    setPlayerState(updatedPlayer);
+  };
 
 
   // Mapear respuesta del backend al modelo UI Player
@@ -71,7 +69,11 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         setUser(null);
         // limpiar player también si no hay usuario
         setPlayer(null);
-        try { localStorage.removeItem('player'); } catch {}
+        try {
+          localStorage.removeItem('player');
+        } catch (e) {
+          console.warn('No se pudo eliminar player del storage', e);
+        }
       }
       setLoading(false);
     });
@@ -83,12 +85,16 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       setError(null);
       setLoading(true);
-  const userData = await authService.loginWithEmail(email, password);
-  setUser(userData);
-  //agregue
-  const uiPlayer = toUiPlayer(userData);
-  setPlayer(uiPlayer);
-  try { localStorage.setItem('player', JSON.stringify(uiPlayer)); } catch {}
+      const userData = await authService.loginWithEmail(email, password);
+      setUser(userData);
+      //agregue
+      const uiPlayer = toUiPlayer(userData);
+      setPlayer(uiPlayer);
+      try {
+        localStorage.setItem('player', JSON.stringify(uiPlayer));
+      } catch (e) {
+        console.warn(e);
+      }
     } catch (err) {
       setError('Error al iniciar sesión');
       throw err;
@@ -101,11 +107,15 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       setError(null);
       setLoading(true);
-  const userData = await authService.registerWithEmail(email, password, username);
-  setUser(userData);
-  const uiPlayer = toUiPlayer(userData);
-  setPlayer(uiPlayer);
-  try { localStorage.setItem('player', JSON.stringify(uiPlayer)); } catch {}
+      const userData = await authService.registerWithEmail(email, password, username);
+      setUser(userData);
+      const uiPlayer = toUiPlayer(userData);
+      setPlayer(uiPlayer);
+      try {
+        localStorage.setItem('player', JSON.stringify(uiPlayer));
+      } catch (e) {
+        console.warn(e);
+      }
     } catch (err) {
       setError('Error al registrar usuario');
       console.error('Error en register:', err);
@@ -119,11 +129,15 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       setError(null);
       setLoading(true);
-  const userData = await authService.loginWithGoogle();
-  setUser(userData);
-  const uiPlayer = toUiPlayer(userData);
-  setPlayer(uiPlayer);
-  try { localStorage.setItem('player', JSON.stringify(uiPlayer)); } catch {}
+      const userData = await authService.loginWithGoogle();
+      setUser(userData);
+      const uiPlayer = toUiPlayer(userData);
+      setPlayer(uiPlayer);
+      try {
+        localStorage.setItem('player', JSON.stringify(uiPlayer));
+      } catch (e) {
+        console.warn(e)
+      }
     } catch (err) {
       setError('Error al iniciar sesión con Google');
       throw err;
@@ -138,7 +152,11 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(null);
       //agreuge
       setPlayer(null);
-      try { localStorage.removeItem('player'); } catch {}
+      try {
+        localStorage.removeItem('player');
+      } catch (e) {
+        console.warn(e)
+      }
     } catch (err) {
       setError('Error al cerrar sesión');
       throw err;
@@ -155,7 +173,6 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         register,
         loginWithGoogle,
         logout,
-        //agrego
         player,
         setPlayer,
       }}
@@ -165,5 +182,4 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-// Mover useAuth a un archivo separado
 export { AuthContext, AuthProvider };
