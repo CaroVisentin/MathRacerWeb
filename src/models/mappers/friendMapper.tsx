@@ -1,4 +1,5 @@
 import type { FriendDto } from "../domain/friendDto";
+import type { PlayerProfileDto } from "../domain/playerProfileDto";
 import type { Friend } from "../ui/friend";
 
 
@@ -17,7 +18,7 @@ export const friendMapper = {
     return dtos.map(friendMapper.fromDto);
   },
 
-  fromPlayerProfileDto(dto: any): Friend {
+  fromPlayerProfileDto(dto: PlayerProfileDto): Friend {
     return {
       id: dto.id,
       name: dto.name ?? "Jugador",

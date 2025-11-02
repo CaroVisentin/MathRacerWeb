@@ -29,8 +29,9 @@ export const AddFriendModal = ({ show, onClose, fromPlayerId }: AddFriendModalPr
             //mapear profile a Friend ui model
             const friend = friendMapper.fromPlayerProfileDto(profile);
             setFoundPlayer(friend);
-        } catch (err: any) {
-            alert(err.message || "Jugador no encontrado");
+        } catch (err: unknown) {
+            const error = err as Error;
+            alert(error.message || "Jugador no encontrado");
         } finally {
             setLoading(false);
         }
@@ -49,8 +50,9 @@ export const AddFriendModal = ({ show, onClose, fromPlayerId }: AddFriendModalPr
             onClose();
             setFoundPlayer(null);
             setSearchEmail("");
-        } catch (err: any) {
-            alert(err.message || "Error al enviar solicitud");
+        } catch (err: unknown) {
+            const error = err as Error;
+            alert(error.message || "Error al enviar solicitud");
         } finally {
             setSendingRequest(false);
         }

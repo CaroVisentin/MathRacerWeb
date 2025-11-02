@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { FriendList } from "../components/friendsList";
 import { usePlayer } from "../../../hooks/usePlayer";
 import type { FriendDto } from "../../../models/domain/friendDto";
@@ -17,7 +17,7 @@ export const AmigosSection = () => {
     const [showModal, setShowModal] = useState(false);
 
 
-    const fetchFriends = async () => {
+    const fetchFriends = useCallback(async () => {
         if (!player?.id) return;
         setLoading(true);
         setError(null);
@@ -27,32 +27,23 @@ export const AmigosSection = () => {
             console.log("Friends data fetched:", data);
             const mappedFriends = friendMapper.fromDtoList(data);
             setFriends(mappedFriends);
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error("Error fetching friends:", err);
-            setError(err?.message ?? "No se pudo cargar la lista de amigos");
+            setError((err as Error)?.message ?? "No se pudo cargar la lista de amigos");
         } finally {
             setLoading(false);
         }
-    };
+    }, [player]);
 
     useEffect(() => {
         fetchFriends();
-    }, [player]);
+    }, [fetchFriends]);
 
     const handleRemove = (id: number) => {
         setFriends((prev) => prev.filter((f) => f.id !== id));
     };
 
-    const handleAdd = () => {
-        const newFriend: Friend = {
-            id: Date.now(),
-            name: "NuevoAmigo",
-            points: Math.floor(Math.random() * 10000),
-            avatarUrl: "/avatarDefault.png",
-            carUrl: "/carro.png",
-        };
-        setFriends((prev) => [...prev, newFriend]);
-    };
+
 
     return (
         <div className="w-full h-full flex flex-col items-center gap-6 bg-black py-6">
@@ -79,11 +70,13 @@ export const AmigosSection = () => {
                 </button>
 
                 {/* Modal */}
-                <AddFriendModal
-                    show={showModal}
-                    onClose={() => setShowModal(false)}
-                    fromPlayerId={player?.id!}
-                />
+                {player && (
+                    <AddFriendModal
+                        show={showModal}
+                        onClose={() => setShowModal(false)}
+                        fromPlayerId={player.id}
+                    />
+                )}
             </div>
         </div>
     );
