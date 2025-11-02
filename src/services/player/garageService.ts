@@ -24,7 +24,7 @@ export interface GarageItemsResponseDto {
 export async function getPlayerCars(playerId: number) {
     try{
         const { data } = await api.get(`/garage/cars/${playerId}`);
-        console.log("Data received:", data);
+    
         return data;
     } catch (error) {
         if(axios.isAxiosError(error) && error.response) {
@@ -38,7 +38,7 @@ export async function getPlayerCars(playerId: number) {
 export async function getPlayerCharacters(playerId: number) {
     try {
         const { data } = await api.get(`/garage/characters/${playerId}`);
-        console.log("Data received:", data);
+        
         return data;
     } catch (error) {
         if(axios.isAxiosError(error) && error.response) {
@@ -52,7 +52,7 @@ export async function getPlayerCharacters(playerId: number) {
 export async function getPlayerBackgrounds(playerId: number) {
     try {
         const { data } = await api.get(`/garage/backgrounds/${playerId}`);
-        console.log("Data received:", data);
+        
         return data;
     } catch (error) {
         if(axios.isAxiosError(error) && error.response) {

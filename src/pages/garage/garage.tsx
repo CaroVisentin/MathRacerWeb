@@ -58,7 +58,7 @@ export const GaragePage = () => {
                 const activeInCars = cResp.activeItem?.productId;
                 const firstOwnedCar = cResp.items?.find((i: GarageItemDto) => i.isOwned)?.productId ?? cResp.items?.[0]?.productId;
                 setSelectedItemId(activeInCars || firstOwnedCar || 0);
-            } catch (e: any) {
+            } catch  {
                 setError("No se pudo cargar el Garage");
             } finally {
                 setLoading(false);
@@ -79,7 +79,7 @@ export const GaragePage = () => {
         if (!list.some(i => i.id === selectedItemId)) {
             if (preferredId !== undefined) setSelectedItemId(preferredId);
         }
-    }, [activeCategory, cars, characters, backgrounds]);
+    }, [activeCategory, cars, characters, backgrounds, selectedItemId]);
 
     const selectedData = useMemo(() => {
         return activeCategory === "cars" ? cars : activeCategory === "characters" ? characters : backgrounds;
@@ -91,7 +91,7 @@ export const GaragePage = () => {
         const type: ProductTypeApi = activeCategory === "cars" ? "Auto" : activeCategory === "characters" ? "Personaje" : "Fondo";
         const list = activeCategory === "cars" ? cars : activeCategory === "characters" ? characters : backgrounds;
         const selected = list.find(i => i.id === selectedItemId);
-        if (!selected?.isOwned || selected.isActive) return; // nada que hacer
+        if (!selected?.isOwned || selected.isActive) return; // seguridad
         try {
             await activatePlayerItem(player.id, selectedItemId, type);
             // Actualizar estado local para reflejar activación
