@@ -13,10 +13,11 @@ export const mapPlayerToHomeData = (
   const toItem = (src: PlayerItem | null, type: 'car'|'background'|'character', def: {id:number; name:string; imageUrl:string}): Item => {
     if (!src) return def;
     // si llega a venir la imagen del back , se usa sino se compara id
-    const anySrc: any = src as any;
-    const imageId: number | undefined = anySrc.imageId ?? src.id;
-    const imageUrl: string = anySrc.imageUrl ?? resolveImageUrl(type, imageId);
-    return { id: src.id, name: src.name, imageUrl };
+   // const anySrc: any = src as any;
+   // const imageId: number | undefined = anySrc.imageId ?? src.id;
+   // const imageUrl: string = anySrc.imageUrl ?? resolveImageUrl(type, imageId);
+   const imageUrl: string = resolveImageUrl(type, src.id);
+   return { id: src.id, name: src.name, imageUrl };
   };
 
   const car: Item = toItem(player.car, 'car', { id: 0, name: 'Default Car', imageUrl: autoDefault });

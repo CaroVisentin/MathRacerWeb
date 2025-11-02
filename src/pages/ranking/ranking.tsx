@@ -8,6 +8,7 @@ import { StarsBackground } from "../../shared/backgrounds/starBackground";
 import { getRankingTop10 } from "../../services/player/rankingService";
 import { usePlayer } from "../../hooks/usePlayer";
 import ErrorConnection from "../../shared/modals/errorConnection";
+import type { AxiosError } from "axios";
 
 export const RankingPage = () => {
     const { player } = usePlayer();
@@ -33,9 +34,11 @@ export const RankingPage = () => {
                 }));
                 setPlayers(mapped);
                 setCurrentPlayerPosition(data.currentPlayerPosition);
-            } catch (e: any) {
-                if (e?.response?.status === 404) {
-                    setError(e.response.data?.message || 'Jugador no encontrado en el ranking');
+            } catch (e: unknown) {
+                const error = e as AxiosError<{ message: string }>;
+
+                if (error.response?.status === 404) {
+                    setError(error.response.data?.message || 'Jugador no encontrado en el ranking');
                 } else {
                     setError('No se pudo cargar el ranking');
                 }

@@ -33,11 +33,11 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 
 
   // Mapear respuesta del backend al modelo UI Player
-  const toUiPlayer = (data: any): Player => ({
+  const toUiPlayer = (data: Player): Player => ({
     id: data?.id ?? 0,
     name: data?.name ?? '',
     email: data?.email ?? '',
-    lastlevelId: data?.lastlevelId ?? data?.lastLevelId ?? 1,
+    lastlevelId: data?.lastlevelId ?? data?.lastlevelId ?? 1,
     points: data?.points ?? 0,
     coins: data?.coins ?? 0,
     background: data?.background || null,
@@ -74,7 +74,9 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         setUser(null);
         // limpiar player también si no hay usuario
         setPlayer(null);
-        try { localStorage.removeItem('player'); } catch {}
+        try { localStorage.removeItem('player'); } catch (e) {
+          console.warn('No se pudo restaurar el player del storage:', e);
+        }
       }
       setLoading(false);
     });
@@ -93,7 +95,9 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   console.log("Usuario logueado:", uiPlayer);
   console.log("jugador", userData);
   setPlayer(uiPlayer);
-  try { localStorage.setItem('player', JSON.stringify(uiPlayer)); } catch {}
+  try { localStorage.setItem('player', JSON.stringify(uiPlayer)); } catch (e) {
+    console.warn('No se pudo guardar el player en el storage:', e);
+  }
     } catch (err) {
       setError('Error al iniciar sesión');
       throw err;
@@ -112,10 +116,12 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   setPlayer(uiPlayer);
   console.log("Usuario logueado:", uiPlayer);
   console.log("jugador", userData);
-  try { localStorage.setItem('player', JSON.stringify(uiPlayer)); } catch {}
+  try { localStorage.setItem('player', JSON.stringify(uiPlayer)); } catch (e) {
+    console.warn('No se pudo guardar el player en el storage:', e);
+  }
     } catch (err) {
       setError('Error al registrar usuario');
-      console.error('Error en register:', err);
+      
       throw err;
     } finally {
       setLoading(false);
@@ -132,7 +138,9 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   setPlayer(uiPlayer);
   console.log("Usuario logueado:", uiPlayer);
   console.log("jugador", userData);
-  try { localStorage.setItem('player', JSON.stringify(uiPlayer)); } catch {}
+  try { localStorage.setItem('player', JSON.stringify(uiPlayer)); } catch (e) {
+    console.warn('No se pudo guardar el player en el storage:', e);
+  }
     } catch (err) {
       setError('Error al iniciar sesión con Google');
       throw err;
@@ -147,7 +155,9 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(null);
       //agreuge
       setPlayer(null);
-      try { localStorage.removeItem('player'); } catch {}
+      try { localStorage.removeItem('player'); } catch (e) {
+          console.warn('No se pudo eliminar el player del storage:', e);
+        }
     } catch (err) {
       setError('Error al cerrar sesión');
       throw err;

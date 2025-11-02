@@ -23,12 +23,7 @@ const ErrorConnection: React.FC<ErrorConnectionProps> = ({ message, onClose }) =
 
         <p className="text-xl mb-8">{message}</p>
 
-        {/* <button
-          onClick={onRetry}
-          className="!mt-2 bg-[#5df9f9] text-black font-extralight hover:bg-red-700 w-32 py-3 rounded text-xl hover:drop-shadow-[0_0_10px_#00ffff] transition"
-        >
-          Reintentar
-        </button> */}
+        
       </div>
     </div>
   );
