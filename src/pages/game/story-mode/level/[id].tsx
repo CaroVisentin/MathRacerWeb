@@ -17,6 +17,7 @@ import { QuestionSection } from "../../../../components/game/story-mode/question
 import { StoryModeGameHeader } from "../../../../components/game/story-mode/storyModeGameHeader";
 import ErrorModal from "../../../../shared/modals/errorModal";
 import Spinner from "../../../../shared/spinners/spinner";
+import type { AxiosError } from "axios";
 
 export const StoryModeGame = () => {
     const { id } = useParams();
@@ -76,11 +77,19 @@ export const StoryModeGame = () => {
                     // Crear la partida
                     const response: StartSoloGameResponseDto = await startGame(levelId);
                     setGameData(response);
-                } catch (error: any) {
-                    const message =
-                        error.response?.data?.message ||
-                        error.message ||
-                        "Ocurrió un error desconocido";
+                } catch (error: unknown) {
+                    let message = "Ocurrió un error desconocido";
+
+                    // Si es un error de Axios
+                    if ((error as AxiosError)?.response) {
+                        const axiosError = error as AxiosError<{ message: string }>;
+                        message = axiosError.response?.data?.message || axiosError.message || message;
+                    }
+                    // Si es un error normal de JS
+                    else if (error instanceof Error) {
+                        message = error.message;
+                    }
+
                     setErrorMessage(message);
                     console.error("Error al iniciar partida:", message);
                 } finally {
