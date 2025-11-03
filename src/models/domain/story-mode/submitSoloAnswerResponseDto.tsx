@@ -24,4 +24,6 @@ export interface SubmitSoloAnswerResponseDto {
     // Indica si el jugador debe abrir un cofre por completar el último nivel del mundo
     shouldOpenWorldCompletionChest: boolean;
     progressIncrement: number;
+
+    coinsEarned: number; // Cantidad de monedas obtenidas al completar el nivel (0 si no completó)
 }

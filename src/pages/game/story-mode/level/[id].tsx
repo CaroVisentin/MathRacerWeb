@@ -397,7 +397,7 @@ export const StoryModeGame = () => {
                     {winnerModal && (
                         <EndOfStoryModeModal
                             level={level?.number ?? 0}
-                            reward={obtainedChest?.items?.reduce((sum, item) => sum + (item.compensationCoins || 0), 0) || 0}
+                            reward={gameSubmitAnswer?.coinsEarned ?? 0}
                             won={gameStatus?.status === SoloGameStatus.PlayerWon}
                             onClose={handleCloseWinnerModal}
                             onNext={handleCloseWinnerModal}
