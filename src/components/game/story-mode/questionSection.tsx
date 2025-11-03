@@ -1,4 +1,4 @@
-import type { SoloQuestionDto } from "../../../models/domain/story-mode/questionDto";
+import type { SoloQuestionDto } from "../../../models/domain/story-mode/soloQuestionDto";
 import type { SubmitSoloAnswerResponseDto } from "../../../models/domain/story-mode/submitSoloAnswerResponseDto";
 import { EquationSection } from "./equationSection";
 import { OptionsSection } from "./optionsSection";
