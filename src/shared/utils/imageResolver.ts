@@ -17,24 +17,24 @@ import jugador3 from "../../assets/images/jugador3.png";
 const carImages: Record<number, string> = {
   1: autoDefault,
   2: autoAlt,
-  7: autoRojo,
-  4: autoAzul,
-  10: autoBlanco,
-  6: autoNaranja,
+  3: autoRojo,
+  6: autoAzul,
+  9: autoBlanco,
+  12: autoNaranja,
 };
 
 const backgroundImages: Record<number, string> = {
-  6: fondoPastel,
-  9: fondoNube,
-  3: pistaDia,
-  12: pistaNoche,
+  11: fondoPastel,
+  14: fondoNube,
+  5: pistaDia,
+  8: pistaNoche,
 };
 
 const characterImages: Record<number, string> = {
-  11: jugadorDefault,
-  2: jugador1,
-  5: jugador2,
-  8: jugador3,
+  4: jugadorDefault,
+  7: jugador1,
+  10: jugador2,
+  13: jugador3,
 };
 
 export type ProductVisualType = "car" | "background" | "character";
