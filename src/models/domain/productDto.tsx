@@ -3,6 +3,15 @@ export interface ProductDto {
     name: string;
     description: string;
     price: number;
-    typeProduct: string;
-    image: string;
+    imageUrl: string;
+    productTypeId: number;
+    productTypeName: string;
+    rarity: string;
+    isOwned: boolean;
+    currency: string;
+}
+
+export interface StoreProductsResponse {
+    items: ProductDto[];
+    totalCount: number;
 }

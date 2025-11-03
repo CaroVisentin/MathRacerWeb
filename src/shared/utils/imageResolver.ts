@@ -1,17 +1,17 @@
 import autoDefault from "../../assets/images/auto.png";
 import autoAlt from "../../assets/images/auto3.png";
-import autoRojo from "../../assets/images/auto_rojo.png";
-import autoAzul from "../../assets/images/auto-garage.png";
-import autoBlanco from "../../assets/images/auto-garage2.png";
-import autoNaranja from "../../assets/images/auto-garage3.png";
-import fondoPastel from "../../assets/images/pista-pastel.png";
-import fondoNube from "../../assets/images/fondo2.png";
-import pistaDia from "../../assets/images/pista-dia.png";
-import pistaNoche from "../../assets/images/pista-noche.png";
-import jugadorDefault from "../../assets/images/jugador.png";
-import jugador1 from "../../assets/images/jugador1.png";
-import jugador2 from "../../assets/images/jugador2.png";
-import jugador3 from "../../assets/images/jugador3.png";
+import autoRojo from "../../assets/images/cars/a1.png";
+import autoAzul from "../../assets/images/cars/a2.png";
+import autoBlanco from "../../assets/images/cars/a3.png";
+import autoNaranja from "../../assets/images/cars/a4.png";
+import fondoPastel from "../../assets/images/backgrounds/f3.png";
+import fondoNube from "../../assets/images/backgrounds/f1.png";
+import pistaDia from "../../assets/images/backgrounds/f4.png";
+import pistaNoche from "../../assets/images/backgrounds/f2.png";
+import jugadorDefault from "../../assets/images/characters/p1.png";
+import jugadorRojo from "../../assets/images/characters/p2.png";
+import jugadorAzul from "../../assets/images/characters/p3.png";
+import jugadorSonic from "../../assets/images/characters/p5.png";
 
 
 const carImages: Record<number, string> = {
@@ -32,9 +32,9 @@ const backgroundImages: Record<number, string> = {
 
 const characterImages: Record<number, string> = {
   4: jugadorDefault,
-  7: jugador1,
-  10: jugador2,
-  13: jugador3,
+  7: jugadorRojo,
+  10: jugadorAzul,
+  13: jugadorSonic,
 };
 
 export type ProductVisualType = "car" | "background" | "character";

@@ -1,5 +1,5 @@
-import carImg from "../../assets/images/auto.png";
-import characterImg from "../../assets/images/mario.png";
+import carImg from "../../assets/images/cars/a4.png";
+import characterImg from "../../assets/images/characters/p6.png";
 import coinImg from "../../assets/images/coin.png";
 
 export const SpecialOffer = () => {

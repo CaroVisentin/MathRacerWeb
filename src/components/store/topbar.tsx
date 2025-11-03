@@ -1,14 +1,16 @@
 import { BackButton } from "../../shared/buttons/backButton";
 import { CoinsDisplay } from "../home/coinsDisplay";
-import { homeDataMock } from "../../data/mocks/home";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faShoppingCart } from "@fortawesome/free-solid-svg-icons";
 import { useCart } from "../../hooks/useCart";
 import { useNavigate } from "react-router-dom";
+import { usePlayer } from "../../hooks/usePlayer";
 
 export const Topbar = () => {
     const { cart } = useCart();
+    const { player } = usePlayer();
     const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+    const coins = player?.coins ?? 0;
     const navigate = useNavigate();
 
     const handleClickCartButton = () => {
@@ -40,7 +42,7 @@ export const Topbar = () => {
                         )}
                     </button>
 
-                    <CoinsDisplay coins={homeDataMock.user.coins} />
+                    <CoinsDisplay coins={coins} />
                 </div>
 
             </div>
