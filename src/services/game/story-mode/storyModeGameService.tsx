@@ -1,4 +1,3 @@
-import { AxiosError } from "axios";
 import type { SoloGameStatusResponseDto } from "../../../models/domain/story-mode/soloGameStatusResponseDto";
 import type { StartSoloGameResponseDto } from "../../../models/domain/story-mode/startSoloGameResponseDto";
 import type { SubmitSoloAnswerResponseDto } from "../../../models/domain/story-mode/submitSoloAnswerResponseDto";

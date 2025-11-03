@@ -90,7 +90,7 @@ export const StoryModeGame = () => {
                     const response: StartSoloGameResponseDto = await startGame(levelId);
                     setGameData(response);
                 } catch (error: unknown) {
-                    let message = getErrorMessage(error);
+                    const message = getErrorMessage(error);
                     setErrorMessage(message);
                 } finally {
                     setIsLoading(false);
