@@ -20,4 +20,8 @@ export interface SubmitSoloAnswerResponseDto {
     answeredAt: Date;
 
     currentQuestionIndex: number;
+
+    // Indica si el jugador debe abrir un cofre por completar el último nivel del mundo
+    shouldOpenWorldCompletionChest: boolean;
+    progressIncrement: number;
 }

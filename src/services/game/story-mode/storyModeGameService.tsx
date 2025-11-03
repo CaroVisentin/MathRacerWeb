@@ -3,6 +3,8 @@ import type { SoloGameStatusResponseDto } from "../../../models/domain/story-mod
 import type { StartSoloGameResponseDto } from "../../../models/domain/story-mode/startSoloGameResponseDto";
 import type { SubmitSoloAnswerResponseDto } from "../../../models/domain/story-mode/submitSoloAnswerResponseDto";
 import { api, API_URLS } from "../../network/api";
+import { manageError } from "../../../shared/utils/manageErrors";
+import type { UseWildcardResponseDto } from "../../../models/domain/story-mode/usedWildcardResponseDto";
 
 /** 
 * Inicia una nueva partida individual
@@ -15,18 +17,7 @@ export async function startGame(levelId: number): Promise<StartSoloGameResponseD
         )
         return response.data;
     } catch (error: unknown) {
-        let message = "Error desconocido";
-
-        // Si es un error de Axios
-        if (error instanceof AxiosError) {
-            message = error.response?.data?.message || error.message || message;
-        }
-        // Si es un Error normal de JS
-        else if (error instanceof Error) {
-            message = error.message;
-        }
-
-        throw new Error(message);
+        manageError(error);
     }
 }
 
@@ -41,8 +32,7 @@ export async function getGameStatus(gameId: number): Promise<SoloGameStatusRespo
         )
         return response.data;
     } catch (error: unknown) {
-        console.error("Error al iniciar una partida individual:", error);
-        throw error;
+        manageError(error);
     }
 }
 
@@ -64,7 +54,22 @@ export async function submitAnswer(gameId: number, answer: number): Promise<Subm
         );
         return response.data;
     } catch (error: unknown) {
-        console.error("Error al iniciar una partida individual:", error);
-        throw error;
+        manageError(error);
+    }
+}
+
+/** 
+* Activa un wildcard en la partida individual actual
+* @param gameId Id de la partida para enviar la respuesta
+* @param wildcardId Id del wildcard a usar 
+*/
+export async function useWildcard(gameId: number, wildcardId: number): Promise<UseWildcardResponseDto> {
+    try {
+        const response = await api.post<UseWildcardResponseDto>(
+            `${API_URLS.storyModeGame}/${gameId}/wildcard/${wildcardId}`,
+        );
+        return response.data;
+    } catch (error: unknown) {
+        manageError(error);
     }
 }

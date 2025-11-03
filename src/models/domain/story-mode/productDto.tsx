@@ -1,5 +1,5 @@
 // DTO para representar un producto (auto, personaje, fondo)
-export interface ProductDto {
+export interface SoloProductDto {
     productId: number;
     name: string;
     description: string;
