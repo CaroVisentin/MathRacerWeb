@@ -30,7 +30,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
 
-  // Mapear respuesta del backend al modelo UI Player
+  
   const toUiPlayer = (data: Player): Player => ({
     id: data?.id ?? 0,
     name: data?.name ?? '',
@@ -44,20 +44,20 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   });
 
 
-  // Mantener token actualizado en Axios
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
-        const token = await firebaseUser.getIdToken(); // token válido y renovado
+        const token = await firebaseUser.getIdToken(); 
         setAuthToken(token);
 
         setUser({
-          id: 0, // actualizalo si tenés el id del backend
+          id: 0, 
           email: firebaseUser.email || "",
           username: firebaseUser.displayName || firebaseUser.email?.split("@")[0] || "",
         });
 
-        // Restaurar el player desde almacenamiento local (si existe)
+        
         try {
           const stored = localStorage.getItem('player');
           if (stored) {
@@ -70,7 +70,6 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       } else {
         setAuthToken(null);
         setUser(null);
-        // limpiar player también si no hay usuario
         setPlayer(null);
         try {
           localStorage.removeItem('player');
@@ -148,9 +147,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       setLoading(false);
     }
   };
-
-  // Nota: las acciones del tutorial/cofre se realizan desde las páginas correspondientes
-
+ 
   const logout = async () => {
     try {
       await authService.logout();

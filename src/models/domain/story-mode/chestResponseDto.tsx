@@ -8,7 +8,7 @@ export interface ChestItemDto {
   type: string;
   quantity: number;
   product: ChestProductDto | null;
-  wildcard: CartItem | null; // Si en el futuro hay un tipo definido para wildcards, reemplazar
+  wildcard: CartItem | null; 
   compensationCoins: number | null;
 }
 
