@@ -62,11 +62,12 @@ export async function submitAnswer(gameId: number, answer: number): Promise<Subm
 * @param gameId Id de la partida para enviar la respuesta
 * @param wildcardId Id del wildcard a usar 
 */
-export async function useWildcard(gameId: number, wildcardId: number): Promise<UseWildcardResponseDto> {
+export async function applyWildcard(gameId: number, wildcardId: number): Promise<UseWildcardResponseDto> {
     try {
         const response = await api.post<UseWildcardResponseDto>(
             `${API_URLS.storyModeGame}/${gameId}/wildcard/${wildcardId}`,
         );
+        console.log(response)
         return response.data;
     } catch (error: unknown) {
         manageError(error);

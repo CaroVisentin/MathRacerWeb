@@ -4,7 +4,7 @@ import { EndOfStoryModeModal } from "../../../../shared/modals/endOfStoryModeMod
 import fondoRival from "../../../../assets/images/pista-montana.png";
 import fondoJugador from "../../../../assets/images/pista-noche.png";
 import auto1 from "../../../../assets/images/auto.png";
-import { getGameStatus, startGame, submitAnswer } from "../../../../services/game/story-mode/storyModeGameService";
+import { getGameStatus, startGame, submitAnswer, applyWildcard } from "../../../../services/game/story-mode/storyModeGameService";
 import type { StartSoloGameResponseDto } from "../../../../models/domain/story-mode/startSoloGameResponseDto";
 import type { SoloGameStatusResponseDto } from "../../../../models/domain/story-mode/soloGameStatusResponseDto";
 import type { SubmitSoloAnswerResponseDto } from "../../../../models/domain/story-mode/submitSoloAnswerResponseDto";
@@ -16,7 +16,7 @@ import { RaceTrack } from "../../../../components/game/story-mode/raceTrack";
 import { QuestionSection } from "../../../../components/game/story-mode/questionSection";
 import { StoryModeGameHeader } from "../../../../components/game/story-mode/storyModeGameHeader";
 import ErrorModal from "../../../../shared/modals/errorModal";
-import Spinner from "../../../../shared/spinners/spinner";
+import Spinner, { SmallSpinner } from "../../../../shared/spinners/spinner";
 import cofre from "../../../../assets/images/cofre.png";
 import cofreAbierto from "../../../../assets/images/cofre-abierto.png";
 import type { ChestResponseDto } from "../../../../models/domain/chest/chestResponseDto";
@@ -24,6 +24,8 @@ import { openRandomChest } from "../../../../services/chest/chestService";
 import fondoGarage from "../../../../assets/images/fondo-garage.png";
 import type { ChestItemDto } from "../../../../models/domain/chest/chestItemDto";
 import { getErrorMessage } from "../../../../shared/utils/manageErrors";
+import type { WildcardType } from "../../../../models/enums/wildcard";
+import ErrorModalDuringGame from "../../../../shared/modals/errorModalDuringGame";
 
 export const StoryModeGame = () => {
     const { id } = useParams();
@@ -50,8 +52,10 @@ export const StoryModeGame = () => {
     const [timeLeft, setTimeLeft] = useState<number>(10);
 
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [errorMessageDuringGame, setErrorMessageDuringGame] = useState<string | null>(null);
 
     const [isLoading, setIsLoading] = useState(false);
+    const [isUsingWildcard, setIsUsingWildcard] = useState(false);
 
     const [isPendingChest, setIsPendingChest] = useState(false);
     const [showChest, setShowChest] = useState(false);
@@ -185,14 +189,14 @@ export const StoryModeGame = () => {
 
         try {
             // Enviar respuesta
-            const response: SubmitSoloAnswerResponseDto = await submitAnswer(gameData.gameId, opcion);
+            const submitAnswerResponse: SubmitSoloAnswerResponseDto = await submitAnswer(gameData.gameId, opcion);
 
             // Mostrar feedback visual
-            setGameSubmitAnswer(response);
-            setAnswerResult(response.isCorrect ? "correct" : "wrong");
+            setGameSubmitAnswer(submitAnswerResponse);
+            setAnswerResult(submitAnswerResponse.isCorrect ? "correct" : "wrong");
 
             // Si debe abrir el cofre mostramos el cofre
-            if (response.shouldOpenWorldCompletionChest) {
+            if (submitAnswerResponse.shouldOpenWorldCompletionChest) {
                 const chest: ChestResponseDto = await openRandomChest();
                 // Guardamos el cofre pendiente en estado
                 setIsPendingChest(true);
@@ -200,7 +204,7 @@ export const StoryModeGame = () => {
             }
 
             // Esperar el tiempo indicado por el backend (3 segundos)
-            await new Promise((resolve) => setTimeout(resolve, response.waitTimeSeconds * 1000));
+            await new Promise((resolve) => setTimeout(resolve, submitAnswerResponse.waitTimeSeconds * 1000));
 
             // Consultar el estado actualizado de la partida
             const updatedStatus: SoloGameStatusResponseDto = await getGameStatus(gameData.gameId);
@@ -208,20 +212,41 @@ export const StoryModeGame = () => {
             // Actualizar el estado del juego
             setGameStatus(updatedStatus);
 
+            let playerPos = updatedStatus.playerPosition;
+            const machinePos = updatedStatus.machinePosition;
+
             // Actualizar las posiciones de los autos
-            setPlayerPosition((updatedStatus.playerPosition / gameData.totalQuestions) * 100);
-            setMachinePosition((updatedStatus.machinePosition / gameData.totalQuestions) * 100);
+            if (updatedStatus.hasDoubleProgressActive && submitAnswerResponse.isCorrect) {
+                // Si utilizó el comodín para que la respuesta correcta valga doble, avanza dos posiciones:
+                playerPos = Math.min(playerPos + 1, gameData.totalQuestions);
+            }
+
+            // Si se usó el comodín del matafuego (elimina opciones incorrectas)
+            if (updatedStatus.modifiedOptions && updatedStatus.modifiedOptions.length > 0 && updatedStatus.currentQuestion) {
+                updatedStatus.currentQuestion = {
+                    id: updatedStatus.currentQuestion.id,
+                    equation: updatedStatus.currentQuestion.equation,
+                    startedAt: updatedStatus.currentQuestion.startedAt,
+                    options: updatedStatus.modifiedOptions,
+                };
+            }
+
+            // Actualizar posiciones visuales
+            setPlayerPosition((playerPos / gameData.totalQuestions) * 100);
+            setMachinePosition((machinePos / gameData.totalQuestions) * 100);
 
             // Si el status del juego es distinto de In Progress, significa que terminó
             if (updatedStatus.status !== SoloGameStatus.InProgress) {
                 setWinnerModal(true);
+                setStartMatch(false); // Detener temporizador y lógicas del juego
             }
 
             // Resetear feedback visual
             setSelectedAnswer(null);
             setAnswerResult(null);
-        } catch (error) {
-            console.error("Error al procesar respuesta:", error);
+        } catch (error: unknown) {
+            const message = await getErrorMessage(error);
+            setErrorMessageDuringGame(message);
         } finally {
             setIsAnswering(false);
         }
@@ -243,6 +268,36 @@ export const StoryModeGame = () => {
         navigate("/modo-historia")
     }
 
+    async function handleWildcardClick(wildcardId: WildcardType) {
+        try {
+            if (!gameData?.gameId) return;
+
+            // Mostrar Spinner si usa un comodín
+            setIsUsingWildcard(true);
+
+            // Forzar que React renderice antes de continuar
+            await new Promise(resolve => setTimeout(resolve, 0));
+
+            // Usamos el comodín
+            await applyWildcard(gameData.gameId, wildcardId);
+
+            // Esperamos 3 segundos siempre
+            await new Promise(resolve => setTimeout(resolve, 3000));
+
+            // Ocultar Spinner solo si estaba activo
+            setIsUsingWildcard(false);
+
+            // Actualizamos estado del juego
+            const gameStatusAfterUseWildcard: SoloGameStatusResponseDto = await getGameStatus(gameData.gameId);
+            setGameStatus(gameStatusAfterUseWildcard);
+
+        } catch (error: unknown) {
+            const message = getErrorMessage(error);
+            setErrorMessageDuringGame(message);
+            setIsUsingWildcard(false);
+        }
+    }
+
     return (
         <>
             {isLoading && <Spinner />}
@@ -252,10 +307,7 @@ export const StoryModeGame = () => {
                     {/* Recompensa */}
                     <div className="relative w-screen h-screen">
                         {/* Fondo */}
-                        <div
-                            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-                            style={{ backgroundImage: `url(${fondoGarage})` }}
-                        >
+                        <div className="absolute inset-0 bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(${fondoGarage})` }}>
                             <div className="absolute inset-0 bg-black/60"></div>
                         </div>
 
@@ -276,6 +328,7 @@ export const StoryModeGame = () => {
 
                             {!rewards && (
                                 <button
+                                    className="bg-[#0F7079] border-2 border-white rounded-lg text-3xl transition w-32 h-12 text-white"
                                     onClick={() => {
                                         if (isChestOpen) {
                                             setRewards(true);
@@ -284,7 +337,6 @@ export const StoryModeGame = () => {
                                         }
 
                                     }}
-                                    className="bg-[#0F7079] border-2 border-white rounded-lg text-3xl transition w-32 h-12 text-white"
                                 >
                                     {isChestOpen ? "Siguiente" : "Abrir"}
                                 </button>
@@ -393,14 +445,22 @@ export const StoryModeGame = () => {
                         />
                     )}
 
-                    {/* Modal de Resultados */}
+                    {/* Modal de Error */}
+                    {errorMessageDuringGame && (
+                        <ErrorModalDuringGame
+                            title="¡Oops!"
+                            message={errorMessageDuringGame}
+                            onClose={() => setErrorMessageDuringGame(null)}
+                        />
+                    )}
+
+                    {/* Modal de Error durante la partida */}
                     {winnerModal && (
                         <EndOfStoryModeModal
                             level={level?.number ?? 0}
                             reward={gameSubmitAnswer?.coinsEarned ?? 0}
                             won={gameStatus?.status === SoloGameStatus.PlayerWon}
                             onClose={handleCloseWinnerModal}
-                            onNext={handleCloseWinnerModal}
                             remainingLives={gameStatus?.livesRemaining ?? 0}
                         />
                     )}
@@ -419,17 +479,23 @@ export const StoryModeGame = () => {
                             />
 
                             {/* Instrucciones y Comodines */}
-                            <WildcardsAndInstructions level={level!} />
+                            <WildcardsAndInstructions level={level!} onWildcardClick={handleWildcardClick} />
 
                             {/* Ecuación y Opciones */}
                             {(gameData || gameStatus) && (
-                                <QuestionSection
-                                    currentQuestion={gameStatus?.currentQuestion || gameData?.currentQuestion}
-                                    selectedAnswer={selectedAnswer}
-                                    answerResult={answerResult}
-                                    gameSubmitAnswer={gameSubmitAnswer}
-                                    handleAnswer={handleAnswer}
-                                />
+                                isUsingWildcard ? (
+                                    <div className="flex flex-col justify-center items-center h-full gap-5 !mb-10 mt-4 bg-black">
+                                        <SmallSpinner />
+                                    </div>
+                                ) : (
+                                    <QuestionSection
+                                        currentQuestion={gameStatus?.currentQuestion || gameData?.currentQuestion}
+                                        selectedAnswer={selectedAnswer}
+                                        answerResult={answerResult}
+                                        gameSubmitAnswer={gameSubmitAnswer}
+                                        handleAnswer={handleAnswer}
+                                    />
+                                )
                             )}
                         </>
                     )}
