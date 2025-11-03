@@ -10,10 +10,11 @@ interface EndOfStoryModeModalProps {
     reward: number;
     won: boolean;
     onClose: () => void;
+    onNext?: () => void;
     remainingLives: number;
 }
 
-export const EndOfStoryModeModal: React.FC<EndOfStoryModeModalProps> = ({ level, reward, won, onClose, remainingLives }) => {
+export const EndOfStoryModeModal: React.FC<EndOfStoryModeModalProps> = ({ level, reward, won, onClose, onNext, remainingLives }) => {
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black z-50">
             <div className="bg-[#484848] text-white border-4 border-white p-6 w-[400px] max-w-full">
@@ -66,6 +67,15 @@ export const EndOfStoryModeModal: React.FC<EndOfStoryModeModalProps> = ({ level,
                     <button onClick={onClose} className="bg-gray-600 px-6 py-2 rounded hover:bg-gray-500">
                         Regresar
                     </button>
+
+                    {onNext && (
+                        <button
+                            onClick={onNext}
+                            className="bg-teal-600 px-6 py-2 rounded hover:bg-teal-500"
+                        >
+                            Siguiente
+                        </button>
+                    )}
                 </div>
             </div>
         </div>
