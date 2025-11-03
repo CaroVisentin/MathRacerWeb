@@ -30,7 +30,6 @@ api.interceptors.response.use(
         if (error.response?.status === 401) {
             // Token inválido o expirado
             setAuthToken(null);
-            // Aquí podrías disparar un evento de logout o similar
         }
         return Promise.reject(error);
     }
@@ -44,4 +43,5 @@ export const API_URLS = {
     levels: "/levels",
     online: "/online",
     storyModeGame: "/solo",
+    chest: "/chest"
 };

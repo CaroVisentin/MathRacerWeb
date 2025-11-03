@@ -8,7 +8,7 @@ interface WildcardsAndInstructionsProps {
 export const WildcardsAndInstructions = ({ level }: WildcardsAndInstructionsProps) => {
     return (
         <div className="flex justify-center items-center gridComodin mt-4">
-            <div className={`!text-xl !m-5`}>
+            <div className={`!text-3xl !m-5`}>
                 {level ? `Elegí la opción para que la Y sea ${level.resultType.toUpperCase()}` : "Esperando instrucción..."}
             </div>
             <div className={`comodin !mt-2`}>

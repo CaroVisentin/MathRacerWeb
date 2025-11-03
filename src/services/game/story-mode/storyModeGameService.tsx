@@ -3,13 +3,6 @@ import type { StartSoloGameResponseDto } from "../../../models/domain/story-mode
 import type { SubmitSoloAnswerResponseDto } from "../../../models/domain/story-mode/submitSoloAnswerResponseDto";
 import { api, API_URLS } from "../../network/api";
 
-/* Flujo del juego 
-1. startGame
-2. submitAnswer 
-3. espera 3 segundos para mostrar rta correcta
-4. getGameStatus
-5. vuelve a repetirse desde el paso 2
-
 /** 
 * Inicia una nueva partida individual
 * @param levelId Id del nivel para empezar la partida
@@ -27,7 +20,7 @@ export async function startGame(levelId: number): Promise<StartSoloGameResponseD
 }
 
 /** 
-* Obtiene el estado actual de una partida individual
+* Obtiene el estado actual de una partida individual en progreso
 * @param gameId Id de la partida para obtener el estado
 */
 export async function getGameStatus(gameId: number): Promise<SoloGameStatusResponseDto> {
@@ -43,7 +36,7 @@ export async function getGameStatus(gameId: number): Promise<SoloGameStatusRespo
 }
 
 /** 
-* Envía una respuesta a la pregunta actual 
+* Envía la respuesta del jugador a la pregunta actual de la partida
 * @param gameId Id de la partida para enviar la respuesta
 * @param answer Respuesta del jugador a la pregunta actual
 */

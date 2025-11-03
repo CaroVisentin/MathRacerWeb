@@ -1,4 +1,4 @@
-export interface QuestionDto {
+export interface SoloQuestionDto {
     id: number;
     equation: string;
     options: number[];

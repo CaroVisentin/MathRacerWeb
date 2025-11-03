@@ -1,4 +1,4 @@
-import type { QuestionDto } from "./questionDto";
+import type { SoloQuestionDto } from "./questionDto";
 
 /*
 * Estado completo de la partida individual (GET)
@@ -14,7 +14,7 @@ export interface SoloGameStatusResponseDto {
     correctAnswers: number;
 
     // Pregunta actual
-    currentQuestion?: QuestionDto;
+    currentQuestion?: SoloQuestionDto;
     currentQuestionIndex: number;
     totalQuestions: number;
     timePerEquation: number;

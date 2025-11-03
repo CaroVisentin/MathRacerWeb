@@ -1,10 +1,10 @@
-import type { QuestionDto } from "../../../models/domain/story-mode/questionDto";
+import type { SoloQuestionDto } from "../../../models/domain/story-mode/questionDto";
 import type { SubmitSoloAnswerResponseDto } from "../../../models/domain/story-mode/submitSoloAnswerResponseDto";
 import { EquationSection } from "./equationSection";
 import { OptionsSection } from "./optionsSection";
 
 interface QuestionSectionProps {
-    currentQuestion: QuestionDto;
+    currentQuestion: SoloQuestionDto;
     selectedAnswer: number | null;
     answerResult: "correct" | "wrong" | null;
     gameSubmitAnswer: SubmitSoloAnswerResponseDto | null;

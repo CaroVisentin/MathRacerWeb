@@ -17,6 +17,12 @@ import { QuestionSection } from "../../../../components/game/story-mode/question
 import { StoryModeGameHeader } from "../../../../components/game/story-mode/storyModeGameHeader";
 import ErrorModal from "../../../../shared/modals/errorModal";
 import Spinner from "../../../../shared/spinners/spinner";
+import cofre from "../../../../assets/images/cofre.png";
+import cofreAbierto from "../../../../assets/images/cofre-abierto.png";
+import type { ChestResponseDto } from "../../../../models/domain/chest/chestResponseDto";
+import { openRandomChest } from "../../../../services/chest/chestService";
+import fondoGarage from "../../../../assets/images/fondo-garage.png";
+import type { ChestItemDto } from "../../../../models/domain/chest/chestItemDto";
 
 export const StoryModeGame = () => {
     const { id } = useParams();
@@ -45,6 +51,12 @@ export const StoryModeGame = () => {
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     const [isLoading, setIsLoading] = useState(false);
+
+    const [isPendingChest, setIsPendingChest] = useState(false);
+    const [showChest, setShowChest] = useState(false);
+    const [isChestOpen, setIsChestOpen] = useState(false);
+    const [rewards, setRewards] = useState(false);
+    const [obtainedChest, setObtainedChest] = useState<ChestResponseDto | null>(null);
 
     useEffect(() => {
         if (!stateLevel) {
@@ -182,6 +194,14 @@ export const StoryModeGame = () => {
             setGameSubmitAnswer(response);
             setAnswerResult(response.isCorrect ? "correct" : "wrong");
 
+            // Si debe abrir el cofre mostramos el cofre
+            if (response.shouldOpenWorldCompletionChest) {
+                const chest: ChestResponseDto = await openRandomChest();
+                // Guardamos el cofre pendiente en estado
+                setIsPendingChest(true);
+                setObtainedChest(chest);
+            }
+
             // Esperar el tiempo indicado por el backend (3 segundos)
             await new Promise((resolve) => setTimeout(resolve, response.waitTimeSeconds * 1000));
 
@@ -210,76 +230,215 @@ export const StoryModeGame = () => {
         }
     }
 
+    function handleCloseWinnerModal() {
+        setWinnerModal(false);
+
+        if (isPendingChest && obtainedChest) {
+            // Mostrar el cofre al usuario
+            setShowChest(true);
+        } else {
+            // No hay cofre pendiente → redirigir al modo historia
+            redirectToStoryMode();
+        }
+    }
+
+    function redirectToStoryMode() {
+        navigate("/modo-historia")
+    }
+
     return (
         <>
             {isLoading && <Spinner />}
 
-            <div className="juego w-full h-full bg-black text-white relative">
-                {/* Header */}
-                <StoryModeGameHeader
-                    startMatch={startMatch}
-                    gameData={gameData}
-                    timeLeft={timeLeft}
-                    remainingLives={gameStatus?.livesRemaining ?? 3}
-                    onBack={() => navigate("/home")}
-                />
+            {showChest ? (
+                <>
+                    {/* Recompensa */}
+                    <div className="relative w-screen h-screen">
+                        {/* Fondo */}
+                        <div
+                            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+                            style={{ backgroundImage: `url(${fondoGarage})` }}
+                        >
+                            <div className="absolute inset-0 bg-black/60"></div>
+                        </div>
 
-                {/* Contador */}
-                {showCountdown && (
-                    <Countdown countdown={countdown} />
-                )}
+                        {/* Contenido centrado */}
+                        <div className="relative z-10 w-full h-full flex flex-col justify-center items-center gap-4">
 
-                {/* Modal de Error */}
-                {errorMessage && (
-                    <ErrorModal
-                        title="¡Oops!"
-                        message={errorMessage}
-                        onClose={() => setErrorMessage(null)}
-                        onReturn={() => navigate("/home")}
+                            {!rewards && (
+                                <>
+                                    {
+                                        isChestOpen ? (
+                                            <img src={cofreAbierto} alt="Cofre" className="w-70 h-70 object-contain" />
+                                        ) : (
+                                            <img src={cofre} alt="Cofre" className="w-70 h-70 object-contain" />
+                                        )
+                                    }
+                                </>
+                            )}
+
+                            {!rewards && (
+                                <button
+                                    onClick={() => {
+                                        if (isChestOpen) {
+                                            setRewards(true);
+                                        } else {
+                                            setIsChestOpen(true)
+                                        }
+
+                                    }}
+                                    className="bg-[#0F7079] border-2 border-white rounded-lg text-3xl transition w-32 h-12 text-white"
+                                >
+                                    {isChestOpen ? "Siguiente" : "Abrir"}
+                                </button>
+
+                            )}
+
+                            {rewards && (
+                                <div className="flex flex-col items-center gap-6">
+                                    {/* Contenedor de las cards */}
+                                    <div className="flex justify-center items-center gap-6">
+                                        {obtainedChest?.items.map((item: ChestItemDto, index) => {
+                                            // Determinar contenido y color según el tipo
+                                            let title = "";
+                                            let description = "";
+                                            let color = "#c0be9a"; // color base
+                                            let imageSrc = "";
+
+                                            switch (item.type) {
+                                                case "Product":
+                                                    title = item.product?.name ?? "Producto misterioso";
+                                                    description = item.product?.description ?? "";
+                                                    color = item.product?.rarityColor ?? "#c0be9a";
+                                                    imageSrc = `/images/products/${item.product?.id}.png`;
+                                                    break;
+
+                                                case "Wildcard":
+                                                    title = item.wildcard?.name ?? "Comodín";
+                                                    description = item.wildcard?.description ?? "";
+                                                    color = "#a3e4d7";
+                                                    imageSrc = `/images/wildcards/${item.wildcard?.id}.png`;
+                                                    break;
+
+                                                case "Coins":
+                                                    title = `${item.compensationCoins ?? 0} monedas`;
+                                                    description = "Monedas obtenidas del cofre";
+                                                    color = "#f4d03f";
+                                                    imageSrc = `/images/coin.png`;
+                                                    break;
+
+                                                default:
+                                                    title = "Recompensa desconocida";
+                                                    break;
+                                            }
+
+                                            return (
+                                                <div
+                                                    key={index}
+                                                    className="w-60 h-68 rounded-lg border-2 border-white flex flex-col justify-center items-center p-4"
+                                                    style={{ backgroundColor: color }}
+                                                >
+                                                    <img src={imageSrc} alt={title} className="w-24 h-24 object-contain mb-2" />
+                                                    <h3 className="text-lg font-bold text-center">{title}</h3>
+                                                    {description && (
+                                                        <p className="text-sm text-center opacity-80">{description}</p>
+                                                    )}
+                                                    {item.number && (
+                                                        <span className="mt-2 text-sm font-semibold">x{item.number}</span>
+                                                    )}
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+
+                                    {/* Botón debajo y centrado */}
+                                    <button
+                                        onClick={() => {
+                                            setShowChest(false);
+                                            setRewards(false);
+                                            setObtainedChest(null);
+                                            setIsPendingChest(false);
+                                            navigate("/modo-historia")
+                                        }}
+                                        className="bg-[#0F7079] border-2 border-white rounded-lg text-3xl transition w-32 h-12 text-white"
+                                    >
+                                        Siguiente
+                                    </button>
+                                </div>
+                            )}
+
+                        </div>
+                    </div>
+                </>
+            ) : (
+                <div className="juego w-full h-full bg-black text-white relative">
+                    {/* Header */}
+                    <StoryModeGameHeader
+                        startMatch={startMatch}
+                        gameData={gameData}
+                        timeLeft={timeLeft}
+                        remainingLives={gameStatus?.livesRemaining ?? 3}
+                        onBack={() => navigate("/home")}
                     />
-                )}
 
-                {/* Modal de Resultados */}
-                {winnerModal && (
-                    <EndOfStoryModeModal
-                        level={level?.number ?? 0}
-                        reward={0}
-                        won={gameStatus?.status === SoloGameStatus.PlayerWon}
-                        onClose={() => navigate("/home")}
-                        onNext={() => { setWinnerModal(false) }}
-                        remainingLives={gameStatus?.livesRemaining ?? 0}
-                    />
-                )}
+                    {/* Contador */}
+                    {showCountdown && (
+                        <Countdown countdown={countdown} />
+                    )}
 
-                {/* Contenido del Juego */}
-                {startMatch && gameData && (
-                    <>
-                        {/* Ruta */}
-                        <RaceTrack
-                            playerPosition={playerPosition}
-                            machinePosition={machinePosition}
-                            fondoJugador={fondoJugador}
-                            fondoRival={fondoRival}
-                            autoJugador={auto1}
-                            autoRival={auto1}
+                    {/* Modal de Error */}
+                    {errorMessage && (
+                        <ErrorModal
+                            title="¡Oops!"
+                            message={errorMessage}
+                            onClose={() => setErrorMessage(null)}
+                            onReturn={() => navigate("/home")}
                         />
+                    )}
 
-                        {/* Instrucciones y Comodines */}
-                        <WildcardsAndInstructions level={level!} />
+                    {/* Modal de Resultados */}
+                    {winnerModal && (
+                        <EndOfStoryModeModal
+                            level={level?.number ?? 0}
+                            reward={obtainedChest?.items?.reduce((sum, item) => sum + (item.compensationCoins || 0), 0) || 0}
+                            won={gameStatus?.status === SoloGameStatus.PlayerWon}
+                            onClose={handleCloseWinnerModal}
+                            onNext={handleCloseWinnerModal}
+                            remainingLives={gameStatus?.livesRemaining ?? 0}
+                        />
+                    )}
 
-                        {/* Ecuación y Opciones */}
-                        {(gameData || gameStatus) && (
-                            <QuestionSection
-                                currentQuestion={gameStatus?.currentQuestion || gameData?.currentQuestion}
-                                selectedAnswer={selectedAnswer}
-                                answerResult={answerResult}
-                                gameSubmitAnswer={gameSubmitAnswer}
-                                handleAnswer={handleAnswer}
+                    {/* Contenido del Juego */}
+                    {startMatch && gameData && (
+                        <>
+                            {/* Ruta */}
+                            <RaceTrack
+                                playerPosition={playerPosition}
+                                machinePosition={machinePosition}
+                                fondoJugador={fondoJugador}
+                                fondoRival={fondoRival}
+                                autoJugador={auto1}
+                                autoRival={auto1}
                             />
-                        )}
-                    </>
-                )}
-            </div>
+
+                            {/* Instrucciones y Comodines */}
+                            <WildcardsAndInstructions level={level!} />
+
+                            {/* Ecuación y Opciones */}
+                            {(gameData || gameStatus) && (
+                                <QuestionSection
+                                    currentQuestion={gameStatus?.currentQuestion || gameData?.currentQuestion}
+                                    selectedAnswer={selectedAnswer}
+                                    answerResult={answerResult}
+                                    gameSubmitAnswer={gameSubmitAnswer}
+                                    handleAnswer={handleAnswer}
+                                />
+                            )}
+                        </>
+                    )}
+                </div>
+            )}
+
         </>
     )
 }
