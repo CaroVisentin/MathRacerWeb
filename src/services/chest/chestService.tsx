@@ -1,5 +1,6 @@
 import type { ChestResponseDto } from "../../models/domain/chest/chestResponseDto";
 import { api, API_URLS } from "../network/api";
+import { manageError } from "../../shared/utils/manageErrors";
 
 export async function openRandomChest(): Promise<ChestResponseDto> {
     try {
@@ -7,8 +8,7 @@ export async function openRandomChest(): Promise<ChestResponseDto> {
             `${API_URLS.chest}/open/`
         )
         return response.data;
-    } catch (error: any) {
-        const message = error.response?.data?.message || error.message || "Error desconocido";
-        throw new Error(message);
+    } catch (error: unknown) {
+        manageError(error);
     }
 }

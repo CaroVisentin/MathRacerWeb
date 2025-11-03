@@ -2,6 +2,7 @@ import type { SoloGameStatusResponseDto } from "../../../models/domain/story-mod
 import type { StartSoloGameResponseDto } from "../../../models/domain/story-mode/startSoloGameResponseDto";
 import type { SubmitSoloAnswerResponseDto } from "../../../models/domain/story-mode/submitSoloAnswerResponseDto";
 import { api, API_URLS } from "../../network/api";
+import { manageError } from "../../../shared/utils/manageErrors";
 
 /** 
 * Inicia una nueva partida individual
@@ -13,14 +14,13 @@ export async function startGame(levelId: number): Promise<StartSoloGameResponseD
             `${API_URLS.storyModeGame}/start/${levelId}/`
         )
         return response.data;
-    } catch (error: any) {
-        const message = error.response?.data?.message || error.message || "Error desconocido";
-        throw new Error(message); 
+    } catch (error: unknown) {
+        manageError(error);
     }
 }
 
 /** 
-* Obtiene el estado actual de una partida individual en progreso
+* Obtiene el estado actual de una partida individual
 * @param gameId Id de la partida para obtener el estado
 */
 export async function getGameStatus(gameId: number): Promise<SoloGameStatusResponseDto> {
@@ -30,13 +30,12 @@ export async function getGameStatus(gameId: number): Promise<SoloGameStatusRespo
         )
         return response.data;
     } catch (error: unknown) {
-        console.error("Error al iniciar una partida individual:", error);
-        throw error;
+        manageError(error);
     }
 }
 
 /** 
-* Envía la respuesta del jugador a la pregunta actual de la partida
+* Envía una respuesta a la pregunta actual 
 * @param gameId Id de la partida para enviar la respuesta
 * @param answer Respuesta del jugador a la pregunta actual
 */
@@ -53,7 +52,6 @@ export async function submitAnswer(gameId: number, answer: number): Promise<Subm
         );
         return response.data;
     } catch (error: unknown) {
-        console.error("Error al iniciar una partida individual:", error);
-        throw error;
+        manageError(error);
     }
 }
