@@ -23,7 +23,7 @@ import type { ChestResponseDto } from "../../../../models/domain/chest/chestResp
 import { openRandomChest } from "../../../../services/chest/chestService";
 import fondoGarage from "../../../../assets/images/fondo-garage.png";
 import type { ChestItemDto } from "../../../../models/domain/chest/chestItemDto";
-import type { AxiosError } from "axios";
+import { getErrorMessage } from "../../../../shared/utils/manageErrors";
 
 export const StoryModeGame = () => {
     const { id } = useParams();
@@ -90,20 +90,8 @@ export const StoryModeGame = () => {
                     const response: StartSoloGameResponseDto = await startGame(levelId);
                     setGameData(response);
                 } catch (error: unknown) {
-                    let message = "Ocurrió un error desconocido";
-
-                    // Si es un error de Axios
-                    if ((error as AxiosError)?.response) {
-                        const axiosError = error as AxiosError<{ message: string }>;
-                        message = axiosError.response?.data?.message || axiosError.message || message;
-                    }
-                    // Si es un error normal de JS
-                    else if (error instanceof Error) {
-                        message = error.message;
-                    }
-
+                    let message = getErrorMessage(error);
                     setErrorMessage(message);
-                    console.error("Error al iniciar partida:", message);
                 } finally {
                     setIsLoading(false);
                 }
