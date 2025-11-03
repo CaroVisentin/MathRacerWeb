@@ -1,6 +1,4 @@
 import { BackButton } from "../../shared/buttons/backButton"
-import { CoinsDisplay } from "../home/coinsDisplay"
-import { homeDataMock } from "../../data/mocks/home"
 
 export const Topbar = () => {
     return (
@@ -14,7 +12,7 @@ export const Topbar = () => {
                 </div>
 
                 <div className="flex items-center gap-4">
-                    <CoinsDisplay coins={homeDataMock.user.coins} />
+                    {/* <CoinsDisplay coins={homeDataMock.user.coins} /> */}
                 </div>
 
             </div>

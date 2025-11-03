@@ -1,4 +1,4 @@
-import type { WildcardDto } from "../chest/chestWildcardDto";
+import type { WildcardDto } from "./wildcardDto";
 import type { SoloProductDto } from "./productDto";
 import type { SoloQuestionDto } from "./soloQuestionDto";
 
