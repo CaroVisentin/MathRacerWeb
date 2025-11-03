@@ -149,6 +149,8 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  // Nota: las acciones del tutorial/cofre se realizan desde las páginas correspondientes
+
   const logout = async () => {
     try {
       await authService.logout();

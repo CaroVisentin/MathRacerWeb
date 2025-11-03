@@ -15,6 +15,8 @@ import type { QuestionDto } from "../../models/domain/questionDto";
 import { FuelIndicator } from "../../shared/energy/energy";
 import { useNavigate } from "react-router-dom";
 import { EndOfStoryModeModal } from "../../shared/modals/endOfStoryModeModal";
+import { tutorialService } from "../../services/player/tutorialService";
+import type { ChestResponseDto } from "../../models/domain/story-mode/chestResponseDto";
 
 export const TutorialPage = () => {
     const [posicionAuto1, setPosicionAuto1] = useState<number>(0);
@@ -44,10 +46,14 @@ export const TutorialPage = () => {
     const [mostrarCofre, setMostrarCofre] = useState(false);
     const [isCofreOpen, setIsCofreOpen] = useState(false);
     const [recompensas, setRecompensas] = useState(false);
+    const [chest, setChest] = useState<ChestResponseDto | null>(null);
 
-    const handleFinalizarTutorial = () => {
+    const handleFinalizarTutorial = async () => {
         setMostrarCofre(true);
-    }
+        // Llama al backend para marcar tutorial completo y obtener el cofre
+        const response = await tutorialService.completeTutorial();
+        setChest(response);
+    };
 
     return (
         <>
@@ -98,22 +104,36 @@ export const TutorialPage = () => {
 
                                 {recompensas && (
                                     <div className="flex flex-col items-center gap-6">
-                                        {/* Contenedor de las cards */}
-                                        <div className="flex justify-center items-center gap-6">
-                                            {/* Card 1 */}
-                                            <div className="w-60 h-68 bg-[#c0be9a] rounded-lg border-2 border-white flex justify-center items-center">
-                                                <img src={autoImg} alt="Auto" className="w-45 h-45 object-contain" />
-                                            </div>
-
-                                            {/* Card 2 */}
-                                            <div className="w-60 h-68 bg-[#c0be9a] rounded-lg border-2 border-white flex justify-center items-center">
-                                                <img src={personajeImg} alt="Personaje" className="w-35 h-35 object-contain" />
-                                            </div>
-
-                                            {/* Card 3 */}
-                                            <div className="w-60 h-68 bg-[#c0be9a] rounded-lg border-2 border-white flex justify-center items-center">
-                                                <img src={pistaImg} alt="Pista" className="w-45 h-45 object-contain" />
-                                            </div>
+                                        {/* Contenedor dinámico de recompensas */}
+                                        <div className="flex justify-center items-center gap-6 flex-wrap">
+                                            {chest?.items?.length ? (
+                                                chest.items.map((item, idx) => (
+                                                    <div key={idx} className="w-60 min-h-68 bg-[#c0be9a] rounded-lg border-2 border-white p-4 flex flex-col items-center justify-center text-black">
+                                                        {/* Imagen placeholder según tipo */}
+                                                        {item.product ? (
+                                                            <img src={autoImg} alt="Producto" className="w-32 h-32 object-contain mb-2" />
+                                                        ) : item.wildcard ? (
+                                                            <img src={personajeImg} alt="Wildcard" className="w-32 h-32 object-contain mb-2" />
+                                                        ) : (
+                                                            <img src={pistaImg} alt="Recompensa" className="w-32 h-32 object-contain mb-2" />
+                                                        )}
+                                                        <div className="text-center">
+                                                            <p className="font-bold">{item.type}</p>
+                                                            {item.product && (
+                                                                <p>{item.product.name} x{item.quantity}</p>
+                                                            )}
+                                                            {item.compensationCoins && (
+                                                                <p>Monedas: {item.compensationCoins}</p>
+                                                            )}
+                                                            {item.wildcard && (
+                                                                <p>{item.wildcard.name} x{item.quantity}</p>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <p className="text-white">No se recibieron recompensas.</p>
+                                            )}
                                         </div>
 
                                         {/* Botón debajo y centrado */}
