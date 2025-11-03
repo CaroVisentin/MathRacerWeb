@@ -10,7 +10,7 @@ import type { SoloGameStatusResponseDto } from "../../../../models/domain/story-
 import type { SubmitSoloAnswerResponseDto } from "../../../../models/domain/story-mode/submitSoloAnswerResponseDto";
 import { SoloGameStatus } from "../../../../models/enums/soloGameStatus";
 import type { LevelDtoUi } from "../../../../models/ui/story-mode/levelDtoUi";
-import { Countdown } from "../../../../components/game/story-mode/countdown";
+import { Semaphore } from "../../../../components/game/story-mode/countdown";
 import { WildcardsAndInstructions } from "../../../../components/game/story-mode/wildcardsAndInstructions";
 import { RaceTrack } from "../../../../components/game/story-mode/raceTrack";
 import { QuestionSection } from "../../../../components/game/story-mode/questionSection";
@@ -432,7 +432,7 @@ export const StoryModeGame = () => {
 
                     {/* Contador */}
                     {showCountdown && (
-                        <Countdown countdown={countdown} />
+                        <Semaphore countdown={countdown} />
                     )}
 
                     {/* Modal de Error */}
