@@ -4,20 +4,28 @@ import { EndOfStoryModeModal } from "../../../../shared/modals/endOfStoryModeMod
 import fondoRival from "../../../../assets/images/pista-montana.png";
 import fondoJugador from "../../../../assets/images/pista-noche.png";
 import auto1 from "../../../../assets/images/auto.png";
-import { getGameStatus, startGame, submitAnswer } from "../../../../services/game/story-mode/storyModeGameService";
+import { getGameStatus, startGame, submitAnswer, applyWildcard } from "../../../../services/game/story-mode/storyModeGameService";
 import type { StartSoloGameResponseDto } from "../../../../models/domain/story-mode/startSoloGameResponseDto";
 import type { SoloGameStatusResponseDto } from "../../../../models/domain/story-mode/soloGameStatusResponseDto";
 import type { SubmitSoloAnswerResponseDto } from "../../../../models/domain/story-mode/submitSoloAnswerResponseDto";
 import { SoloGameStatus } from "../../../../models/enums/soloGameStatus";
 import type { LevelDtoUi } from "../../../../models/ui/story-mode/levelDtoUi";
-import { Countdown } from "../../../../components/game/story-mode/countdown";
+import { Semaphore } from "../../../../components/game/story-mode/countdown";
 import { WildcardsAndInstructions } from "../../../../components/game/story-mode/wildcardsAndInstructions";
 import { RaceTrack } from "../../../../components/game/story-mode/raceTrack";
 import { QuestionSection } from "../../../../components/game/story-mode/questionSection";
 import { StoryModeGameHeader } from "../../../../components/game/story-mode/storyModeGameHeader";
 import ErrorModal from "../../../../shared/modals/errorModal";
-import Spinner from "../../../../shared/spinners/spinner";
-import type { AxiosError } from "axios";
+import Spinner, { SmallSpinner } from "../../../../shared/spinners/spinner";
+import cofre from "../../../../assets/images/cofre.png";
+import cofreAbierto from "../../../../assets/images/cofre-abierto.png";
+import type { ChestResponseDto } from "../../../../models/domain/chest/chestResponseDto";
+import { openRandomChest } from "../../../../services/chest/chestService";
+import fondoGarage from "../../../../assets/images/fondo-garage.png";
+import type { ChestItemDto } from "../../../../models/domain/chest/chestItemDto";
+import { getErrorMessage } from "../../../../shared/utils/manageErrors";
+import type { WildcardType } from "../../../../models/enums/wildcard";
+import ErrorModalDuringGame from "../../../../shared/modals/errorModalDuringGame";
 
 export const StoryModeGame = () => {
     const { id } = useParams();
@@ -44,8 +52,16 @@ export const StoryModeGame = () => {
     const [timeLeft, setTimeLeft] = useState<number>(10);
 
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [errorMessageDuringGame, setErrorMessageDuringGame] = useState<string | null>(null);
 
     const [isLoading, setIsLoading] = useState(false);
+    const [isUsingWildcard, setIsUsingWildcard] = useState(false);
+
+    const [isPendingChest, setIsPendingChest] = useState(false);
+    const [showChest, setShowChest] = useState(false);
+    const [isChestOpen, setIsChestOpen] = useState(false);
+    const [rewards, setRewards] = useState(false);
+    const [obtainedChest, setObtainedChest] = useState<ChestResponseDto | null>(null);
 
     useEffect(() => {
         if (!stateLevel) {
@@ -78,20 +94,8 @@ export const StoryModeGame = () => {
                     const response: StartSoloGameResponseDto = await startGame(levelId);
                     setGameData(response);
                 } catch (error: unknown) {
-                    let message = "Ocurrió un error desconocido";
-
-                    // Si es un error de Axios
-                    if ((error as AxiosError)?.response) {
-                        const axiosError = error as AxiosError<{ message: string }>;
-                        message = axiosError.response?.data?.message || axiosError.message || message;
-                    }
-                    // Si es un error normal de JS
-                    else if (error instanceof Error) {
-                        message = error.message;
-                    }
-
+                    const message = getErrorMessage(error);
                     setErrorMessage(message);
-                    console.error("Error al iniciar partida:", message);
                 } finally {
                     setIsLoading(false);
                 }
@@ -185,14 +189,22 @@ export const StoryModeGame = () => {
 
         try {
             // Enviar respuesta
-            const response: SubmitSoloAnswerResponseDto = await submitAnswer(gameData.gameId, opcion);
+            const submitAnswerResponse: SubmitSoloAnswerResponseDto = await submitAnswer(gameData.gameId, opcion);
 
             // Mostrar feedback visual
-            setGameSubmitAnswer(response);
-            setAnswerResult(response.isCorrect ? "correct" : "wrong");
+            setGameSubmitAnswer(submitAnswerResponse);
+            setAnswerResult(submitAnswerResponse.isCorrect ? "correct" : "wrong");
+
+            // Si debe abrir el cofre mostramos el cofre
+            if (submitAnswerResponse.shouldOpenWorldCompletionChest) {
+                const chest: ChestResponseDto = await openRandomChest();
+                // Guardamos el cofre pendiente en estado
+                setIsPendingChest(true);
+                setObtainedChest(chest);
+            }
 
             // Esperar el tiempo indicado por el backend (3 segundos)
-            await new Promise((resolve) => setTimeout(resolve, response.waitTimeSeconds * 1000));
+            await new Promise((resolve) => setTimeout(resolve, submitAnswerResponse.waitTimeSeconds * 1000));
 
             // Consultar el estado actualizado de la partida
             const updatedStatus: SoloGameStatusResponseDto = await getGameStatus(gameData.gameId);
@@ -200,22 +212,89 @@ export const StoryModeGame = () => {
             // Actualizar el estado del juego
             setGameStatus(updatedStatus);
 
+            let playerPos = updatedStatus.playerPosition;
+            const machinePos = updatedStatus.machinePosition;
+
             // Actualizar las posiciones de los autos
-            setPlayerPosition((updatedStatus.playerPosition / gameData.totalQuestions) * 100);
-            setMachinePosition((updatedStatus.machinePosition / gameData.totalQuestions) * 100);
+            if (updatedStatus.hasDoubleProgressActive && submitAnswerResponse.isCorrect) {
+                // Si utilizó el comodín para que la respuesta correcta valga doble, avanza dos posiciones:
+                playerPos = Math.min(playerPos + 1, gameData.totalQuestions);
+            }
+
+            // Si se usó el comodín del matafuego (elimina opciones incorrectas)
+            if (updatedStatus.modifiedOptions && updatedStatus.modifiedOptions.length > 0 && updatedStatus.currentQuestion) {
+                updatedStatus.currentQuestion = {
+                    id: updatedStatus.currentQuestion.id,
+                    equation: updatedStatus.currentQuestion.equation,
+                    startedAt: updatedStatus.currentQuestion.startedAt,
+                    options: updatedStatus.modifiedOptions,
+                };
+            }
+
+            // Actualizar posiciones visuales
+            setPlayerPosition((playerPos / gameData.totalQuestions) * 100);
+            setMachinePosition((machinePos / gameData.totalQuestions) * 100);
 
             // Si el status del juego es distinto de In Progress, significa que terminó
             if (updatedStatus.status !== SoloGameStatus.InProgress) {
                 setWinnerModal(true);
+                setStartMatch(false); // Detener temporizador y lógicas del juego
             }
 
             // Resetear feedback visual
             setSelectedAnswer(null);
             setAnswerResult(null);
-        } catch (error) {
-            console.error("Error al procesar respuesta:", error);
+        } catch (error: unknown) {
+            const message = await getErrorMessage(error);
+            setErrorMessageDuringGame(message);
         } finally {
             setIsAnswering(false);
+        }
+    }
+
+    function handleCloseWinnerModal() {
+        setWinnerModal(false);
+
+        if (isPendingChest && obtainedChest) {
+            // Mostrar el cofre al usuario
+            setShowChest(true);
+        } else {
+            // No hay cofre pendiente → redirigir al modo historia
+            redirectToStoryMode();
+        }
+    }
+
+    function redirectToStoryMode() {
+        navigate("/modo-historia")
+    }
+
+    async function handleWildcardClick(wildcardId: WildcardType) {
+        try {
+            if (!gameData?.gameId) return;
+
+            // Mostrar Spinner si usa un comodín
+            setIsUsingWildcard(true);
+
+            // Forzar que React renderice antes de continuar
+            await new Promise(resolve => setTimeout(resolve, 0));
+
+            // Usamos el comodín
+            await applyWildcard(gameData.gameId, wildcardId);
+
+            // Esperamos 3 segundos siempre
+            await new Promise(resolve => setTimeout(resolve, 3000));
+
+            // Ocultar Spinner solo si estaba activo
+            setIsUsingWildcard(false);
+
+            // Actualizamos estado del juego
+            const gameStatusAfterUseWildcard: SoloGameStatusResponseDto = await getGameStatus(gameData.gameId);
+            setGameStatus(gameStatusAfterUseWildcard);
+
+        } catch (error: unknown) {
+            const message = getErrorMessage(error);
+            setErrorMessageDuringGame(message);
+            setIsUsingWildcard(false);
         }
     }
 
@@ -223,72 +302,206 @@ export const StoryModeGame = () => {
         <>
             {isLoading && <Spinner />}
 
-            <div className="juego w-full h-full bg-black text-white relative">
-                {/* Header */}
-                <StoryModeGameHeader
-                    startMatch={startMatch}
-                    gameData={gameData}
-                    timeLeft={timeLeft}
-                    remainingLives={gameStatus?.livesRemaining ?? 3}
-                    onBack={() => navigate("/home")}
-                />
+            {showChest ? (
+                <>
+                    {/* Recompensa */}
+                    <div className="relative w-screen h-screen">
+                        {/* Fondo */}
+                        <div className="absolute inset-0 bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(${fondoGarage})` }}>
+                            <div className="absolute inset-0 bg-black/60"></div>
+                        </div>
 
-                {/* Contador */}
-                {showCountdown && (
-                    <Countdown countdown={countdown} />
-                )}
+                        {/* Contenido centrado */}
+                        <div className="relative z-10 w-full h-full flex flex-col justify-center items-center gap-4">
 
-                {/* Modal de Error */}
-                {errorMessage && (
-                    <ErrorModal
-                        title="¡Oops!"
-                        message={errorMessage}
-                        onClose={() => setErrorMessage(null)}
-                        onReturn={() => navigate("/home")}
+                            {!rewards && (
+                                <>
+                                    {
+                                        isChestOpen ? (
+                                            <img src={cofreAbierto} alt="Cofre" className="w-70 h-70 object-contain" />
+                                        ) : (
+                                            <img src={cofre} alt="Cofre" className="w-70 h-70 object-contain" />
+                                        )
+                                    }
+                                </>
+                            )}
+
+                            {!rewards && (
+                                <button
+                                    className="bg-[#0F7079] border-2 border-white rounded-lg text-3xl transition w-32 h-12 text-white"
+                                    onClick={() => {
+                                        if (isChestOpen) {
+                                            setRewards(true);
+                                        } else {
+                                            setIsChestOpen(true)
+                                        }
+
+                                    }}
+                                >
+                                    {isChestOpen ? "Siguiente" : "Abrir"}
+                                </button>
+
+                            )}
+
+                            {rewards && (
+                                <div className="flex flex-col items-center gap-6">
+                                    {/* Contenedor de las cards */}
+                                    <div className="flex justify-center items-center gap-6">
+                                        {obtainedChest?.items.map((item: ChestItemDto, index) => {
+                                            // Determinar contenido y color según el tipo
+                                            let title = "";
+                                            let description = "";
+                                            let color = "#c0be9a"; // color base
+                                            let imageSrc = "";
+
+                                            switch (item.type) {
+                                                case "Product":
+                                                    title = item.product?.name ?? "Producto misterioso";
+                                                    description = item.product?.description ?? "";
+                                                    color = item.product?.rarityColor ?? "#c0be9a";
+                                                    imageSrc = `/images/products/${item.product?.id}.png`;
+                                                    break;
+
+                                                case "Wildcard":
+                                                    title = item.wildcard?.name ?? "Comodín";
+                                                    description = item.wildcard?.description ?? "";
+                                                    color = "#a3e4d7";
+                                                    imageSrc = `/images/wildcards/${item.wildcard?.id}.png`;
+                                                    break;
+
+                                                case "Coins":
+                                                    title = `${item.compensationCoins ?? 0} monedas`;
+                                                    description = "Monedas obtenidas del cofre";
+                                                    color = "#f4d03f";
+                                                    imageSrc = `/images/coin.png`;
+                                                    break;
+
+                                                default:
+                                                    title = "Recompensa desconocida";
+                                                    break;
+                                            }
+
+                                            return (
+                                                <div
+                                                    key={index}
+                                                    className="w-60 h-68 rounded-lg border-2 border-white flex flex-col justify-center items-center p-4"
+                                                    style={{ backgroundColor: color }}
+                                                >
+                                                    <img src={imageSrc} alt={title} className="w-24 h-24 object-contain mb-2" />
+                                                    <h3 className="text-lg font-bold text-center">{title}</h3>
+                                                    {description && (
+                                                        <p className="text-sm text-center opacity-80">{description}</p>
+                                                    )}
+                                                    {item.number && (
+                                                        <span className="mt-2 text-sm font-semibold">x{item.number}</span>
+                                                    )}
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+
+                                    {/* Botón debajo y centrado */}
+                                    <button
+                                        onClick={() => {
+                                            setShowChest(false);
+                                            setRewards(false);
+                                            setObtainedChest(null);
+                                            setIsPendingChest(false);
+                                            navigate("/modo-historia")
+                                        }}
+                                        className="bg-[#0F7079] border-2 border-white rounded-lg text-3xl transition w-32 h-12 text-white"
+                                    >
+                                        Siguiente
+                                    </button>
+                                </div>
+                            )}
+
+                        </div>
+                    </div>
+                </>
+            ) : (
+                <div className="juego w-full h-full bg-black text-white relative">
+                    {/* Header */}
+                    <StoryModeGameHeader
+                        startMatch={startMatch}
+                        gameData={gameData}
+                        timeLeft={timeLeft}
+                        remainingLives={gameStatus?.livesRemaining ?? 3}
+                        onBack={() => navigate("/home")}
                     />
-                )}
 
-                {/* Modal de Resultados */}
-                {winnerModal && (
-                    <EndOfStoryModeModal
-                        level={level?.number ?? 0}
-                        reward={0}
-                        won={gameStatus?.status === SoloGameStatus.PlayerWon}
-                        onClose={() => navigate("/home")}
-                        onNext={() => { setWinnerModal(false) }}
-                        remainingLives={gameStatus?.livesRemaining ?? 0}
-                    />
-                )}
+                    {/* Contador */}
+                    {showCountdown && (
+                        <Semaphore countdown={countdown} />
+                    )}
 
-                {/* Contenido del Juego */}
-                {startMatch && gameData && (
-                    <>
-                        {/* Ruta */}
-                        <RaceTrack
-                            playerPosition={playerPosition}
-                            machinePosition={machinePosition}
-                            fondoJugador={fondoJugador}
-                            fondoRival={fondoRival}
-                            autoJugador={auto1}
-                            autoRival={auto1}
+                    {/* Modal de Error */}
+                    {errorMessage && (
+                        <ErrorModal
+                            title="¡Oops!"
+                            message={errorMessage}
+                            onClose={() => setErrorMessage(null)}
+                            onReturn={() => navigate("/home")}
                         />
+                    )}
 
-                        {/* Instrucciones y Comodines */}
-                        <WildcardsAndInstructions level={level!} />
+                    {/* Modal de Error */}
+                    {errorMessageDuringGame && (
+                        <ErrorModalDuringGame
+                            title="¡Oops!"
+                            message={errorMessageDuringGame}
+                            onClose={() => setErrorMessageDuringGame(null)}
+                        />
+                    )}
 
-                        {/* Ecuación y Opciones */}
-                        {(gameData || gameStatus) && (
-                            <QuestionSection
-                                currentQuestion={gameStatus?.currentQuestion || gameData?.currentQuestion}
-                                selectedAnswer={selectedAnswer}
-                                answerResult={answerResult}
-                                gameSubmitAnswer={gameSubmitAnswer}
-                                handleAnswer={handleAnswer}
+                    {/* Modal de Error durante la partida */}
+                    {winnerModal && (
+                        <EndOfStoryModeModal
+                            level={level?.number ?? 0}
+                            reward={gameSubmitAnswer?.coinsEarned ?? 0}
+                            won={gameStatus?.status === SoloGameStatus.PlayerWon}
+                            onClose={handleCloseWinnerModal}
+                            remainingLives={gameStatus?.livesRemaining ?? 0}
+                        />
+                    )}
+
+                    {/* Contenido del Juego */}
+                    {startMatch && gameData && (
+                        <>
+                            {/* Ruta */}
+                            <RaceTrack
+                                playerPosition={playerPosition}
+                                machinePosition={machinePosition}
+                                fondoJugador={fondoJugador}
+                                fondoRival={fondoRival}
+                                autoJugador={auto1}
+                                autoRival={auto1}
                             />
-                        )}
-                    </>
-                )}
-            </div>
+
+                            {/* Instrucciones y Comodines */}
+                            <WildcardsAndInstructions level={level!} onWildcardClick={handleWildcardClick} />
+
+                            {/* Ecuación y Opciones */}
+                            {(gameData || gameStatus) && (
+                                isUsingWildcard ? (
+                                    <div className="flex flex-col justify-center items-center h-full gap-5 !mb-10 mt-4 bg-black">
+                                        <SmallSpinner />
+                                    </div>
+                                ) : (
+                                    <QuestionSection
+                                        currentQuestion={gameStatus?.currentQuestion || gameData?.currentQuestion}
+                                        selectedAnswer={selectedAnswer}
+                                        answerResult={answerResult}
+                                        gameSubmitAnswer={gameSubmitAnswer}
+                                        handleAnswer={handleAnswer}
+                                    />
+                                )
+                            )}
+                        </>
+                    )}
+                </div>
+            )}
+
         </>
     )
 }

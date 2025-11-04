@@ -80,21 +80,33 @@ const router = createBrowserRouter([
     element: <PublicRoute><LoginPage /></PublicRoute>
   },
   {
-    path: "/register",
+    path: "/registro",
     element: <PublicRoute><RegisterPage /></PublicRoute>
   },
-  { path: "/ranking",
-    element: <ProtectedRoute><RankingPage /></ProtectedRoute> },
-  { path: "/garage",
-     element: <ProtectedRoute><GaragePage /></ProtectedRoute> },
-  { path: "/store", 
-    element: <ProtectedRoute><StorePage /></ProtectedRoute> },
-  { path: "/store/product/:id",
-    element: <ProtectedRoute><ProductDetailsPage /></ProtectedRoute> },
-  { path: "/cart", 
-    element: <ProtectedRoute><CartPage /></ProtectedRoute> },
-  { path: "/tutorial",
-     element: <ProtectedRoute><TutorialPage /></ProtectedRoute> },
+  {
+    path: "/ranking",
+    element: <ProtectedRoute> <RankingPage /> </ProtectedRoute>
+  },
+  {
+    path: "/garage",
+    element: <ProtectedRoute> <GaragePage /> </ProtectedRoute>
+  },
+  {
+    path: "/tienda",
+    element: <PublicRoute> <StorePage /> </PublicRoute>
+  },
+  {
+    path: "/tienda/producto/:id",
+    element: <PublicRoute> <ProductDetailsPage /> </PublicRoute>
+  },
+  {
+    path: "/carrito",
+    element: <ProtectedRoute> <CartPage /> </ProtectedRoute>
+  },
+  {
+    path: "/tutorial",
+    element: <ProtectedRoute> <TutorialPage /> </ProtectedRoute>
+  },
 ]);
 
 export function AppRouter() {

@@ -10,20 +10,13 @@ interface EndOfStoryModeModalProps {
     reward: number;
     won: boolean;
     onClose: () => void;
-    onNext: () => void;
+    onNext?: () => void;
     remainingLives: number;
 }
 
-export const EndOfStoryModeModal: React.FC<EndOfStoryModeModalProps> = ({
-    level,
-    reward,
-    won,
-    onClose,
-    onNext,
-    remainingLives
-}) => {
+export const EndOfStoryModeModal: React.FC<EndOfStoryModeModalProps> = ({ level, reward, won, onClose, onNext, remainingLives }) => {
     return (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/60 z-50">
+        <div className="fixed inset-0 flex items-center justify-center bg-black z-50">
             <div className="bg-[#484848] text-white border-4 border-white p-6 w-[400px] max-w-full">
                 {/* Nivel */}
                 <div className="mt-4 text-center">
@@ -33,21 +26,14 @@ export const EndOfStoryModeModal: React.FC<EndOfStoryModeModalProps> = ({
                 </div>
 
                 {/* Título */}
-                <h2
-                    className={`text-center text-5xl ${won ? "text-[#A6FF00]" : "text-[#FB2828]"
-                        }`}
-                >
+                <h2 className={`text-center text-5xl ${won ? "text-[#A6FF00]" : "text-[#FB2828]"}`}>
                     {won ? "¡GANASTE!" : "¡PERDISTE!"}
                 </h2>
 
                 {/* Contenido */}
                 <div className="mt-4 flex flex-col items-center text-center">
                     <div className="mt-4">
-                        <img
-                            src={carImg}
-                            alt="auto"
-                            className="mx-auto w-44 h-32 object-contain"
-                        />
+                        <img src={carImg} alt="auto" className="mx-auto w-44 h-32 object-contain" />
                     </div>
 
                     {won ? (
@@ -78,18 +64,18 @@ export const EndOfStoryModeModal: React.FC<EndOfStoryModeModalProps> = ({
 
                 {/* Botones */}
                 <div className="flex justify-between mt-6">
-                    <button
-                        onClick={onClose}
-                        className="bg-gray-600 px-6 py-2 rounded hover:bg-gray-500"
-                    >
+                    <button onClick={onClose} className="bg-gray-600 px-6 py-2 rounded hover:bg-gray-500">
                         Regresar
                     </button>
-                    <button
-                        onClick={onNext}
-                        className="bg-teal-600 px-6 py-2 rounded hover:bg-teal-500"
-                    >
-                        Siguiente
-                    </button>
+
+                    {onNext && (
+                        <button
+                            onClick={onNext}
+                            className="bg-teal-600 px-6 py-2 rounded hover:bg-teal-500"
+                        >
+                            Siguiente
+                        </button>
+                    )}
                 </div>
             </div>
         </div>

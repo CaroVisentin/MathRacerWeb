@@ -1,17 +1,32 @@
-interface CountdownProps {
+
+interface SemaphoreProps {
     countdown: number;
 }
 
-export const Countdown = ({ countdown }: CountdownProps) => {
+export const Semaphore = ({ countdown }: SemaphoreProps) => {
     return (
         <div className="absolute inset-0 flex flex-col justify-center items-center bg-black bg-opacity-90 z-20">
-            <h2 className="text-7xl mb-4 text-[#5df9f9]">¡PREPARATE!</h2>
+            <h2 className="text-6xl !mb-6 text-white">¡PREPARATE!</h2>
 
-            <div className="flex gap-6 text-8xl font-bold">
-                <span className={`${countdown === 3 ? "text-[#5df9f9]" : "text-gray-600"}`}>3</span>
-                <span className={`${countdown === 2 ? "text-[#5df9f9]" : "text-gray-600"}`}>2</span>
-                <span className={`${countdown === 1 ? "text-[#5df9f9]" : "text-gray-600"}`}>1</span>
+            <div className="flex gap-2">
+                {/* Luz 3 */}
+                <div
+                    className={`w-24 h-24 border-4 border-gray-700 ${countdown === 3 ? "bg-red-500" : "bg-gray-600"}`}
+                    style={{ imageRendering: "pixelated" }}
+                ></div>
+
+                {/* Luz 2 */}
+                <div
+                    className={`w-24 h-24 border-4 border-gray-700 ${countdown === 2 ? "bg-yellow-400" : "bg-gray-600"}`}
+                    style={{ imageRendering: "pixelated" }}
+                ></div>
+
+                {/* Luz 1 */}
+                <div
+                    className={`w-24 h-24 border-4 border-gray-700 ${countdown === 1 ? "bg-green-500" : "bg-gray-600"}`}
+                    style={{ imageRendering: "pixelated" }}
+                ></div>
             </div>
         </div>
-    )
-}
+    );
+};

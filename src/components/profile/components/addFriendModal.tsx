@@ -4,7 +4,6 @@ import { profileService } from "../../../services/profile/profileService";
 import { friendMapper } from "../../../models/mappers/friendMapper";
 import type { Friend } from "../../../models/ui/friend";
 
-
 interface AddFriendModalProps {
     show: boolean;
     onClose: () => void;
@@ -16,6 +15,10 @@ export const AddFriendModal = ({ show, onClose, fromPlayerId }: AddFriendModalPr
     const [foundPlayer, setFoundPlayer] = useState<Friend | null>(null);
     const [loading, setLoading] = useState(false);
     const [sendingRequest, setSendingRequest] = useState(false);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+
 
     if (!show) return null;
 
@@ -23,15 +26,16 @@ export const AddFriendModal = ({ show, onClose, fromPlayerId }: AddFriendModalPr
         if (!searchEmail) return;
         setLoading(true);
         setFoundPlayer(null);
+        setErrorMessage(null);
+        setSuccessMessage(null);
 
         try {
             const profile = await profileService.getProfileByEmail(searchEmail);
-            //mapear profile a Friend ui model
             const friend = friendMapper.fromPlayerProfileDto(profile);
             setFoundPlayer(friend);
         } catch (err: unknown) {
             const error = err as Error;
-            alert(error.message || "Jugador no encontrado");
+            setErrorMessage(error.message || "Error al buscar jugador.");
         } finally {
             setLoading(false);
         }
@@ -41,25 +45,27 @@ export const AddFriendModal = ({ show, onClose, fromPlayerId }: AddFriendModalPr
         if (!foundPlayer) return;
 
         setSendingRequest(true);
+        setErrorMessage(null);
+        setSuccessMessage(null);
+
         try {
             await friendshipService.sendFriendRequest({
                 fromPlayerId,
                 toPlayerId: foundPlayer.id,
             });
-            alert("Solicitud enviada correctamente");
-            onClose();
+            setSuccessMessage("Solicitud enviada correctamente.");
             setFoundPlayer(null);
             setSearchEmail("");
         } catch (err: unknown) {
             const error = err as Error;
-            alert(error.message || "Error al enviar solicitud");
+            setErrorMessage(error.message || "Error al enviar solicitud.");
         } finally {
             setSendingRequest(false);
         }
     };
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
             <div className="bg-gray-900 p-6 rounded w-96 flex flex-col gap-4">
                 <h2 className="text-white text-center text-xl">Buscar amigo por e-mail</h2>
 
@@ -107,11 +113,25 @@ export const AddFriendModal = ({ show, onClose, fromPlayerId }: AddFriendModalPr
                     </div>
                 )}
 
+                {errorMessage && (
+                    <div className="mt-4 bg-red-500/20 border border-red-500 text-red-400 px-4 py-2 rounded-md text-center">
+                        {errorMessage}
+                    </div>
+                )}
+
+                {successMessage && (
+                    <div className="mt-4 bg-green-500/20 border border-green-500 text-green-400 px-4 py-2 rounded text-center">
+                        {successMessage}
+                    </div>
+                )}
+
                 <button
                     onClick={() => {
                         onClose();
                         setFoundPlayer(null);
                         setSearchEmail("");
+                        setErrorMessage(null);
+                        setSuccessMessage(null);
                     }}
                     className="mt-4 text-red-500 hover:text-red-600"
                 >
@@ -121,3 +141,4 @@ export const AddFriendModal = ({ show, onClose, fromPlayerId }: AddFriendModalPr
         </div>
     );
 };
+
