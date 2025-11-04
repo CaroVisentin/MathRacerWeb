@@ -92,15 +92,15 @@ const router = createBrowserRouter([
     element: <ProtectedRoute> <GaragePage /> </ProtectedRoute>
   },
   {
-    path: "/tienda",
-    element: <PublicRoute> <StorePage /> </PublicRoute>
+    path: "/store",
+    element: <ProtectedRoute> <StorePage /> </ProtectedRoute>
   },
   {
-    path: "/tienda/producto/:id",
-    element: <PublicRoute> <ProductDetailsPage /> </PublicRoute>
+    path: "/store/product/:id",
+    element: <ProtectedRoute> <ProductDetailsPage /> </ProtectedRoute>
   },
   {
-    path: "/carrito",
+    path: "/cart",
     element: <ProtectedRoute> <CartPage /> </ProtectedRoute>
   },
   {

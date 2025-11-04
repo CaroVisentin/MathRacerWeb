@@ -3,7 +3,7 @@ import medallaOro from "../../assets/images/medalla1.png";
 import medallaPlata from "../../assets/images/medalla2.png";
 import type { PlayerDto } from "../../models/domain/playerDto";
 import auto1 from "../../assets/images/auto.png"
-
+import mathi from "../../assets/images/mathi.png"
 interface EndOfMultiplayerModeModalProps {
     players: PlayerDto[];
     won: boolean;
@@ -35,11 +35,15 @@ export const EndOfMultiplayerModeModal: React.FC<EndOfMultiplayerModeModalProps>
         <div className="fixed inset-0 flex items-center justify-center bg-black/60 z-50">
             <div className="bg-[#484848] text-white rounded-2xl p-6 w-[500px] max-w-full border-4 border-white">
                 {/* Título */}
+                <div className="flex items-center justify-center gap-4">
+                    <img src={mathi} alt="Mathi" className="w-20 h-20 drop-shadow-[0_0_5px_#00FFFF] animate-bounce" />
                 <h2
                     className={`text-center text-5xl ${won ? "text-[#A6FF00]" : "text-[#FB2828]"}`}
                 >
                     {won ? "¡GANASTE!" : "¡PERDISTE!"}
                 </h2>
+                
+                </div>
 
                 {/* Subtítulo */}
                 <h3 className="text-center text-2xl mt-2">RESULTADOS</h3>
@@ -72,7 +76,8 @@ export const EndOfMultiplayerModeModal: React.FC<EndOfMultiplayerModeModalProps>
                             {/* Auto hardcodeado */}
                             <img
                                 src={auto1} // la imagen que pusiste en public
-                                alt={`Auto de ${j.name}`}
+                               
+                               alt={`Auto de ${j.name}`}
                                 className={`${i === 0 ? "w-28 h-20" : "w-20 h-16"} object-contain`}
                             />
                         </li>

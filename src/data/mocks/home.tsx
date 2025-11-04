@@ -1,4 +1,4 @@
-// //import type { HomeData } from "../../models/ui/home-data";
+
 
  import pila from "../../assets/images/pila-full.png";
  import pilaempty from "../../assets/images/pila-empty.png";
