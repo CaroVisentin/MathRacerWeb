@@ -1,3 +1,4 @@
+import { useHomeData } from "../../../hooks/useHomeData";
 import { usePlayer } from "../../../hooks/usePlayer";
 import { UserInfoSection } from "../components/userInfo"
 
@@ -6,6 +7,7 @@ import { UserInfoSection } from "../components/userInfo"
 export const ProfileSection = () => {
 
   const { player } = usePlayer();
+  const { homeData } = useHomeData();
 
 
     if (!player) {
@@ -30,7 +32,7 @@ export const ProfileSection = () => {
                 email={player.email}
                 partidas={player.points}
                 puntuacion={player.points}
-                avatarUrlId={player.character?.id}
+                avatarUrlId={homeData?.activeItems.profile.imageUrl}
             />
         </>
     )

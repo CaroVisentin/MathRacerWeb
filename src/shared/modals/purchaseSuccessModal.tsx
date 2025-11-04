@@ -1,4 +1,5 @@
 import React from "react";
+import mathiImg from "../../assets/images/mathi.png";
 
 interface PurchaseSuccessModalProps {
   title?: string;
@@ -11,7 +12,7 @@ interface PurchaseSuccessModalProps {
 const PurchaseSuccessModal: React.FC<PurchaseSuccessModalProps> = ({
   title = "¡Compra exitosa!",
   message = "Tu compra fue procesada correctamente.",
-  imageSrc = "/src/assets/images/mathi.png",
+  imageSrc = mathiImg,
   onClose,
   onGoToGarage,
 }) => {
