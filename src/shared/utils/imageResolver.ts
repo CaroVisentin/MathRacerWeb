@@ -15,12 +15,12 @@ import jugadorSonic from "../../assets/images/characters/p5.png";
 
 
 const carImages: Record<number, string> = {
-  1: autoDefault,
-  2: autoAlt,
-  3: autoRojo,
+  2: autoDefault,
+  3: autoAlt,
+  1: autoRojo,
   6: autoAzul,
-  9: autoBlanco,
-  12: autoNaranja,
+  7: autoBlanco,
+  10: autoNaranja,
 };
 
 const backgroundImages: Record<number, string> = {

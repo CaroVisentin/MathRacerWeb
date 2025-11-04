@@ -17,6 +17,7 @@ import { useNavigate } from "react-router-dom";
 import { EndOfStoryModeModal } from "../../shared/modals/endOfStoryModeModal";
 import { tutorialService } from "../../services/player/tutorialService";
 import type { ChestResponseDto } from "../../models/domain/story-mode/chestResponseDto";
+import mathi from "../../assets/images/mathi.png";
 
 export const TutorialPage = () => {
     const [posicionAuto1, setPosicionAuto1] = useState<number>(0);
@@ -73,6 +74,7 @@ export const TutorialPage = () => {
                             {/* Contenido centrado */}
                             <div className="relative z-10 w-full h-full flex flex-col justify-center items-center gap-4">
 
+
                                 {!recompensas && (
                                     <>
                                         {
@@ -104,6 +106,7 @@ export const TutorialPage = () => {
 
                                 {recompensas && (
                                     <div className="flex flex-col items-center gap-6">
+    
                                         {/* Contenedor dinámico de recompensas */}
                                         <div className="flex justify-center items-center gap-6 flex-wrap">
                                             {chest?.items?.length ? (
@@ -135,7 +138,7 @@ export const TutorialPage = () => {
                                                 <p className="text-white">No se recibieron recompensas.</p>
                                             )}
                                         </div>
-
+                                       
                                         {/* Botón debajo y centrado */}
                                         <button
                                             onClick={() => navigate("/home")}
@@ -147,7 +150,9 @@ export const TutorialPage = () => {
                                 )}
 
                             </div>
+                            
                         </div>
+
                     </>
                 ) : (
                     // Tutorial
@@ -166,11 +171,21 @@ export const TutorialPage = () => {
                         {/* CARTEL DE OBJETIVO */}
                         {mostrarObjetivo && (
                             <div className="fixed inset-0 flex flex-col items-center justify-center z-65 pointer-events-none">
+                                <div className="relative">
+      {/* Mathi al costado del cartel */}
+      <img
+        src={mathi}
+        alt="Mathi guía"
+        className="absolute -left-24 -top-10 w-40 h-40  drop-shadow-[0_0_10px_#00ffff]"
+      />
+
+                               
                                 <div className="bg-[#0F7079] border-4 border-white px-10 py-8 text-center shadow-lg pointer-events-auto">
                                     <h2 className="text-3xl mb-3 text-white">Objetivo</h2>
                                     <p className="text-lg mb-5 text-white leading-snug">
                                         Verás la ecuación a resolver y debajo la condición que debes cumplir
                                     </p>
+                                </div>
                                 </div>
 
                                 <button
@@ -184,17 +199,29 @@ export const TutorialPage = () => {
                                     Siguiente
                                 </button>
                             </div>
+                           
                         )}
 
                         {/* CARTEL DE OPCIONES */}
                         {mostrarOpciones && (
                             <div className="fixed inset-0 flex flex-col items-center justify-center z-65 pointer-events-none">
+                               <div className="relative">
+      {/* Mathi al costado del cartel */}
+      <img
+        src={mathi}
+        alt="Mathi guía"
+        className="absolute -left-24 -top-10 w-40 h-40  drop-shadow-[0_0_10px_#00ffff]"
+      />
+                               
+      
                                 <div className="bg-[#0F7079] border-4 border-white px-10 py-8 text-center shadow-lg pointer-events-auto">
                                     <h2 className="text-3xl mb-3 text-white">Opciones</h2>
                                     <p className="text-lg mb-5 text-white leading-snug">
                                         Aquí verás las opciones a elegir
                                     </p>
                                 </div>
+                                </div>
+                                
 
                                 <div className="flex space-x-2">
                                     <button
@@ -223,11 +250,19 @@ export const TutorialPage = () => {
 
                         {mostrarVidas && (
                             <div className="fixed inset-0 flex flex-col items-center justify-center z-65 pointer-events-none">
+                                <div className="relative">
+      {/* Mathi al costado del cartel */}
+      <img
+        src={mathi}
+        alt="Mathi guía"
+        className="absolute -left-24 -top-10 w-40 h-40  drop-shadow-[0_0_10px_#00ffff]"
+      />
                                 <div className="bg-[#0F7079] border-4 border-white px-10 py-8 text-center shadow-lg pointer-events-auto">
                                     <h2 className="text-3xl mb-3 text-white">Tus vidas</h2>
                                     <p className="text-lg mb-5 text-white leading-snug">
                                         Si llegan a 0, termina la partida
                                     </p>
+                                </div>
                                 </div>
 
                                 <div className="flex space-x-2">
@@ -257,11 +292,19 @@ export const TutorialPage = () => {
 
                         {mostrarCarrera && (
                             <div className="fixed bottom-4 right-4 z-65 pointer-events-none">
+                                <div className="relative">
+      {/* Mathi al costado del cartel */}
+      <img
+        src={mathi}
+        alt="Mathi guía"
+        className="absolute -left-24 -top-10 w-40 h-40  drop-shadow-[0_0_10px_#00ffff]"
+      />
                                 <div className="bg-[#0F7079] border-4 border-white px-10 py-8 text-center shadow-lg pointer-events-auto">
                                     <h2 className="text-3xl mb-3 text-white">Carrera</h2>
                                     <p className="text-lg mb-5 text-white leading-snug">
                                         En este sector verás tu avance y el de tu rival
                                     </p>
+                                </div>
                                 </div>
 
                                 <div className="flex justify-end space-x-2 mt-3">
@@ -291,11 +334,19 @@ export const TutorialPage = () => {
 
                         {mostrarComodines && (
                             <div className="fixed inset-0 flex flex-col items-center justify-center z-65 pointer-events-none">
+                                <div className="relative">
+      {/* Mathi al costado del cartel */}
+      <img
+        src={mathi}
+        alt="Mathi guía"
+        className="absolute -left-24 -top-10 w-40 h-40  drop-shadow-[0_0_10px_#00ffff]"
+      />
                                 <div className="bg-[#0F7079] border-4 border-white px-10 py-8 text-center shadow-lg pointer-events-auto">
                                     <h2 className="text-3xl mb-3 text-white">Comodines</h2>
                                     <p className="text-lg mb-5 text-white leading-snug">
                                         Podrás tener ayudas activables durante el juego
                                     </p>
+                                </div>
                                 </div>
 
                                 <div className="flex justify-end space-x-2 mt-3">
@@ -325,14 +376,24 @@ export const TutorialPage = () => {
 
                         {mostrarJuguemos && (
                             <div className="fixed inset-0 flex flex-col items-center justify-center z-65 pointer-events-none">
+                                 <div className="relative">
+      {/* Mathi al costado del cartel */}
+      <img
+        src={mathi}
+        alt="Mathi guía"
+        className="absolute -left-24 -top-20 w-40 h-40  drop-shadow-[0_0_10px_#00ffff]"
+      />
                                 <div className="bg-[#0F7079] border-4 border-white px-10 py-8 text-center shadow-lg pointer-events-auto">
                                     <h2 className="text-3xl mb-3 text-white">Juguemos</h2>
                                     <p className="text-lg mb-5 text-white leading-snug">
                                         Selecciona la opción marcada
                                     </p>
                                 </div>
+                                </div>
 
                                 <div className="flex justify-end space-x-2 mt-3">
+                                    
+     
                                     <button
                                         type="button"
                                         onClick={() => {
@@ -343,17 +404,26 @@ export const TutorialPage = () => {
                                     >
                                         Atrás
                                     </button>
+
                                 </div>
                             </div>
                         )}
 
                         {mostrarOpcionIncorrecta && (
                             <div className="fixed bottom-4 right-4 z-65 pointer-events-none">
+                                <div className="relative">
+      {/* Mathi al costado del cartel */}
+      <img
+        src={mathi}
+        alt="Mathi guía"
+        className="absolute -left-24 -top-10 w-40 h-40  drop-shadow-[0_0_10px_#00ffff]"
+      />
                                 <div className="bg-[#0F7079] border-4 border-white px-10 py-8 text-center shadow-lg pointer-events-auto">
                                     <h2 className="text-3xl mb-3 text-white">Juguemos</h2>
                                     <p className="text-lg mb-5 text-white leading-snug">
                                         Opción incorrecta y tu rival te ha adelantado
                                     </p>
+                                </div>
                                 </div>
 
                                 <div className="flex justify-end space-x-2 mt-3">
@@ -383,11 +453,19 @@ export const TutorialPage = () => {
 
                         {mostrarJuguemosParteDos && (
                             <div className="fixed bottom-4 right-4 z-65 pointer-events-none">
+                                <div className="relative">
+      {/* Mathi al costado del cartel */}
+      <img
+        src={mathi}
+        alt="Mathi guía"
+        className="absolute -left-24 -top-10 w-40 h-40  drop-shadow-[0_0_10px_#00ffff]"
+      />
                                 <div className="bg-[#0F7079] border-4 border-white px-10 py-8 text-center shadow-lg pointer-events-auto">
                                     <h2 className="text-3xl mb-3 text-white">Juguemos</h2>
                                     <p className="text-lg mb-5 text-white leading-snug">
                                         Seleccioná la opción marcada
                                     </p>
+                                </div>
                                 </div>
 
                                 <div className="flex justify-end space-x-2 mt-3">
@@ -417,11 +495,19 @@ export const TutorialPage = () => {
 
                         {mostrarOpcionCorrecta && (
                             <div className="fixed bottom-4 right-4 z-65 pointer-events-none">
+                                 <div className="relative">
+      {/* Mathi al costado del cartel */}
+      <img
+        src={mathi}
+        alt="Mathi guía"
+        className="absolute -left-24 -top-10 w-40 h-40  drop-shadow-[0_0_10px_#00ffff]"
+      />
                                 <div className="bg-[#0F7079] border-4 border-white px-10 py-8 text-center shadow-lg pointer-events-auto">
                                     <h2 className="text-3xl mb-3 text-white">Juguemos</h2>
                                     <p className="text-lg mb-5 text-white leading-snug">
                                         ¡Opción correcta! Ahora vas ganando
                                     </p>
+                                </div>
                                 </div>
 
                                 <div className="flex justify-end space-x-2 mt-3">
@@ -549,6 +635,7 @@ export const TutorialPage = () => {
 
                             {/* Opciones */}
                             <div className={`flex justify-center items-center mt-3 gap-6 opciones ${mostrarOpciones ? "z-60" : ""}`}>
+                                 
                                 {opciones?.map((opcion, i) => (
                                     <button
                                         key={i}
@@ -578,7 +665,8 @@ export const TutorialPage = () => {
                                 ))}
 
                             </div>
-                        </div>
+                            </div>
+                        
                     </div>
                 )}
         </>
