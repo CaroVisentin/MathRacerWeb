@@ -8,9 +8,10 @@ export const friendMapper = {
     return {
       id: dto.id,
       name: dto.name ?? "Jugador",
+      email: dto.email,
       points: dto.points ?? 0,
       avatarUrl: `/images/characters/${dto.character.id}.png`,
-      carUrl: "/images/cars/1.png",
+      // carUrl: "/images/cars/1.png",
     };
   },
 
@@ -22,9 +23,10 @@ export const friendMapper = {
     return {
       id: dto.id,
       name: dto.name ?? "Jugador",
+      email: dto.email,
       points: dto.points ?? 0,
       avatarUrl: `/images/characters/${dto.character.id}.png`,
-      carUrl: "/images/cars/1.png",
+      // carUrl: "/images/cars/1.png",
     };
   }
 };

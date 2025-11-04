@@ -13,24 +13,26 @@ export const ProfilePage = () => {
 
 
     return (
-  <div className="min-h-screen w-full bg-black flex flex-col">
+        <div className="min-h-screen w-full bg-black flex flex-col relative">
             <TabPanel activeSection={activeSection} setActiveSection={setActiveSection} />
 
-            {activeSection === "perfil" && (
-                <ProfileSection />
-            )}
+            <main className="flex-1 flex flex-col items-center pb-10 overflow-y-auto">
+                {activeSection === "perfil" && (
+                    <ProfileSection />
+                )}
 
-            {activeSection === "amigos" && (
-                <AmigosSection />
-            )}
+                {activeSection === "amigos" && (
+                    <AmigosSection />
+                )}
 
-            {activeSection === "ajustes" && (
-                <AjustesSection />
-            )}
+                {activeSection === "ajustes" && (
+                    <AjustesSection />
+                )}
+            </main>
 
-            <RulesButton
-                onClick={() => navigate("/reglas")}
-            />
+            <div className="fixed bottom-4 right-4">
+                <RulesButton onClick={() => navigate("/reglas")} />
+            </div>
         </div>
     );
 };

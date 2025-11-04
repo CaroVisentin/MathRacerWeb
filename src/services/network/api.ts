@@ -54,5 +54,6 @@ export const API_URLS = {
     levels: "/levels",
     online: "/online",
     storyModeGame: "/solo",
-    chest: "/chest"
+    chest: "/chest",
+    friends: "/friendship",
 };
