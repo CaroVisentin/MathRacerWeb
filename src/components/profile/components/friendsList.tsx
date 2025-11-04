@@ -2,9 +2,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import type { Friend } from "../../../models/ui/friend";
 
+
 interface FriendListProps {
-    friends: Friend[];
-    onRemove: (id: number) => void;
+  friends: Friend[];
+  onRemove: (friend: Friend) => void; 
 }
 
 export const FriendList = ({ friends, onRemove }: FriendListProps) => {
@@ -14,7 +15,7 @@ export const FriendList = ({ friends, onRemove }: FriendListProps) => {
                 {friends.map((friend) => (
                     <div
                         key={friend.id}
-                        className="grid grid-cols-4 items-center border-2 border-cyan-400 rounded px-6 py-4"
+                        className="grid grid-cols-3 items-center border-2 border-cyan-400 rounded px-6 py-4"
                     >
                         {/* Columna 1: Avatar + nombre (izquierda) */}
                         <div className="flex items-center gap-3">
@@ -31,9 +32,9 @@ export const FriendList = ({ friends, onRemove }: FriendListProps) => {
                         </div>
 
                         {/* Columna 2: Auto (centrado) */}
-                        <div className="flex justify-center">
+                        {/* <div className="flex justify-center">
                             <img src={friend.carUrl} alt="carro" className="w-14 h-8" />
-                        </div>
+                        </div> */}
 
                         {/* Columna 3: Puntuación (centrada) */}
                         <div className="flex justify-center">
@@ -45,7 +46,7 @@ export const FriendList = ({ friends, onRemove }: FriendListProps) => {
                         {/* Columna 4: Botón eliminar (derecha) */}
                         <div className="flex justify-end">
                             <button
-                                onClick={() => onRemove(friend.id)}
+                                onClick={() => onRemove(friend)}
                                 className="text-red-500 hover:text-red-600 text-2xl"
                             >
                                 <FontAwesomeIcon icon={faTrash} className="text-xl" />
