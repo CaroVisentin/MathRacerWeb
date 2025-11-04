@@ -8,7 +8,6 @@ import { friendMapper } from "../../../models/mappers/friendMapper";
 import { AddFriendModal } from "../components/addFriendModal";
 import Spinner from "../../../shared/spinners/spinner";
 import { FriendRequestsModal } from "../components/friendRequestsModal";
-import { manageError } from "../../../shared/utils/manageErrors";
 import { ConfirmModal } from "../components/confirmDeleteFriendModal";
 
 
@@ -37,7 +36,8 @@ export const AmigosSection = () => {
             const mappedFriends = friendMapper.fromDtoList(data);
             setFriends(mappedFriends);
         } catch (err) {
-            manageError(err);
+            const errorMessage = err instanceof Error ? err.message : 'Error al obtener lista de amigos.';
+            setError(errorMessage);
         } finally {
             setLoading(false);
         }
@@ -51,7 +51,8 @@ export const AmigosSection = () => {
             setPendingRequests(mappedRequests);
             setPendingCount(mappedRequests.length);
         } catch (err) {
-            manageError(err);
+            const errorMessage = err instanceof Error ? err.message : 'Error al obtener solicitudes.';
+            setError(errorMessage);
         }
     }, [player]);
 
@@ -69,6 +70,7 @@ export const AmigosSection = () => {
 
     const confirmDelete = async () => {
         if (!player || !friendToDelete) return;
+        setError(null);
         try {
             const dto = { fromPlayerId: player.id, toPlayerId: friendToDelete.id };
             await friendshipService.deleteFriend(dto);
@@ -76,7 +78,8 @@ export const AmigosSection = () => {
             setFriendToDelete(null);
             await fetchFriends();
         } catch (err) {
-            manageError(err);
+            const errorMessage = err instanceof Error ? err.message : 'Error al eliminar amigo.';
+            setError(errorMessage);
         }
     };
 
@@ -117,8 +120,10 @@ export const AmigosSection = () => {
                 </div>
 
                 <div className="flex-1 overflow-y-auto custom-scrollbar">
+
                     {loading && <Spinner />}
-                    {error && <div className="text-red-400 p-4">Error: {error}</div>}
+
+                    {error &&  <div className="text-red-400 p-4 text-center">Error: {error}</div>}
 
                     {!loading && !error && (
                         friends.length > 0 ? (
