@@ -1,12 +1,23 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useCart } from "../../hooks/useCart";
 import { faMinus, faPlus, faShoppingCart, faTrash } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Topbar } from "../../components/cart/topbar";
 import coinImg from "../../assets/images/coin.png";
+import { usePlayer } from "../../hooks/usePlayer";
+import { buyBackground, buyCar, buyCharacter } from "../../services/player/storeService";
+import ErrorModal from "../../shared/modals/errorModal";
+import PurchaseSuccessModal from "../../shared/modals/purchaseSuccessModal";
+import { useState } from "react";
 
 export default function CartPage() {
-    const { cart, updateQuantity, removeFromCart } = useCart()
+    const { cart, updateQuantity, removeFromCart, clearCart } = useCart();
+    const { player } = usePlayer();
+    const navigate = useNavigate();
+
+    const [isPurchasing, setIsPurchasing] = useState(false);
+    const [showSuccess, setShowSuccess] = useState(false);
+    const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
     const incrementar = (id: number) => {
         const item = cart.find((i) => i.id === id)
@@ -19,6 +30,47 @@ export default function CartPage() {
     }
 
     const total = cart.reduce((acc, item) => acc + item.price * item.quantity, 0)
+
+    const procederAlPago = async () => {
+        if (!player?.id) {
+            setErrorMsg("Debes iniciar sesión para comprar.");
+            return;
+        }
+        if (!cart.length) return;
+
+        setIsPurchasing(true);
+        const failed: string[] = [];
+        try {
+            for (const item of cart) {
+                // Normalizamos el tipo
+                const type = (item.typeProduct || "").toLowerCase();
+                try {
+                    if (type === "auto" || type === "car") {
+                        await buyCar(player.id, item.id);
+                    } else if (type === "personaje" || type === "character") {
+                        await buyCharacter(player.id, item.id);
+                    } else if (type === "fondo" || type === "background") {
+                        await buyBackground(player.id, item.id);
+                    } else {
+                        // Tipo no reconocido
+                        failed.push(item.name);
+                    }
+                } catch {
+                    failed.push(item.name);
+                }
+            }
+
+            if (failed.length === 0) {
+                // Éxito total
+                clearCart();
+                setShowSuccess(true);
+            } else {
+                setErrorMsg(`No se pudo completar la compra de: ${failed.join(", ")}.`);
+            }
+        } finally {
+            setIsPurchasing(false);
+        }
+    };
 
     return (
         <div className="min-h-screen bg-black text-white">
@@ -120,8 +172,13 @@ export default function CartPage() {
                                     </div>
                                 </div>
 
-                                <button type="button" className="w-full h-12 bg-primary text-primary-foreground hover:bg-primary/90 border-2 border-[#00FCFC] text-lg !mb-3">
-                                    PROCEDER AL PAGO
+                                <button
+                                    type="button"
+                                    disabled={isPurchasing}
+                                    onClick={procederAlPago}
+                                    className={`w-full h-12 border-2 border-[#00FCFC] text-lg !mb-3 ${isPurchasing ? "bg-gray-600 cursor-wait" : "bg-primary text-primary-foreground hover:bg-primary/90"}`}
+                                >
+                                    {isPurchasing ? "Procesando..." : "PROCEDER AL PAGO"}
                                 </button>
 
                                 <Link to="/store">
@@ -134,6 +191,25 @@ export default function CartPage() {
                     </div>
                 )}
             </div>
+            {errorMsg && (
+                <ErrorModal
+                    title="Error de compra"
+                    message={errorMsg}
+                    onClose={() => setErrorMsg(null)}
+                    onReturn={() => setErrorMsg(null)}
+                />
+            )}
+
+            {showSuccess && (
+                <PurchaseSuccessModal
+                    message="Tu compra fue exitosa. Puedes activarla desde el Garage."
+                    onClose={() => setShowSuccess(false)}
+                    onGoToGarage={() => {
+                        setShowSuccess(false);
+                        navigate("/garage");
+                    }}
+                />
+            )}
         </div>
     )
 

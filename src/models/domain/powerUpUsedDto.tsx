@@ -1,8 +1,8 @@
-import type { PowerUpType } from "../enums/powerUpType";
+ import type { PowerUpType } from "../enums/powerUpType";
 
 
-export interface PowerUpUsedDto {
-    gameId: number;
-    playerId: number;
-    powerUpType: PowerUpType;
-}
+ export interface PowerUpUsedDto {
+     gameId: number;
+     playerId: number;
+     powerUpType: PowerUpType;
+ }

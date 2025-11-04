@@ -1,19 +1,26 @@
 import { useEffect, useState } from 'react';
 import { usePlayer } from './usePlayer';
 import { mapPlayerToHomeData } from '../models/mappers/homePlayerMapper';
-import { homeDataMock } from '../data/mocks/home';
+//import { homeDataMock } from '../data/mocks/home';
 import type { HomeData } from '../models/ui/home-data';
 
 export const useHomeData = () => {
   const { player } = usePlayer();
   const [homeData, setHomeData] = useState<HomeData | null>(null);
 
+  const battery ={
+   
+   time: "02:35",
+   levels: ["full", "full", "empty"] as ("full" | "empty")[],
+  
+  }
+
   useEffect(() => {
     if (!player) return;
 
     const mapped = mapPlayerToHomeData(
       player,
-      homeDataMock.battery,
+      battery,
     );
 
     setHomeData(mapped);
