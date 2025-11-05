@@ -21,7 +21,8 @@ export const LivesAndTimer = () => {
 
       {/* Vidas */}
       <div className="flex items-center gap-1">
-        {[...Array(10)].map((_, i) => (
+        {/* Son 3 vidas */}
+        {[...Array(3)].map((_, i) => (
           <img
             key={i}
             src={i < remainingLives ? batteryIcons.pila : batteryIcons.pilaempty}
