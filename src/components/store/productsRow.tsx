@@ -37,7 +37,7 @@ export const ProductsRow = ({ title, products }: ProductsRowProps) => {
     };
 
     return (
-        <div className="flex flex-col gap-4">
+        <div className="flex w-screen flex-col gap-4">
             <h2 className="text-white text-xl">{title}</h2>
             <div className="flex gap-4 overflow-x-auto pb-2">
                 {products.map((product) => (

@@ -79,7 +79,7 @@ export const StorePage = () => {
             <CategorySelector activeCategory={activeCategory} setActiveCategory={setActiveCategory}/>
 
             {/* Contenido principal */}
-            <div className="flex-1 flex flex-col overflow-y-auto px-4 gap-6">
+            <div className="flex-1 flex flex-col">
                 {/* Oferta especial */}
                 <SpecialOffer />
 

@@ -142,7 +142,7 @@ export const LoginPage = () => {
                 {/* Registro */}
                 <p className="!mt-5 text-center text-white text-xl font-audiowide">
                     ¿No tenés cuenta?{" "}
-                    <Link to="/register"
+                    <Link to="/registro"
                         className="text-[#FFE50C] hover:text-orange-300 transition-colors hover:drop-shadow-[0_0_10px_#00ffff]"
                     >
                         Registrate acá
