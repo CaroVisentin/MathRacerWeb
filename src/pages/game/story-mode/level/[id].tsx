@@ -26,6 +26,7 @@ import type { ChestItemDto } from "../../../../models/domain/chest/chestItemDto"
 import { getErrorMessage } from "../../../../shared/utils/manageErrors";
 import type { WildcardType } from "../../../../models/enums/wildcard";
 import ErrorModalDuringGame from "../../../../shared/modals/errorModalDuringGame";
+import { usePlayer } from "../../../../hooks/usePlayer";
 
 export const StoryModeGame = () => {
     const { id } = useParams();
@@ -62,6 +63,8 @@ export const StoryModeGame = () => {
     const [isChestOpen, setIsChestOpen] = useState(false);
     const [rewards, setRewards] = useState(false);
     const [obtainedChest, setObtainedChest] = useState<ChestResponseDto | null>(null);
+
+    const { player } = usePlayer();
 
     // Guarda la pregunta que se autoenvió (por timeout)
     const [autoSubmittedQuestionIndex, setAutoSubmittedQuestionIndex] = useState<number | null>(null);
@@ -521,9 +524,9 @@ export const StoryModeGame = () => {
                             <RaceTrack
                                 playerPosition={playerPosition}
                                 machinePosition={machinePosition}
-                                fondoJugador={fondoJugador}
+                                fondoJugador={`/images/backgrounds/${player?.background?.id}.png`}
                                 fondoRival={fondoRival}
-                                autoJugador={auto1}
+                                autoJugador={`/images/cars/${player?.car?.id}.png`}
                                 autoRival={auto1}
                             />
 

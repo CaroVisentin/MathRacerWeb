@@ -135,7 +135,7 @@ export const GaragePage = () => {
     };
 
     return (
-        <div className="relative h-screen w-screen flex flex-col p-2">
+        <div className="relative h-screen w-screen flex flex-col p-2   overflow-hidden bg-black">
             {/* Fondo dinámico */}
             <div
                 className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-700"

@@ -12,7 +12,7 @@ export const Menu = () => {
         Multijugador
       </h1>
 
-      <div className="bg-black/60 rounded-lg p-8 grid grid-cols-2 gap-6 w-4/5 max-w-screen-lg">
+      <div className=" rounded-lg p-8 grid grid-cols-2 gap-6 w-4/5 max-w-screen-lg">
         
         <Link
           to="/crear"

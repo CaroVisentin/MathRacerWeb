@@ -60,7 +60,7 @@ body {
   overflow: hidden;
   background-color: #333;
   background-repeat: repeat-x;
-  background-size: cover;
+  background-size: contain;
   animation: moverFondoRuta 10s linear infinite;
   z-index: 1;
 }
@@ -101,7 +101,7 @@ body {
 
 .fondo-multijugador {
   background-image: url('/src/assets/images/partidas.png');
-  background-size: cover;
+  background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
 }
