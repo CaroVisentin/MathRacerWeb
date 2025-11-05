@@ -17,7 +17,7 @@ import { resolveImageUrl } from "../../shared/utils/imageResolver";
 import ErrorConnection from "../../shared/modals/errorConnection";
 
 export const GaragePage = () => {
-    const { player } = usePlayer();
+    const { player, setPlayer } = usePlayer();
     const [activeCategory, setActiveCategory] = useState<"cars" | "characters" | "backgrounds">("cars");
     const [cars, setCars] = useState<ItemSelectable[]>([]);
     const [characters, setCharacters] = useState<ItemSelectable[]>([]);
@@ -102,6 +102,33 @@ export const GaragePage = () => {
             if (activeCategory === "cars") setCars(updateActive);
             if (activeCategory === "characters") setCharacters(updateActive);
             if (activeCategory === "backgrounds") setBackgrounds(updateActive);
+
+            // Actualizar el player en el contexto para que el home se actualice
+            if (player) {
+                const updatedPlayer = { ...player };
+                const newItem = {
+                    id: selectedItemId,
+                    name: selected.name,
+                    description: "",
+                    price: 0,
+                    productType: type
+                };
+
+                if (activeCategory === "cars") {
+                    updatedPlayer.car = newItem;
+                } else if (activeCategory === "characters") {
+                    updatedPlayer.character = newItem;
+                } else if (activeCategory === "backgrounds") {
+                    updatedPlayer.background = newItem;
+                }
+                setPlayer(updatedPlayer);
+                // Actualizar localStorage también
+                try {
+                    localStorage.setItem('player', JSON.stringify(updatedPlayer));
+                } catch (e) {
+                    console.warn('No se pudo actualizar player en storage:', e);
+                }
+            }
         } catch {
             setError("No se pudo activar el ítem seleccionado");
         }

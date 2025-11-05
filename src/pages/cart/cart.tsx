@@ -6,13 +6,14 @@ import { Topbar } from "../../components/cart/topbar";
 import coinImg from "../../assets/images/coin.png";
 import { usePlayer } from "../../hooks/usePlayer";
 import { buyBackground, buyCar, buyCharacter } from "../../services/player/storeService";
+import { getPlayerData } from "../../services/player/playerService";
 import ErrorModal from "../../shared/modals/errorModal";
 import PurchaseSuccessModal from "../../shared/modals/purchaseSuccessModal";
 import { useState } from "react";
 
 export default function CartPage() {
     const { cart, updateQuantity, removeFromCart, clearCart } = useCart();
-    const { player } = usePlayer();
+    const { player, setPlayer } = usePlayer();
     const navigate = useNavigate();
 
     const [isPurchasing, setIsPurchasing] = useState(false);
@@ -61,7 +62,15 @@ export default function CartPage() {
             }
 
             if (failed.length === 0) {
-                // Éxito total
+                // Éxito total - recargar datos del player
+                try {
+                    const updatedPlayer = await getPlayerData(player.id);
+                    setPlayer(updatedPlayer);
+                    // Actualizar localStorage
+                    localStorage.setItem('player', JSON.stringify(updatedPlayer));
+                } catch (e) {
+                    console.warn("No se pudo actualizar player después de la compra:", e);
+                }
                 clearCart();
                 setShowSuccess(true);
             } else {
