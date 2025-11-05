@@ -8,18 +8,30 @@ import { InfoBox } from "../../components/home/infoBox";
 import { CarDisplay } from "../../components/home/carDisplay";
 import { useState } from "react";
 import fondoHome from "../../assets/images/fondocity.png";
-import { Link,  } from "react-router-dom";
+import { Link,useNavigate  } from "react-router-dom";
 import ErrorConnection from "../../shared/modals/errorConnection";
 import { useHomeData } from "../../hooks/useHomeData";
+import { useAuth } from "../../hooks/useAuth";
 
 
 export const Home = () => {
-  const [ errorMessage ] = useState("");
+   const navigate = useNavigate();
+  const { logout } = useAuth();
+  const [errorMessage, setErrorMessage] = useState("");
+  //const [ errorMessage ] = useState("");
   const [showErrorModal, setShowErrorModal] = useState(false); 
   const {homeData} = useHomeData();
   
 
- 
+   const handleLogout = async () => {
+    try {
+      await logout();
+      navigate("/login");
+    } catch {
+      setErrorMessage("no se pudo cerrar sesión");
+      setShowErrorModal(true);
+    }
+  };
 
   const handleCloseModal = () => {
     setShowErrorModal(false);
@@ -75,6 +87,9 @@ export const Home = () => {
           </div>
 
           <div className="flex flex-col gap-3 items-end">
+            <ActionButton size="small" onClick={handleLogout}>
+                  <i className="ri-logout-box-r-line"></i>               
+                </ActionButton>
             <ActionButton to="/ranking" size="small">
               <i className="ri-trophy-fill"></i>
             </ActionButton>
