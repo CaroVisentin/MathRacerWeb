@@ -325,16 +325,16 @@ export const MultiplayerGame = () => {
             {/* Instrucciones y Comodines */}
             <div className="flex justify-center items-center gridComodin mt-4">
 
-                <div className="instruccion font-mono text-3xl text-center">
+                <div className="instruccion tracking-widest text-4xl text-center">
                     {instruccion
                         ? ( 
                             <>
                             Elegí la opción para que {" "}
-      <span className="text-cyan-400 font-bold drop-shadow-[0_0_5px_#00ffff] ">
+      <span className="text-cyan-400 drop-shadow-[0_0_5px_#00ffff] ">
         Y
       </span>{" "}                            
                               sea {" "}
-                            <span className="text-cyan-400 font-bold drop-shadow-[0_0_5px_#00ffff] ">
+                            <span className="text-cyan-400  ">
                              {instruccion.toUpperCase()}
                              </span>
                              </>
