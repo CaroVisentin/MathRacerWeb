@@ -75,13 +75,10 @@ export const Home = () => {
           </div>
           <InfoBox>Nivel {homeData.user.level}</InfoBox>
           <InfoBox>{homeData.user.ranking}</InfoBox>
-          <p className="font-audiowide text-[#5df9f9] drop-shadow-[0_0_10px_#00ffff] text-3xl mt-2">Hola, {homeData.user.name} 👋</p>
+          <p className="text-[#5df9f9] drop-shadow-[0_0_10px_#00ffff] text-3xl mt-2">Hola, {homeData.user.name} </p>
         </div>
 
-        <ActionButton size="small" onClick={handleLogout}>
-                  <i className="ri-logout-box-r-line"></i> Cerrar sesión
-                </ActionButton>
-
+      
         <div className="flex flex-1 items-end justify-between px-4 pb-8">
           <div className="flex flex-col gap-3">
             <ActionButton to="/menu">Multijugador</ActionButton>

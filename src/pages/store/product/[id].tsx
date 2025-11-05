@@ -114,7 +114,7 @@
      };
 
      return (
-         <div className="min-h-screen bg-black">
+         <div className="min-h-50 bg-black">
 
              <Topbar />
 

@@ -1,6 +1,7 @@
-import carImg from "../../assets/images/cars/a4.png";
-import characterImg from "../../assets/images/characters/p6.png";
+import carImg from "../../assets/images/8.png";
+import characterImg from "../../assets/images/9.png";
 import coinImg from "../../assets/images/coin.png";
+import { StarsBackground } from "../game/story-mode/starsBackground";
 
 export const SpecialOffer = () => {
     return (
@@ -11,10 +12,10 @@ export const SpecialOffer = () => {
             </div>
 
             {/* Contenido principal: dos columnas */}
-            <div className="flex items-center justify-center bg-gradient-to-r from-[#0a0131] to-[#001233] p-6">
+            <div className="flex items-center justify-center bg-[#1C092D] p-6">
                 {/* Columna izquierda */}
                 <div className="flex flex-col gap-2 items-center justify-center">
-                    <h2 className="text-5xl tracking-wide">MARIO + AUTO ESTILO</h2>
+                    <h2 className="text-5xl tracking-wide">PILOTO + DEPORTIVO</h2>
                     <h3 className="text-5xl text-gray-200">“MATH RACER”</h3>
                     <div className="flex items-center gap-2 mt-3">
                         <img src={coinImg} className="w-7 h-7" />
