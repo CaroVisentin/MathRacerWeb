@@ -6,7 +6,6 @@ import auto1 from "../../assets/images/auto-pista.png";
 import fondoGarage from "../../assets/images/fondo-garage.png";
 import cofre from "../../assets/images/cofre.png";
 import cofreAbierto from "../../assets/images/cofre-abierto.png";
-import autoImg from "../../assets/images/auto.png";
 import personajeImg from "../../assets/images/jugador1.png";
 import pistaImg from "../../assets/images/pista-inicio.png";
 import { useState } from "react";
@@ -18,6 +17,7 @@ import { EndOfStoryModeModal } from "../../shared/modals/endOfStoryModeModal";
 import { tutorialService } from "../../services/player/tutorialService";
 import type { ChestResponseDto } from "../../models/domain/story-mode/chestResponseDto";
 import mathi from "../../assets/images/mathi.png";
+import { productFolderMap } from "../../shared/utils/imageResolver";
 
 export const TutorialPage = () => {
     const [posicionAuto1, setPosicionAuto1] = useState<number>(0);
@@ -114,7 +114,7 @@ export const TutorialPage = () => {
                                                     <div key={idx} className="w-60 min-h-68 bg-[#c0be9a] rounded-lg border-2 border-white p-4 flex flex-col items-center justify-center text-black">
                                                         {/* Imagen placeholder según tipo */}
                                                         {item.product ? (
-                                                            <img src={autoImg} alt="Producto" className="w-32 h-32 object-contain mb-2" />
+                                                            <img src={`images/${productFolderMap[item.product.productType]}/${item.product.id}.png`} alt="Producto" className="w-32 h-32 object-contain mb-2" />
                                                         ) : item.wildcard ? (
                                                             <img src={personajeImg} alt="Wildcard" className="w-32 h-32 object-contain mb-2" />
                                                         ) : (

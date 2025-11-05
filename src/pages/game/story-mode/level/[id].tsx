@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { EndOfStoryModeModal } from "../../../../shared/modals/endOfStoryModeModal";
 import fondoRival from "../../../../assets/images/pista-montana.png";
-import fondoJugador from "../../../../assets/images/pista-noche.png";
 import auto1 from "../../../../assets/images/auto.png";
 import { getGameStatus, startGame, submitAnswer, applyWildcard } from "../../../../services/game/story-mode/storyModeGameService";
 import type { StartSoloGameResponseDto } from "../../../../models/domain/story-mode/startSoloGameResponseDto";

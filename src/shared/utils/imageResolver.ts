@@ -74,3 +74,11 @@ function fallback(type: ProductVisualType): string {
       return jugador1;
   }
 }
+
+const productFolderMap: Record<number, string> = {
+  1: "cars",
+  2: "characters",
+  3: "backgrounds",
+};
+
+export { productFolderMap };

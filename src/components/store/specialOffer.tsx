@@ -1,7 +1,6 @@
 import carImg from "../../assets/images/8.png";
 import characterImg from "../../assets/images/9.png";
 import coinImg from "../../assets/images/coin.png";
-import { StarsBackground } from "../game/story-mode/starsBackground";
 
 export const SpecialOffer = () => {
     return (

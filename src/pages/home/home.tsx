@@ -8,30 +8,16 @@ import { InfoBox } from "../../components/home/infoBox";
 import { CarDisplay } from "../../components/home/carDisplay";
 import { useState } from "react";
 import fondoHome from "../../assets/images/fondocity.png";
-import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../../hooks/useAuth";
+import { Link,  } from "react-router-dom";
 import ErrorConnection from "../../shared/modals/errorConnection";
 import { useHomeData } from "../../hooks/useHomeData";
 
 
 export const Home = () => {
- 
-   const navigate = useNavigate();
-  const { logout } = useAuth();
-  const [errorMessage, setErrorMessage] = useState("");
+  const [ errorMessage ] = useState("");
   const [showErrorModal, setShowErrorModal] = useState(false); 
   const {homeData} = useHomeData();
   
-
-      const handleLogout = async () => {
-    try {
-      await logout();
-      navigate("/login");
-    } catch {
-      setErrorMessage("no se pudo cerrar sesión");
-      setShowErrorModal(true);
-    }
-  };
 
  
 
