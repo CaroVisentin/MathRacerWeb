@@ -17,7 +17,7 @@ import { resolveImageUrl } from "../../shared/utils/imageResolver";
 import ErrorConnection from "../../shared/modals/errorConnection";
 
 export const GaragePage = () => {
-    const { player } = usePlayer();
+    const { player, setPlayer } = usePlayer();
     const [activeCategory, setActiveCategory] = useState<"cars" | "characters" | "backgrounds">("cars");
     const [cars, setCars] = useState<ItemSelectable[]>([]);
     const [characters, setCharacters] = useState<ItemSelectable[]>([]);
@@ -54,7 +54,7 @@ export const GaragePage = () => {
                 setCharacters(mapDtoToSelectable(chResp, "Personaje"));
                 setBackgrounds(mapDtoToSelectable(bResp, "Fondo"));
 
-                // Preseleccionar el activo del primer tab (autos)
+                
                 const activeInCars = cResp.activeItem?.productId;
                 const firstOwnedCar = cResp.items?.find((i: GarageItemDto) => i.isOwned)?.productId ?? cResp.items?.[0]?.productId;
                 setSelectedItemId(activeInCars || firstOwnedCar || 0);
@@ -71,7 +71,7 @@ export const GaragePage = () => {
     useEffect(() => {
         const list = activeCategory === "cars" ? cars : activeCategory === "characters" ? characters : backgrounds;
         if (!list.length) return;
-        // Preferir activo de la categoría, luego el primero adquirido, luego el primero
+        
         const active = list.find(i => i.isActive);
         const firstOwned = list.find(i => i.isOwned);
         const fallback = list[0];
@@ -94,11 +94,41 @@ export const GaragePage = () => {
         if (!selected?.isOwned || selected.isActive) return; // seguridad
         try {
             await activatePlayerItem(player.id, selectedItemId, type);
-            // Actualizar estado local para reflejar activación
-            const updateActive = (arr: ItemSelectable[]) => arr.map(it => ({ ...it, isActive: it.id === selectedItemId }));
-            if (activeCategory === "cars") setCars(prev => updateActive(prev));
-            if (activeCategory === "characters") setCharacters(prev => updateActive(prev));
-            if (activeCategory === "backgrounds") setBackgrounds(prev => updateActive(prev));
+            // Actualizar estado local: desactivar todos y activar solo el seleccionado
+            const updateActive = (arr: ItemSelectable[]) => arr.map(it => ({ 
+                ...it, 
+                isActive: it.id === selectedItemId 
+            }));
+            if (activeCategory === "cars") setCars(updateActive);
+            if (activeCategory === "characters") setCharacters(updateActive);
+            if (activeCategory === "backgrounds") setBackgrounds(updateActive);
+
+            // Actualizar el player en el contexto para que el home se actualice
+            if (player) {
+                const updatedPlayer = { ...player };
+                const newItem = {
+                    id: selectedItemId,
+                    name: selected.name,
+                    description: "",
+                    price: 0,
+                    productType: type
+                };
+
+                if (activeCategory === "cars") {
+                    updatedPlayer.car = newItem;
+                } else if (activeCategory === "characters") {
+                    updatedPlayer.character = newItem;
+                } else if (activeCategory === "backgrounds") {
+                    updatedPlayer.background = newItem;
+                }
+                setPlayer(updatedPlayer);
+                // Actualizar localStorage también
+                try {
+                    localStorage.setItem('player', JSON.stringify(updatedPlayer));
+                } catch (e) {
+                    console.warn('No se pudo actualizar player en storage:', e);
+                }
+            }
         } catch {
             setError("No se pudo activar el ítem seleccionado");
         }

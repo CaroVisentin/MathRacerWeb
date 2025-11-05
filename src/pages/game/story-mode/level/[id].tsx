@@ -63,6 +63,11 @@ export const StoryModeGame = () => {
     const [rewards, setRewards] = useState(false);
     const [obtainedChest, setObtainedChest] = useState<ChestResponseDto | null>(null);
 
+    // Guarda la pregunta que se autoenvió (por timeout)
+    const [autoSubmittedQuestionIndex, setAutoSubmittedQuestionIndex] = useState<number | null>(null);
+    // Guarda el índice actual de pregunta (según estado del juego)
+    const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
+
     useEffect(() => {
         if (!stateLevel) {
             const saved = sessionStorage.getItem("selectedLevel");
@@ -180,6 +185,49 @@ export const StoryModeGame = () => {
         }
     }, [winnerModal, gameData])
 
+    // Cada vez que cambia el estado del juego, actualizamos el índice actual
+    useEffect(() => {
+        if (gameStatus?.currentQuestionIndex != null) {
+            setCurrentQuestionIndex(gameStatus.currentQuestionIndex);
+        } else if (gameData?.currentQuestion.id != null) {
+            setCurrentQuestionIndex(gameData.currentQuestion.id);
+        }
+    }, [gameStatus?.currentQuestionIndex, gameData?.currentQuestion.id]);
+
+    // Autoenvío cuando se acaba el tiempo
+    useEffect(() => {
+        if (!startMatch || isAnswering || !gameData?.gameId) return;
+
+        const currentQuestion = gameStatus?.currentQuestion || gameData?.currentQuestion;
+        if (!currentQuestion) return;
+
+        // Solo ejecutar si el tiempo llegó a 0 y aún no se autoenvió esta pregunta
+        if (timeLeft === 0 && autoSubmittedQuestionIndex !== currentQuestionIndex) {
+            // Mostrar modal para avisar que se agotó el tiempo
+            setErrorMessageDuringGame("¡Tiempo fuera! Vamos con la siguiente.");
+
+            // Marcar esta pregunta como autoenviada
+            setAutoSubmittedQuestionIndex(currentQuestionIndex);
+
+            // Enviar una respuesta automática (aleatoria)
+            const allOptions = currentQuestion.options;
+            if (!allOptions || allOptions.length === 0) return;
+            const randomOption = allOptions[Math.floor(Math.random() * allOptions.length)];
+
+            handleAnswer(randomOption);
+        }
+    }, [timeLeft, startMatch, isAnswering, gameData, gameStatus, autoSubmittedQuestionIndex, currentQuestionIndex]);
+
+    // Resetear control cuando cambia la pregunta (si querés permitir nuevo autoenvío)
+    useEffect(() => {
+        if (gameStatus?.currentQuestionIndex != null) {
+            // Solo resetear si realmente cambió a una nueva pregunta
+            if (gameStatus.currentQuestionIndex !== autoSubmittedQuestionIndex) {
+                setAutoSubmittedQuestionIndex(null);
+            }
+        }
+    }, [gameStatus?.currentQuestionIndex]);
+
     async function handleAnswer(opcion: number) {
         // Si la partida no empezó / no hay datos iniciales / está enviando la respuesta
         if (!startMatch || !gameData || isAnswering) return;
@@ -249,6 +297,7 @@ export const StoryModeGame = () => {
             setErrorMessageDuringGame(message);
         } finally {
             setIsAnswering(false);
+            setErrorMessageDuringGame(null);
         }
     }
 

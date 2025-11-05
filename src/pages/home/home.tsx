@@ -1,4 +1,5 @@
 import isologo from "/images/mathi_racer_logo.png";
+import auto from "../../assets/images/auto.png"
 import { ActionButton } from "../../shared/buttons/actionButton";
 import { BatteryStatus } from "../../components/home/batteryStatus";
 import { CoinsDisplay } from "../../components/home/coinsDisplay";
@@ -6,27 +7,23 @@ import { ProfileCard } from "../../components/home/profileCard";
 import { InfoBox } from "../../components/home/infoBox";
 import { CarDisplay } from "../../components/home/carDisplay";
 import { useState } from "react";
-//import { homeDataMock } from "../../data/mocks/home";
+import fondoHome from "../../assets/images/fondocity.png";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import ErrorConnection from "../../shared/modals/errorConnection";
-//import { homeDataMock } from "../../data/mocks/home";
-//agrego
-
 import { useHomeData } from "../../hooks/useHomeData";
-//import { mapPlayerToHomeData } from "../../models/mappers/homePlayerMapper";
+
 
 export const Home = () => {
  
    const navigate = useNavigate();
   const { logout } = useAuth();
   const [errorMessage, setErrorMessage] = useState("");
-  const [showErrorModal, setShowErrorModal] = useState(false);
-  
- 
+  const [showErrorModal, setShowErrorModal] = useState(false); 
   const {homeData} = useHomeData();
+  
 
-    const handleLogout = async () => {
+      const handleLogout = async () => {
     try {
       await logout();
       navigate("/login");
@@ -49,23 +46,22 @@ export const Home = () => {
       </div>
     );
   }
-
-
-
   return (
     <div className="relative h-screen w-screen flex flex-col">
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${homeData.activeItems.background.imageUrl})` }}
+        style={{ backgroundImage: `url(${fondoHome})` }}
       >
         <div className="absolute pointer-events-none inset-0 bg-black/60"></div>
       </div>
 
       <div className="relative z-10 h-full flex flex-col">
-        <div className="absolute top-4 left-10">
+         <div className="absolute top-4 left-10">
 
           <img src={isologo} alt="Math Racer" className=" drop-shadow-[0_0_10px_#00ffff]" />
-        </div>
+          
+        </div> 
+       
 
         <div className="absolute top-4 right-4 flex flex-col items-end gap-3">
           <div className="flex items-start gap-5">
@@ -108,7 +104,7 @@ export const Home = () => {
           </div>
         </div>
 
-        <CarDisplay imageUrl={homeData.activeItems.car.imageUrl} />
+        <CarDisplay imageUrl={auto} />
       </div>
 
       {showErrorModal && (

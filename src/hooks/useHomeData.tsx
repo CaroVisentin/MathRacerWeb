@@ -8,12 +8,15 @@ export const useHomeData = () => {
   const { player } = usePlayer();
   const [homeData, setHomeData] = useState<HomeData | null>(null);
 
+ 
+
   useEffect(() => {
     if (!player) return;
 
     const mapped = mapPlayerToHomeData(
       player,
       homeDataMock.battery,
+     
     );
 
     setHomeData(mapped);

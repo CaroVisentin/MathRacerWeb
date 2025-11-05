@@ -4,6 +4,8 @@ import carImg from "../../assets/images/auto.png";
 import grayRectangle from "../../assets/images/gray-rectangle.png";
 import yellowRectangle from "../../assets/images/yellow-rectangle.png";
 import iconoEnergia from "../../assets/images/icono-energia.png";
+import mathi from "../../assets/images/mathi.png";
+import mathiTriste from "../../assets/images/mathiTriste.png";
 
 interface EndOfStoryModeModalProps {
     level: number;
@@ -26,9 +28,19 @@ export const EndOfStoryModeModal: React.FC<EndOfStoryModeModalProps> = ({ level,
                 </div>
 
                 {/* Título */}
-                <h2 className={`text-center text-5xl ${won ? "text-[#A6FF00]" : "text-[#FB2828]"}`}>
+                <div className="flex items-center justify-center gap-4">
+                    <img 
+                    src={won ? mathi : mathiTriste} 
+                    alt="Mathi" 
+                    className={`w-25 h-30 drop-shadow-[0_0_5px_#00FFFF] ${won ? "animate-bounce" : "opacity-80 "}`}  
+                    />
+                <h2
+                    className={`text-center text-5xl ${won ? "text-[#A6FF00]" : "text-[#FB2828]"}`}
+                >
                     {won ? "¡GANASTE!" : "¡PERDISTE!"}
                 </h2>
+                
+                </div>
 
                 {/* Contenido */}
                 <div className="mt-4 flex flex-col items-center text-center">

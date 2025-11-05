@@ -181,9 +181,12 @@ body {
   50% { opacity: 1; }
 }
 
+
+
 .star {
   animation: twinkle 2s infinite;
 }
+
 
 
 .pixel-corners {
@@ -238,4 +241,12 @@ body {
 .custom-scrollbar {
   scrollbar-width: thin;
   scrollbar-color: #00f0ff #ffffff00;
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(-5deg); }
+  50% { transform: rotate(5deg); }
+}
+.animate-wiggle {
+  animation: wiggle 0.6s infinite;
 }

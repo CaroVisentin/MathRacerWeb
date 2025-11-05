@@ -1,4 +1,4 @@
-import currencyIcon from "../../assets/images/coin.png"; // ajustar path
+import currencyIcon from "../../assets/images/coin.png";
 
 interface coinsDisplayProps {
   coins: number;

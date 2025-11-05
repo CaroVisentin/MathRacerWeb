@@ -10,6 +10,7 @@ import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import type { GameUpdateDto } from '../../../models/domain/gameUpdateDto';
 import { useConnection } from '../../../services/signalR/connection';
 import { PowerUpType } from '../../../models/enums/powerUpType';
+import mathi from "../../../assets/images/mathi.png";
 const fondos = [
     'pista-noche.png',
     'pista-dia.png',
@@ -324,10 +325,21 @@ export const MultiplayerGame = () => {
             {/* Instrucciones y Comodines */}
             <div className="flex justify-center items-center gridComodin mt-4">
 
-                <div className="instruccion font-mono text-xl text-center">
+                <div className="instruccion font-mono text-3xl text-center">
                     {instruccion
-                        ? `Elegí la opción para que Y sea ${instruccion.toUpperCase()}`
-                        : "esperando instruccion"}
+                        ? ( 
+                            <>
+                            Elegí la opción para que {" "}
+      <span className="text-cyan-400 font-bold drop-shadow-[0_0_5px_#00ffff] ">
+        Y
+      </span>{" "}                            
+                              sea {" "}
+                            <span className="text-cyan-400 font-bold drop-shadow-[0_0_5px_#00ffff] ">
+                             {instruccion.toUpperCase()}
+                             </span>
+                             </>
+                             )
+                        : ("esperando instruccion")}
 
                 </div>
                 <div className="comodin">
@@ -348,7 +360,7 @@ export const MultiplayerGame = () => {
             <div className="flex flex-col justify-center items-center h-full gap-5 mb-10 mt-4">
                 {mensajeComodin && (
                     <div className="w-full flex justify-end px-4">
-                        <div className="text-cyan-200 font-mono  text-l  text-center animate-fade-in">
+                        <div className="text-cyan-200 font-mono  text-xl  text-center drop-shadow-[0_0_5px_#00ffff] animate-fade-in">
                             {mensajeComodin}
                         </div>
                     </div>
@@ -356,9 +368,7 @@ export const MultiplayerGame = () => {
                 <div className="flex justify-center mb-6">
 
                     <div className="inline-block border-2 border-white rounded-lg text-6xl px-6 py-3">
-                        {/* <div className={`inline-block border-2 border-white rounded-lg text-6xl w-100 h-20 text-center align-middle py-2
-                    ${penalizado ? 'opacity-50' : 'opacity-100'} transition-opacity`}> */}
-                        {/* Mostrar ecuación solo si está definida */}
+                       
                         {ecuacion?.equation && <span>{ecuacion.equation}</span>}
                     </div>
 
@@ -369,19 +379,6 @@ export const MultiplayerGame = () => {
                         {errorConexion}
                     </div>
                 )}
-
-                {/* {mensajeResultado && (
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0 }}
-                            transition={{ duration: 0.4 }}
-                            className={`text-xl mt-2  ${resultado === "acierto" ? "text-green-400" : "text-red-500"
-                                }`}
-                        >
-                            {mensajeResultado}
-                        </motion.div>
-                    )} */}
 
                 {/* Opciones */}
                 <div className="flex justify-center items-center mt-6 gap-6 opciones">
@@ -410,7 +407,25 @@ export const MultiplayerGame = () => {
                         } else {
                             clases += "bg-transparent hover:bg-blue-500";
                         }
+
+                        const mostrarMascota =
+      respuestaSeleccionada !== null &&
+      ((resultado === "acierto" && opcion === respuestaSeleccionada) ||
+        (resultado === "error" && opcion === ecuacion?.correctAnswer));
+
+
                         return (
+                             <div key={i} className="flex flex-col items-center">
+        {/* Mascota arriba del botón */}
+        {mostrarMascota && (
+          <img
+            src={mathi}
+            alt="Mascota celebrando"
+            className="w-16 h-16 mb-2 animate-bounce drop-shadow-[0_0_10px_#00ffff]"
+          />
+        )}
+
+
                             <button
                                 key={i}
                                 onClick={() => manejarRespuesta(opcion)}
@@ -419,6 +434,7 @@ export const MultiplayerGame = () => {
                             >
                                 {opcion}
                             </button>
+                            </div>
                         );
                     })}
 

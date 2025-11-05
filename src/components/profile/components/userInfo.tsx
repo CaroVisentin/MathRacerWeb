@@ -5,7 +5,7 @@ interface UserCardProps {
     email: string;
     partidas: number;
     puntuacion: number;
-    avatarUrlId?: number;
+    avatarUrlId?: string;
 }
 
 export const UserInfoSection: React.FC<UserCardProps> = ({
@@ -20,7 +20,8 @@ export const UserInfoSection: React.FC<UserCardProps> = ({
             {/* Avatar */}
             <div className="flex flex-col items-center mb-3">
                 <div className="w-36 h-36 rounded-full border-2 border-pink-500 flex items-center justify-center overflow-hidden">
-                    <img src={`images/characters/${avatarUrlId}.png`} alt="avatar" className="w-28 h-28" />
+                   {/*  <img src={`images/characters/${avatarUrlId}.png`} alt="avatar" className="w-28 h-28" /> */}
+                    <img src={avatarUrlId} alt="avatar" className="w-36 h-36 object-cover" />
                 </div>
                 <p className="mt-2 text-cyan-400 text-3xl">{username}</p>
             </div>
