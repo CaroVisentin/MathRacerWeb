@@ -325,7 +325,7 @@ export const MultiplayerGame = () => {
             {/* Instrucciones y Comodines */}
             <div className="flex justify-center items-center gridComodin mt-4">
 
-                <div className="instruccion font-mono text-3xl text-center">
+                <div className="instruccion text-3xl text-center">
                     {instruccion
                         ? ( 
                             <>
@@ -339,7 +339,7 @@ export const MultiplayerGame = () => {
                              </span>
                              </>
                              )
-                        : ("esperando instruccion")}
+                        : ("Esperando instrucción")}
 
                 </div>
                 <div className="comodin">
