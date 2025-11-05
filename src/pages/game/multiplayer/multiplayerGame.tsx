@@ -53,7 +53,11 @@ export const Menu = () => {
       <div className="m-16">
         <Link
           to="/home"
-          className="botonGral uppercase hover:drop-shadow-[0_0_10px_#00ffff] text-xl py-2 px-4 mb-3"
+          className="bg-[#00f0ff] text-2xl border-2 border-white px-3 py-1
+                tracking-wider transition-all duration-300 
+                 hover:bg-cyan-400 shadow-[0_0_10px_rgba(0,217,255,0.3)] 
+                 hover:shadow-[0_0_20px_rgba(0,217,255,0.6)]
+                 disabled:opacity-50"
         >
           Volver
         </Link>

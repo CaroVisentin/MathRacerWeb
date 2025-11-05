@@ -4,7 +4,7 @@ import type { StoryModeContextType } from "../models/ui/story-mode/storyModeGame
 const StoryModeGameContext = createContext<StoryModeContextType | undefined>(undefined)
 
 export const StoryModeGameProvider = ({ children }: { children: ReactNode }) => {
-    const MAX_LIVES = 10;
+    const MAX_LIVES = 3; // 3 vidas como máximo
     const RECHARGE_INTERVAL = 300; // 5 minutos (en segundos)
 
     const [remainingLives, setRemainingLives] = useState<number>(MAX_LIVES);
@@ -12,7 +12,7 @@ export const StoryModeGameProvider = ({ children }: { children: ReactNode }) => 
     const [lastLifeAddedAt, setLastLifeAddedAt] = useState<Date | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
-    // --- 🔹 Inicialización desde sessionStorage o simulación backend ---
+    //  Inicialización desde sessionStorage o simulación backend 
     useEffect(() => {
         const init = async () => {
             setIsLoading(true);

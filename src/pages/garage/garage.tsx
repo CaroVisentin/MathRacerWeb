@@ -54,11 +54,11 @@ export const GaragePage = () => {
                 setCharacters(mapDtoToSelectable(chResp, "Personaje"));
                 setBackgrounds(mapDtoToSelectable(bResp, "Fondo"));
 
-                
+
                 const activeInCars = cResp.activeItem?.productId;
                 const firstOwnedCar = cResp.items?.find((i: GarageItemDto) => i.isOwned)?.productId ?? cResp.items?.[0]?.productId;
                 setSelectedItemId(activeInCars || firstOwnedCar || 0);
-            } catch  {
+            } catch {
                 setError("No se pudo cargar el Garage");
             } finally {
                 setLoading(false);
@@ -71,7 +71,7 @@ export const GaragePage = () => {
     useEffect(() => {
         const list = activeCategory === "cars" ? cars : activeCategory === "characters" ? characters : backgrounds;
         if (!list.length) return;
-        
+
         const active = list.find(i => i.isActive);
         const firstOwned = list.find(i => i.isOwned);
         const fallback = list[0];
@@ -95,9 +95,9 @@ export const GaragePage = () => {
         try {
             await activatePlayerItem(player.id, selectedItemId, type);
             // Actualizar estado local: desactivar todos y activar solo el seleccionado
-            const updateActive = (arr: ItemSelectable[]) => arr.map(it => ({ 
-                ...it, 
-                isActive: it.id === selectedItemId 
+            const updateActive = (arr: ItemSelectable[]) => arr.map(it => ({
+                ...it,
+                isActive: it.id === selectedItemId
             }));
             if (activeCategory === "cars") setCars(updateActive);
             if (activeCategory === "characters") setCharacters(updateActive);
@@ -135,37 +135,42 @@ export const GaragePage = () => {
     };
 
     return (
-        <div className="relative h-screen w-screen flex flex-col p-2   overflow-hidden bg-black">
+        <div className="relative h-screen w-screen flex flex-col bg-black overflow-hidden">
             {/* Fondo dinámico */}
             <div
                 className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-700"
                 style={{
                     backgroundImage: `url(${activeCategory === "backgrounds" && selectedItem
-                        ? selectedItem.image
-                        : fondoGarage
+                            ? selectedItem.image
+                            : fondoGarage
                         })`,
                 }}
             >
-                <div className="absolute pointer-events-none inset-0 bg-black/60"></div>
+                <div className="absolute inset-0 bg-black/60"></div>
             </div>
 
             {/* Contenido principal */}
-            <div className="relative z-20 h-full flex flex-col">
+            <div className="relative z-20 flex flex-col h-full">
                 {/* Topbar */}
-                <Topbar activeCategory={activeCategory} setActiveCategory={setActiveCategory} />
+                <Topbar
+                    activeCategory={activeCategory}
+                    setActiveCategory={setActiveCategory}
+                />
 
-                {/* Área principal */}
-                <div className="flex flex-1 p-2">
+                {/* Área principal (contenido y sidebar) */}
+                <div className="flex flex-1 overflow-hidden p-2">
                     {/* Sidebar */}
                     <SelectionSidebar
-                        title={activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1)}
+                        title={
+                            activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1)
+                        }
                         items={selectedData}
                         selectedItemId={selectedItemId}
                         setSelectedItemId={setSelectedItemId}
                     />
 
                     {/* Elemento central */}
-                    <div className="flex-1 flex justify-center items-center">
+                    <div className="flex-1 flex justify-center items-center overflow-hidden">
                         {activeCategory !== "backgrounds" && selectedItem && (
                             <img
                                 src={selectedItem.image}
@@ -175,22 +180,32 @@ export const GaragePage = () => {
                         )}
                     </div>
                 </div>
-                <div className="p-2 flex justify-center">
+
+                {/* Botón inferior */}
+                <div className="p-3 flex justify-center bg-black/60 items-center">
                     <button
                         type="button"
                         disabled={!selectedItem?.isOwned || selectedItem?.isActive}
-                        className={`text-black text-lg py-2 px-4 rounded transition-colors
-                            ${!selectedItem?.isOwned || selectedItem?.isActive
-                                ? "bg-gray-500 cursor-not-allowed"
-                                : "bg-cyan-400 hover:bg-cyan-300"}
-                        `}
                         onClick={handleActivate}
+                        className={`
+                                text-black text-lg tracking-wider transition-all duration-300 
+                                px-3 py-1 border-2
+                                ${!selectedItem?.isOwned || selectedItem?.isActive
+                                ? "bg-gray-500 border-gray-400 cursor-not-allowed opacity-80"
+                                : "bg-[#00f0ff] border-white hover:bg-cyan-400 shadow-[0_0_10px_rgba(0,217,255,0.3)] hover:shadow-[0_0_20px_rgba(0,217,255,0.6)]"
+                            }
+    `}
                     >
-                        {selectedItem?.isActive ? "Ya activo" : !selectedItem?.isOwned ? "No adquirido" : "Activar seleccionado"}
+                        {selectedItem?.isActive
+                            ? "Ya activo"
+                            : !selectedItem?.isOwned
+                                ? "No adquirido"
+                                : "Activar seleccionado"}
                     </button>
                 </div>
             </div>
 
+            {/* Loading y errores */}
             {loading && (
                 <div className="absolute inset-0 bg-black/70 flex items-center justify-center z-30">
                     <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-cyan-400" />

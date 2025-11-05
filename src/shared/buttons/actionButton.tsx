@@ -11,7 +11,13 @@ interface ActionButtonProps {
 
 
 //#0f0f0f 5df9f9
-export const ActionButton = ({ size = "large", to, children, className = "", onClick }: ActionButtonProps) => {
+export const ActionButton = ({
+  size = "large",
+  to,
+  children,
+  className = "",
+  onClick,
+}: ActionButtonProps) => {
   const sizeClasses =
     size === "large"
       ? "w-56 h-16 text-3xl"
@@ -28,14 +34,13 @@ export const ActionButton = ({ size = "large", to, children, className = "", onC
     cursor-pointer
     ${className}
     hover:scale-105
-    hover:text-[#5df9f9]
-    hover:border-[#5df9f9]
-    hover:shadow-[0_0_3px_rgba(255,255,255,0.5),0_0_20px_rgba(93,249,249,0.5),0_0_11px_rgba(93,249,249,0.5)]
+    hover:text-[#f95ec8]
+    hover:border-[#f95ec8]
+    hover:shadow-[0_0_3px_rgba(249,94,200,0.5),0_0_20px_rgba(249,94,200,0.6),0_0_11px_rgba(249,94,200,0.4)]
     active:scale-95
   `;
 
   if (to) {
-    // Usar Link para navegación SPA; evitar anidar un button dentro de un anchor
     return (
       <Link to={to} className={baseClasses} onClick={onClick} role="button">
         {children}

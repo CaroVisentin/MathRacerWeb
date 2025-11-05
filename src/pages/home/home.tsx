@@ -61,7 +61,7 @@ export const Home = () => {
           </div>
           <InfoBox>Nivel {homeData.user.level}</InfoBox>
           <InfoBox>{homeData.user.ranking}</InfoBox>
-          <p className="text-[#5df9f9] drop-shadow-[0_0_10px_#00ffff] text-3xl mt-2">Hola, {homeData.user.name} </p>
+          <p className="text-[#5df9f9] drop-shadow-[0_0_10px_#00ffff] text-3xl mt-2">Hola, {homeData.user.name} 👋</p>
         </div>
 
       
