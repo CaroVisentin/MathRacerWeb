@@ -68,6 +68,12 @@ export const StoryModeGame = () => {
     // Guarda el índice actual de pregunta (según estado del juego)
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
 
+    const [wildcardQuantities, setWildcardQuantities] = useState({
+        fireExtinguisher: 0,
+        changeEquation: 0,
+        doubleCount: 0,
+    });
+
     useEffect(() => {
         if (!stateLevel) {
             const saved = sessionStorage.getItem("selectedLevel");
@@ -98,6 +104,24 @@ export const StoryModeGame = () => {
                     // Crear la partida
                     const response: StartSoloGameResponseDto = await startGame(levelId);
                     setGameData(response);
+
+                    console.log("Response wildcards: ", response.availableWildcards)
+                    // Actualizamos las cantidades iniciales de comodines
+                    if (response.availableWildcards) {
+                        // Matafuego
+                        const extinguisher = response.availableWildcards.find(w => w.wildcardId === 1)?.quantity || 0;
+                        // Cambio de rumbo
+                        const changeEq = response.availableWildcards.find(w => w.wildcardId === 2)?.quantity || 0;
+                        // Nitro
+                        const double = response.availableWildcards.find(w => w.wildcardId === 3)?.quantity || 0;
+
+                        setWildcardQuantities({
+                            fireExtinguisher: Number(extinguisher),
+                            changeEquation: Number(changeEq),
+                            doubleCount: Number(double),
+                        });
+                    }
+
                 } catch (error: unknown) {
                     const message = getErrorMessage(error);
                     setErrorMessage(message);
@@ -340,6 +364,22 @@ export const StoryModeGame = () => {
             const gameStatusAfterUseWildcard: SoloGameStatusResponseDto = await getGameStatus(gameData.gameId);
             setGameStatus(gameStatusAfterUseWildcard);
 
+            // Actualizamos las cantidades de comodines según el nuevo estado
+            if (gameStatusAfterUseWildcard.availableWildcards) {
+                // Matafuego
+                const extinguisher = gameStatusAfterUseWildcard.availableWildcards.find(w => w.wildcardId === 1)?.quantity || 0;
+                // Cambio de rumbo
+                const changeEq = gameStatusAfterUseWildcard.availableWildcards.find(w => w.wildcardId === 2)?.quantity || 0;
+                // Nitro
+                const double = gameStatusAfterUseWildcard.availableWildcards.find(w => w.wildcardId === 3)?.quantity || 0;
+
+                setWildcardQuantities({
+                    fireExtinguisher: Number(extinguisher),
+                    changeEquation: Number(changeEq),
+                    doubleCount: Number(double),
+                });
+            }
+
         } catch (error: unknown) {
             const message = getErrorMessage(error);
             setErrorMessageDuringGame(message);
@@ -528,7 +568,13 @@ export const StoryModeGame = () => {
                             />
 
                             {/* Instrucciones y Comodines */}
-                            <WildcardsAndInstructions level={level!} onWildcardClick={handleWildcardClick} />
+                            <WildcardsAndInstructions
+                                level={level!}
+                                onWildcardClick={handleWildcardClick}
+                                fireExtinguisherQuantity={wildcardQuantities.fireExtinguisher}
+                                changeEquationQuantity={wildcardQuantities.changeEquation}
+                                dobleCountQuantity={wildcardQuantities.doubleCount}
+                            />
 
                             {/* Ecuación y Opciones */}
                             {(gameData || gameStatus) && (
