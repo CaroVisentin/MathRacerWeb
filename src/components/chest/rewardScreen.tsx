@@ -1,7 +1,6 @@
 import { RewardBackground } from "./rewardBackground";
 import { ChestView } from "./chestView";
 import { RewardsList } from "./rewardsList";
-import type { ChestItemDto } from "../../models/domain/chest/chestItemDto";
 import type { ChestResponseDto } from "../../models/domain/chest/chestResponseDto";
 
 interface RewardScreenProps {
@@ -9,7 +8,7 @@ interface RewardScreenProps {
     setIsChestOpen: React.Dispatch<React.SetStateAction<boolean>>;
     rewards: boolean;
     setRewards: React.Dispatch<React.SetStateAction<boolean>>;
-    obtainedChest: { items: ChestItemDto[] } | null;
+    obtainedChest: ChestResponseDto | null;
     setShowChest: React.Dispatch<React.SetStateAction<boolean>>;
     setObtainedChest: React.Dispatch<React.SetStateAction<ChestResponseDto | null>>;
     setIsPendingChest: React.Dispatch<React.SetStateAction<boolean>>;

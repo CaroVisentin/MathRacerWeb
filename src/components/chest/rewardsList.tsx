@@ -1,10 +1,9 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { type ChestItemDto } from "../../models/domain/chest/chestItemDto";
 import type { ChestResponseDto } from "../../models/domain/chest/chestResponseDto";
 
 interface RewardsListProps {
-    obtainedChest: { items: ChestItemDto[] } | null;
+    obtainedChest: ChestResponseDto | null;
     setShowChest: React.Dispatch<React.SetStateAction<boolean>>;
     setRewards: React.Dispatch<React.SetStateAction<boolean>>;
     setObtainedChest: React.Dispatch<React.SetStateAction<ChestResponseDto | null>>;

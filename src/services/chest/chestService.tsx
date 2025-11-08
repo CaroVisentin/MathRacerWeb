@@ -12,15 +12,3 @@ export async function openRandomChest(): Promise<ChestResponseDto> {
         manageError(error);
     }
 }
-
-
-export async function openTutorialChest(): Promise<ChestResponseDto> {
-    try {
-        const response = await api.post<ChestResponseDto>(
-            `${API_URLS.chest}/complete-tutorial/`
-        )
-        return response.data;
-    } catch (error: unknown) {
-        manageError(error);
-    }
-}

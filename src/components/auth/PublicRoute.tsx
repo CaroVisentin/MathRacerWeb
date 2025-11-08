@@ -1,4 +1,4 @@
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 
 interface PublicRouteProps {
@@ -7,6 +7,7 @@ interface PublicRouteProps {
 
 export const PublicRoute = ({ children }: PublicRouteProps) => {
     const { user, loading } = useAuth();
+    const location = useLocation(); // obtenemos la ruta actual
 
     if (loading) {
         return (
@@ -16,9 +17,10 @@ export const PublicRoute = ({ children }: PublicRouteProps) => {
         );
     }
 
-    if (user) {
-        // Si hay un usuario logueado lo redirige a home
-        return <Navigate to="/home" />;
+    // si el usuario está logueado e intenta entrar a /login o /register, lo mandamos al home
+    const publicPaths = ["/login", "/register"];
+    if (user && publicPaths.includes(location.pathname)) {
+        return <Navigate to="/home" replace />;
     }
 
     return <>{children}</>;
