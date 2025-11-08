@@ -6,38 +6,13 @@ import { CoinsDisplay } from "../../components/home/coinsDisplay";
 import { ProfileCard } from "../../components/home/profileCard";
 import { InfoBox } from "../../components/home/infoBox";
 import { CarDisplay } from "../../components/home/carDisplay";
-import { useState } from "react";
 import fondoHome from "../../assets/images/fondocity.png";
-import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../../hooks/useAuth";
-import ErrorConnection from "../../shared/modals/errorConnection";
+import { Link } from "react-router-dom";
 import { useHomeData } from "../../hooks/useHomeData";
 
-
 export const Home = () => {
- 
-   const navigate = useNavigate();
-  const { logout } = useAuth();
-  const [errorMessage, setErrorMessage] = useState("");
-  const [showErrorModal, setShowErrorModal] = useState(false); 
-  const {homeData} = useHomeData();
-  
 
-      const handleLogout = async () => {
-    try {
-      await logout();
-      navigate("/login");
-    } catch {
-      setErrorMessage("no se pudo cerrar sesión");
-      setShowErrorModal(true);
-    }
-  };
-
- 
-
-  const handleCloseModal = () => {
-    setShowErrorModal(false);
-  };
+  const { homeData } = useHomeData();
 
   if (!homeData) {
     return (
@@ -46,22 +21,17 @@ export const Home = () => {
       </div>
     );
   }
+
   return (
     <div className="relative h-screen w-screen flex flex-col">
-      <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${fondoHome})` }}
-      >
+      <div className="absolute inset-0 bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(${fondoHome})` }}>
         <div className="absolute pointer-events-none inset-0 bg-black/60"></div>
       </div>
 
       <div className="relative z-10 h-full flex flex-col">
-         <div className="absolute top-4 left-10">
-
+        <div className="absolute top-4 left-10">
           <img src={isologo} alt="Math Racer" className=" drop-shadow-[0_0_10px_#00ffff]" />
-          
-        </div> 
-       
+        </div>
 
         <div className="absolute top-4 right-4 flex flex-col items-end gap-3">
           <div className="flex items-start gap-5">
@@ -75,12 +45,7 @@ export const Home = () => {
           </div>
           <InfoBox>Nivel {homeData.user.level}</InfoBox>
           <InfoBox>{homeData.user.ranking}</InfoBox>
-          <p className="font-audiowide text-[#5df9f9] drop-shadow-[0_0_10px_#00ffff] text-3xl mt-2">Hola, {homeData.user.name} 👋</p>
         </div>
-
-        <ActionButton size="small" onClick={handleLogout}>
-                  <i className="ri-logout-box-r-line"></i> Cerrar sesión
-                </ActionButton>
 
         <div className="flex flex-1 items-end justify-between px-4 pb-8">
           <div className="flex flex-col gap-3">
@@ -106,20 +71,6 @@ export const Home = () => {
 
         <CarDisplay imageUrl={auto} />
       </div>
-
-      {showErrorModal && (
-        <ErrorConnection
-          message={errorMessage}
-          onClose={handleCloseModal}
-        />
-      )}
-
-      {showErrorModal && (
-        <ErrorConnection
-          message={errorMessage}
-          onClose={handleCloseModal}
-        />
-      )}
     </div>
   );
 };

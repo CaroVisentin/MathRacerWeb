@@ -1,12 +1,13 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { type ChestItemDto } from "../../models/domain/chest/chestItemDto";
+import type { ChestResponseDto } from "../../models/domain/chest/chestResponseDto";
 
 interface RewardsListProps {
     obtainedChest: { items: ChestItemDto[] } | null;
     setShowChest: React.Dispatch<React.SetStateAction<boolean>>;
     setRewards: React.Dispatch<React.SetStateAction<boolean>>;
-    setObtainedChest: React.Dispatch<React.SetStateAction<any>>;
+    setObtainedChest: React.Dispatch<React.SetStateAction<ChestResponseDto | null>>;
     setIsPendingChest: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
@@ -28,6 +29,7 @@ export const RewardsList: React.FC<RewardsListProps> = ({
                     let description = "";
                     let color = "#c0be9a";
                     let imageSrc = "";
+                    let quantity = 0;
 
                     switch (item.type) {
                         case "Product":
@@ -35,6 +37,7 @@ export const RewardsList: React.FC<RewardsListProps> = ({
                             description = item.product?.description ?? "";
                             color = item.product?.rarityColor ?? "#c0be9a";
                             imageSrc = `/images/products/${item.product?.id}.png`;
+                            quantity = item.quantity;
                             break;
 
                         case "Wildcard":
@@ -42,6 +45,7 @@ export const RewardsList: React.FC<RewardsListProps> = ({
                             description = item.wildcard?.description ?? "";
                             color = "#a3e4d7";
                             imageSrc = `/images/wildcards/${item.wildcard?.id}.png`;
+                            quantity = item.quantity;
                             break;
 
                         case "Coins":
@@ -49,6 +53,7 @@ export const RewardsList: React.FC<RewardsListProps> = ({
                             description = "Monedas obtenidas del cofre";
                             color = "#f4d03f";
                             imageSrc = `/images/coin.png`;
+                            quantity = item.quantity;
                             break;
 
                         default:
@@ -63,12 +68,9 @@ export const RewardsList: React.FC<RewardsListProps> = ({
                             style={{ backgroundColor: color }}
                         >
                             <img src={imageSrc} alt={title} className="w-24 h-24 object-contain mb-2" />
-                            <h3 className="text-lg font-bold text-center">{title}</h3>
+                            <h3 className="text-lg font-bold text-center">{title} x{quantity}</h3>
                             {description && (
                                 <p className="text-sm text-center opacity-80">{description}</p>
-                            )}
-                            {item.number && (
-                                <span className="mt-2 text-sm font-semibold">x{item.number}</span>
                             )}
                         </div>
                     );
@@ -82,11 +84,11 @@ export const RewardsList: React.FC<RewardsListProps> = ({
                     setRewards(false);
                     setObtainedChest(null);
                     setIsPendingChest(false);
-                    navigate("/modo-historia");
+                    navigate("/garage");
                 }}
-                className="bg-[#0F7079] border-2 border-white rounded-lg text-3xl transition w-32 h-12 text-white"
+                className="bg-[#0F7079] border-2 border-white rounded-lg text-2xl transition w-40 h-12 text-white hover:bg-[#13909B]"
             >
-                Siguiente
+                Continuar
             </button>
         </div>
     );

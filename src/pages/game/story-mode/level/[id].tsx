@@ -21,7 +21,6 @@ import cofre from "../../../../assets/images/cofre.png";
 import cofreAbierto from "../../../../assets/images/cofre-abierto.png";
 import type { ChestResponseDto } from "../../../../models/domain/chest/chestResponseDto";
 import { openRandomChest } from "../../../../services/chest/chestService";
-import fondoGarage from "../../../../assets/images/fondo-garage.png";
 import { getErrorMessage } from "../../../../shared/utils/manageErrors";
 import type { WildcardType } from "../../../../models/enums/wildcard";
 import ErrorModalDuringGame from "../../../../shared/modals/errorModalDuringGame";
@@ -394,7 +393,6 @@ export const StoryModeGame = () => {
 
             {showChest ? (
                 <RewardScreen
-                    fondoGarage={fondoGarage}
                     isChestOpen={isChestOpen}
                     setIsChestOpen={setIsChestOpen}
                     rewards={rewards}
@@ -405,6 +403,9 @@ export const StoryModeGame = () => {
                     setIsPendingChest={setIsPendingChest}
                     cofre={cofre}
                     cofreAbierto={cofreAbierto}
+                    chestTitle={"¡Felicidades!"}
+                    firstMessage={"Acá está tu recompensa por terminar el último nivel del mundo"}
+                    secondMessage={"Toca el cofre para verlo"}
                 />
             ) : (
                 <div className="juego w-full h-full bg-black text-white relative">
