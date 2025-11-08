@@ -16,8 +16,9 @@ import { FuelIndicator } from "../../shared/energy/energy";
 import { useNavigate } from "react-router-dom";
 import { EndOfStoryModeModal } from "../../shared/modals/endOfStoryModeModal";
 import { tutorialService } from "../../services/player/tutorialService";
-import type { ChestResponseDto } from "../../models/domain/story-mode/chestResponseDto";
+import type { ChestResponseDto } from "../../models/domain/chest/chestResponseDto";
 import mathi from "../../assets/images/mathi.png";
+import type { ChestItemDto } from "../../models/domain/chest/chestItemDto";
 
 export const TutorialPage = () => {
     const [posicionAuto1, setPosicionAuto1] = useState<number>(0);
@@ -110,7 +111,7 @@ export const TutorialPage = () => {
                                         {/* Contenedor dinámico de recompensas */}
                                         <div className="flex justify-center items-center gap-6 flex-wrap">
                                             {chest?.items?.length ? (
-                                                chest.items.map((item, idx) => (
+                                                chest.items.map((item: ChestItemDto, idx: number) => (
                                                     <div key={idx} className="w-60 min-h-68 bg-[#c0be9a] rounded-lg border-2 border-white p-4 flex flex-col items-center justify-center text-black">
                                                         {/* Imagen placeholder según tipo */}
                                                         {item.product ? (
