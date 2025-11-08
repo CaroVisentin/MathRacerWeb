@@ -36,7 +36,7 @@ export const Home = () => {
         <div className="absolute top-4 right-4 flex flex-col items-end gap-3">
           <div className="flex items-start gap-5">
             <div className="flex flex-col gap-3">
-              <BatteryStatus levels={homeData.battery.levels} time={homeData.battery.time} />
+              <BatteryStatus />
               <CoinsDisplay coins={homeData.user.coins} />
             </div>
             <Link to="/perfil">

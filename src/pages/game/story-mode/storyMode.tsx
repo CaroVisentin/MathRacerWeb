@@ -6,12 +6,21 @@ import { type PlayerWorldsResponseDto } from "../../../models/domain/story-mode/
 import { getPlayerWorlds } from "../../../services/game/story-mode/worldService"
 import { getWorldLevels } from "../../../services/game/story-mode/levelService"
 import type { WorldDtoUi } from "../../../models/ui/story-mode/worldDtoUi"
+import type { PlayerWildcardDto } from "../../../models/domain/playerWildcardDto"
+import { getMyWildcards } from "../../../services/wildcard/wildcardService"
+import type { WildcardQuantities } from "../../../models/ui/wildcard/wildcardQuantities"
 
 export const StoryMode = () => {
     const [mappedWorlds, setMappedWorlds] = useState<WorldDtoUi[]>([]);
 
+    const [wildcardQuantities, setWildcardQuantities] = useState<WildcardQuantities>({
+        fireExtinguisher: 0,
+        changeEquation: 0,
+        doubleCount: 0,
+    });
+
     useEffect(() => {
-        async function fetchPlayerWorldsAndLevels() {
+        async function fetchPlayerWorldsScreenInfo() {
             try {
                 const playerWorldsResponse: PlayerWorldsResponseDto = await getPlayerWorlds();
 
@@ -46,12 +55,22 @@ export const StoryMode = () => {
 
                 setMappedWorlds(enrichedWorlds);
 
+                const playerWildcardsResponse: PlayerWildcardDto[] = await getMyWildcards();
+
+                const wildcards: WildcardQuantities = {
+                    fireExtinguisher: playerWildcardsResponse.find(w => w.wildcardId === 1)?.quantity || 0, // Matafuego
+                    changeEquation: playerWildcardsResponse.find(w => w.wildcardId === 2)?.quantity || 0, // Cambio de pregunta
+                    doubleCount: playerWildcardsResponse.find(w => w.wildcardId === 3)?.quantity || 0 // Nitro
+                };
+
+                setWildcardQuantities(wildcards);
+
             } catch (error: unknown) {
                 console.error("Error cargando mundos y niveles:", error);
             }
         }
 
-        fetchPlayerWorldsAndLevels();
+        fetchPlayerWorldsScreenInfo();
     }, []);
 
     return (
@@ -61,7 +80,11 @@ export const StoryMode = () => {
             {mappedWorlds.length > 0 && <WorldMap mappedWorlds={mappedWorlds} />}
 
             <div className="p-4">
-                <BottomUI fireExtinguisherQuant={2} changeEquationQuant={3} dobleCountQuant={4} />
+                <BottomUI
+                    fireExtinguisherQuant={wildcardQuantities.fireExtinguisher}
+                    changeEquationQuant={wildcardQuantities.changeEquation}
+                    dobleCountQuant={wildcardQuantities.doubleCount}
+                />
             </div>
         </div>
     );

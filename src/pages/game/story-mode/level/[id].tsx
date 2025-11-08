@@ -25,6 +25,7 @@ import { getErrorMessage } from "../../../../shared/utils/manageErrors";
 import type { WildcardType } from "../../../../models/enums/wildcard";
 import ErrorModalDuringGame from "../../../../shared/modals/errorModalDuringGame";
 import { RewardScreen } from "../../../../components/chest/rewardScreen";
+import { useEnergy } from "../../../../hooks/useEnergy";
 
 export const StoryModeGame = () => {
     const { id } = useParams();
@@ -66,6 +67,8 @@ export const StoryModeGame = () => {
     const [autoSubmittedQuestionIndex, setAutoSubmittedQuestionIndex] = useState<number | null>(null);
     // Guarda el índice actual de pregunta (según estado del juego)
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
+
+    const { refreshEnergy } = useEnergy()
 
     const [wildcardQuantities, setWildcardQuantities] = useState({
         fireExtinguisher: 0,
@@ -325,8 +328,11 @@ export const StoryModeGame = () => {
         }
     }, [timeLeft, startMatch, isAnswering, gameData, gameStatus, autoSubmittedQuestionIndex, currentQuestionIndex, handleAnswer]);
 
-    function handleCloseWinnerModal() {
+    async function handleCloseWinnerModal() {
         setWinnerModal(false);
+
+        //Refrescamos energía al terminar el juego
+        await refreshEnergy();
 
         if (isPendingChest && obtainedChest) {
             // Mostrar el cofre al usuario

@@ -24,7 +24,6 @@ export const setAuthToken = (token: string | null) => {
     }
 };
 
-
 export const getAuthToken = async () => {
     const auth = getAuth();
     const user = auth.currentUser;
@@ -56,4 +55,6 @@ export const API_URLS = {
     storyModeGame: "/solo",
     chest: "/chest",
     friends: "/friendship",
+    energy: "/energy",
+    wildcards: "/wildcards",
 };
