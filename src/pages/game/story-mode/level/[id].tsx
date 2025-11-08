@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { EndOfStoryModeModal } from "../../../../shared/modals/endOfStoryModeModal";
 import fondoRival from "../../../../assets/images/pista-montana.png";
@@ -218,30 +218,6 @@ export const StoryModeGame = () => {
         }
     }, [gameStatus?.currentQuestionIndex, gameData?.currentQuestion.id]);
 
-    // Autoenvío cuando se acaba el tiempo
-    useEffect(() => {
-        if (!startMatch || isAnswering || !gameData?.gameId) return;
-
-        const currentQuestion = gameStatus?.currentQuestion || gameData?.currentQuestion;
-        if (!currentQuestion) return;
-
-        // Solo ejecutar si el tiempo llegó a 0 y aún no se autoenvió esta pregunta
-        if (timeLeft === 0 && autoSubmittedQuestionIndex !== currentQuestionIndex) {
-            // Mostrar modal para avisar que se agotó el tiempo
-            setErrorMessageDuringGame("¡Tiempo fuera! Vamos con la siguiente.");
-
-            // Marcar esta pregunta como autoenviada
-            setAutoSubmittedQuestionIndex(currentQuestionIndex);
-
-            // Enviar una respuesta automática (aleatoria)
-            const allOptions = currentQuestion.options;
-            if (!allOptions || allOptions.length === 0) return;
-            const randomOption = allOptions[Math.floor(Math.random() * allOptions.length)];
-
-            handleAnswer(randomOption);
-        }
-    }, [timeLeft, startMatch, isAnswering, gameData, gameStatus, autoSubmittedQuestionIndex, currentQuestionIndex]);
-
     // Resetear control cuando cambia la pregunta (si querés permitir nuevo autoenvío)
     useEffect(() => {
         if (gameStatus?.currentQuestionIndex != null) {
@@ -250,9 +226,9 @@ export const StoryModeGame = () => {
                 setAutoSubmittedQuestionIndex(null);
             }
         }
-    }, [gameStatus?.currentQuestionIndex]);
+    }, [gameStatus?.currentQuestionIndex, autoSubmittedQuestionIndex]);
 
-    async function handleAnswer(opcion: number) {
+    const handleAnswer = useCallback(async (opcion: number) => {
         // Si la partida no empezó / no hay datos iniciales / está enviando la respuesta
         if (!startMatch || !gameData || isAnswering) return;
 
@@ -323,7 +299,47 @@ export const StoryModeGame = () => {
             setIsAnswering(false);
             setErrorMessageDuringGame(null);
         }
-    }
+    }, [
+        startMatch,
+        gameData,
+        isAnswering,
+        setSelectedAnswer,
+        setIsAnswering,
+        setGameSubmitAnswer,
+        setAnswerResult,
+        setIsPendingChest,
+        setObtainedChest,
+        setGameStatus,
+        setPlayerPosition,
+        setMachinePosition,
+        setWinnerModal,
+        setStartMatch,
+        setErrorMessageDuringGame
+    ]);
+
+    // Autoenvío cuando se acaba el tiempo
+    useEffect(() => {
+        if (!startMatch || isAnswering || !gameData?.gameId) return;
+
+        const currentQuestion = gameStatus?.currentQuestion || gameData?.currentQuestion;
+        if (!currentQuestion) return;
+
+        // Solo ejecutar si el tiempo llegó a 0 y aún no se autoenvió esta pregunta
+        if (timeLeft === 0 && autoSubmittedQuestionIndex !== currentQuestionIndex) {
+            // Mostrar modal para avisar que se agotó el tiempo
+            setErrorMessageDuringGame("¡Tiempo fuera! Vamos con la siguiente.");
+
+            // Marcar esta pregunta como autoenviada
+            setAutoSubmittedQuestionIndex(currentQuestionIndex);
+
+            // Enviar una respuesta automática (aleatoria)
+            const allOptions = currentQuestion.options;
+            if (!allOptions || allOptions.length === 0) return;
+            const randomOption = allOptions[Math.floor(Math.random() * allOptions.length)];
+
+            handleAnswer(randomOption);
+        }
+    }, [timeLeft, startMatch, isAnswering, gameData, gameStatus, autoSubmittedQuestionIndex, currentQuestionIndex, handleAnswer]);
 
     function handleCloseWinnerModal() {
         setWinnerModal(false);
