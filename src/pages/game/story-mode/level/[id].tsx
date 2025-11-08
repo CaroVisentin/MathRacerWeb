@@ -22,10 +22,10 @@ import cofreAbierto from "../../../../assets/images/cofre-abierto.png";
 import type { ChestResponseDto } from "../../../../models/domain/chest/chestResponseDto";
 import { openRandomChest } from "../../../../services/chest/chestService";
 import fondoGarage from "../../../../assets/images/fondo-garage.png";
-import type { ChestItemDto } from "../../../../models/domain/chest/chestItemDto";
 import { getErrorMessage } from "../../../../shared/utils/manageErrors";
 import type { WildcardType } from "../../../../models/enums/wildcard";
 import ErrorModalDuringGame from "../../../../shared/modals/errorModalDuringGame";
+import { RewardScreen } from "../../../../components/chest/rewardScreen";
 
 export const StoryModeGame = () => {
     const { id } = useParams();
@@ -105,7 +105,6 @@ export const StoryModeGame = () => {
                     const response: StartSoloGameResponseDto = await startGame(levelId);
                     setGameData(response);
 
-                    console.log("Response wildcards: ", response.availableWildcards)
                     // Actualizamos las cantidades iniciales de comodines
                     if (response.availableWildcards) {
                         // Matafuego
@@ -299,23 +298,9 @@ export const StoryModeGame = () => {
             setIsAnswering(false);
             setErrorMessageDuringGame(null);
         }
-    }, [
-        startMatch,
-        gameData,
-        isAnswering,
-        setSelectedAnswer,
-        setIsAnswering,
-        setGameSubmitAnswer,
-        setAnswerResult,
-        setIsPendingChest,
-        setObtainedChest,
-        setGameStatus,
-        setPlayerPosition,
-        setMachinePosition,
-        setWinnerModal,
-        setStartMatch,
-        setErrorMessageDuringGame
-    ]);
+    }, [startMatch, gameData, isAnswering, setSelectedAnswer, setIsAnswering, setGameSubmitAnswer, setAnswerResult,
+        setIsPendingChest, setObtainedChest, setGameStatus, setPlayerPosition, setMachinePosition, setWinnerModal,
+        setStartMatch, setErrorMessageDuringGame]);
 
     // Autoenvío cuando se acaba el tiempo
     useEffect(() => {
@@ -408,122 +393,19 @@ export const StoryModeGame = () => {
             {isLoading && <Spinner />}
 
             {showChest ? (
-                <>
-                    {/* Recompensa */}
-                    <div className="relative w-screen h-screen">
-                        {/* Fondo */}
-                        <div className="absolute inset-0 bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(${fondoGarage})` }}>
-                            <div className="absolute inset-0 bg-black/60"></div>
-                        </div>
-
-                        {/* Contenido centrado */}
-                        <div className="relative z-10 w-full h-full flex flex-col justify-center items-center gap-4">
-
-                            {!rewards && (
-                                <>
-                                    {
-                                        isChestOpen ? (
-                                            <img src={cofreAbierto} alt="Cofre" className="w-70 h-70 object-contain" />
-                                        ) : (
-                                            <img src={cofre} alt="Cofre" className="w-70 h-70 object-contain" />
-                                        )
-                                    }
-                                </>
-                            )}
-
-                            {!rewards && (
-                                <button
-                                    className="bg-[#0F7079] border-2 border-white rounded-lg text-3xl transition w-32 h-12 text-white"
-                                    onClick={() => {
-                                        if (isChestOpen) {
-                                            setRewards(true);
-                                        } else {
-                                            setIsChestOpen(true)
-                                        }
-
-                                    }}
-                                >
-                                    {isChestOpen ? "Siguiente" : "Abrir"}
-                                </button>
-
-                            )}
-
-                            {rewards && (
-                                <div className="flex flex-col items-center gap-6">
-                                    {/* Contenedor de las cards */}
-                                    <div className="flex justify-center items-center gap-6">
-                                        {obtainedChest?.items.map((item: ChestItemDto, index) => {
-                                            // Determinar contenido y color según el tipo
-                                            let title = "";
-                                            let description = "";
-                                            let color = "#c0be9a"; // color base
-                                            let imageSrc = "";
-
-                                            switch (item.type) {
-                                                case "Product":
-                                                    title = item.product?.name ?? "Producto misterioso";
-                                                    description = item.product?.description ?? "";
-                                                    color = item.product?.rarityColor ?? "#c0be9a";
-                                                    imageSrc = `/images/products/${item.product?.id}.png`;
-                                                    break;
-
-                                                case "Wildcard":
-                                                    title = item.wildcard?.name ?? "Comodín";
-                                                    description = item.wildcard?.description ?? "";
-                                                    color = "#a3e4d7";
-                                                    imageSrc = `/images/wildcards/${item.wildcard?.id}.png`;
-                                                    break;
-
-                                                case "Coins":
-                                                    title = `${item.compensationCoins ?? 0} monedas`;
-                                                    description = "Monedas obtenidas del cofre";
-                                                    color = "#f4d03f";
-                                                    imageSrc = `/images/coin.png`;
-                                                    break;
-
-                                                default:
-                                                    title = "Recompensa desconocida";
-                                                    break;
-                                            }
-
-                                            return (
-                                                <div
-                                                    key={index}
-                                                    className="w-60 h-68 rounded-lg border-2 border-white flex flex-col justify-center items-center p-4"
-                                                    style={{ backgroundColor: color }}
-                                                >
-                                                    <img src={imageSrc} alt={title} className="w-24 h-24 object-contain mb-2" />
-                                                    <h3 className="text-lg font-bold text-center">{title}</h3>
-                                                    {description && (
-                                                        <p className="text-sm text-center opacity-80">{description}</p>
-                                                    )}
-                                                    {item.number && (
-                                                        <span className="mt-2 text-sm font-semibold">x{item.number}</span>
-                                                    )}
-                                                </div>
-                                            );
-                                        })}
-                                    </div>
-
-                                    {/* Botón debajo y centrado */}
-                                    <button
-                                        onClick={() => {
-                                            setShowChest(false);
-                                            setRewards(false);
-                                            setObtainedChest(null);
-                                            setIsPendingChest(false);
-                                            navigate("/modo-historia")
-                                        }}
-                                        className="bg-[#0F7079] border-2 border-white rounded-lg text-3xl transition w-32 h-12 text-white"
-                                    >
-                                        Siguiente
-                                    </button>
-                                </div>
-                            )}
-
-                        </div>
-                    </div>
-                </>
+                <RewardScreen
+                    fondoGarage={fondoGarage}
+                    isChestOpen={isChestOpen}
+                    setIsChestOpen={setIsChestOpen}
+                    rewards={rewards}
+                    setRewards={setRewards}
+                    obtainedChest={obtainedChest}
+                    setShowChest={setShowChest}
+                    setObtainedChest={setObtainedChest}
+                    setIsPendingChest={setIsPendingChest}
+                    cofre={cofre}
+                    cofreAbierto={cofreAbierto}
+                />
             ) : (
                 <div className="juego w-full h-full bg-black text-white relative">
                     {/* Header */}
