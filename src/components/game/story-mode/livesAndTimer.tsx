@@ -1,16 +1,16 @@
-import { useMemo } from "react"
-import { batteryIcons } from "../../../data/mocks/home"
-import { useEnergy } from "../../../hooks/useEnergy"
+import { useMemo } from "react";
+import { batteryIcons } from "../../../models/ui/home/batteryIcons";
+import { useEnergy } from "../../../hooks/useEnergy";
 
 export const LivesAndTimer = () => {
   const { currentAmount, maxAmount, secondsUntilNextRecharge } = useEnergy();
 
   const formattedTime = useMemo(() => {
-    if (secondsUntilNextRecharge == null) return "--:--" // sin recarga
-    const minutes = Math.floor(secondsUntilNextRecharge / 60)
-    const secs = secondsUntilNextRecharge % 60
-    return `${minutes}:${secs.toString().padStart(2, "0")}`
-  }, [secondsUntilNextRecharge])
+    if (secondsUntilNextRecharge == null) return "--:--"; // sin recarga
+    const minutes = Math.floor(secondsUntilNextRecharge / 60);
+    const secs = secondsUntilNextRecharge % 60;
+    return `${minutes}:${secs.toString().padStart(2, "0")}`;
+  }, [secondsUntilNextRecharge]);
 
   return (
     <div className="flex items-center gap-3">
@@ -31,5 +31,5 @@ export const LivesAndTimer = () => {
         ))}
       </div>
     </div>
-  )
-}
+  );
+};
