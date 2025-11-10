@@ -9,8 +9,6 @@ export const PublicRoute = ({ children }: PublicRouteProps) => {
   const { user, loading } = useAuth();
   const location = useLocation(); // obtenemos la ruta actual
 
-  console.log(user);
-
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-black">
