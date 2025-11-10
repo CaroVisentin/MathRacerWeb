@@ -5,19 +5,19 @@ import { AxiosError } from "axios";
  * @param error - El error recibido
  */
 export function manageError(error: unknown): never {
-    let message = "Error desconocido";
+  let message = "Error desconocido";
 
-    if (error instanceof AxiosError) {
-        message = error.response?.data?.message || error.message || message;
-    } else if (error instanceof Error) {
-        message = error.message;
-    }
+  if (error instanceof AxiosError) {
+    message = error.response?.data?.message || error.message || message;
+  } else if (error instanceof Error) {
+    message = error.message;
+  }
 
-    // Loguea el error completo para debugging
-    // console.error(error);
+  // Loguea el error completo para debugging
+  // console.error(error);
 
-    // Lanza el error con mensaje legible
-    throw new Error(message);
+  // Lanza el error con mensaje legible
+  throw new Error(message);
 }
 
 /**
@@ -26,14 +26,14 @@ export function manageError(error: unknown): never {
  * @returns string - Mensaje de error
  */
 export function getErrorMessage(error: unknown): string {
-    let message = "Ocurrió un error desconocido";
+  let message = "Ocurrió un error desconocido";
 
-    if (error instanceof AxiosError) {
-        message = error.response?.data?.message || error.message || message;
-    } else if (error instanceof Error) {
-        message = error.message;
-    }
+  if (error instanceof AxiosError) {
+    message = error.response?.data?.message || error.message || message;
+  } else if (error instanceof Error) {
+    message = error.message;
+  }
 
-    // console.error(error); 
-    return message;
+  // console.error(error);
+  return message;
 }

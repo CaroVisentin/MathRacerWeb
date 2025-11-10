@@ -1,12 +1,14 @@
-// context/EnergyContext.tsx
 import React, { createContext, useEffect, useState, useRef } from "react";
 import { getEnergyStatus } from "../services/energy/energyService";
 import { type EnergyStatusDto } from "../models/domain/energy/energyStatusDto";
 import type { EnergyContextValue } from "../models/ui/energy/energy";
+import { getErrorMessage } from "../shared/utils/manageErrors";
 
 const EnergyContext = createContext<EnergyContextValue | null>(null);
 
-export const EnergyProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const EnergyProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [energy, setEnergy] = useState<EnergyStatusDto>({
     currentAmount: 0,
     maxAmount: 3,
@@ -16,8 +18,13 @@ export const EnergyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const fetchEnergy = async () => {
-    const data = await getEnergyStatus();
-    setEnergy(data);
+    try {
+      const data: EnergyStatusDto = await getEnergyStatus();
+      setEnergy(data);
+    } catch (error: unknown) {
+      const message = getErrorMessage(error);
+      console.error(message);
+    }
   };
 
   // Llamar al backend al montar el provider
@@ -31,7 +38,7 @@ export const EnergyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     if (energy.secondsUntilNextRecharge != null) {
       intervalRef.current = setInterval(() => {
-        setEnergy(prev => {
+        setEnergy((prev) => {
           const next = prev.secondsUntilNextRecharge! - 1;
           if (next <= 0) {
             fetchEnergy(); // recarga completa → consultar backend
