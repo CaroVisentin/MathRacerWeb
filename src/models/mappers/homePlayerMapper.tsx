@@ -1,5 +1,5 @@
-import type { Player, PlayerItem } from "../ui/player";
-import type { HomeData, Item } from "../ui/home-data";
+import type { Player, PlayerItem } from "../ui/player/player";
+import type { HomeData, Item } from "../ui/home/home-data";
 import autoDefault from "../../assets/images/auto.png";
 import fondoDefault from "../../assets/images/fondocity.png";
 import perfilDefault from "../../assets/images/jugador.png";

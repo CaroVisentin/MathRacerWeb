@@ -1,5 +1,5 @@
 import { api } from "../network/api";
-import type { Player } from "../../models/ui/player";
+import type { Player } from "../../models/ui/player/player";
 
 /**
  * Servicio para obtener y actualizar datos del jugador
@@ -11,24 +11,24 @@ import type { Player } from "../../models/ui/player";
  * @returns Datos actualizados del jugador
  */
 export async function getPlayerData(playerId: number): Promise<Player> {
-    try {
-        const { data } = await api.get(`/player/${playerId}`);
-        return data;
-    } catch (error) {
-        console.error("Error al obtener datos del jugador:", error);
-        throw error;
-    }
+  try {
+    const { data } = await api.get(`/player/${playerId}`);
+    return data;
+  } catch (error) {
+    console.error("Error al obtener datos del jugador:", error);
+    throw error;
+  }
 }
 
 /**
  * Actualiza las monedas del jugador en el contexto
  */
 export async function refreshPlayerCoins(playerId: number): Promise<number> {
-    try {
-        const player = await getPlayerData(playerId);
-        return player.coins;
-    } catch (error) {
-        console.error("Error al actualizar monedas:", error);
-        throw error;
-    }
+  try {
+    const player = await getPlayerData(playerId);
+    return player.coins;
+  } catch (error) {
+    console.error("Error al actualizar monedas:", error);
+    throw error;
+  }
 }

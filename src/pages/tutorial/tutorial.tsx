@@ -7,7 +7,7 @@ import cofre from "../../assets/images/cofre.png";
 import cofreAbierto from "../../assets/images/cofre-abierto.png";
 import { useState } from "react";
 import { Wildcards } from "../../shared/wildcards/wildcards";
-import type { QuestionDto } from "../../models/domain/questionDto";
+import type { QuestionDto } from "../../models/domain/signalR/questionDto";
 import { FuelIndicator } from "../../shared/energy/energy";
 import { useNavigate } from "react-router-dom";
 import { EndOfStoryModeModal } from "../../shared/modals/endOfStoryModeModal";

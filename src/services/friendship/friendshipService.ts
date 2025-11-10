@@ -1,11 +1,9 @@
 import { api, API_URLS } from "../network/api";
-import type { FriendDto } from "../../models/domain/friendDto";
-import type { FriendRequestDto } from "../../models/domain/friendRequestDto";
+import type { FriendDto } from "../../models/domain/profile/friends/friendDto";
+import type { FriendRequestDto } from "../../models/domain/profile/friends/friendRequestDto";
 import type { AxiosError } from "axios";
 
-
 export const friendshipService = {
-
   async getFriends(playerId: number) {
     try {
       const res = await api.get(`/Friendship/${playerId}/friends`);
@@ -78,4 +76,3 @@ export const friendshipService = {
     }
   },
 };
-

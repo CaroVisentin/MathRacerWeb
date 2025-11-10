@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { usePlayer } from "./usePlayer";
 import { mapPlayerToHomeData } from "../models/mappers/homePlayerMapper";
-import type { HomeData } from "../models/ui/home-data";
+import type { HomeData } from "../models/ui/home/home-data";
 import { useEnergy } from "./useEnergy";
 
 export const useHomeData = () => {
@@ -19,7 +19,7 @@ export const useHomeData = () => {
     });
 
     setHomeData(mapped);
-  }, [player]);
+  }, [player, currentAmount, maxAmount, secondsUntilNextRecharge]);
 
   return { homeData };
 };

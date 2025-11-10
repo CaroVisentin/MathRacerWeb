@@ -1,5 +1,5 @@
-import { useState } from "react"
-import { TabPanel } from "../../components/profile/components/tab"
+import { useState } from "react";
+import { TabPanel } from "../../components/profile/components/tab";
 import { ProfileSection } from "../../components/profile/sections/profileSection";
 import { AmigosSection } from "../../components/profile/sections/friendsSection";
 import { AjustesSection } from "../../components/profile/sections/settingsSection";
@@ -7,32 +7,29 @@ import { useNavigate } from "react-router-dom";
 import { RulesButton } from "../../shared/buttons/buttonReglas";
 
 export const ProfilePage = () => {
-    const [activeSection, setActiveSection] = useState<"perfil" | "amigos" | "ajustes">("perfil");
-    const navigate = useNavigate();
+  const [activeSection, setActiveSection] = useState<
+    "perfil" | "amigos" | "ajustes"
+  >("perfil");
+  const navigate = useNavigate();
 
+  return (
+    <div className="min-h-screen w-full bg-black flex flex-col relative">
+      <TabPanel
+        activeSection={activeSection}
+        setActiveSection={setActiveSection}
+      />
 
+      <main className="flex-1 flex flex-col items-center pb-10 overflow-y-auto">
+        {activeSection === "perfil" && <ProfileSection />}
 
-    return (
-        <div className="min-h-screen w-full bg-black flex flex-col relative">
-            <TabPanel activeSection={activeSection} setActiveSection={setActiveSection} />
+        {activeSection === "amigos" && <AmigosSection />}
 
-            <main className="flex-1 flex flex-col items-center pb-10 overflow-y-auto">
-                {activeSection === "perfil" && (
-                    <ProfileSection />
-                )}
+        {activeSection === "ajustes" && <AjustesSection />}
+      </main>
 
-                {activeSection === "amigos" && (
-                    <AmigosSection />
-                )}
-
-                {activeSection === "ajustes" && (
-                    <AjustesSection />
-                )}
-            </main>
-
-            <div className="fixed bottom-4 right-4">
-                <RulesButton onClick={() => navigate("/reglas")} />
-            </div>
-        </div>
-    );
+      <div className="fixed bottom-4 right-4">
+        <RulesButton onClick={() => navigate("/reglas")} />
+      </div>
+    </div>
+  );
 };
