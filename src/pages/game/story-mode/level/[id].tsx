@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { EndOfStoryModeModal } from "../../../../shared/modals/endOfStoryModeModal";
 import fondoRival from "../../../../assets/images/pista-montana.png";
@@ -20,11 +20,11 @@ import cofre from "../../../../assets/images/cofre.png";
 import cofreAbierto from "../../../../assets/images/cofre-abierto.png";
 import type { ChestResponseDto } from "../../../../models/domain/chest/chestResponseDto";
 import { openRandomChest } from "../../../../services/chest/chestService";
-import fondoGarage from "../../../../assets/images/fondo-garage.png";
-import type { ChestItemDto } from "../../../../models/domain/chest/chestItemDto";
 import { getErrorMessage } from "../../../../shared/utils/manageErrors";
 import type { WildcardType } from "../../../../models/enums/wildcard";
 import ErrorModalDuringGame from "../../../../shared/modals/errorModalDuringGame";
+import { RewardScreen } from "../../../../components/chest/rewardScreen";
+import { useEnergy } from "../../../../hooks/useEnergy";
 import { usePlayer } from "../../../../hooks/usePlayer";
 
 export const StoryModeGame = () => {
@@ -70,6 +70,14 @@ export const StoryModeGame = () => {
     // Guarda el índice actual de pregunta (según estado del juego)
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
 
+    const { refreshEnergy } = useEnergy()
+
+    const [wildcardQuantities, setWildcardQuantities] = useState({
+        fireExtinguisher: 0,
+        changeEquation: 0,
+        doubleCount: 0,
+    });
+
     useEffect(() => {
         if (!stateLevel) {
             const saved = sessionStorage.getItem("selectedLevel");
@@ -100,6 +108,23 @@ export const StoryModeGame = () => {
                     // Crear la partida
                     const response: StartSoloGameResponseDto = await startGame(levelId);
                     setGameData(response);
+
+                    // Actualizamos las cantidades iniciales de comodines
+                    if (response.availableWildcards) {
+                        // Matafuego
+                        const extinguisher = response.availableWildcards.find(w => w.wildcardId === 1)?.quantity || 0;
+                        // Cambio de rumbo
+                        const changeEq = response.availableWildcards.find(w => w.wildcardId === 2)?.quantity || 0;
+                        // Nitro
+                        const double = response.availableWildcards.find(w => w.wildcardId === 3)?.quantity || 0;
+
+                        setWildcardQuantities({
+                            fireExtinguisher: Number(extinguisher),
+                            changeEquation: Number(changeEq),
+                            doubleCount: Number(double),
+                        });
+                    }
+
                 } catch (error: unknown) {
                     const message = getErrorMessage(error);
                     setErrorMessage(message);
@@ -196,30 +221,6 @@ export const StoryModeGame = () => {
         }
     }, [gameStatus?.currentQuestionIndex, gameData?.currentQuestion.id]);
 
-    // Autoenvío cuando se acaba el tiempo
-    useEffect(() => {
-        if (!startMatch || isAnswering || !gameData?.gameId) return;
-
-        const currentQuestion = gameStatus?.currentQuestion || gameData?.currentQuestion;
-        if (!currentQuestion) return;
-
-        // Solo ejecutar si el tiempo llegó a 0 y aún no se autoenvió esta pregunta
-        if (timeLeft === 0 && autoSubmittedQuestionIndex !== currentQuestionIndex) {
-            // Mostrar modal para avisar que se agotó el tiempo
-            setErrorMessageDuringGame("¡Tiempo fuera! Vamos con la siguiente.");
-
-            // Marcar esta pregunta como autoenviada
-            setAutoSubmittedQuestionIndex(currentQuestionIndex);
-
-            // Enviar una respuesta automática (aleatoria)
-            const allOptions = currentQuestion.options;
-            if (!allOptions || allOptions.length === 0) return;
-            const randomOption = allOptions[Math.floor(Math.random() * allOptions.length)];
-
-            handleAnswer(randomOption);
-        }
-    }, [timeLeft, startMatch, isAnswering, gameData, gameStatus, autoSubmittedQuestionIndex, currentQuestionIndex]);
-
     // Resetear control cuando cambia la pregunta (si querés permitir nuevo autoenvío)
     useEffect(() => {
         if (gameStatus?.currentQuestionIndex != null) {
@@ -228,9 +229,9 @@ export const StoryModeGame = () => {
                 setAutoSubmittedQuestionIndex(null);
             }
         }
-    }, [gameStatus?.currentQuestionIndex]);
+    }, [gameStatus?.currentQuestionIndex, autoSubmittedQuestionIndex]);
 
-    async function handleAnswer(opcion: number) {
+    const handleAnswer = useCallback(async (opcion: number) => {
         // Si la partida no empezó / no hay datos iniciales / está enviando la respuesta
         if (!startMatch || !gameData || isAnswering) return;
 
@@ -301,10 +302,39 @@ export const StoryModeGame = () => {
             setIsAnswering(false);
             setErrorMessageDuringGame(null);
         }
-    }
+    }, [startMatch, gameData, isAnswering, setSelectedAnswer, setIsAnswering, setGameSubmitAnswer, setAnswerResult,
+        setIsPendingChest, setObtainedChest, setGameStatus, setPlayerPosition, setMachinePosition, setWinnerModal,
+        setStartMatch, setErrorMessageDuringGame]);
 
-    function handleCloseWinnerModal() {
+    // Autoenvío cuando se acaba el tiempo
+    useEffect(() => {
+        if (!startMatch || isAnswering || !gameData?.gameId) return;
+
+        const currentQuestion = gameStatus?.currentQuestion || gameData?.currentQuestion;
+        if (!currentQuestion) return;
+
+        // Solo ejecutar si el tiempo llegó a 0 y aún no se autoenvió esta pregunta
+        if (timeLeft === 0 && autoSubmittedQuestionIndex !== currentQuestionIndex) {
+            // Mostrar modal para avisar que se agotó el tiempo
+            setErrorMessageDuringGame("¡Tiempo fuera! Vamos con la siguiente.");
+
+            // Marcar esta pregunta como autoenviada
+            setAutoSubmittedQuestionIndex(currentQuestionIndex);
+
+            // Enviar una respuesta automática (aleatoria)
+            const allOptions = currentQuestion.options;
+            if (!allOptions || allOptions.length === 0) return;
+            const randomOption = allOptions[Math.floor(Math.random() * allOptions.length)];
+
+            handleAnswer(randomOption);
+        }
+    }, [timeLeft, startMatch, isAnswering, gameData, gameStatus, autoSubmittedQuestionIndex, currentQuestionIndex, handleAnswer]);
+
+    async function handleCloseWinnerModal() {
         setWinnerModal(false);
+
+        //Refrescamos energía al terminar el juego
+        await refreshEnergy();
 
         if (isPendingChest && obtainedChest) {
             // Mostrar el cofre al usuario
@@ -342,6 +372,22 @@ export const StoryModeGame = () => {
             const gameStatusAfterUseWildcard: SoloGameStatusResponseDto = await getGameStatus(gameData.gameId);
             setGameStatus(gameStatusAfterUseWildcard);
 
+            // Actualizamos las cantidades de comodines según el nuevo estado
+            if (gameStatusAfterUseWildcard.availableWildcards) {
+                // Matafuego
+                const extinguisher = gameStatusAfterUseWildcard.availableWildcards.find(w => w.wildcardId === 1)?.quantity || 0;
+                // Cambio de rumbo
+                const changeEq = gameStatusAfterUseWildcard.availableWildcards.find(w => w.wildcardId === 2)?.quantity || 0;
+                // Nitro
+                const double = gameStatusAfterUseWildcard.availableWildcards.find(w => w.wildcardId === 3)?.quantity || 0;
+
+                setWildcardQuantities({
+                    fireExtinguisher: Number(extinguisher),
+                    changeEquation: Number(changeEq),
+                    doubleCount: Number(double),
+                });
+            }
+
         } catch (error: unknown) {
             const message = getErrorMessage(error);
             setErrorMessageDuringGame(message);
@@ -354,122 +400,21 @@ export const StoryModeGame = () => {
             {isLoading && <Spinner />}
 
             {showChest ? (
-                <>
-                    {/* Recompensa */}
-                    <div className="relative w-screen h-screen">
-                        {/* Fondo */}
-                        <div className="absolute inset-0 bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(${fondoGarage})` }}>
-                            <div className="absolute inset-0 bg-black/60"></div>
-                        </div>
-
-                        {/* Contenido centrado */}
-                        <div className="relative z-10 w-full h-full flex flex-col justify-center items-center gap-4">
-
-                            {!rewards && (
-                                <>
-                                    {
-                                        isChestOpen ? (
-                                            <img src={cofreAbierto} alt="Cofre" className="w-70 h-70 object-contain" />
-                                        ) : (
-                                            <img src={cofre} alt="Cofre" className="w-70 h-70 object-contain" />
-                                        )
-                                    }
-                                </>
-                            )}
-
-                            {!rewards && (
-                                <button
-                                    className="bg-[#0F7079] border-2 border-white rounded-lg text-3xl transition w-32 h-12 text-white"
-                                    onClick={() => {
-                                        if (isChestOpen) {
-                                            setRewards(true);
-                                        } else {
-                                            setIsChestOpen(true)
-                                        }
-
-                                    }}
-                                >
-                                    {isChestOpen ? "Siguiente" : "Abrir"}
-                                </button>
-
-                            )}
-
-                            {rewards && (
-                                <div className="flex flex-col items-center gap-6">
-                                    {/* Contenedor de las cards */}
-                                    <div className="flex justify-center items-center gap-6">
-                                        {obtainedChest?.items.map((item: ChestItemDto, index) => {
-                                            // Determinar contenido y color según el tipo
-                                            let title = "";
-                                            let description = "";
-                                            let color = "#c0be9a"; // color base
-                                            let imageSrc = "";
-
-                                            switch (item.type) {
-                                                case "Product":
-                                                    title = item.product?.name ?? "Producto misterioso";
-                                                    description = item.product?.description ?? "";
-                                                    color = item.product?.rarityColor ?? "#c0be9a";
-                                                    imageSrc = `/images/products/${item.product?.id}.png`;
-                                                    break;
-
-                                                case "Wildcard":
-                                                    title = item.wildcard?.name ?? "Comodín";
-                                                    description = item.wildcard?.description ?? "";
-                                                    color = "#a3e4d7";
-                                                    imageSrc = `/images/wildcards/${item.wildcard?.id}.png`;
-                                                    break;
-
-                                                case "Coins":
-                                                    title = `${item.compensationCoins ?? 0} monedas`;
-                                                    description = "Monedas obtenidas del cofre";
-                                                    color = "#f4d03f";
-                                                    imageSrc = `/images/coin.png`;
-                                                    break;
-
-                                                default:
-                                                    title = "Recompensa desconocida";
-                                                    break;
-                                            }
-
-                                            return (
-                                                <div
-                                                    key={index}
-                                                    className="w-60 h-68 rounded-lg border-2 border-white flex flex-col justify-center items-center p-4"
-                                                    style={{ backgroundColor: color }}
-                                                >
-                                                    <img src={imageSrc} alt={title} className="w-24 h-24 object-contain mb-2" />
-                                                    <h3 className="text-lg font-bold text-center">{title}</h3>
-                                                    {description && (
-                                                        <p className="text-sm text-center opacity-80">{description}</p>
-                                                    )}
-                                                    {item.number && (
-                                                        <span className="mt-2 text-sm font-semibold">x{item.number}</span>
-                                                    )}
-                                                </div>
-                                            );
-                                        })}
-                                    </div>
-
-                                    {/* Botón debajo y centrado */}
-                                    <button
-                                        onClick={() => {
-                                            setShowChest(false);
-                                            setRewards(false);
-                                            setObtainedChest(null);
-                                            setIsPendingChest(false);
-                                            navigate("/modo-historia")
-                                        }}
-                                        className="bg-[#0F7079] border-2 border-white rounded-lg text-3xl transition w-32 h-12 text-white"
-                                    >
-                                        Siguiente
-                                    </button>
-                                </div>
-                            )}
-
-                        </div>
-                    </div>
-                </>
+                <RewardScreen
+                    isChestOpen={isChestOpen}
+                    setIsChestOpen={setIsChestOpen}
+                    rewards={rewards}
+                    setRewards={setRewards}
+                    obtainedChest={obtainedChest}
+                    setShowChest={setShowChest}
+                    setObtainedChest={setObtainedChest}
+                    setIsPendingChest={setIsPendingChest}
+                    cofre={cofre}
+                    cofreAbierto={cofreAbierto}
+                    chestTitle={"¡Felicidades!"}
+                    firstMessage={"Acá está tu recompensa por terminar el último nivel del mundo"}
+                    secondMessage={"Toca el cofre para verlo"}
+                />
             ) : (
                 <div className="juego w-full h-full bg-black text-white relative">
                     {/* Header */}
@@ -530,7 +475,13 @@ export const StoryModeGame = () => {
                             />
 
                             {/* Instrucciones y Comodines */}
-                            <WildcardsAndInstructions level={level!} onWildcardClick={handleWildcardClick} />
+                            <WildcardsAndInstructions
+                                level={level!}
+                                onWildcardClick={handleWildcardClick}
+                                fireExtinguisherQuantity={wildcardQuantities.fireExtinguisher}
+                                changeEquationQuantity={wildcardQuantities.changeEquation}
+                                dobleCountQuantity={wildcardQuantities.doubleCount}
+                            />
 
                             {/* Ecuación y Opciones */}
                             {(gameData || gameStatus) && (
