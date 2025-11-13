@@ -7,6 +7,7 @@ import { StoryMode } from "../pages/game/story-mode/storyMode";
 import CreateGame from "../components/game/on-line/create-game";
 import InviteFriend from "../components/game/on-line/invite-friend";
 import JoinGame from "../components/game/on-line/join-game";
+import { QuickGame } from "../components/game/on-line/quick-game";
 import { LevelMap } from "../pages/game/story-mode/world/[id]";
 import { StoryModeGame } from "../pages/game/story-mode/level/[id]";
 import { LoginPage } from "../pages/login/logIn";
@@ -32,6 +33,10 @@ const router = createBrowserRouter([
   },
   {
     path: "/multijugador",
+    element: <ProtectedRoute><MultiplayerGame /></ProtectedRoute>
+  },
+  {
+    path: "/multijugador/:gameId",
     element: <ProtectedRoute><MultiplayerGame /></ProtectedRoute>
   },
   {
@@ -64,7 +69,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/partida-rapida",
-    element: <ProtectedRoute><MultiplayerGame /></ProtectedRoute>
+    element: <ProtectedRoute><QuickGame /></ProtectedRoute>
   },
   {
     path: "/reglas",

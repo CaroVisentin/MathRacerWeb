@@ -3,12 +3,16 @@ import { getEnergyStatus } from "../services/energy/energyService";
 import { type EnergyStatusDto } from "../models/domain/energy/energyStatusDto";
 import type { EnergyContextValue } from "../models/ui/energy/energy";
 import { getErrorMessage } from "../shared/utils/manageErrors";
+import { useContext} from "react";
+import { AuthContext } from "./AuthContext";
 
 const EnergyContext = createContext<EnergyContextValue | null>(null);
+
 
 export const EnergyProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
+  const auth = useContext(AuthContext);
   const [energy, setEnergy] = useState<EnergyStatusDto>({
     currentAmount: 0,
     maxAmount: 3,
@@ -29,8 +33,10 @@ export const EnergyProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // Llamar al backend al montar el provider
   useEffect(() => {
+    if(!auth?.loading && auth?.user){
     fetchEnergy();
-  }, []);
+    }
+  }, [auth?.loading, auth?.user]);
 
   // Controlar el countdown visual
   useEffect(() => {

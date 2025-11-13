@@ -1,23 +1,28 @@
 
 import { useState } from "react";
-
-import { useConnection } from '../../../services/signalR/connection';
-import ErrorConnection from "../../../shared/modals/errorConnection";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { StarsBackground } from "../../../shared/backgrounds/starBackground";
+import { usePlayer } from "../../../hooks/usePlayer";
+import { createCustomGame } from "../../../services/game/onlineService";
+import ErrorConnection from "../../../shared/modals/errorConnection";
+import type { CreateCustomGameRequestDto } from "../../../models/domain/signalR/createCustomGameDto";
+
 export default function CreateGame() {
+  const { player } = usePlayer();
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     nombrePartida: '',
-    privacidad: 'publico',
+    privacidad: 'publica',
     contraseña: '',
-    dificultad: 'Facil',
-    tipodeResultado: 'El Mayor',
+    dificultad: 'Facil' as "Facil" | "Medio" | "Dificil",
+    tipodeResultado: 'Mayor' as "Mayor" | "Menor" ,
   });
 
-  const { errorConexion, invoke } = useConnection();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
-  // usar la conexión exportada
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prevState => ({
@@ -25,19 +30,58 @@ export default function CreateGame() {
       [name]: value
     }));
   };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.nombrePartida.trim()) return;
+    
+    if (!formData.nombrePartida.trim()) {
+      setError("El nombre de la partida es requerido");
+      setShowModal(true);
+      return;
+    }
+
+    if (!player?.id) {
+      setError("Debes iniciar sesión para crear una partida");
+      setShowModal(true);
+      return;
+    }
+
+    // Validar contraseña si es privada
+    if (formData.privacidad === 'privada' && !formData.contraseña.trim()) {
+      setError("Debes establecer una contraseña para partidas privadas");
+      setShowModal(true);
+      return;
+    }
 
     try {
+      setLoading(true);
+      setError(null);
 
-      // Enviar nombre de partida como identificador del jugador
-      await invoke("FindMatch", formData.nombrePartida);
-      // onCreateGame(formData); // Llama a la función pasada por props con los datos del formulario y emitir con signal R
-    } catch {
+      const request: CreateCustomGameRequestDto = {
+        gameName: formData.nombrePartida,
+        isPrivate: formData.privacidad === 'privada',
+        //password: (formData.privacidad === 'privada' && formData.contraseña ? formData.contraseña : undefined),
+        difficulty: formData.dificultad,
+        expectedResult: formData.tipodeResultado,
+        ... (formData.privacidad === 'privada' && formData.contraseña ? { password: formData.contraseña } : {})
+      };
+console.log("Creando partida con datos:", request);
+      const response = await createCustomGame(request);
+
+      console.log("Partida creada:", response);
+      
+      // Navegar a la pantalla del juego multijugador con el gameId
+      // El jugador será el creador (Player 1) y esperará a que otro jugador se una
+      navigate(`/multijugador/${response.gameId}`);
+
+    } catch (err: any) {
+      console.error("Error al crear partida:", err);
+      setError(err.response?.data?.error || "No se pudo crear la partida. Inténtalo de nuevo.");
       setShowModal(true);
+    } finally {
+      setLoading(false);
     }
-    }; 
+  }; 
 
   return (
 
@@ -109,24 +153,30 @@ export default function CreateGame() {
             onChange={handleChange}
             className="w-full mt-1 p-2 rounded bg-black/90 border border-gray-600"
           >
-            <option value="El Mayor">El Mayor</option>
-            <option value="El Menor">El Menor</option>
-            <option value="Igual">Igual</option>
+            <option value="Mayor">Mayor</option>
+            <option value="Menor">Menor</option>
+           
           </select>
         </label>
         <div className="flex justify-between mt-6 pt-5 border-t border-gray-700">
           <Link to="/menu"
-            
-            className="bg-[#5df9f9] text-black  border-2 border-white hover:bg-red-700 w-30 h-10 px-4 content-center rounded text-2xl hover:drop-shadow-[0_0_10px_#00ffff]">← Volver</Link>
+            className="bg-[#5df9f9] text-black  border-2 border-white hover:bg-red-700 w-30 h-10 px-4 content-center rounded text-2xl hover:drop-shadow-[0_0_10px_#00ffff]">
+            ← Volver
+          </Link>
           <button
             type="submit"
-            className="bg-[#5df9f9] text-black  border-2 border-white hover:bg-[#f95ec8] w-30 h-10 px-4  rounded text-2xl leading-relaxed hover:drop-shadow-[0_0_10px_#00ffff]">Crear</button>
-
+            disabled={loading}
+            className={`bg-[#5df9f9] text-black border-2 border-white w-30 h-10 px-4 rounded text-2xl leading-relaxed hover:drop-shadow-[0_0_10px_#00ffff] ${
+              loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-[#f95ec8]'
+            }`}
+          >
+            {loading ? 'Creando...' : 'Crear'}
+          </button>
         </div>
       </form>
       {showModal && (
         <ErrorConnection
-          message={errorConexion || "No se pudo conectar al servidor. Por favor, inténtalo de nuevo."}
+          message={error || "No se pudo crear la partida. Por favor, inténtalo de nuevo."}
           onClose={() => setShowModal(false)}
         />
       )}

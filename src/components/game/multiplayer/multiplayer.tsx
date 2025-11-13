@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import type { QuestionDto } from "../../../models/domain/signalR/questionDto";
 import { LookingForRivalModal } from "../../../shared/modals/lookingForRivalModal";
@@ -11,6 +12,8 @@ import type { GameUpdateDto } from "../../../models/domain/signalR/gameUpdateDto
 import { useConnection } from "../../../services/signalR/connection";
 import { PowerUpType } from "../../../models/enums/powerUpType";
 import mathi from "../../../assets/images/mathi.png";
+import { usePlayer } from "../../../hooks/usePlayer";
+
 const fondos = [
   "pista-noche.png",
   "pista-dia.png",
@@ -21,6 +24,9 @@ const fondos = [
 ];
 
 export const MultiplayerGame = () => {
+  const { gameId } = useParams<{ gameId: string }>();
+  const { player } = usePlayer();
+  const navigate = useNavigate();
   const { errorConexion, invoke, on, off } = useConnection();
   const [ecuacion, setEcuacion] = useState<QuestionDto>();
   const [opciones, setOpciones] = useState<number[]>();
@@ -34,7 +40,6 @@ export const MultiplayerGame = () => {
   const [jugadoresPartida, setJugadoresPartida] = useState<PlayerDto[]>([]);
   const [buscandoRival, setBuscandoRival] = useState(true);
   const [jugadorId, setJugadorId] = useState<number | null>(null);
-  const [nombreJugador, setNombreJugador] = useState<string>("");
   const [partidaId, setPartidaId] = useState<number | null>(null);
   const [instruccion, setInstruccion] = useState<string>("");
   const [perdedor, setPerdedor] = useState<boolean>(false);
@@ -47,10 +52,28 @@ export const MultiplayerGame = () => {
   const [powerUseOrden, setPowerUseOrden] = useState(false);
   const [mensajeComodin, setMensajeComodin] = useState<string | null>(null);
 
+  // Usar el nombre del jugador desde el contexto
+  const nombreJugador = player?.name || "";
+
   const conectarJugador = useCallback(async () => {
-    if (!nombreJugador.trim()) return;
-    await invoke("FindMatch", nombreJugador);
-  }, [nombreJugador, invoke]);
+    // Si hay gameId en la URL, unirse a esa partida específica
+    if (gameId) {
+      const partidaIdNum = parseInt(gameId, 10);
+      if (!isNaN(partidaIdNum) && player?.id) {
+        try {
+          await invoke("JoinGame", partidaIdNum, player.id);
+          setPartidaId(partidaIdNum);
+        } catch (error) {
+          console.error("Error al unirse a la partida:", error);
+        }
+      }
+    } else {
+      // Si no hay gameId, buscar partida rápida (matchmaking)
+      if (nombreJugador.trim()) {
+        await invoke("FindMatch", nombreJugador);
+      }
+    }
+  }, [gameId, player, nombreJugador, invoke]);
 
   const reiniciarJuego = () => {
     setGanador(false);
@@ -60,13 +83,19 @@ export const MultiplayerGame = () => {
     setResultado(null);
     setRespuestaSeleccionada(null);
     setBuscandoRival(true);
-    conectarJugador();
+    // Si vino de una partida específica, volver al menú
+    if (gameId) {
+      navigate('/menu');
+    } else {
+      conectarJugador();
+    }
   };
 
   const handleVolver = () => {
-    // Agregar lógica para abandonar partida
+    // Abandonar partida y volver al menú
     setGanador(false);
     setPerdedor(true);
+    navigate('/menu');
   };
 
   const handleFireExtinguisher = () => {
@@ -147,6 +176,13 @@ export const MultiplayerGame = () => {
 
     setTimeout(() => sendAnswer(opcion), 200);
   };
+
+  // Conectar automáticamente cuando el componente se monte y tengamos el nombre del jugador
+  useEffect(() => {
+    if (nombreJugador && !partidaId) {
+      conectarJugador();
+    }
+  }, [nombreJugador, partidaId, conectarJugador]);
 
   useEffect(() => {
     if (!useConnection) return; // Esperar a que la conexión esté inicializada
@@ -254,12 +290,24 @@ export const MultiplayerGame = () => {
       </div>
 
       {/*modal de busqueda de rival*/}
-      {buscandoRival && (
+      {buscandoRival && !gameId && (
         <LookingForRivalModal
           playerId={nombreJugador}
-          setPlayerId={setNombreJugador}
+          setPlayerId={() => {}} // El nombre viene del contexto, no se puede cambiar aquí
           onConnection={conectarJugador}
         />
+      )}
+
+      {/* Mensaje de espera cuando hay gameId pero aún busca rival */}
+      {buscandoRival && gameId && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80">
+          <div className="bg-black/90 border-2 border-cyan-400 rounded-lg p-8 text-center">
+            <div className="animate-spin rounded-full h-20 w-20 border-t-4 border-b-4 border-[#5df9f9] mx-auto mb-4"></div>
+            <h2 className="text-3xl text-[#f95ec8] mb-4">Esperando rival...</h2>
+            <p className="text-white text-xl">{nombreJugador}</p>
+            <p className="text-gray-400 mt-2">Partida ID: {gameId}</p>
+          </div>
+        </div>
       )}
 
       {/* Modal de fin de partida (Ganador) */}
