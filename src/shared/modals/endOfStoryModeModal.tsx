@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import coinImg from "../../assets/images/coin.png";
 import carImg from "../../assets/images/auto.png";
 import grayRectangle from "../../assets/images/gray-rectangle.png";
@@ -6,6 +6,7 @@ import yellowRectangle from "../../assets/images/yellow-rectangle.png";
 import iconoEnergia from "../../assets/images/icono-energia.png";
 import mathi from "../../assets/images/mathi.png";
 import mathiTriste from "../../assets/images/mathiTriste.png";
+import { useAudio } from "../../contexts/AudioContext";
 
 interface EndOfStoryModeModalProps {
     level: number;
@@ -17,6 +18,17 @@ interface EndOfStoryModeModalProps {
 }
 
 export const EndOfStoryModeModal: React.FC<EndOfStoryModeModalProps> = ({ level, reward, won, onClose, onNext, remainingLives }) => {
+    const { playWinnerSound, playGameOverSound } = useAudio();
+
+    useEffect(() => {
+        // Reproducir sonido según el resultado
+        if (won) {
+            playWinnerSound();
+        } else {
+            playGameOverSound();
+        }
+    }, [won, playWinnerSound, playGameOverSound]);
+
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black z-50">
             <div className="bg-[#484848] text-white border-4 border-white p-6 w-[400px] max-w-full">

@@ -1,14 +1,19 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
+import { useAudio } from "../../contexts/AudioContext";
 
 interface BackButtonProps {
     onClick?: () => void;
 }
 
 export const BackButton = ({onClick}: BackButtonProps) => {
+    const { playBackSound } = useAudio();
     const navigate = useNavigate();
-    const handleClick = onClick ?? (() => navigate(-1));
+    const handleClick = onClick ?? (() => {
+        playBackSound();
+        navigate(-1);
+    });
 
     return (
         <button

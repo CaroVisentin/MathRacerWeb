@@ -6,10 +6,11 @@ import { usePlayer } from "../../../hooks/usePlayer";
 import { createCustomGame } from "../../../services/game/onlineService";
 import ErrorConnection from "../../../shared/modals/errorConnection";
 import type { CreateCustomGameRequestDto } from "../../../models/domain/signalR/createCustomGameDto";
-
+import { useAudio } from "../../../contexts/AudioContext";
 export default function CreateGame() {
   const { player } = usePlayer();
   const navigate = useNavigate();
+  const { playBackSound } = useAudio();
 
   const [formData, setFormData] = useState({
     nombrePartida: '',
@@ -165,6 +166,7 @@ console.log("Creando partida con datos:", request);
         </label>
         <div className="flex justify-between mt-6 pt-5 border-t border-gray-700">
           <Link to="/menu"
+          onClick={playBackSound}
             className="bg-[#5df9f9] text-black  border-2 border-white hover:bg-red-700 w-30 h-10 px-4 content-center rounded text-2xl hover:drop-shadow-[0_0_10px_#00ffff]">
             ← Volver
           </Link>

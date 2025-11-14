@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useAudio } from "../../contexts/AudioContext";
 
 interface ActionButtonProps {
     size?: "small" | "large";
@@ -18,6 +19,15 @@ export const ActionButton = ({
   className = "",
   onClick,
 }: ActionButtonProps) => {
+  const { playButtonSound } = useAudio();
+
+  const handleClick = () => {
+    playButtonSound();
+    if (onClick) {
+      onClick();
+    }
+  };
+
   const sizeClasses =
     size === "large"
       ? "w-56 h-16 text-3xl"
@@ -42,14 +52,14 @@ export const ActionButton = ({
 
   if (to) {
     return (
-      <Link to={to} className={baseClasses} onClick={onClick} role="button">
+      <Link to={to} className={baseClasses} onClick={handleClick} role="button">
         {children}
       </Link>
     );
   }
 
   return (
-    <button type="button" className={baseClasses} onClick={onClick}>
+    <button type="button" className={baseClasses} onClick={handleClick}>
       {children}
     </button>
   );

@@ -5,10 +5,11 @@ import { StarsBackground } from "../../../shared/backgrounds/starBackground";
 import { getAvailableGames } from "../../../services/game/onlineService";
 import type { AvailableGameDto } from "../../../models/domain/signalR/availbleGameDto";
 import ErrorConnection from "../../../shared/modals/errorConnection";
-
+import { useAudio } from "../../../contexts/AudioContext";
 export default function JoinGame() {
   const navigate = useNavigate();
-  
+  const { playBackSound } = useAudio();
+
   const [games, setGames] = useState<AvailableGameDto[]>([]);
   const [filteredGames, setFilteredGames] = useState<AvailableGameDto[]>([]);
   const [search, setSearch] = useState('');
@@ -219,6 +220,7 @@ export default function JoinGame() {
         <div className="flex justify-between mt-3 pt-2 ">
           <Link 
             to="/menu" 
+            onClick={playBackSound}
             className="bg-[#5df9f9] text-black font-extralight border-2 border-white transition-all duration-300 hover:bg-red-700 w-20 h-10 px-4 content-center rounded text-2xl hover:drop-shadow-[0_0_10px_#00ffff]" 
             style={{ marginTop: '20px', marginBottom: '20px' }}
           >

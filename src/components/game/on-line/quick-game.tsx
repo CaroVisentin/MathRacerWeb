@@ -4,12 +4,12 @@ import { StarsBackground } from "../../../shared/backgrounds/starBackground";
 import { usePlayer } from "../../../hooks/usePlayer";
 import { useConnection } from "../../../services/signalR/connection";
 import ErrorConnection from "../../../shared/modals/errorConnection";
-
+import { useAudio } from "../../../contexts/AudioContext";
 export const QuickGame: React.FC = () => {
   const { player } = usePlayer();
   const navigate = useNavigate();
   const { conn, errorConexion, invoke, on, off } = useConnection();
-  
+  const { playBackSound } = useAudio();
   const [searching, setSearching] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
@@ -127,6 +127,7 @@ export const QuickGame: React.FC = () => {
             <div className="flex gap-4 justify-center">
               <Link
                 to="/menu"
+                onClick={playBackSound}
                 className="bg-red-600 text-white border-2 border-white px-8 py-3 rounded text-2xl hover:bg-red-700 hover:drop-shadow-[0_0_10px_#ff0000] transition-all"
               >
                 ← Volver

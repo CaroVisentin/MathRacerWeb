@@ -4,6 +4,7 @@ import { SelectionSidebar } from "../../components/garage/sidebar";
 import { Topbar } from "../../components/garage/topbar";
 import type { ItemSelectable } from "../../models/ui/garage/garage";
 import { usePlayer } from "../../hooks/usePlayer";
+import { useAudio } from "../../contexts/AudioContext";
 import {
   getPlayerBackgrounds,
   getPlayerCars,
@@ -18,6 +19,7 @@ import ErrorConnection from "../../shared/modals/errorConnection";
 
 export const GaragePage = () => {
   const { player, setPlayer } = usePlayer();
+  const { playPurchaseSound } = useAudio();
   const [activeCategory, setActiveCategory] = useState<
     "cars" | "characters" | "backgrounds"
   >("cars");
@@ -123,6 +125,10 @@ export const GaragePage = () => {
     if (!selected?.isOwned || selected.isActive) return; // seguridad
     try {
       await activatePlayerItem(player.id, selectedItemId, type);
+      
+      // Reproducir sonido de activación
+      playPurchaseSound();
+      
       // Actualizar estado local: desactivar todos y activar solo el seleccionado
       const updateActive = (arr: ItemSelectable[]) =>
         arr.map((it) => ({

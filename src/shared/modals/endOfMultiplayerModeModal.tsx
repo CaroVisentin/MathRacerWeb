@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import medallaOro from "../../assets/images/medalla1.png";
 import medallaPlata from "../../assets/images/medalla2.png";
 import type { PlayerDto } from "../../models/domain/signalR/playerDto";
 import auto1 from "../../assets/images/auto.png";
 import mathi from "../../assets/images/mathi.png";
+import { useAudio } from "../../contexts/AudioContext";
+
 interface EndOfMultiplayerModeModalProps {
   players: PlayerDto[];
   won: boolean;
@@ -15,6 +17,8 @@ interface EndOfMultiplayerModeModalProps {
 export const EndOfMultiplayerModeModal: React.FC<
   EndOfMultiplayerModeModalProps
 > = ({ players, currentPlayer, onClose, onRetry }) => {
+  const { playWinnerSound, playGameOverSound } = useAudio();
+
   // position 1 = ganador
   const jugadoresOrdenados = [...players].sort(
     (a, b) => a.position - b.position
@@ -25,6 +29,15 @@ export const EndOfMultiplayerModeModal: React.FC<
 
   // Determinar si ganó (posición = 1)
   const won = jugadorActual?.position === 1;
+
+  // Reproducir sonido al montar el modal
+  useEffect(() => {
+    if (won) {
+      playWinnerSound();
+    } else {
+      playGameOverSound();
+    }
+  }, [won, playWinnerSound, playGameOverSound]);
 
   // Medallas por posición (solo ejemplo)
   const medallas = [medallaOro, medallaPlata];

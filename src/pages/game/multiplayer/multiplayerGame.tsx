@@ -1,6 +1,10 @@
 import { Link } from "react-router-dom";
 import { StarsBackground } from "../../../shared/backgrounds/starBackground";
+import { useAudio } from "../../../contexts/AudioContext";
+
 export const Menu = () => {
+  const { playButtonSound, playBackSound } = useAudio();
+
   return (
     // Contenedor principal
     <div className="h-screen w-screen bg-[#1C092D] flex flex-col items-center justify-between p-4 overflow-hidden">
@@ -16,6 +20,7 @@ export const Menu = () => {
         
         <Link
           to="/crear"
+          onClick={playButtonSound}
           className="botonGral uppercase tracking-wider transition-all duration-300 ease-out hover:drop-shadow-[0_0_10px_#00ffff] text-center text-5xl"
         >
           Crear Partida
@@ -23,6 +28,7 @@ export const Menu = () => {
 
         <Link
           to="/unirse-partida"
+          onClick={playButtonSound}
           className="botonGral uppercase hover:drop-shadow-[0_0_10px_#00ffff] text-center text-5xl"
         >
           Unirse a Partida
@@ -30,6 +36,7 @@ export const Menu = () => {
 
         <Link
           to="/invitar-amigo"
+          onClick={playButtonSound}
           className="botonGral uppercase hover:drop-shadow-[0_0_10px_#00ffff] text-center text-5xl"
         >
           Invitar a un Amigo
@@ -37,6 +44,7 @@ export const Menu = () => {
 
         <Link
           to="/ranking"
+          onClick={playButtonSound}
           className="botonGral uppercase hover:drop-shadow-[0_0_10px_#00ffff] text-center text-5xl"
         >
           Ranking
@@ -44,6 +52,7 @@ export const Menu = () => {
 
         <Link
           to="/partida-rapida"
+          onClick={playButtonSound}
           className="botonGral uppercase hover:drop-shadow-[0_0_10px_#00ffff] text-center col-span-2 justify-self-center w-1/2 text-5xl"
         >
           Partida Competitiva
@@ -53,6 +62,7 @@ export const Menu = () => {
       <div className="m-16">
         <Link
           to="/home"
+          onClick={playBackSound}
           className="bg-[#00f0ff] text-2xl border-2 border-white px-3 py-1
                 tracking-wider transition-all duration-300 
                  hover:bg-cyan-400 shadow-[0_0_10px_rgba(0,217,255,0.3)] 

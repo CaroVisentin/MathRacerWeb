@@ -1,6 +1,6 @@
 import React from "react";
 import { BackButton } from "../../../shared/buttons/backButton";
-import { useNavigate } from "react-router-dom";
+//import { useNavigate } from "react-router-dom";
 
 interface TabPanelProps {
     activeSection: "perfil" | "amigos" | "ajustes";
@@ -10,7 +10,7 @@ interface TabPanelProps {
 }
 
 export const TabPanel = ({ activeSection, setActiveSection }: TabPanelProps) => {
-    const navigate = useNavigate();
+   // const navigate = useNavigate();
     const tabs: { label: string; key: "perfil" | "amigos" | "ajustes" }[] = [
         { label: "Perfil", key: "perfil" },
         { label: "Amigos", key: "amigos" },
@@ -19,9 +19,7 @@ export const TabPanel = ({ activeSection, setActiveSection }: TabPanelProps) => 
 
     return (
         <div className="w-full flex items-center justify-between mb-8">
-            <BackButton
-                onClick={() => navigate(-1)}
-            />
+            <BackButton />
 
             {/* Tabs */}
             <div className="flex gap-6">
