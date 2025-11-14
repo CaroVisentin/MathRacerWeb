@@ -58,12 +58,11 @@ export default function CreateGame() {
       setError(null);
 
       const request: CreateCustomGameRequestDto = {
-        gameName: formData.nombrePartida,
-        isPrivate: formData.privacidad === 'privada',
-        //password: (formData.privacidad === 'privada' && formData.contraseña ? formData.contraseña : undefined),
-        difficulty: formData.dificultad,
-        expectedResult: formData.tipodeResultado,
-        ... (formData.privacidad === 'privada' && formData.contraseña ? { password: formData.contraseña } : {})
+        GameName: formData.nombrePartida,
+        IsPrivate: formData.privacidad === 'privada',
+        Difficulty: formData.dificultad,
+        ExpectedResult: formData.tipodeResultado,
+        ...(formData.privacidad === 'privada' && formData.contraseña ? { Password: formData.contraseña } : {})
       };
 console.log("Creando partida con datos:", request);
       const response = await createCustomGame(request);
@@ -140,9 +139,9 @@ console.log("Creando partida con datos:", request);
             onChange={handleChange}
             className="w-full mt-1 p-2 rounded bg-black/90 border border-gray-600"
           >
-            <option value="Facil">Fácil</option>
-            <option value="Medio">Medio</option>
-            <option value="Dificil">Difícil</option>
+            <option value="FACIL">Fácil</option>
+            <option value="MEDIO">Medio</option>
+            <option value="DIFICIL">Difícil</option>
           </select>
         </label>
         <label className="block text-3xl">
@@ -153,8 +152,8 @@ console.log("Creando partida con datos:", request);
             onChange={handleChange}
             className="w-full mt-1 p-2 rounded bg-black/90 border border-gray-600"
           >
-            <option value="Mayor">Mayor</option>
-            <option value="Menor">Menor</option>
+            <option value="MAYOR">Mayor</option>
+            <option value="MENOR">Menor</option>
            
           </select>
         </label>

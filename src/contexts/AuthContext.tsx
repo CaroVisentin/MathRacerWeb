@@ -48,24 +48,35 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
-        const token = await firebaseUser.getIdToken();
-        setAuthToken(token);
-
-        setUser({
-          id: 0,
-          email: firebaseUser.email || "",
-          username:
-            firebaseUser.displayName || firebaseUser.email?.split("@")[0] || "",
-        });
-
         try {
-          const stored = localStorage.getItem("player");
-          if (stored) {
-            const parsed = JSON.parse(stored);
-            setPlayer(toUiPlayer(parsed));
+          // Obtener token fresco de Firebase
+          const token = await firebaseUser.getIdToken(true); // true = force refresh
+          setAuthToken(token);
+
+          // Esperar explícitamente a que el token se configure
+          await new Promise(resolve => setTimeout(resolve, 100));
+
+          setUser({
+            id: 0,
+            email: firebaseUser.email || "",
+            username:
+              firebaseUser.displayName || firebaseUser.email?.split("@")[0] || "",
+          });
+
+          try {
+            const stored = localStorage.getItem("player");
+            if (stored) {
+              const parsed = JSON.parse(stored);
+              setPlayer(toUiPlayer(parsed));
+            }
+          } catch (e) {
+            console.warn("No se pudo restaurar el player del storage:", e);
           }
-        } catch (e) {
-          console.warn("No se pudo restaurar el player del storage:", e);
+        } catch (error) {
+          console.error("Error al configurar autenticación:", error);
+          setAuthToken(null);
+          setUser(null);
+          setPlayer(null);
         }
       } else {
         setAuthToken(null);
