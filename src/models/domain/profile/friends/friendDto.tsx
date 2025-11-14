@@ -8,5 +8,3 @@ export interface FriendDto {
     id: number;
   };
 }
-
-

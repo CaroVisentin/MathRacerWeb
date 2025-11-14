@@ -1,27 +1,42 @@
-import { batteryIcons } from "../../data/mocks/home";
+import { useMemo } from "react";
+import { useEnergy } from "../../hooks/useEnergy";
+import { batteryIcons } from "../../models/ui/home/batteryIcons";
 
-interface BatteryStatusProps {
-    levels: ("full" | "empty")[];
-    time: string;
-}
+export const BatteryStatus = () => {
+  const { currentAmount, maxAmount, secondsUntilNextRecharge } = useEnergy();
 
-export const BatteryStatus = ({ levels, time }: BatteryStatusProps) => (
+  // Calcular los niveles (baterías llenas vs vacías)
+  const levels = useMemo(() => {
+    const full = Array(currentAmount).fill("full");
+    const empty = Array(maxAmount - currentAmount).fill("empty");
+    return [...full, ...empty];
+  }, [currentAmount, maxAmount]);
+
+  // Formatear el tiempo restante
+  const time = useMemo(() => {
+    if (secondsUntilNextRecharge == null) return "--:--";
+    const m = Math.floor(secondsUntilNextRecharge / 60);
+    const s = secondsUntilNextRecharge % 60;
+    return `${m}:${s.toString().padStart(2, "0")}`;
+  }, [secondsUntilNextRecharge]);
+
+  return (
     <div className="flex items-end gap-3">
-        <div className="flex flex-col justify-space-between align-space-between">
-            <img src={batteryIcons.pilabolt} alt="bolt" className="h-4" />
-            <span className="text-base font-semibold h-4 text-white">{time}</span>
-        </div>
-        <div className="flex items-end gap-1">
-            {levels.map((lvl, i) => (
-                <img
-                    key={i}
-                    src={lvl === "full" ? batteryIcons.pila : batteryIcons.pilaempty}
-                    alt={lvl}
-                    className="w-4 h-8"
-                />
-            ))}
-        </div>
+      <div className="flex flex-col justify-space-between align-space-between">
+        <img src={batteryIcons.pilabolt} alt="bolt" className="h-4" />
+        <span className="text-base h-4 text-white">{time}</span>
+      </div>
 
+      <div className="flex items-end gap-1">
+        {levels.map((lvl, i) => (
+          <img
+            key={i}
+            src={lvl === "full" ? batteryIcons.pila : batteryIcons.pilaempty}
+            alt={lvl}
+            className="w-4 h-8"
+          />
+        ))}
+      </div>
     </div>
-);
-
+  );
+};

@@ -26,7 +26,7 @@ export interface SoloGameStatusResponseDto {
     elapsedTime: number;
 
     // Wildcards
-    availableWildcards: WildcardDto;
+    availableWildcards: WildcardDto[];
     usedWildcardTypes: number[];
     hasDoubleProgressActive: boolean;
     modifiedOptions?: number[];

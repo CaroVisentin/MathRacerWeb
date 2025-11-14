@@ -1,29 +1,17 @@
 import isologo from "/images/mathi_racer_logo.png";
-import auto from "../../assets/images/auto.png"
+import auto from "../../assets/images/auto.png";
 import { ActionButton } from "../../shared/buttons/actionButton";
 import { BatteryStatus } from "../../components/home/batteryStatus";
 import { CoinsDisplay } from "../../components/home/coinsDisplay";
 import { ProfileCard } from "../../components/home/profileCard";
 import { InfoBox } from "../../components/home/infoBox";
 import { CarDisplay } from "../../components/home/carDisplay";
-import { useState } from "react";
 import fondoHome from "../../assets/images/fondocity.png";
-import { Link,  } from "react-router-dom";
-import ErrorConnection from "../../shared/modals/errorConnection";
+import { Link } from "react-router-dom";
 import { useHomeData } from "../../hooks/useHomeData";
 
-
 export const Home = () => {
-  const [ errorMessage ] = useState("");
-  const [showErrorModal, setShowErrorModal] = useState(false); 
-  const {homeData} = useHomeData();
-  
-
- 
-
-  const handleCloseModal = () => {
-    setShowErrorModal(false);
-  };
+  const { homeData } = useHomeData();
 
   if (!homeData) {
     return (
@@ -32,8 +20,10 @@ export const Home = () => {
       </div>
     );
   }
+
   return (
     <div className="relative h-screen w-screen flex flex-col">
+      {/* Fondo del Home */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: `url(${fondoHome})` }}
@@ -42,17 +32,20 @@ export const Home = () => {
       </div>
 
       <div className="relative z-10 h-full flex flex-col">
-         <div className="absolute top-4 left-10">
+        {/* Isologo */}
+        <div className="absolute top-4 left-10">
+          <img
+            src={isologo}
+            alt="Math Racer"
+            className=" drop-shadow-[0_0_10px_#00ffff]"
+          />
+        </div>
 
-          <img src={isologo} alt="Math Racer" className=" drop-shadow-[0_0_10px_#00ffff]" />
-          
-        </div> 
-       
-
+        {/* Esquina superior derecha - Monedas, Perfil, Nivel y Ranking */}
         <div className="absolute top-4 right-4 flex flex-col items-end gap-3">
           <div className="flex items-start gap-5">
             <div className="flex flex-col gap-3">
-              <BatteryStatus levels={homeData.battery.levels} time={homeData.battery.time} />
+              <BatteryStatus />
               <CoinsDisplay coins={homeData.user.coins} />
             </div>
             <Link to="/perfil">
@@ -61,10 +54,9 @@ export const Home = () => {
           </div>
           <InfoBox>Nivel {homeData.user.level}</InfoBox>
           <InfoBox>{homeData.user.ranking}</InfoBox>
-          <p className="text-[#5df9f9] drop-shadow-[0_0_10px_#00ffff] text-3xl mt-2">Hola, {homeData.user.name} </p>
         </div>
 
-      
+        {/* Esquina inferior izquierda - Modos de juego */}
         <div className="flex flex-1 items-end justify-between px-4 pb-8">
           <div className="flex flex-col gap-3">
             <ActionButton to="/menu">Multijugador</ActionButton>
@@ -74,6 +66,7 @@ export const Home = () => {
             </ActionButton>
           </div>
 
+          {/* Esquina inferior derecha - Navegación a otras páginas */}
           <div className="flex flex-col gap-3 items-end">
             <ActionButton to="/ranking" size="small">
               <i className="ri-trophy-fill"></i>
@@ -89,20 +82,6 @@ export const Home = () => {
 
         <CarDisplay imageUrl={auto} />
       </div>
-
-      {showErrorModal && (
-        <ErrorConnection
-          message={errorMessage}
-          onClose={handleCloseModal}
-        />
-      )}
-
-      {showErrorModal && (
-        <ErrorConnection
-          message={errorMessage}
-          onClose={handleCloseModal}
-        />
-      )}
     </div>
   );
 };

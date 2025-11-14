@@ -1,7 +1,6 @@
-import type { FriendDto } from "../domain/friendDto";
-import type { PlayerProfileDto } from "../domain/playerProfileDto";
-import type { Friend } from "../ui/friend";
-
+import type { FriendDto } from "../domain/profile/friends/friendDto";
+import type { PlayerProfileDto } from "../domain/profile/playerProfileDto";
+import type { Friend } from "../ui/profile/friends/friend";
 
 export const friendMapper = {
   fromDto(dto: FriendDto): Friend {
@@ -28,5 +27,5 @@ export const friendMapper = {
       avatarUrl: `/images/characters/${dto.character.id}.png`,
       // carUrl: "/images/cars/1.png",
     };
-  }
+  },
 };

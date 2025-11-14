@@ -1,17 +1,21 @@
-import { createContext, useState, useEffect, type ReactNode } from 'react';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '../services/network/firebase';
-import type { AuthUser } from '../models/domain/authTypes';
-import { authService } from '../services/auth/authService';
-import { setAuthToken } from '../services/network/api';
-import type { Player } from '../models/ui/player';
+import { createContext, useState, useEffect, type ReactNode } from "react";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../services/network/firebase";
+import type { AuthUser } from "../models/domain/auth/authTypes";
+import { authService } from "../services/auth/authService";
+import { setAuthToken } from "../services/network/api";
+import type { Player } from "../models/ui/player/player";
 
 interface AuthContextType {
   user: AuthUser | null;
   loading: boolean;
   error: string | null;
   login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string, username: string) => Promise<void>;
+  register: (
+    email: string,
+    password: string,
+    username: string
+  ) => Promise<void>;
   loginWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
   player: Player | null;
@@ -29,12 +33,10 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     setPlayerState(updatedPlayer);
   };
 
-
-  
   const toUiPlayer = (data: Player): Player => ({
     id: data?.id ?? 0,
-    name: data?.name ?? '',
-    email: data?.email ?? '',
+    name: data?.name ?? "",
+    email: data?.email ?? "",
     lastlevelId: data?.lastlevelId ?? data?.lastlevelId ?? 1,
     points: data?.points ?? 0,
     coins: data?.coins ?? 0,
@@ -43,38 +45,36 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     character: data?.character || null,
   });
 
-
-
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
-        const token = await firebaseUser.getIdToken(); 
+        const token = await firebaseUser.getIdToken();
         setAuthToken(token);
 
         setUser({
-          id: 0, 
+          id: 0,
           email: firebaseUser.email || "",
-          username: firebaseUser.displayName || firebaseUser.email?.split("@")[0] || "",
+          username:
+            firebaseUser.displayName || firebaseUser.email?.split("@")[0] || "",
         });
 
-        
         try {
-          const stored = localStorage.getItem('player');
+          const stored = localStorage.getItem("player");
           if (stored) {
             const parsed = JSON.parse(stored);
             setPlayer(toUiPlayer(parsed));
           }
         } catch (e) {
-          console.warn('No se pudo restaurar el player del storage:', e);
+          console.warn("No se pudo restaurar el player del storage:", e);
         }
       } else {
         setAuthToken(null);
         setUser(null);
         setPlayer(null);
         try {
-          localStorage.removeItem('player');
+          localStorage.removeItem("player");
         } catch (e) {
-          console.warn('No se pudo eliminar player del storage', e);
+          console.warn("No se pudo eliminar player del storage", e);
         }
       }
       setLoading(false);
@@ -93,34 +93,42 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       const uiPlayer = toUiPlayer(userData);
       setPlayer(uiPlayer);
       try {
-        localStorage.setItem('player', JSON.stringify(uiPlayer));
+        localStorage.setItem("player", JSON.stringify(uiPlayer));
       } catch (e) {
-        console.warn('No se pudo guardar el player en el storage:',e);
+        console.warn("No se pudo guardar el player en el storage:", e);
       }
     } catch (err) {
-      setError('Error al iniciar sesión');
+      setError("Error al iniciar sesión");
       throw err;
     } finally {
       setLoading(false);
     }
   };
 
-  const register = async (email: string, password: string, username: string) => {
+  const register = async (
+    email: string,
+    password: string,
+    username: string
+  ) => {
     try {
       setError(null);
       setLoading(true);
-      const userData = await authService.registerWithEmail(email, password, username);
+      const userData = await authService.registerWithEmail(
+        email,
+        password,
+        username
+      );
       setUser(userData);
       const uiPlayer = toUiPlayer(userData);
       setPlayer(uiPlayer);
       try {
-        localStorage.setItem('player', JSON.stringify(uiPlayer));
+        localStorage.setItem("player", JSON.stringify(uiPlayer));
       } catch (e) {
-        console.warn('No se pudo guardar en el storage:',e);
+        console.warn("No se pudo guardar en el storage:", e);
       }
     } catch (err) {
-      setError('Error al registrar usuario');
-      
+      setError("Error al registrar usuario");
+
       throw err;
     } finally {
       setLoading(false);
@@ -136,29 +144,31 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       const uiPlayer = toUiPlayer(userData);
       setPlayer(uiPlayer);
       try {
-        localStorage.setItem('player', JSON.stringify(uiPlayer));
+        localStorage.setItem("player", JSON.stringify(uiPlayer));
       } catch (e) {
-        console.warn('No se pudo guardar el player en el storage:',e)
+        console.warn("No se pudo guardar el player en el storage:", e);
       }
     } catch (err) {
-      setError('Error al iniciar sesión con Google');
+      setError("Error al iniciar sesión con Google");
       throw err;
     } finally {
       setLoading(false);
     }
   };
- 
+
   const logout = async () => {
     try {
       await authService.logout();
       setUser(null);
       //agreuge
       setPlayer(null);
-      try { localStorage.removeItem('player'); } catch (e) {
-          console.warn('No se pudo eliminar el player del storage:', e);
-        }
+      try {
+        localStorage.removeItem("player");
+      } catch (e) {
+        console.warn("No se pudo eliminar el player del storage:", e);
+      }
     } catch (err) {
-      setError('Error al cerrar sesión');
+      setError("Error al cerrar sesión");
       throw err;
     }
   };

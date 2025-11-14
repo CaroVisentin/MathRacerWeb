@@ -106,7 +106,6 @@ const router = createBrowserRouter([
   {
     path: "/tutorial",
     element: <ProtectedRoute> <TutorialPage /> </ProtectedRoute>
-    //element:  <TutorialPage />   
   },
 ]);
 
