@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { StarsBackground } from "../../../shared/backgrounds/starBackground";
 import { useAudio } from "../../../contexts/AudioContext";
-
+import mathi from "../../../assets/images/mathi.png";
 export const Menu = () => {
   const { playButtonSound, playBackSound } = useAudio();
 
@@ -11,6 +11,7 @@ export const Menu = () => {
       <div className="absolute inset-0 z-0 pointer-events-none">
         <StarsBackground />
       </div>
+      <img src={mathi} alt="Mathi" className="absolute top-4 left-4 w-20 h-20 z-10 " />
 
       <h1 className="text-pink-400 text-8xl text-center uppercase tracking-wide mb-12 drop-shadow-[0_0_10px_#00ffff]">
         Multijugador

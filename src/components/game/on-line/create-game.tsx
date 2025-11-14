@@ -7,6 +7,8 @@ import { createCustomGame } from "../../../services/game/onlineService";
 import ErrorConnection from "../../../shared/modals/errorConnection";
 import type { CreateCustomGameRequestDto } from "../../../models/domain/signalR/createCustomGameDto";
 import { useAudio } from "../../../contexts/AudioContext";
+import mathi from "../../../assets/images/mathi.png";
+
 export default function CreateGame() {
   const { player } = usePlayer();
   const navigate = useNavigate();
@@ -96,9 +98,11 @@ console.log("Creando partida con datos:", request);
     //   style={{ backgroundImage: `url(${StarsBackground})` }}
     // >
     <div className="h-screen w-screen bg-[#1C092D] flex  items-center justify-center p-4 overflow-hidden">
-      <div className="absolute inset-0 z-0 pointer-events-none">
+          <div className="absolute inset-0 z-0 pointer-events-none">
+        
         <StarsBackground />
       </div>
+      <img src={mathi} alt="Mathi" className="absolute top-4 left-4 w-20 h-20 z-10" />
 
       <form onSubmit={handleSubmit}
         className="w-full max-w-2xl mx-auto bg-black/90 text-[#5df9f9] p-6 pb-2 rounded-lg shadow-lg ">

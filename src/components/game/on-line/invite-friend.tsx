@@ -2,6 +2,7 @@
 import { StarsBackground } from "../../../shared/backgrounds/starBackground";
 import { Link } from 'react-router-dom';
 import { useAudio } from "../../../contexts/AudioContext";
+import mathi from "../../../assets/images/mathi.png";
 export default function InviteFriends ()  {
   const friends = [
     { name: 'Amigo 1', score: 1200, avatar: '🧑' },
@@ -19,6 +20,7 @@ export default function InviteFriends ()  {
       <div className="absolute inset-0 z-0 pointer-events-none">
         <StarsBackground />
       </div>
+      <img src={mathi} alt="Mathi" className="absolute top-4 left-4 w-20 h-20 z-10" />
 
     <div className="w-full max-w-5xl mx-auto bg-black/90 text-[#5df9f9] p-6 pb-2 rounded-lg shadow-lg ">
       <h1 className="text-6xl text-[#f95ec8] uppercase text-center mb-10 pb-5 drop-shadow-[0_0_10px_#00ffff] ">Invitar amigo</h1>

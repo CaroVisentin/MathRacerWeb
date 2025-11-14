@@ -5,6 +5,7 @@ import { usePlayer } from "../../../hooks/usePlayer";
 import { useConnection } from "../../../services/signalR/connection";
 import ErrorConnection from "../../../shared/modals/errorConnection";
 import { useAudio } from "../../../contexts/AudioContext";
+import mathi from "../../../assets/images/mathi.png";
 export const QuickGame: React.FC = () => {
   const { player } = usePlayer();
   const navigate = useNavigate();
@@ -81,6 +82,7 @@ export const QuickGame: React.FC = () => {
       <div className="absolute inset-0 z-0 pointer-events-none">
         <StarsBackground />
       </div>
+      <img src={mathi} alt="Mathi" className="absolute top-4 left-4 w-20 h-20 z-10 correr-imagen" />
 
       <div className="w-full max-w-2xl mx-auto bg-black/90 text-[#5df9f9] p-8 rounded-lg shadow-lg relative z-10">
         <h1 className="text-6xl text-[#f95ec8] uppercase text-center mb-10 drop-shadow-[0_0_10px_#00ffff]">
