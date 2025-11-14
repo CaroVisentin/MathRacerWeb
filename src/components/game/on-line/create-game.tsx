@@ -15,8 +15,8 @@ export default function CreateGame() {
     nombrePartida: '',
     privacidad: 'publica',
     contraseña: '',
-    dificultad: 'Facil' as "Facil" | "Medio" | "Dificil",
-    tipodeResultado: 'Mayor' as "Mayor" | "Menor" ,
+    dificultad: 'FACIL' as "FACIL" | "MEDIO" | "DIFICIL",
+    tipodeResultado: 'MAYOR' as "MAYOR" | "MENOR" ,
   });
 
   const [loading, setLoading] = useState(false);
@@ -58,11 +58,13 @@ export default function CreateGame() {
       setError(null);
 
       const request: CreateCustomGameRequestDto = {
-        GameName: formData.nombrePartida,
-        IsPrivate: formData.privacidad === 'privada',
-        Difficulty: formData.dificultad,
-        ExpectedResult: formData.tipodeResultado,
-        ...(formData.privacidad === 'privada' && formData.contraseña ? { Password: formData.contraseña } : {})
+        gameName: formData.nombrePartida,
+        isPrivate: formData.privacidad === 'privada',
+        //password: (formData.privacidad === 'privada' && formData.contraseña ? formData.contraseña : undefined),
+        ... (formData.privacidad === 'privada' && formData.contraseña ? { password: formData.contraseña } : {}),
+        difficulty: formData.dificultad,
+        expectedResult: formData.tipodeResultado,
+        
       };
 console.log("Creando partida con datos:", request);
       const response = await createCustomGame(request);
@@ -70,8 +72,12 @@ console.log("Creando partida con datos:", request);
       console.log("Partida creada:", response);
       
       // Navegar a la pantalla del juego multijugador con el gameId
-      // El jugador será el creador (Player 1) y esperará a que otro jugador se una
-      navigate(`/multijugador/${response.gameId}`);
+      // Pasar la contraseña en el state si la partida es privada
+      navigate(`/multijugador/${response.gameId}`, {
+        state: { 
+          password: formData.privacidad === 'privada' ? formData.contraseña : undefined 
+        }
+      });
 
     } catch (err: any) {
       console.error("Error al crear partida:", err);
@@ -139,9 +145,9 @@ console.log("Creando partida con datos:", request);
             onChange={handleChange}
             className="w-full mt-1 p-2 rounded bg-black/90 border border-gray-600"
           >
-            <option value="FACIL">Fácil</option>
-            <option value="MEDIO">Medio</option>
-            <option value="DIFICIL">Difícil</option>
+            <option value="Facil">Fácil</option>
+            <option value="Medio">Medio</option>
+            <option value="Dificil">Difícil</option>
           </select>
         </label>
         <label className="block text-3xl">
@@ -152,8 +158,8 @@ console.log("Creando partida con datos:", request);
             onChange={handleChange}
             className="w-full mt-1 p-2 rounded bg-black/90 border border-gray-600"
           >
-            <option value="MAYOR">Mayor</option>
-            <option value="MENOR">Menor</option>
+            <option value="Mayor">Mayor</option>
+            <option value="Menor">Menor</option>
            
           </select>
         </label>

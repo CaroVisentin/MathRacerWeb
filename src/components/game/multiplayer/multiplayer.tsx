@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import type { QuestionDto } from "../../../models/domain/signalR/questionDto";
 import { LookingForRivalModal } from "../../../shared/modals/lookingForRivalModal";
@@ -25,9 +25,13 @@ const fondos = [
 
 export const MultiplayerGame = () => {
   const { gameId } = useParams<{ gameId: string }>();
+  const location = useLocation();
   const { player } = usePlayer();
   const navigate = useNavigate();
-  const { errorConexion, invoke, on, off } = useConnection();
+  const { conn, errorConexion, invoke, on, off } = useConnection();
+  
+  // Obtener la contraseña del state si fue pasada desde create-game o join-game
+  const password = location.state?.password as string | undefined;
   const [ecuacion, setEcuacion] = useState<QuestionDto>();
   const [opciones, setOpciones] = useState<number[]>();
   const [respuestaSeleccionada, setRespuestaSeleccionada] = useState<
@@ -56,24 +60,43 @@ export const MultiplayerGame = () => {
   const nombreJugador = player?.name || "";
 
   const conectarJugador = useCallback(async () => {
+    // Verificar que la conexión esté establecida
+    if (!conn || conn.state !== "Connected") {
+      console.log("Esperando a que la conexión SignalR esté lista...");
+      return;
+    }
+
+    console.log("=== DATOS PARA CONEXIÓN ===");
+    console.log("GameId:", gameId);
+    console.log("Player completo:", player);
+    console.log("Nombre jugador:", nombreJugador);
+
     // Si hay gameId en la URL, unirse a esa partida específica
     if (gameId) {
       const partidaIdNum = parseInt(gameId, 10);
-      if (!isNaN(partidaIdNum) && player?.id) {
+      if (!isNaN(partidaIdNum)) {
         try {
-          await invoke("JoinGame", partidaIdNum, player.id);
+          console.log(`Llamando JoinGame con gameId=${partidaIdNum}, password=${password || 'null'}`);
+          // JoinGame solo necesita gameId y password (opcional)
+          // El backend obtiene el firebaseUid del token JWT automáticamente
+          await invoke("JoinGame", partidaIdNum, password || null);
           setPartidaId(partidaIdNum);
-        } catch (error) {
+          console.log("JoinGame exitoso");
+        } catch (error: any) {
           console.error("Error al unirse a la partida:", error);
+          console.error("Detalles del error:", error.message);
         }
+      } else {
+        console.error("GameId inválido:", gameId);
       }
     } else {
       // Si no hay gameId, buscar partida rápida (matchmaking)
       if (nombreJugador.trim()) {
+        console.log(`Buscando partida rápida para ${nombreJugador}`);
         await invoke("FindMatch", nombreJugador);
       }
     }
-  }, [gameId, player, nombreJugador, invoke]);
+  }, [gameId, player, nombreJugador, invoke, conn]);
 
   const reiniciarJuego = () => {
     setGanador(false);
@@ -177,17 +200,19 @@ export const MultiplayerGame = () => {
     setTimeout(() => sendAnswer(opcion), 200);
   };
 
-  // Conectar automáticamente cuando el componente se monte y tengamos el nombre del jugador
+  // Conectar automáticamente cuando el componente se monte y la conexión esté lista
   useEffect(() => {
-    if (nombreJugador && !partidaId) {
+    if (conn && conn.state === "Connected" && nombreJugador && !partidaId) {
+      console.log("Conexión establecida, intentando conectar jugador...");
       conectarJugador();
     }
-  }, [nombreJugador, partidaId, conectarJugador]);
+  }, [conn, conn?.state, nombreJugador, partidaId, conectarJugador]);
 
   useEffect(() => {
-    if (!useConnection) return; // Esperar a que la conexión esté inicializada
+    if (!conn) return; // Esperar a que la conexión esté inicializada
 
     const gameUpdateHandler = (data: GameUpdateDto) => {
+      console.log("GameUpdate recibido:", data);
       setJugadoresPartida(data.players);
 
       const jugadorActual = data.players.find(
@@ -252,14 +277,39 @@ export const MultiplayerGame = () => {
       }
     };
 
+    // Handler para errores del servidor
+    const errorHandler = (message: string) => {
+      console.error("Error del servidor SignalR:", message);
+      alert(`Error: ${message}`);
+      // Volver al menú si hay un error crítico
+      navigate("/menu");
+    };
+
     // Registrar el listener para "GameUpdate"
     on("GameUpdate", gameUpdateHandler);
+    
+    // Registrar listeners para errores (el backend puede usar "Error" o "error")
+    on("Error", errorHandler);
+    on("error", errorHandler);
+    
     // on("PowerUpUsed", powerUpUsedHandler);
 
+    // Manejar errores del servidor
+    if (conn) {
+      conn.onclose((error) => {
+        console.error("Conexión SignalR cerrada:", error);
+        setBuscandoRival(false);
+      });
+    }
+
     // Función de limpieza para quitar el listener
-    return () => off("GameUpdate", gameUpdateHandler);
-    //  off("PowerUpUsed", powerUpUsedHandler);
-  }, [on, off, nombreJugador]); // Depende de 'connection' y 'nombreJugador'
+    return () => {
+      off("GameUpdate", gameUpdateHandler);
+      off("Error", errorHandler);
+      off("error", errorHandler);
+      //  off("PowerUpUsed", powerUpUsedHandler);
+    };
+  }, [conn, on, off, nombreJugador, navigate]); // Depende de 'connection' y 'nombreJugador'
 
   useEffect(() => {
     const indexJugador = Math.floor(Math.random() * fondos.length);

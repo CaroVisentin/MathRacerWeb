@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { StarsBackground } from "../../../shared/backgrounds/starBackground";
-import { getAvailableGames, joinGame } from "../../../services/game/onlineService";
+import { getAvailableGames } from "../../../services/game/onlineService";
 import type { AvailableGameDto } from "../../../models/domain/signalR/availbleGameDto";
 import ErrorConnection from "../../../shared/modals/errorConnection";
 
@@ -24,6 +24,8 @@ export default function JoinGame() {
 
   // Cargar partidas disponibles al montar el componente
   useEffect(() => {
+    console.log("=== JOIN GAME COMPONENT MOUNTED ===");
+    console.log("VITE_API_URL:", import.meta.env.VITE_API_URL);
     loadGames();
   }, []);
 
@@ -76,15 +78,24 @@ export default function JoinGame() {
   const handleJoinGame = async (gameId: number, pwd?: string) => {
     try {
       setLoading(true);
-      await joinGame({ gameId, password: pwd });
+      console.log("=== HANDLE JOIN GAME ===");
+      console.log("GameId:", gameId);
+      console.log("Password:", pwd);
+      
+      // NO hacer petición HTTP, solo navegar al juego
+      // El componente multiplayer.tsx se encargará de hacer JoinGame por SignalR
+      console.log("Navegando a multiplayer para unirse por SignalR...");
       
       // Navegar a la pantalla del juego multijugador con el gameId
-      // El jugador se unirá como Player 2
-      navigate(`/multijugador/${gameId}`);
+      // Pasar la contraseña en el state si existe
+      navigate(`/multijugador/${gameId}`, {
+        state: { password: pwd }
+      });
       
     } catch (err: any) {
       console.error("Error al unirse a la partida:", err);
-      setError(err.response?.data?.error || "No se pudo unir a la partida");
+      console.error("Error completo:", err);
+      setError(err.response?.data?.error || err.message || "No se pudo unir a la partida");
       setShowModal(true);
     } finally {
       setLoading(false);
