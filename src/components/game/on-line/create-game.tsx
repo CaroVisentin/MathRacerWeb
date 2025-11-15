@@ -1,10 +1,10 @@
 
 import { useState } from "react";
-import fondoPartida from '../../../assets/images/partidas.png';
+
 import { useConnection } from '../../../services/signalR/connection';
 import ErrorConnection from "../../../shared/modals/errorConnection";
 import { Link } from "react-router-dom";
-
+import { StarsBackground } from "../../../shared/backgrounds/starBackground";
 export default function CreateGame() {
 
   const [formData, setFormData] = useState({
@@ -41,14 +41,18 @@ export default function CreateGame() {
 
   return (
 
-    <div
-      className="min-h-screen flex items-center justify-center bg-cover bg-center bg-no-repeat px-2"
-      style={{ backgroundImage: `url(${fondoPartida})` }}
-    >
+    // <div
+    //   className="min-h-screen flex items-center justify-center bg-cover bg-center bg-no-repeat px-2"
+    //   style={{ backgroundImage: `url(${StarsBackground})` }}
+    // >
+    <div className="h-screen w-screen bg-[#1C092D] flex  items-center justify-center p-4 overflow-hidden">
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        <StarsBackground />
+      </div>
 
       <form onSubmit={handleSubmit}
         className="w-full max-w-2xl mx-auto bg-black/90 text-[#5df9f9] p-6 pb-2 rounded-lg shadow-lg ">
-        <h2 className="text-5xl text-[#f95ec8] uppercase text-center mb-10 pb-5 drop-shadow-[0_0_10px_#00ffff] font-audiowide">Crear Partida</h2>
+        <h2 className="text-6xl text-[#f95ec8] uppercase text-center mb-10 pb-5 drop-shadow-[0_0_10px_#00ffff]">Crear Partida</h2>
 
         <label className="block text-3xl font-normal ">
           Nombre de la Partida:
@@ -113,10 +117,10 @@ export default function CreateGame() {
         <div className="flex justify-between mt-6 pt-5 border-t border-gray-700">
           <Link to="/menu"
             
-            className="bg-[#5df9f9] text-black font-extralight hover:bg-red-700 w-30 h-10 px-4 content-center rounded text-2xl hover:drop-shadow-[0_0_10px_#00ffff]">← Volver</Link>
+            className="bg-[#5df9f9] text-black  border-2 border-white hover:bg-red-700 w-30 h-10 px-4 content-center rounded text-2xl hover:drop-shadow-[0_0_10px_#00ffff]">← Volver</Link>
           <button
             type="submit"
-            className="bg-[#5df9f9] text-black font-extralight hover:bg-[#f95ec8] w-30 h-10 px-4  rounded text-2xl leading-relaxed hover:drop-shadow-[0_0_10px_#00ffff]">Crear</button>
+            className="bg-[#5df9f9] text-black  border-2 border-white hover:bg-[#f95ec8] w-30 h-10 px-4  rounded text-2xl leading-relaxed hover:drop-shadow-[0_0_10px_#00ffff]">Crear</button>
 
         </div>
       </form>
