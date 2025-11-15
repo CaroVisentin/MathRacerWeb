@@ -55,6 +55,7 @@ export const MultiplayerGame = () => {
   const [powerUsePosition, setPowerUsePosition] = useState(false);
   const [powerUseOrden, setPowerUseOrden] = useState(false);
   const [mensajeComodin, setMensajeComodin] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   // Usar el nombre del jugador desde el contexto
   const nombreJugador = player?.name || "";
@@ -62,41 +63,63 @@ export const MultiplayerGame = () => {
   const conectarJugador = useCallback(async () => {
     // Verificar que la conexión esté establecida
     if (!conn || conn.state !== "Connected") {
-      console.log("Esperando a que la conexión SignalR esté lista...");
+      console.log("⏳ Esperando a que la conexión SignalR esté lista...");
       return;
     }
 
-    console.log("=== DATOS PARA CONEXIÓN ===");
-    console.log("GameId:", gameId);
-    console.log("Player completo:", player);
+    // Evitar llamadas duplicadas
+    if (partidaId) {
+      console.log("✅ Ya conectado a la partida", partidaId);
+      return;
+    }
+
+    console.log("=== INICIANDO CONEXIÓN A PARTIDA ===");
+    console.log("GameId desde URL:", gameId);
+    console.log("Player:", player);
     console.log("Nombre jugador:", nombreJugador);
+    console.log("Estado conexión SignalR:", conn.state);
 
     // Si hay gameId en la URL, unirse a esa partida específica
     if (gameId) {
       const partidaIdNum = parseInt(gameId, 10);
       if (!isNaN(partidaIdNum)) {
         try {
-          console.log(`Llamando JoinGame con gameId=${partidaIdNum}, password=${password || 'null'}`);
+          console.log(`🎮 Llamando JoinGame con gameId=${partidaIdNum}, password=${password ? '***' : 'null'}`);
+          
           // JoinGame solo necesita gameId y password (opcional)
           // El backend obtiene el firebaseUid del token JWT automáticamente
           await invoke("JoinGame", partidaIdNum, password || null);
+          
           setPartidaId(partidaIdNum);
-          console.log("JoinGame exitoso");
+          console.log("✅ JoinGame exitoso - esperando GameUpdate del servidor");
         } catch (error: any) {
-          console.error("Error al unirse a la partida:", error);
+          console.error("❌ Error al unirse a la partida:", error);
           console.error("Detalles del error:", error.message);
+          
+          // Mostrar error al usuario y volver al menú
+          setError(error.message || "No se pudo unir a la partida");
+          setTimeout(() => {
+            navigate('/menu');
+          }, 2000);
         }
       } else {
-        console.error("GameId inválido:", gameId);
+        console.error("❌ GameId inválido:", gameId);
+        navigate('/menu');
       }
     } else {
       // Si no hay gameId, buscar partida rápida (matchmaking)
       if (nombreJugador.trim()) {
-        console.log(`Buscando partida rápida para ${nombreJugador}`);
-        await invoke("FindMatch", nombreJugador);
+        console.log(`🔍 Buscando partida rápida para ${nombreJugador}`);
+        try {
+          await invoke("FindMatch", nombreJugador);
+          console.log("✅ Búsqueda de partida rápida iniciada");
+        } catch (error: any) {
+          console.error("❌ Error en FindMatch:", error);
+          setError("No se pudo buscar partida");
+        }
       }
     }
-  }, [gameId, player, nombreJugador, invoke, conn]);
+  }, [gameId, player, nombreJugador, password, invoke, conn, partidaId, navigate]);
 
   const reiniciarJuego = () => {
     setGanador(false);
@@ -202,9 +225,25 @@ export const MultiplayerGame = () => {
 
   // Conectar automáticamente cuando el componente se monte y la conexión esté lista
   useEffect(() => {
-    if (conn && conn.state === "Connected" && nombreJugador && !partidaId) {
-      console.log("Conexión establecida, intentando conectar jugador...");
+    // Condiciones para intentar conectar:
+    // 1. Conexión SignalR establecida
+    // 2. Tenemos el nombre del jugador
+    // 3. No estamos ya conectados a una partida
+    const shouldConnect = 
+      conn && 
+      conn.state === "Connected" && 
+      nombreJugador.trim() !== "" && 
+      !partidaId;
+
+    if (shouldConnect) {
+      console.log("✅ Condiciones cumplidas - conectando jugador...");
       conectarJugador();
+    } else {
+      console.log("⏸️ Esperando condiciones:", {
+        conexionActiva: conn?.state === "Connected",
+        tieneNombre: nombreJugador.trim() !== "",
+        noConectado: !partidaId
+      });
     }
   }, [conn, conn?.state, nombreJugador, partidaId, conectarJugador]);
 
@@ -349,13 +388,29 @@ export const MultiplayerGame = () => {
       )}
 
       {/* Mensaje de espera cuando hay gameId pero aún busca rival */}
-      {buscandoRival && gameId && (
+      {buscandoRival && gameId && !error && (
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80">
           <div className="bg-black/90 border-2 border-cyan-400 rounded-lg p-8 text-center">
             <div className="animate-spin rounded-full h-20 w-20 border-t-4 border-b-4 border-[#5df9f9] mx-auto mb-4"></div>
             <h2 className="text-3xl text-[#f95ec8] mb-4">Esperando rival...</h2>
             <p className="text-white text-xl">{nombreJugador}</p>
             <p className="text-gray-400 mt-2">Partida ID: {gameId}</p>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de error de conexión */}
+      {error && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80">
+          <div className="bg-black/90 border-2 border-red-500 rounded-lg p-8 text-center max-w-md">
+            <h2 className="text-3xl text-red-500 mb-4">❌ Error</h2>
+            <p className="text-white text-xl mb-6">{error}</p>
+            <button
+              onClick={() => navigate('/menu')}
+              className="bg-[#5df9f9] text-black px-6 py-3 rounded text-xl hover:bg-[#f95ec8] transition-colors"
+            >
+              Volver al Menú
+            </button>
           </div>
         </div>
       )}

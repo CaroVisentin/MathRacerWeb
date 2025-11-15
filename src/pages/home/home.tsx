@@ -12,7 +12,7 @@ import fondoHome from "../../assets/images/fondocity.png";
 import { Link } from "react-router-dom";
 import { useHomeData } from "../../hooks/useHomeData";
 //import { useAuth } from "../../hooks/useAuth";
-import mathi from "../../assets/images/mathi.png";
+import mathi from "../../assets/images/mathisentado.png";
 
 
 export const Home = () => {
@@ -61,7 +61,7 @@ export const Home = () => {
           <InfoBox>{homeData.user.ranking}</InfoBox>
           <p className="text-[#5df9f9] drop-shadow-[0_0_10px_#00ffff] text-3xl mt-2">Hola, {homeData.user.name} 👋</p>
         </div>
-        <img src={mathi} alt="Mathi" className="absolute top-80 left-190 w-30 h-30 z-10 drop-shadow-[0_0_10px_#00ffff] " />
+        <img src={mathi} alt="Mathi" className="absolute top-80 left-190 w-40 h-40 z-10 drop-shadow-[0_0_10px_#00ffff] " />
 
         {/* Esquina inferior izquierda - Modos de juego */}
         <div className="flex flex-1 items-end justify-between px-4 pb-8">

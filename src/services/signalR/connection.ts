@@ -1,7 +1,7 @@
 import { HubConnection, HubConnectionBuilder, LogLevel, HubConnectionState } from "@microsoft/signalr";
 import { signalRUrl } from "../network/signalR";
 import { useEffect, useState } from "react";
-import { getAuth } from "firebase/auth";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 
 export const useConnection = () => {
@@ -12,24 +12,27 @@ export const useConnection = () => {
     useEffect(() => {
         const auth = getAuth();
 
-        const newConnection = new HubConnectionBuilder()
-            .withUrl(signalRUrl, {
-                // Adjunta el token de Firebase a todas las conexiones (negotiate y websockets)
-                accessTokenFactory: async () => {
-                    const user = auth.currentUser;
-                    if (user) {
-                        return await user.getIdToken();
-                    }
-                    return ""; // sin token ⇒ el backend debe permitir público para ciertos métodos
-                },
-            })
-            .configureLogging(LogLevel.Information)
-            .withAutomaticReconnect()
-            .build();
+        let activeConnection: HubConnection | null = null;
 
-        setConn(newConnection);
+        const buildAndStart = async () => {
+            const newConnection = new HubConnectionBuilder()
+                .withUrl(signalRUrl, {
+                    accessTokenFactory: async () => {
+                        const user = auth.currentUser;
+                        if (user) {
+                            // token fresco para asegurar validez en el hub
+                            return await user.getIdToken(true);
+                        }
+                        return "";
+                    },
+                })
+                .configureLogging(LogLevel.Information)
+                .withAutomaticReconnect()
+                .build();
 
-        const start = async () => {
+            setConn(newConnection);
+            activeConnection = newConnection;
+
             try {
                 await newConnection.start();
                 setErrorConexion(null);
@@ -37,19 +40,35 @@ export const useConnection = () => {
                 console.error("Error al iniciar SignalR:", err);
                 setErrorConexion("Error al iniciar la conexión con SignalR.");
             }
+
+            newConnection.onreconnected(() => setErrorConexion(null));
+            newConnection.onclose(() => setErrorConexion("Conexión con SignalR cerrada."));
         };
 
-        // Reintentos básicos durante reconexiones automáticas
-        newConnection.onreconnected(() => setErrorConexion(null));
-        newConnection.onclose(() => {
-            // El hook de reconexión automática intentará restablecer; si no, mostramos error
-            setErrorConexion("Conexión con SignalR cerrada.");
+        // Iniciar la conexión cuando haya usuario autenticado
+        const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+            if (firebaseUser) {
+                // Si hay una conexión previa sin token, detenerla y reconstruir
+                if (activeConnection) {
+                    try { await activeConnection.stop(); } catch { /* ignore */ }
+                    activeConnection = null;
+                }
+                await buildAndStart();
+            } else {
+                // Sin usuario ⇒ detener conexión si existiera
+                if (activeConnection) {
+                    try { await activeConnection.stop(); } catch { /* ignore */ }
+                    activeConnection = null;
+                }
+                setConn(null);
+            }
         });
 
-        void start();
-
         return () => {
-            void newConnection.stop();
+            unsubscribe();
+            if (activeConnection) {
+                void activeConnection.stop();
+            }
         };
     }, []);
 

@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { StarsBackground } from "../../../shared/backgrounds/starBackground";
 import { usePlayer } from "../../../hooks/usePlayer";
-import { createCustomGame } from "../../../services/game/onlineService";
+import { createCustomGame } from "../../../services/game/multiplayer-mode/onlineService";
 import ErrorConnection from "../../../shared/modals/errorConnection";
 import type { CreateCustomGameRequestDto } from "../../../models/domain/signalR/createCustomGameDto";
 import { useAudio } from "../../../contexts/AudioContext";

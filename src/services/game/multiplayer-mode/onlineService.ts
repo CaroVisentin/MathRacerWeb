@@ -1,10 +1,9 @@
-import type { AvailableGamesResponseDto } from "../../models/domain/signalR/availableGameRespDto";
-import type { CreateCustomGameRequestDto } from "../../models/domain/signalR/createCustomGameDto";
-import type { CreateGameResponseDto } from "../../models/domain/signalR/createGameRespDto";
-import type { JoinGameRequestDto } from "../../models/domain/signalR/joinGameDto";
-import type { OnlineGameDto } from "../../models/domain/signalR/onlineGameDto";
-import type { SignalRConnectionInfo } from "../../models/domain/signalR/signalConnectionInfo";
-import { api, API_URLS } from "../network/api";
+import type { AvailableGamesResponseDto } from "../../../models/domain/signalR/availableGameRespDto";
+import type { CreateCustomGameRequestDto } from "../../../models/domain/signalR/createCustomGameDto";
+import type { CreateGameResponseDto } from "../../../models/domain/signalR/createGameRespDto";
+import type { OnlineGameDto } from "../../../models/domain/signalR/onlineGameDto";
+import type { SignalRConnectionInfo } from "../../../models/domain/signalR/signalConnectionInfo";
+import { api, API_URLS } from "../../network/api";
 
 
 /**
@@ -51,7 +50,7 @@ export async function getGameInfo(gameId: number): Promise<OnlineGameDto> {
 export async function createCustomGame(request: CreateCustomGameRequestDto): Promise<CreateGameResponseDto> {
     try {
         // Importar getAuthToken desde api.ts
-        const { getAuthToken } = await import('../network/api');
+        const { getAuthToken } = await import('../../network/api');
         
         // Asegurarse de que el token esté actualizado antes de hacer la petición
         await getAuthToken();
@@ -63,29 +62,6 @@ export async function createCustomGame(request: CreateCustomGameRequestDto): Pro
     } catch (error: any) {
         console.error("Error al crear partida:", error);
         console.error("Detalles del error:", error.response?.data);
-        throw error;
-    }
-}
-
-/**
- * Une al jugador a una partida existente
- * @param request Datos para unirse (gameId y password opcional)
- * @returns Información de la partida
- */
-export async function joinGame(request: JoinGameRequestDto): Promise<OnlineGameDto> {
-    try {
-        console.log("=== JOIN GAME SERVICE ===");
-        console.log("Request:", request);
-        console.log("API Base URL:", api.defaults.baseURL);
-        console.log("Full URL:", `${api.defaults.baseURL}${API_URLS.online}/join`);
-        
-        const { data } = await api.post(`${API_URLS.online}/join`, request);
-        console.log("Respuesta exitosa:", data);
-        return data;
-    } catch (error: any) {
-        console.error("Error al unirse a la partida:", error);
-        console.error("Error response:", error.response?.data);
-        console.error("Error status:", error.response?.status);
         throw error;
     }
 }
