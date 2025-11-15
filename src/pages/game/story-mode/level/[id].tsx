@@ -25,6 +25,7 @@ import type { WildcardType } from "../../../../models/enums/wildcard";
 import ErrorModalDuringGame from "../../../../shared/modals/errorModalDuringGame";
 import { RewardScreen } from "../../../../components/chest/rewardScreen";
 import { useEnergy } from "../../../../hooks/useEnergy";
+import { usePlayer } from "../../../../hooks/usePlayer";
 
 export const StoryModeGame = () => {
     const { id } = useParams();
