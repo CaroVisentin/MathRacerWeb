@@ -1,40 +1,51 @@
-import autoDefault from "../../assets/images/auto.png";
-import autoAlt from "../../assets/images/auto3.png";
-import autoRojo from "../../assets/images/cars/a1.png";
-import autoAzul from "../../assets/images/cars/a2.png";
-import autoBlanco from "../../assets/images/cars/a3.png";
-import autoNaranja from "../../assets/images/cars/a4.png";
-import fondoPastel from "../../assets/images/backgrounds/f3.png";
-import fondoNube from "../../assets/images/backgrounds/f1.png";
-import pistaDia from "../../assets/images/backgrounds/f4.png";
-import pistaNoche from "../../assets/images/backgrounds/f2.png";
-import jugadorDefault from "../../assets/images/characters/p1.png";
-import jugadorRojo from "../../assets/images/characters/p2.png";
-import jugadorAzul from "../../assets/images/characters/p3.png";
-import jugadorSonic from "../../assets/images/characters/p5.png";
-
-
+import auto1 from "../../assets/images/1.png";
+import auto2 from "../../assets/images/2.png";
+import auto3 from "../../assets/images/3.png";
+import auto4 from "../../assets/images/4.png";
+import auto5 from "../../assets/images/5.png";
+import auto6 from "../../assets/images/6.png";
+import auto7 from "../../assets/images/7.png";
+import auto8 from "../../assets/images/8.png";
+import jugador1 from "../../assets/images/9.png";
+import jugador2 from "../../assets/images/10.png";
+import jugador3 from "../../assets/images/11.png";
+import jugador4 from "../../assets/images/12.png";
+import jugador5 from "../../assets/images/13.png";
+import jugador6 from "../../assets/images/14.png";
+import fondo1 from "../../assets/images/15.png";
+import fondo2 from "../../assets/images/16.png";
+import fondo3 from "../../assets/images/17.png";
+import fondo4 from "../../assets/images/18.png";
+import fondo5 from "../../assets/images/19.png";
+// Maps por tipo -> id numérico a asset local
 const carImages: Record<number, string> = {
-  2: autoDefault,
-  3: autoAlt,
-  1: autoRojo,
-  6: autoAzul,
-  7: autoBlanco,
-  10: autoNaranja,
+  1: auto1,
+  2: auto2,
+  3: auto3,
+  4: auto4,
+  5: auto5,
+  6: auto6,
+  7: auto7,
+  8: auto8,
 };
 
-const backgroundImages: Record<number, string> = {
-  11: fondoPastel,
-  14: fondoNube,
-  5: pistaDia,
-  8: pistaNoche,
-};
-
+// Los ProductId de personajes van del 9 al 14
 const characterImages: Record<number, string> = {
-  4: jugadorDefault,
-  7: jugadorRojo,
-  10: jugadorAzul,
-  13: jugadorSonic,
+  9: jugador1,  
+  10: jugador2, 
+  11: jugador3, 
+  12: jugador4, 
+  13: jugador5, 
+  14: jugador6, 
+};
+
+// Los ProductId de fondos van del 15 al 19
+const backgroundImages: Record<number, string> = {
+  15: fondo1, 
+  16: fondo2, 
+  17: fondo3, 
+  18: fondo4, 
+  19: fondo5,
 };
 
 export type ProductVisualType = "car" | "background" | "character";
@@ -49,17 +60,25 @@ export function resolveImageUrl(type: ProductVisualType, id?: number): string {
     case "character":
       return characterImages[id] ?? fallback(type);
     default:
-      return autoDefault;
+      return auto1;
   }
 }
 
 function fallback(type: ProductVisualType): string {
   switch (type) {
     case "car":
-      return autoDefault;
+      return auto1;
     case "background":
-      return fondoPastel;
+      return fondo1;
     case "character":
-      return jugadorDefault;
+      return jugador1;
   }
 }
+
+const productFolderMap: Record<number, string> = {
+  1: "cars",
+  2: "characters",
+  3: "backgrounds",
+};
+
+export { productFolderMap };

@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import fondoPartida from '../../../assets/images/partidas.png';
+import { StarsBackground } from "../../../shared/backgrounds/starBackground";
 import { Link } from 'react-router-dom';
 
 export default function JoinGame() {
@@ -28,12 +28,17 @@ export default function JoinGame() {
   const displayedGames = filteredGames.slice((currentPage - 1) * gamesPerPage, currentPage * gamesPerPage);
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center bg-cover bg-center bg-no-repeat px-2"
-      style={{ backgroundImage: `url(${fondoPartida})` }}
-    >
+    // <div
+    //   className="min-h-screen flex items-center justify-center bg-cover bg-center bg-no-repeat px-2"
+    //   style={{ backgroundImage: `url(${fondoPartida})` }}
+    // >
+     <div className="h-screen w-screen bg-[#1C092D] flex  items-center justify-center p-4 overflow-hidden">
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        <StarsBackground />
+      </div>
+
       <div className="w-full max-w-3xl mx-auto bg-black/90 text-[#5df9f9] p-6 pb-2 rounded-lg shadow-lg ">
-        <h1 className="text-5xl text-[#f95ec8] uppercase text-center mb-10 pb-5 drop-shadow-[0_0_10px_#00ffff] font-audiowide">Unirse a partida</h1>
+        <h1 className="text-6xl text-[#f95ec8] uppercase text-center mb-10 pb-5 drop-shadow-[0_0_10px_#00ffff] ">Unirse a partida</h1>
 
         <div className="grid grid-cols-3 gap-4 mb-4 mt-2.5">
           <input
@@ -95,7 +100,7 @@ export default function JoinGame() {
         </div>
 
         <div className="flex justify-between mt-3 pt-2 ">
-          <Link to="/menu" className="bg-[#5df9f9] text-black font-extralight hover:bg-red-700 w-20 h-10 px-4 content-center rounded text-2xl  hover:drop-shadow-[0_0_10px_#00ffff]" style={{ marginTop: '20px', marginBottom: '20px' }}>Volver</Link>
+          <Link to="/menu" className="bg-[#5df9f9] text-black font-extralight border-2 border-white  transition-all duration-300 hover:bg-red-700 w-20 h-10 px-4 content-center rounded text-2xl  hover:drop-shadow-[0_0_10px_#00ffff]" style={{ marginTop: '20px', marginBottom: '20px' }}>Volver</Link>
         </div>
       </div>
     </div>

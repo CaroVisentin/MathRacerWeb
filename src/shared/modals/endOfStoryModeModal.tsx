@@ -59,7 +59,7 @@ export const EndOfStoryModeModal: React.FC<EndOfStoryModeModalProps> = ({ level,
                     ) : (
                         <>
                             <p className="mt-4 text-xl">Vida restante</p>
-                            <div className="flex items-center justify-center gap-2 mt-2">
+                            <div className="flex items-center justify-center gap-2 pb-3 mt-2">
                                 <img src={iconoEnergia} alt="energias" className="w-6 h-6" />
                                 {Array.from({ length: 3 }).map((_, index) => (
                                     <img
@@ -75,7 +75,7 @@ export const EndOfStoryModeModal: React.FC<EndOfStoryModeModalProps> = ({ level,
                 </div>
 
                 {/* Botones */}
-                <div className="flex justify-between mt-6">
+                <div className="flex justify-center mt-6">
                     <button onClick={onClose} className="bg-gray-600 px-6 py-2 rounded hover:bg-gray-500">
                         Regresar
                     </button>
