@@ -28,9 +28,9 @@ export const OptionsSection = ({ options, selectedAnswer, answerResult, gameSubm
                     clases += " hover:bg-blue-500"
                 }
                 const mostrarMascota =
-      selectedAnswer !== null &&
-      ((answerResult === "correct" && opcion === selectedAnswer) ||
-        (answerResult === "wrong" && opcion === gameSubmitAnswer?.correctAnswer));
+                    selectedAnswer !== null &&
+                    ((answerResult === "correct" && opcion === selectedAnswer) ||
+                        (answerResult === "wrong" && opcion === gameSubmitAnswer?.correctAnswer));
 
                 return (
                     <div key={i} className="flex flex-col items-center">
@@ -41,16 +41,16 @@ export const OptionsSection = ({ options, selectedAnswer, answerResult, gameSubm
                                 alt="Mascota celebrando"
                                 className="w-16 h-16 mb-2 animate-bounce drop-shadow-[0_0_10px_#00ffff]"
                             />
-                        )}          
-        
-                    <button
-                        key={i}
-                        onClick={() => handleAnswer(opcion)}
-                        className={clases}
-                        disabled={selectedAnswer !== null}
-                    >
-                        {opcion}
-                    </button>
+                        )}
+
+                        <button
+                            key={i}
+                            onClick={() => handleAnswer(opcion)}
+                            className={clases}
+                            disabled={selectedAnswer !== null}
+                        >
+                            {opcion}
+                        </button>
                     </div>
                 )
             })}

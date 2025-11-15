@@ -20,6 +20,7 @@ import { MultiplayerGame } from "../components/game/multiplayer/multiplayer";
 import { ProtectedRoute } from "../components/auth/ProtectedRoute";
 import { PublicRoute } from "../components/auth/PublicRoute";
 import { TutorialPage } from "../pages/tutorial/tutorial";
+import { InfiniteModeGame } from "../pages/game/infinite-mode/infiniteMode";
 
 const router = createBrowserRouter([
   {
@@ -107,6 +108,10 @@ const router = createBrowserRouter([
     path: "/tutorial",
     element: <ProtectedRoute> <TutorialPage /> </ProtectedRoute>
   },
+  {
+    path: "/modo-infinito",
+    element: <ProtectedRoute> <InfiniteModeGame /> </ProtectedRoute>
+  }
 ]);
 
 export function AppRouter() {

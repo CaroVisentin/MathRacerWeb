@@ -27,7 +27,7 @@ export async function startInfiniteGame(): Promise<StartInfiniteGameResponseDto>
 export async function submitInfiniteAnswer(gameId: number, answer: SubmitInfiniteAnswerRequestDto): Promise<SubmitInfiniteAnswerResponseDto> {
     try {
         const response = await api.post<SubmitInfiniteAnswerResponseDto>(
-            `${API_URLS.storyModeGame}/${gameId}/answer`, // gameId por URL
+            `${API_URLS.infinite}/${gameId}/answer`, // gameId por URL
             answer, // envío respuesta en el body del post, como número plano [FromBody]
             {
                 headers: {
@@ -63,7 +63,7 @@ export async function loadNextBatch(gameId: number): Promise<LoadNextBatchRespon
 */
 export async function getInfiniteGameStatus(gameId: number): Promise<InfiniteGameStatusResponseDto> {
     try {
-        const response = await api.post<InfiniteGameStatusResponseDto>(
+        const response = await api.get<InfiniteGameStatusResponseDto>(
             `${API_URLS.infinite}/${gameId}/status`
         );
 

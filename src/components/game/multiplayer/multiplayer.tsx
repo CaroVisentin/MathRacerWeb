@@ -78,7 +78,7 @@ export const MultiplayerGame = () => {
     // Seleccionar dos opciones incorrectas al azar
     const unaIncorrecta =
       opcionesIncorrectas[
-        Math.floor(Math.random() * opcionesIncorrectas.length)
+      Math.floor(Math.random() * opcionesIncorrectas.length)
       ];
 
     setOpciones(
