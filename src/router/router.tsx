@@ -20,6 +20,9 @@ import { MultiplayerGame } from "../components/game/multiplayer/multiplayer";
 import { ProtectedRoute } from "../components/auth/ProtectedRoute";
 import { PublicRoute } from "../components/auth/PublicRoute";
 import { TutorialPage } from "../pages/tutorial/tutorial";
+import PaymentFailure from "../pages/store/payments/payment-failure";
+import PaymentSuccess from "../pages/store/payments/payment-success";
+import PaymentPending from "../pages/store/payments/payment-pending";
 
 const router = createBrowserRouter([
   {
@@ -107,6 +110,18 @@ const router = createBrowserRouter([
     path: "/tutorial",
     element: <ProtectedRoute> <TutorialPage /> </ProtectedRoute>
   },
+  {
+    path: "/payment-success",
+    element: <PaymentSuccess />
+  },
+  {
+    path: "/payment-failure",
+    element: <PaymentFailure />
+  },
+  {
+    path: "/payment-pending",
+    element: <PaymentPending />
+  }
 ]);
 
 export function AppRouter() {

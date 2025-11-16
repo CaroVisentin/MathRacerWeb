@@ -2,14 +2,17 @@ import { useEffect, useState } from "react";
 import { Topbar } from "../../components/store/topbar";
 import { SpecialOffer } from "../../components/store/specialOffer";
 import { ProductsSection } from "../../components/store/productsSection";
+import { CoinsSection } from "../../components/store/coinsSection";
 import { CategorySelector } from "../../components/store/categorySelector";
 import { usePlayer } from "../../hooks/usePlayer";
 import {
   getCars,
   getCharacters,
   getBackgrounds,
+  getCoinsPackage,
 } from "../../services/player/storeService";
 import type { ProductDto } from "../../models/domain/store/productDto";
+import type { CoinPackageDto } from "../../models/domain/store/coinPackageDto";
 
 export const StorePage = () => {
   const [activeCategory, setActiveCategory] = useState<
@@ -17,6 +20,7 @@ export const StorePage = () => {
   >("cars");
   const { player } = usePlayer();
   const [products, setProducts] = useState<ProductDto[]>([]);
+  const [coinPackages, setCoinPackages] = useState<CoinPackageDto[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -28,26 +32,38 @@ export const StorePage = () => {
       setError(null);
 
       try {
-        let response;
-
         switch (activeCategory) {
-          case "cars":
-            response = await getCars(player.id);
+          case "cars": {
+            const response = await getCars(player.id);
+            setProducts(response.items);
+            setCoinPackages([]);
             break;
-          case "characters":
-            response = await getCharacters(player.id);
+          }
+          case "characters": {
+            const response = await getCharacters(player.id);
+            setProducts(response.items);
+            setCoinPackages([]);
             break;
-          case "backgrounds":
-            response = await getBackgrounds(player.id);
+          }
+          case "backgrounds": {
+            const response = await getBackgrounds(player.id);
+            setProducts(response.items);
+            setCoinPackages([]);
             break;
-          default:
-            // Para coins y energy, no hay endpoint aún
+          }
+          case "coins": {
+            const packages = await getCoinsPackage();
+            setCoinPackages(packages);
             setProducts([]);
+            break;
+          }
+          default:
+            // Para energy, no hay endpoint aún
+            setProducts([]);
+            setCoinPackages([]);
             setLoading(false);
             return;
         }
-
-        setProducts(response.items);
       } catch (err) {
         console.error("Error al cargar productos:", err);
         setError("No se pudieron cargar los productos");
@@ -99,7 +115,11 @@ export const StorePage = () => {
 
         {error && <div className="text-red-500 text-center py-8">{error}</div>}
 
-        {!loading && !error && products.length > 0 && (
+        {!loading && !error && activeCategory === "coins" && coinPackages.length > 0 && (
+          <CoinsSection packages={coinPackages} />
+        )}
+
+        {!loading && !error && activeCategory !== "coins" && products.length > 0 && (
           <ProductsSection
             categories={[
               {
@@ -110,7 +130,13 @@ export const StorePage = () => {
           />
         )}
 
-        {!loading && !error && products.length === 0 && (
+        {!loading && !error && activeCategory === "coins" && coinPackages.length === 0 && (
+          <div className="text-white text-center py-8">
+            No hay paquetes de monedas disponibles
+          </div>
+        )}
+
+        {!loading && !error && activeCategory !== "coins" && products.length === 0 && (
           <div className="text-white text-center py-8">
             No hay productos disponibles
           </div>
@@ -119,3 +145,5 @@ export const StorePage = () => {
     </div>
   );
 };
+
+
