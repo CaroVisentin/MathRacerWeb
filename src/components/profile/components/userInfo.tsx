@@ -29,7 +29,7 @@ export const UserInfoSection: React.FC<UserCardProps> = ({
             {/* Cards estadísticas */}
             <div className="grid grid-cols-2 gap-4 w-full max-w-2xl">
                 <div className="border border-cyan-400 rounded p-4 text-center">
-                    <p className="text-cyan-400 text-3xl">Partidas jugadas</p>
+                    <p className="text-cyan-400 text-3xl">Niveles completados</p>
                     <p className="text-white text-3xl">{partidas}</p>
                 </div>
 

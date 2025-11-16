@@ -25,7 +25,7 @@ export const ProfileSection = () => {
       <UserInfoSection
         username={player.name}
         email={player.email}
-        partidas={player.points}
+        partidas={player.lastlevelId}
         puntuacion={player.points}
         avatarUrlId={homeData?.activeItems.profile.imageUrl}
       />
