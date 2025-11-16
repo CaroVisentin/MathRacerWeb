@@ -7,6 +7,7 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 export const useConnection = () => {
     const [conn, setConn] = useState<HubConnection | null>(null);
     const [errorConexion, setErrorConexion] = useState<string | null>(null);
+    const [isConnected, setIsConnected] = useState<boolean>(false);
 
     // Iniciar conexión 
     useEffect(() => {
@@ -20,9 +21,11 @@ export const useConnection = () => {
                     accessTokenFactory: async () => {
                         const user = auth.currentUser;
                         if (user) {
-                            // token fresco para asegurar validez en el hub
-                            return await user.getIdToken(true);
+                            const freshToken = await user.getIdToken(true);
+                            console.info("[SignalR] Emitting access_token length:", freshToken.length);
+                            return freshToken;
                         }
+                        console.warn("[SignalR] No user authenticated when requesting token");
                         return "";
                     },
                 })
@@ -36,13 +39,24 @@ export const useConnection = () => {
             try {
                 await newConnection.start();
                 setErrorConexion(null);
+                setIsConnected(true);
             } catch (err) {
                 console.error("Error al iniciar SignalR:", err);
                 setErrorConexion("Error al iniciar la conexión con SignalR.");
+                setIsConnected(false);
             }
 
-            newConnection.onreconnected(() => setErrorConexion(null));
-            newConnection.onclose(() => setErrorConexion("Conexión con SignalR cerrada."));
+            newConnection.onreconnecting(() => {
+                setIsConnected(false);
+            });
+            newConnection.onreconnected(() => {
+                setErrorConexion(null);
+                setIsConnected(true);
+            });
+            newConnection.onclose(() => {
+                setErrorConexion("Conexión con SignalR cerrada.");
+                setIsConnected(false);
+            });
         };
 
         // Iniciar la conexión cuando haya usuario autenticado
@@ -61,6 +75,7 @@ export const useConnection = () => {
                     activeConnection = null;
                 }
                 setConn(null);
+                setIsConnected(false);
             }
         });
 
@@ -88,5 +103,5 @@ export const useConnection = () => {
         conn?.off(event, callback);
     };
 
-    return { conn, errorConexion, invoke, on, off };
+    return { conn, errorConexion, isConnected, invoke, on, off };
 };

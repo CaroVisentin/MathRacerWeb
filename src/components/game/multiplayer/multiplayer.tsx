@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { getAuth } from "firebase/auth";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import type { QuestionDto } from "../../../models/domain/signalR/questionDto";
@@ -28,7 +29,7 @@ export const MultiplayerGame = () => {
   const location = useLocation();
   const { player } = usePlayer();
   const navigate = useNavigate();
-  const { conn, errorConexion, invoke, on, off } = useConnection();
+  const { conn, errorConexion, isConnected, invoke, on, off } = useConnection();
   
   // Obtener la contraseña del state si fue pasada desde create-game o join-game
   const password = location.state?.password as string | undefined;
@@ -56,6 +57,8 @@ export const MultiplayerGame = () => {
   const [powerUseOrden, setPowerUseOrden] = useState(false);
   const [mensajeComodin, setMensajeComodin] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const joinRetries = useRef(0);
+  const haConectado = useRef(false); // Rastrear si ya intentamos conectar
 
   // Usar el nombre del jugador desde el contexto
   const nombreJugador = player?.name || "";
@@ -79,22 +82,30 @@ export const MultiplayerGame = () => {
     console.log("Nombre jugador:", nombreJugador);
     console.log("Estado conexión SignalR:", conn.state);
 
-    // Si hay gameId en la URL, unirse a esa partida específica
+    // Si hay gameId, unirse a esa partida específica
     if (gameId) {
       const partidaIdNum = parseInt(gameId, 10);
       if (!isNaN(partidaIdNum)) {
         try {
-          console.log(`🎮 Llamando JoinGame con gameId=${partidaIdNum}, password=${password ? '***' : 'null'}`);
+          console.log("=== 🎮 INTENTANDO JOINGAME ===");
+          console.log("GameId:", partidaIdNum);
+          console.log("Password:", password ? "***" : "null");
+          console.log("Estado conexión:", conn.state);
+          console.log("ConnectionId:", conn.connectionId);
           
-          // JoinGame solo necesita gameId y password (opcional)
-          // El backend obtiene el firebaseUid del token JWT automáticamente
+          // Marcar que ya intentamos conectar
+          haConectado.current = true;
+          
+          console.log("⏰ Invocando JoinGame AHORA...");
           await invoke("JoinGame", partidaIdNum, password || null);
           
           setPartidaId(partidaIdNum);
-          console.log("✅ JoinGame exitoso - esperando GameUpdate del servidor");
+          console.log("✅ JoinGame completado sin errores - esperando GameUpdate");
         } catch (error: any) {
-          console.error("❌ Error al unirse a la partida:", error);
-          console.error("Detalles del error:", error.message);
+          console.error("❌ ERROR COMPLETO AL UNIRSE:", error);
+          console.error("Tipo de error:", error.constructor.name);
+          console.error("Mensaje:", error.message);
+          console.error("Stack:", error.stack);
           
           // Mostrar error al usuario y volver al menú
           setError(error.message || "No se pudo unir a la partida");
@@ -110,6 +121,10 @@ export const MultiplayerGame = () => {
       // Si no hay gameId, buscar partida rápida (matchmaking)
       if (nombreJugador.trim()) {
         console.log(`🔍 Buscando partida rápida para ${nombreJugador}`);
+        
+        // Marcar que ya intentamos conectar
+        haConectado.current = true;
+        
         try {
           await invoke("FindMatch", nombreJugador);
           console.log("✅ Búsqueda de partida rápida iniciada");
@@ -129,6 +144,9 @@ export const MultiplayerGame = () => {
     setResultado(null);
     setRespuestaSeleccionada(null);
     setBuscandoRival(true);
+    haConectado.current = false; // Resetear para permitir reconexión
+    joinRetries.current = 0; // Resetear reintentos
+    
     // Si vino de una partida específica, volver al menú
     if (gameId) {
       navigate('/menu');
@@ -227,25 +245,54 @@ export const MultiplayerGame = () => {
   useEffect(() => {
     // Condiciones para intentar conectar:
     // 1. Conexión SignalR establecida
-    // 2. Tenemos el nombre del jugador
+    // 2. Si es quick match (sin gameId) requerimos nombre; si es join por URL, no lo requerimos
     // 3. No estamos ya conectados a una partida
+    const requireName = !gameId; // solo exigimos nombre cuando NO hay gameId (matchmaking)
+    const hasName = requireName ? (nombreJugador.trim() !== "") : true;
+
+    // IMPORTANTE: Si tenemos gameId en la URL, intentar conectar aunque partidaId aún no esté asignado
     const shouldConnect = 
       conn && 
-      conn.state === "Connected" && 
-      nombreJugador.trim() !== "" && 
-      !partidaId;
+      isConnected && 
+      hasName && 
+      !haConectado.current; // cambiado de !partidaId a !haConectado.current
 
     if (shouldConnect) {
       console.log("✅ Condiciones cumplidas - conectando jugador...");
+      console.log("Estado antes de conectar:", { gameId, partidaId, conn: conn.state, isConnected });
       conectarJugador();
     } else {
       console.log("⏸️ Esperando condiciones:", {
-        conexionActiva: conn?.state === "Connected",
-        tieneNombre: nombreJugador.trim() !== "",
-        noConectado: !partidaId
+        conexionActiva: isConnected,
+        connState: conn?.state,
+        condNombre: hasName,
+        noConectado: !haConectado.current,
+        gameIdPresente: !!gameId
       });
     }
-  }, [conn, conn?.state, nombreJugador, partidaId, conectarJugador]);
+  }, [conn, isConnected, nombreJugador, haConectado, conectarJugador, gameId]);
+
+  // Reintento automático de JoinGame si la conexión ya está activa pero aún no hay partidaId
+  useEffect(() => {
+    if (!conn || !isConnected) return;
+    if (!gameId) return;
+    if (partidaId) return;
+
+    // limitar a 3 reintentos
+    if (joinRetries.current >= 3) return;
+
+    const t = setTimeout(async () => {
+      try {
+        joinRetries.current += 1;
+        console.log(`🔁 Reintento JoinGame #${joinRetries.current}`);
+        await conectarJugador();
+      } catch {
+        // noop, el propio conectarJugador registra errores
+      }
+    }, 1500);
+
+    return () => clearTimeout(t);
+  }, [conn, isConnected, gameId, partidaId, conectarJugador]);
 
   useEffect(() => {
     if (!conn) return; // Esperar a que la conexión esté inicializada
@@ -254,13 +301,29 @@ export const MultiplayerGame = () => {
       console.log("GameUpdate recibido:", data);
       setJugadoresPartida(data.players);
 
-      const jugadorActual = data.players.find(
-        (p: PlayerDto) =>
-          p.name?.trim().toLowerCase() === nombreJugador.trim().toLowerCase()
-      );
-      const otroJugador = data.players.find(
-        (p: PlayerDto) => p.id !== jugadorActual?.id
-      );
+      // Intentar identificar al jugador usando Firebase UID (cuando backend lo envíe en p.uid)
+      const auth = getAuth();
+      const myUid = auth.currentUser?.uid;
+
+      let jugadorActual: PlayerDto | undefined;
+      if (myUid) {
+        jugadorActual = data.players.find(p => p.uid === myUid);
+      }
+
+      // Fallback por nombre exacto si uid aún no está disponible
+      if (!jugadorActual) {
+        jugadorActual = data.players.find(p => p.name?.trim() === nombreJugador.trim());
+      }
+      // Fallback final: case-insensitive o reutilizar jugadorId previo si hubo ambigüedad
+      if (!jugadorActual) {
+        const candidatos = data.players.filter(p => p.name?.trim().toLowerCase() === nombreJugador.trim().toLowerCase());
+        if (candidatos.length === 1) {
+          jugadorActual = candidatos[0];
+        } else if (candidatos.length > 1 && jugadorId) {
+          jugadorActual = candidatos.find(p => p.id === jugadorId) ?? candidatos[0];
+        }
+      }
+      const otroJugador = data.players.find((p: PlayerDto) => p.id !== jugadorActual?.id);
 
       if (jugadorActual) {
         setJugadorId(jugadorActual.id);
