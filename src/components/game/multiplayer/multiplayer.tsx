@@ -560,35 +560,39 @@ export const MultiplayerGame = () => {
         </div>
       </div>
 
-      {/* Instrucciones y Comodines */}
-      <div className="flex justify-center items-center gridComodin mt-4">
-        <div className="instruccion font-mono text-3xl text-center">
-          {instruccion ? (
-            <>
-              Elegí la opción para que{" "}
-              <span className="text-cyan-400 font-bold drop-shadow-[0_0_5px_#00ffff] ">
-                Y
-              </span>{" "}
-              sea{" "}
-              <span className="text-cyan-400 font-bold drop-shadow-[0_0_5px_#00ffff] ">
-                {instruccion.toUpperCase()}
-              </span>
-            </>
-          ) : (
-            "esperando instruccion"
-          )}
-        </div>
-        <div className="comodin">
-          <Wildcards
-            fireExtinguisher={eliminaOpciones ? 0 : 1}
-            changeEquation={powerUseOrden ? 0 : 1}
-            dobleCount={powerUsePosition ? 0 : 1}
-            onFireExtinguisher={handleFireExtinguisher}
-            onChangeEquation={handleChangeEquation}
-            onDobleCount={handleDobleCount}
-          />
-        </div>
-      </div>
+            {/* Instrucciones y Comodines */}
+            <div className="flex justify-center items-center gridComodin mt-4">
+
+                <div className="instruccion text-3xl text-center">
+                    {instruccion
+                        ? ( 
+                            <>
+                            Elegí la opción para que {" "}
+      <span className="text-cyan-400 drop-shadow-[0_0_5px_#00ffff] ">
+        Y
+      </span>{" "}                            
+                              sea {" "}
+                            <span className="text-cyan-400  ">
+                             {instruccion.toUpperCase()}
+                             </span>
+                             </>
+                             )
+                        : ("Esperando instrucción")}
+
+                </div>
+                <div className="comodin">
+                    <Wildcards
+                        fireExtinguisher={eliminaOpciones ? 0 : 1}
+                        changeEquation={powerUseOrden ? 0 : 1}
+                        dobleCount={powerUsePosition ? 0 : 1}
+                        onFireExtinguisher={handleFireExtinguisher}
+                        onChangeEquation={handleChangeEquation}
+                        onDobleCount={handleDobleCount}
+                    />
+
+
+                </div>
+            </div>
 
       {/* Ecuación */}
       <div className="flex flex-col justify-center items-center h-full gap-5 mb-10 mt-4">
