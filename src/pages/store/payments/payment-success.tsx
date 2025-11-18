@@ -3,7 +3,7 @@ import mathiHappy from "../../../assets/images/mathi.png";
 
 export default function PaymentSuccess() {
   return (
-    <div className="min-h-screen w-screen bg-[#020205] flex items-center justify-center relative overflow-hidden px-4 py-12">
+    <div className="min-h-screen w-screen bg-[#020205] flex items-center justify-center relative overflow-hidden px-4 py-12 shadow-[0_0_40px_rgba(0,240,255,0.25)]">
       <div className="relative max-w-4xl w-full  via-[#050512]/90 to-black/80 border border-white/20  p-8 md:p-12 shadow-[0_0_40px_rgba(0,240,255,0.25)]">
         <div className="absolute -inset-1 blur-2xl opacity-30" />
         <div className="relative z-10 flex flex-col md:flex-row items-center gap-10">
