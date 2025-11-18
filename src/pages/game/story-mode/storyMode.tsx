@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../hooks/useAuth";
 import { BottomUI } from "../../../components/game/story-mode/bottomUI";
 import { WorldMap } from "../../../components/game/story-mode/worldMap";
 import { TopBar } from "../../../components/game/story-mode/topBar";
@@ -15,6 +16,7 @@ import ConfirmModal from "../../../shared/modals/confirmModal";
 export const StoryMode = () => {
   const [mappedWorlds, setMappedWorlds] = useState<WorldDtoUi[]>([]);
   const navigate = useNavigate();
+  const { player } = useAuth();
   const [showTutorialModal, setShowTutorialModal] = useState(false);
 
   const [wildcardQuantities, setWildcardQuantities] =
@@ -23,6 +25,15 @@ export const StoryMode = () => {
       changeEquation: 0,
       doubleCount: 0,
     });
+
+  // Verificar si el jugador completó el tutorial antes de cargar el modo historia
+  useEffect(() => {
+    if (player && player.lastlevelId === 0) {
+      console.log("Usuario sin tutorial detectado (lastlevelId: 0), mostrando modal...");
+      setShowTutorialModal(true);
+      return;
+    }
+  }, [player]);
 
   useEffect(() => {
     async function fetchPlayerWorldsScreenInfo() {
@@ -78,19 +89,17 @@ export const StoryMode = () => {
 
         setWildcardQuantities(wildcards);
 
-        // Verificar si el jugador no tiene comodines (no completó el tutorial)
-        const totalWildcards = wildcards.fireExtinguisher + wildcards.changeEquation + wildcards.doubleCount;
-        if (totalWildcards === 0) {
-          console.log("Usuario sin comodines detectado, mostrando modal de tutorial...");
-          setShowTutorialModal(true);
-        }
+        // Ya no verificamos wildcards aquí, usamos lastlevelId del player
       } catch (error: unknown) {
         console.error("Error cargando mundos y niveles:", error);
       }
     }
 
-    fetchPlayerWorldsScreenInfo();
-  }, []);
+    // Solo cargar si el jugador completó el tutorial
+    if (player && player.lastlevelId > 0) {
+      fetchPlayerWorldsScreenInfo();
+    }
+  }, [player]);
 
   return (
     <>

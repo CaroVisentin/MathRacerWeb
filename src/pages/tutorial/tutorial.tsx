@@ -12,6 +12,7 @@ import { FuelIndicator } from "../../shared/energy/energy";
 import { useNavigate } from "react-router-dom";
 import { EndOfStoryModeModal } from "../../shared/modals/endOfStoryModeModal";
 import { tutorialService } from "../../services/player/tutorialService";
+import { getPlayerData } from "../../services/player/playerService";
 import type { ChestResponseDto } from "../../models/domain/chest/chestResponseDto";
 import mathi from "../../assets/images/mathi.png";
 import { RewardScreen } from "../../components/chest/rewardScreen";
@@ -69,12 +70,12 @@ export const TutorialPage = () => {
       setChest(response);
       setTutorialCompletado(true);
       
-      // Actualizar el player en el contexto con lastlevelId = 1
+      // Refrescar el player completo desde el backend (incluye coins actualizados y lastlevelId)
       if (player) {
-        const updatedPlayer = { ...player, lastlevelId: 1 };
-        setPlayer(updatedPlayer);
-        localStorage.setItem("player", JSON.stringify(updatedPlayer));
-        console.log("Tutorial completado, player actualizado:", updatedPlayer);
+        const updatedPlayerFromBackend = await getPlayerData(player.id);
+        setPlayer(updatedPlayerFromBackend);
+        localStorage.setItem("player", JSON.stringify(updatedPlayerFromBackend));
+        console.log("Tutorial completado, player refrescado desde backend:", updatedPlayerFromBackend);
       }
     } catch (error: unknown) {
       const message = getErrorMessage(error);
