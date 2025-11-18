@@ -59,9 +59,10 @@ export async function createCustomGame(request: CreateCustomGameRequestDto): Pro
         const { data } = await api.post(`${API_URLS.online}/create`, request);
         console.log('Respuesta del backend:', data);
         return data;
-    } catch (error: any) {
+    } catch (error) {
         console.error("Error al crear partida:", error);
-        console.error("Detalles del error:", error.response?.data);
+        const err = error as { response?: { data?: unknown } };
+        console.error("Detalles del error:", err.response?.data);
         throw error;
     }
 }

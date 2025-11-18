@@ -65,7 +65,7 @@ export const AudioProvider = ({ children }: { children: ReactNode }) => {
         if (musicVolume > 0) {
           await backgroundMusicRef.current?.play();
         }
-      } catch (error) {
+      } catch {
         console.log('No se pudo reproducir música automáticamente. El usuario debe interactuar primero.');
       }
     };
@@ -76,7 +76,7 @@ export const AudioProvider = ({ children }: { children: ReactNode }) => {
       backgroundMusicRef.current?.pause();
       backgroundMusicRef.current = null;
     };
-  }, []);
+  }, [musicVolume]);
 
   // Actualizar volumen de música de fondo cuando cambia
   useEffect(() => {
@@ -180,10 +180,14 @@ export const AudioProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-export const useAudio = () => {
+// Hook to use audio context
+// eslint-disable-next-line react-refresh/only-export-components
+export function useAudio() {
   const context = useContext(AudioContext);
   if (context === undefined) {
     throw new Error('useAudio must be used within an AudioProvider');
   }
   return context;
-};
+}
+
+export default AudioProvider;

@@ -82,9 +82,10 @@ console.log("Creando partida con datos:", request);
         }
       });
 
-    } catch (err: any) {
+    } catch (err) {
       console.error("Error al crear partida:", err);
-      setError(err.response?.data?.error || "No se pudo crear la partida. Inténtalo de nuevo.");
+      const error = err as { response?: { data?: { error?: string } } };
+      setError(error.response?.data?.error || "No se pudo crear la partida. Inténtalo de nuevo.");
       setShowModal(true);
     } finally {
       setLoading(false);

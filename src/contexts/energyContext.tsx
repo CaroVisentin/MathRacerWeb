@@ -123,6 +123,7 @@ export const EnergyProvider: React.FC<{ children: React.ReactNode }> = ({
         intervalRef.current = null;
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth, fetchEnergy]); // SOLO depende de auth y fetchEnergy, NO de secondsUntilNextRecharge
 
   return (

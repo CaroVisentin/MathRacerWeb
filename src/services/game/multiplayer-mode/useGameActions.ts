@@ -29,8 +29,8 @@ export const useGameActions = () => {
             
             setLoading(false);
             console.log("Búsqueda de partida rápida iniciada para:", playerUid);
-        } catch (err: any) {
-            const errorMsg = err.message || "Error al buscar partida rápida.";
+        } catch (err) {
+            const errorMsg = err instanceof Error ? err.message : "Error al buscar partida rápida.";
             setError(errorMsg);
             setLoading(false);
             console.error("Error en buscarPartidaRapida:", err);
@@ -53,8 +53,8 @@ export const useGameActions = () => {
             
             setLoading(false);
             console.log("Búsqueda de partida rankeada iniciada para:", playerUid);
-        } catch (err: any) {
-            const errorMsg = err.message || "Error al buscar partida rankeada.";
+        } catch (err) {
+            const errorMsg = err instanceof Error ? err.message : "Error al buscar partida rankeada.";
             setError(errorMsg);
             setLoading(false);
             console.error("Error en buscarPartidaRankeada:", err);
@@ -77,8 +77,8 @@ export const useGameActions = () => {
             
             setLoading(false);
             console.log(`Unido a partida ${gameId}`);
-        } catch (err: any) {
-            const errorMsg = err.message || "Error al unirse a la partida.";
+        } catch (err) {
+            const errorMsg = err instanceof Error ? err.message : "Error al unirse a la partida.";
             setError(errorMsg);
             setLoading(false);
             console.error("Error en unirseAPartida:", err);

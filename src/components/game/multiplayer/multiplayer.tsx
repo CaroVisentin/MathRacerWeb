@@ -101,14 +101,15 @@ export const MultiplayerGame = () => {
           
           setPartidaId(partidaIdNum);
           console.log("✅ JoinGame completado sin errores - esperando GameUpdate");
-        } catch (error: any) {
+        } catch (error) {
           console.error("❌ ERROR COMPLETO AL UNIRSE:", error);
-          console.error("Tipo de error:", error.constructor.name);
-          console.error("Mensaje:", error.message);
-          console.error("Stack:", error.stack);
+          const err = error as { constructor?: { name: string }; message?: string; stack?: string };
+          console.error("Tipo de error:", err.constructor?.name);
+          console.error("Mensaje:", err.message);
+          console.error("Stack:", err.stack);
           
           // Mostrar error al usuario y volver al menú
-          setError(error.message || "No se pudo unir a la partida");
+          setError(err.message || "No se pudo unir a la partida");
           setTimeout(() => {
             navigate('/menu');
           }, 2000);
@@ -128,7 +129,7 @@ export const MultiplayerGame = () => {
         try {
           await invoke("FindMatch", nombreJugador);
           console.log("✅ Búsqueda de partida rápida iniciada");
-        } catch (error: any) {
+        } catch (error) {
           console.error("❌ Error en FindMatch:", error);
           setError("No se pudo buscar partida");
         }
@@ -270,7 +271,7 @@ export const MultiplayerGame = () => {
         gameIdPresente: !!gameId
       });
     }
-  }, [conn, isConnected, nombreJugador, haConectado, conectarJugador, gameId]);
+  }, [conn, isConnected, nombreJugador, gameId, partidaId, conectarJugador]);
 
   // Reintento automático de JoinGame si la conexión ya está activa pero aún no hay partidaId
   useEffect(() => {
@@ -411,7 +412,7 @@ export const MultiplayerGame = () => {
       off("error", errorHandler);
       //  off("PowerUpUsed", powerUpUsedHandler);
     };
-  }, [conn, on, off, nombreJugador, navigate]); // Depende de 'connection' y 'nombreJugador'
+  }, [conn, on, off, nombreJugador, navigate, jugadorId, setPartidaId, setJugadoresPartida]);
 
   useEffect(() => {
     const indexJugador = Math.floor(Math.random() * fondos.length);

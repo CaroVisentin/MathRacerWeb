@@ -20,7 +20,7 @@ export const QuickGame: React.FC = () => {
     if (!conn) return;
 
     // Escuchar evento de partida encontrada
-    on("MatchFound", (gameData: any) => {
+    on("MatchFound", (gameData: { gameId?: number; GameId?: number; password?: string; Password?: string }) => {
       console.log("¡Partida encontrada!", gameData);
       setMatchFound(true);
       setSearching(false);
@@ -64,7 +64,7 @@ export const QuickGame: React.FC = () => {
       // Invocar el método FindMatch de SignalR con el nombre del jugador
       await invoke("FindMatch", player.name);
       
-    } catch (err: any) {
+    } catch (err) {
       console.error("Error al buscar partida:", err);
       setError(errorConexion || "No se pudo conectar al servidor de matchmaking");
       setShowModal(true);

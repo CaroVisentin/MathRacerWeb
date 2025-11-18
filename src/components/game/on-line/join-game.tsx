@@ -38,7 +38,7 @@ export default function JoinGame() {
       const response = await getAvailableGames(false); // false para incluir privadas
       setGames(response.games);
       setFilteredGames(response.games);
-    } catch (err: any) {
+    } catch (err) {
       console.error("Error al cargar partidas:", err);
       setError("No se pudieron cargar las partidas disponibles");
       setShowModal(true);
@@ -49,7 +49,7 @@ export default function JoinGame() {
 
   // Filtrar partidas cuando cambien los filtros
   useEffect(() => {
-    let filtered = games.filter(g =>
+    const filtered = games.filter(g =>
       g.gameName.toLowerCase().includes(search.toLowerCase()) &&
       (difficulty ? g.difficulty === difficulty : true) &&
       (privacy ? (privacy === 'Pública' ? !g.isPrivate : g.isPrivate) : true)
@@ -94,10 +94,10 @@ export default function JoinGame() {
         state: { password: pwd }
       });
       
-    } catch (err: any) {
+    } catch (err) {
       console.error("Error al unirse a la partida:", err);
-      console.error("Error completo:", err);
-      setError(err.response?.data?.error || err.message || "No se pudo unir a la partida");
+      const error = err as { response?: { data?: { error?: string } }; message?: string };
+      setError(error.response?.data?.error || error.message || "No se pudo unir a la partida");
       setShowModal(true);
     } finally {
       setLoading(false);

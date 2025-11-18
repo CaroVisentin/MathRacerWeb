@@ -80,10 +80,11 @@ class AuthService {
       
       console.log("3. Registro backend exitoso:", response.data);
       return response.data;
-    } catch (error: any) {
+    } catch (error) {
       console.error("Error en registro:", error);
-      console.error("Error response:", error.response?.data);
-      console.error("Error status:", error.response?.status);
+      const err = error as { response?: { data?: unknown; status?: number } };
+      console.error("Error response:", err.response?.data);
+      console.error("Error status:", err.response?.status);
 
       // Si el usuario de Firebase se creó pero falló el backend, eliminarlo
       if (userCredential?.user) {
