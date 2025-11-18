@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { BottomUI } from "../../../components/game/story-mode/bottomUI";
 import { WorldMap } from "../../../components/game/story-mode/worldMap";
 import { TopBar } from "../../../components/game/story-mode/topBar";
@@ -9,9 +10,12 @@ import type { WorldDtoUi } from "../../../models/ui/story-mode/worldDtoUi";
 import type { PlayerWildcardDto } from "../../../models/domain/player/playerWildcardDto";
 import { getMyWildcards } from "../../../services/wildcard/wildcardService";
 import type { WildcardQuantities } from "../../../models/ui/story-mode/wildcardQuantities";
+import ConfirmModal from "../../../shared/modals/confirmModal";
 
 export const StoryMode = () => {
   const [mappedWorlds, setMappedWorlds] = useState<WorldDtoUi[]>([]);
+  const navigate = useNavigate();
+  const [showTutorialModal, setShowTutorialModal] = useState(false);
 
   const [wildcardQuantities, setWildcardQuantities] =
     useState<WildcardQuantities>({
@@ -73,6 +77,13 @@ export const StoryMode = () => {
         };
 
         setWildcardQuantities(wildcards);
+
+        // Verificar si el jugador no tiene comodines (no completó el tutorial)
+        const totalWildcards = wildcards.fireExtinguisher + wildcards.changeEquation + wildcards.doubleCount;
+        if (totalWildcards === 0) {
+          console.log("Usuario sin comodines detectado, mostrando modal de tutorial...");
+          setShowTutorialModal(true);
+        }
       } catch (error: unknown) {
         console.error("Error cargando mundos y niveles:", error);
       }
@@ -82,8 +93,20 @@ export const StoryMode = () => {
   }, []);
 
   return (
-    <div className="relative flex h-screen w-full flex-col overflow-hidden bg-gradient-to-br from-[#0a0520] via-[#1a0f3a] to-[#0f0828]">
-      <TopBar headerText="Mundos" remainingLives={7} />
+    <>
+      {showTutorialModal && (
+        <ConfirmModal
+          title="Tutorial requerido"
+          message="Para jugar al modo historia necesitás completar el tutorial primero y obtener tus comodines iniciales."
+          confirmText="Ir al tutorial"
+          cancelText="Volver"
+          onConfirm={() => navigate('/tutorial')}
+          onCancel={() => navigate('/home')}
+        />
+      )}
+
+      <div className="relative flex h-screen w-full flex-col overflow-hidden bg-gradient-to-br from-[#0a0520] via-[#1a0f3a] to-[#0f0828]">
+        <TopBar headerText="Mundos" remainingLives={7} />
 
       {mappedWorlds.length > 0 && <WorldMap mappedWorlds={mappedWorlds} />}
 
@@ -95,5 +118,6 @@ export const StoryMode = () => {
         />
       </div>
     </div>
+    </>
   );
 };
