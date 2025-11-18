@@ -33,7 +33,7 @@ export default function JoinGame() {
       style={{ backgroundImage: `url(${fondoPartida})` }}
     >
       <div className="w-full max-w-3xl mx-auto bg-black/90 text-[#5df9f9] p-6 pb-2 rounded-lg shadow-lg ">
-        <h1 className="text-5xl text-[#f95ec8] uppercase text-center mb-10 pb-5 drop-shadow-[0_0_10px_#00ffff] font-audiowide">Unirse a partida</h1>
+        <h1 className="text-5xl text-[#f95ec8] uppercase text-center mb-10 pb-5 drop-shadow-[0_0_10px_#00ffff]">Unirse a partida</h1>
 
         <div className="grid grid-cols-3 gap-4 mb-4 mt-2.5">
           <input

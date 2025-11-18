@@ -37,7 +37,7 @@ export default function CreateGame() {
     } catch {
       setShowModal(true);
     }
-    }; 
+  };
 
   return (
 
@@ -48,7 +48,7 @@ export default function CreateGame() {
 
       <form onSubmit={handleSubmit}
         className="w-full max-w-2xl mx-auto bg-black/90 text-[#5df9f9] p-6 pb-2 rounded-lg shadow-lg ">
-        <h2 className="text-5xl text-[#f95ec8] uppercase text-center mb-10 pb-5 drop-shadow-[0_0_10px_#00ffff] font-audiowide">Crear Partida</h2>
+        <h2 className="text-5xl text-[#f95ec8] uppercase text-center mb-10 pb-5 drop-shadow-[0_0_10px_#00ffff]">Crear Partida</h2>
 
         <label className="block text-3xl font-normal ">
           Nombre de la Partida:
@@ -112,7 +112,7 @@ export default function CreateGame() {
         </label>
         <div className="flex justify-between mt-6 pt-5 border-t border-gray-700">
           <Link to="/menu"
-            
+
             className="bg-[#5df9f9] text-black font-extralight hover:bg-red-700 w-30 h-10 px-4 content-center rounded text-2xl hover:drop-shadow-[0_0_10px_#00ffff]">← Volver</Link>
           <button
             type="submit"

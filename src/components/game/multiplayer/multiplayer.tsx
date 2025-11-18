@@ -345,7 +345,7 @@ export const MultiplayerGame = () => {
 
       {/* Instrucciones y Comodines */}
       <div className="flex justify-center items-center gridComodin mt-4">
-        <div className="instruccion font-mono text-3xl text-center">
+        <div className="instruccion text-3xl text-center">
           {instruccion ? (
             <>
               Elegí la opción para que{" "}
@@ -377,7 +377,7 @@ export const MultiplayerGame = () => {
       <div className="flex flex-col justify-center items-center h-full gap-5 mb-10 mt-4">
         {mensajeComodin && (
           <div className="w-full flex justify-end px-4">
-            <div className="text-cyan-200 font-mono  text-xl  text-center drop-shadow-[0_0_5px_#00ffff] animate-fade-in">
+            <div className="text-cyan-200 text-xl  text-center drop-shadow-[0_0_5px_#00ffff] animate-fade-in">
               {mensajeComodin}
             </div>
           </div>

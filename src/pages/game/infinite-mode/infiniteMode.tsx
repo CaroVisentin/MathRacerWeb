@@ -100,9 +100,9 @@ export const InfiniteModeGame = () => {
             const response: InfiniteGameStatusResponseDto = await abandonInfiniteGame(gameData?.gameId ?? 0);
             setGameStatus(response);
 
-            // Mostrar carga por 2s
+            // Mostrar carga por 1s
             setIsLoading(true);
-            await new Promise(res => setTimeout(res, 2000));
+            await new Promise(res => setTimeout(res, 1000));
             setIsLoading(false);
 
             // Redirigir al home
