@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import cone from "../../assets/images/cone.png";
+import mathiPensando from "../../assets/images/mathi-pensando.png";
 
 type Cone = {
     id: number;
@@ -19,7 +20,6 @@ export default function CountCones({ level = 1 }: { level?: number }) {
     const [showOptions, setShowOptions] = useState(false);
 
     useEffect(() => {
-        // dificultad progresiva
         const min = 3 + level;
         const max = 4 + level;
         const total = Math.floor(Math.random() * (max - min + 1)) + min;
@@ -27,20 +27,18 @@ export default function CountCones({ level = 1 }: { level?: number }) {
         setCorrectAnswer(total);
 
         const generated: Cone[] = [];
-
         for (let i = 0; i < total; i++) {
             const movement = generateConeMovement();
             generated.push({
                 id: i,
                 ...movement,
-                delay: i * 0.4, // evita que aparezcan amontonados
-                duration: Math.max(2 - level * 0.1, 1.2), // progresivo
+                delay: i * 0.4,
+                duration: Math.max(2 - level * 0.1, 1.2),
             });
         }
-
         setCones(generated);
 
-        setTimeout(() => setShowOptions(true), 5500);
+        setTimeout(() => setShowOptions(true), 3000);
     }, [level]);
 
     const options = shuffle([
@@ -50,47 +48,60 @@ export default function CountCones({ level = 1 }: { level?: number }) {
     ]);
 
     return (
-        <div className="flex flex-col items-center p-6">
-            <h2 className="text-2xl font-bold mb-4">
-                ¿Cuántos conos viste? (Nivel {level})
-            </h2>
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-90 z-50">
+            {/* Modal content */}
+            <div className="bg-[#1e1e1e] text-white shadow-lg p-6 w-full max-w-lg flex flex-col items-center">
 
-            <div className="relative h-80 w-full overflow-hidden bg-gray-100 rounded-lg">
-                {cones.map((c) => (
-                    <motion.img
-                        key={c.id}
-                        src={cone}
-                        initial={{ x: c.fromX, y: c.fromY }}
-                        animate={{ x: c.toX, y: c.toY }}
-                        transition={{ duration: c.duration, delay: c.delay, ease: "easeInOut" }}
-                        className="absolute w-12 pointer-events-none select-none"
-                    />
-                ))}
-            </div>
+                <h2 className="text-2xl !mb-4">
+                    ¿Cuántos conos viste?
+                </h2>
 
-            {showOptions && (
-                <div className="mt-6 flex gap-4">
-                    {options.map((o) => (
-                        <button
-                            key={o}
-                            onClick={() => alert(o === correctAnswer ? "¡Correcto!" : "Incorrecto")}
-                            className="px-6 py-3 border rounded-lg bg-white text-xl font-bold"
-                        >
-                            {o}
-                        </button>
+                <div className="relative h-80 w-full overflow-hidden border border-gray-700 !m-4">
+                    {cones.map((c) => (
+                        <motion.img
+                            key={c.id}
+                            src={cone}
+                            initial={{ x: c.fromX, y: c.fromY }}
+                            animate={{ x: c.toX, y: c.toY }}
+                            transition={{ duration: c.duration, delay: c.delay, ease: "easeInOut" }}
+                            className="absolute w-12 pointer-events-none select-none"
+                        />
                     ))}
+
+                    {showOptions && (
+                        <div className="absolute inset-0 flex items-center justify-center !m-2">
+                            <motion.div transition={{ duration: 2.5, ease: "easeInOut" }}>
+                                <img src={mathiPensando} className="w-30" alt="Mathi pensando" />
+                            </motion.div>
+                        </div>
+                    )}
+
                 </div>
-            )}
+
+                {showOptions && (
+                    <div className="mt-6 flex gap-4">
+                        {options.map((o) => (
+                            <button
+                                key={o}
+                                onClick={() =>
+                                    alert(o === correctAnswer ? "¡Correcto!" : "Incorrecto")
+                                }
+                                className="px-6 py-3 border bg-[#0F7079] text-white text-xl shadow-md"
+                            >
+                                {o}
+                            </button>
+                        ))}
+                    </div>
+                )}
+            </div>
         </div>
     );
 }
 
 // ===== Helpers =====
-
 function generateConeMovement(): Pick<Cone, "fromX" | "fromY" | "toX" | "toY"> {
     const screenW = 500;
     const screenH = 300;
-
     const type = Math.floor(Math.random() * 3);
 
     switch (type) {
@@ -101,7 +112,6 @@ function generateConeMovement(): Pick<Cone, "fromX" | "fromY" | "toX" | "toY"> {
                 toX: screenW,
                 toY: rand(40, screenH - 40),
             };
-
         case 1:
             return {
                 fromX: screenW,
@@ -109,7 +119,6 @@ function generateConeMovement(): Pick<Cone, "fromX" | "fromY" | "toX" | "toY"> {
                 toX: -50,
                 toY: rand(40, screenH - 40),
             };
-
         case 2:
             const fromLeft = Math.random() < 0.5;
             return fromLeft
@@ -126,14 +135,7 @@ function generateConeMovement(): Pick<Cone, "fromX" | "fromY" | "toX" | "toY"> {
                     toY: rand(20, screenH - 20),
                 };
     }
-
-    // fallback super seguro (nunca se ejecuta, pero satisface TS)
-    return {
-        fromX: -50,
-        fromY: screenH / 2,
-        toX: screenW,
-        toY: screenH / 2,
-    };
+    return { fromX: -50, fromY: screenH / 2, toX: screenW, toY: screenH / 2 };
 }
 
 function rand(min: number, max: number) {

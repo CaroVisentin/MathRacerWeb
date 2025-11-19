@@ -24,7 +24,6 @@ import { InfiniteModeGame } from "../pages/game/infinite-mode/infiniteMode";
 import CountCones from "../components/mini-games/countCones";
 import LastColor from "../components/mini-games/lastColorCar";
 import MemoryPattern from "../components/mini-games/memorizePattern";
-import MentalDodge from "../components/mini-games/mentalDodge";
 
 const router = createBrowserRouter([
   {
@@ -127,10 +126,6 @@ const router = createBrowserRouter([
   {
     path: "/memorize-pattern",
     element: <ProtectedRoute> <MemoryPattern /> </ProtectedRoute>
-  },
-  {
-    path: "/mental-dodge",
-    element: <ProtectedRoute> <MentalDodge /> </ProtectedRoute>
   },
 ]);
 
