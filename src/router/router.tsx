@@ -21,6 +21,10 @@ import { ProtectedRoute } from "../components/auth/ProtectedRoute";
 import { PublicRoute } from "../components/auth/PublicRoute";
 import { TutorialPage } from "../pages/tutorial/tutorial";
 import { InfiniteModeGame } from "../pages/game/infinite-mode/infiniteMode";
+import CountCones from "../components/mini-games/countCones";
+import LastColor from "../components/mini-games/lastColorCar";
+import MemoryPattern from "../components/mini-games/memorizePattern";
+import MentalDodge from "../components/mini-games/mentalDodge";
 
 const router = createBrowserRouter([
   {
@@ -111,7 +115,23 @@ const router = createBrowserRouter([
   {
     path: "/modo-infinito",
     element: <ProtectedRoute> <InfiniteModeGame /> </ProtectedRoute>
-  }
+  },
+  {
+    path: "/count-cones",
+    element: <ProtectedRoute> <CountCones /> </ProtectedRoute>
+  },
+  {
+    path: "/last-color-car",
+    element: <ProtectedRoute> <LastColor /> </ProtectedRoute>
+  },
+  {
+    path: "/memorize-pattern",
+    element: <ProtectedRoute> <MemoryPattern /> </ProtectedRoute>
+  },
+  {
+    path: "/mental-dodge",
+    element: <ProtectedRoute> <MentalDodge /> </ProtectedRoute>
+  },
 ]);
 
 export function AppRouter() {
