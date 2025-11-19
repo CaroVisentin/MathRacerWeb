@@ -112,6 +112,7 @@ function generateConeMovement(): Pick<Cone, "fromX" | "fromY" | "toX" | "toY"> {
                 toX: screenW,
                 toY: rand(40, screenH - 40),
             };
+
         case 1:
             return {
                 fromX: screenW,
@@ -119,7 +120,9 @@ function generateConeMovement(): Pick<Cone, "fromX" | "fromY" | "toX" | "toY"> {
                 toX: -50,
                 toY: rand(40, screenH - 40),
             };
-        case 2:
+
+        case 2: {
+            // 🔹 Se abren llaves para encapsular la declaración
             const fromLeft = Math.random() < 0.5;
             return fromLeft
                 ? {
@@ -134,8 +137,16 @@ function generateConeMovement(): Pick<Cone, "fromX" | "fromY" | "toX" | "toY"> {
                     toX: -50,
                     toY: rand(20, screenH - 20),
                 };
+        }
+
+        default:
+            return {
+                fromX: -50,
+                fromY: screenH / 2,
+                toX: screenW,
+                toY: screenH / 2,
+            };
     }
-    return { fromX: -50, fromY: screenH / 2, toX: screenW, toY: screenH / 2 };
 }
 
 function rand(min: number, max: number) {
