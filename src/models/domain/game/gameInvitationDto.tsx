@@ -1,22 +1,22 @@
 export interface GameInvitationDto {
   id: number;
-  fromPlayerId: number;
-  fromPlayerName: string;
-  toPlayerId: number;
-  toPlayerName: string;
   gameId: number;
-  status: string; // "Pending", "Accepted", "Rejected"
+  inviterPlayerName: string; // Nombre del jugador que invita
+  gameName: string;
+  difficulty: string;
+  expectedResult: string;
   createdAt: string;
-  expiresAt?: string;
+  status: string; // "Pending", "Accepted", "Rejected"
 }
 
 export interface SendInvitationRequest {
-  fromPlayerId: number;
-  toPlayerId: number;
-  gameId: number;
+  invitedFriendId: number; // ID del amigo a invitar
+  difficulty: string; // "Facil", "Medio", "Dificil"
+  expectedResult: string; // "Mayor", "Menor", "Igual"
 }
 
 export interface RespondInvitationRequest {
   invitationId: number;
   accept: boolean;
 }
+

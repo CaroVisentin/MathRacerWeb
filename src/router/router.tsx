@@ -6,6 +6,7 @@ import { Menu } from "../pages/game/multiplayer/multiplayerGame";
 import { StoryMode } from "../pages/game/story-mode/storyMode";
 import CreateGame from "../components/game/on-line/create-game";
 import InviteFriend from "../components/game/on-line/invite-friend";
+import InvitationsInbox from "../components/game/on-line/invitations-inbox";
 import JoinGame from "../components/game/on-line/join-game";
 import { QuickGame } from "../components/game/on-line/quick-game";
 import { LevelMap } from "../pages/game/story-mode/world/[id]";
@@ -21,8 +22,6 @@ import { MultiplayerGame } from "../components/game/multiplayer/multiplayer";
 import { ProtectedRoute } from "../components/auth/ProtectedRoute";
 import { PublicRoute } from "../components/auth/PublicRoute";
 import { TutorialPage } from "../pages/tutorial/tutorial";
-import { InviteFriendsWrapper } from "../pages/game/multiplayer/invite-friends-wrapper";
-import { GameInvitations } from "../pages/game/multiplayer/game-invitations";
 
 const router = createBrowserRouter([
   {
@@ -61,17 +60,21 @@ const router = createBrowserRouter([
     path: "/crear",
     element: <ProtectedRoute><CreateGame /></ProtectedRoute>
   },
+//  {
+ //   path: "/invitar-amigos/:gameId",
+ //   element: <ProtectedRoute><InviteFriendsWrapper /></ProtectedRoute>
+//  },
+ // {
+  //  path: "/invitaciones",
+  //  element: <ProtectedRoute><GameInvitations /></ProtectedRoute>
+  //},
   {
-    path: "/invitar-amigos/:gameId",
-    element: <ProtectedRoute><InviteFriendsWrapper /></ProtectedRoute>
+    path: "/invitar-amigo",
+    element: <ProtectedRoute><InviteFriend /></ProtectedRoute>
   },
   {
     path: "/invitaciones",
-    element: <ProtectedRoute><GameInvitations /></ProtectedRoute>
-  },
-  {
-    path: "/invitar-amigo/:gameId?",
-    element: <ProtectedRoute><InviteFriend /></ProtectedRoute>
+    element: <ProtectedRoute><InvitationsInbox /></ProtectedRoute>
   },
   {
     path: "/unirse-partida",

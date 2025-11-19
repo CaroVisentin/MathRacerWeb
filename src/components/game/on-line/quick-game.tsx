@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { StarsBackground } from "../../../shared/backgrounds/starBackground";
 import { usePlayer } from "../../../hooks/usePlayer";
@@ -16,6 +16,7 @@ export const QuickGame: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [matchFound, setMatchFound] = useState(false);
+  const fallbackTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (!conn) return;
@@ -24,6 +25,9 @@ export const QuickGame: React.FC = () => {
       console.log("¡Partida encontrada!", gameData);
       setMatchFound(true);
       setSearching(false);
+      if (fallbackTimerRef.current) {
+        clearTimeout(fallbackTimerRef.current);
+      }
       const gid = gameData.gameId || gameData.GameId;
       setTimeout(() => {
         navigate(`/multijugador/${gid}`);
@@ -37,14 +41,32 @@ export const QuickGame: React.FC = () => {
       setSearching(false);
     };
 
+    // Listener temporal para gameUpdate mientras se busca partida
+    // Esto evita el warning cuando el backend envía gameUpdate antes de navegar
+    const handleGameUpdate = (data: any) => {
+      console.log("GameUpdate recibido durante búsqueda (ignorado):", data);
+      // No hacemos nada, solo evitamos el warning
+      // El componente multiplayer.tsx manejará los updates una vez que naveguemos
+    };
+
     on("MatchFound", handleMatchFound);
     on("Error", handleError);
+    
+    // Registrar todos los formatos posibles de gameUpdate
+    on("GameUpdate", handleGameUpdate);
+    on("gameUpdate", handleGameUpdate);
+    on("game-update", handleGameUpdate);
+    on("gameupdate", handleGameUpdate);
 
     return () => {
       off("MatchFound", handleMatchFound);
       off("Error", handleError);
+      off("GameUpdate", handleGameUpdate);
+      off("gameUpdate", handleGameUpdate);
+      off("game-update", handleGameUpdate);
+      off("gameupdate", handleGameUpdate);
     };
-  }, [conn, navigate, on, off]);
+  }, [conn, navigate, on, off, fallbackTimerRef]);
 
   const handleFindMatch = async () => {
     const auth = getAuth();
@@ -62,7 +84,8 @@ export const QuickGame: React.FC = () => {
       const uid = user.uid;
       console.log(`Buscando partida competitiva matchmaking para UID: ${uid} (nombre: ${player?.name || ""})`);
       
-      // Invocar el método FindMatch de SignalR con el UID del jugador (no el nombre)
+      // Usar FindMatchWithMatchmaking que busca partidas existentes primero
+      // y solo crea una nueva si no hay ninguna disponible
       await invoke("FindMatchWithMatchmaking", uid);
       
     } catch (err) {
@@ -75,6 +98,9 @@ export const QuickGame: React.FC = () => {
 
   const handleCancelSearch = () => {
     setSearching(false);
+    if (fallbackTimerRef.current) {
+      clearTimeout(fallbackTimerRef.current);
+    }
     // TODO: Cancelar búsqueda en el servidor si es necesario
   };
 
@@ -103,7 +129,7 @@ export const QuickGame: React.FC = () => {
           <div className="text-center py-8">
             <div className="animate-spin rounded-full h-20 w-20 border-t-4 border-b-4 border-[#5df9f9] mx-auto mb-4"></div>
             <p className="text-2xl text-white animate-pulse">Buscando oponente...</p>
-            <p className="text-lg text-gray-400 mt-2">Por favor espera</p>
+            <p className="text-lg text-gray-400 mt-2">Buscando partidas disponibles</p>
           </div>
         )}
 

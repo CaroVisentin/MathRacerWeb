@@ -2,9 +2,11 @@ import { Link } from "react-router-dom";
 import { StarsBackground } from "../../../shared/backgrounds/starBackground";
 import { useAudio } from "../../../contexts/AudioContext";
 import mathi from "../../../assets/images/mathi.png";
+import { useInvitation } from "../../../contexts/invitationContex";
 export const Menu = () => {
   const { playButtonSound, playBackSound } = useAudio();
-
+  const { hasInvitation } = useInvitation();
+  
   return (
     // Contenedor principal
     <div className="h-screen w-screen bg-[#1C092D] flex flex-col items-center justify-between p-4 overflow-hidden">
@@ -44,6 +46,14 @@ export const Menu = () => {
         </Link>
 
         <Link
+          to="/invitaciones"
+          onClick={playButtonSound}
+          className={`botonGral uppercase hover:drop-shadow-[0_0_10px_#00ffff] text-center text-5xl ${hasInvitation ? 'botonBrillante' : ''}`}
+        >
+          Buzón de Invitaciones
+        </Link>
+
+        <Link
           to="/ranking"
           onClick={playButtonSound}
           className="botonGral uppercase hover:drop-shadow-[0_0_10px_#00ffff] text-center text-5xl"
@@ -54,7 +64,7 @@ export const Menu = () => {
         <Link
           to="/partida-rapida"
           onClick={playButtonSound}
-          className="botonGral uppercase hover:drop-shadow-[0_0_10px_#00ffff] text-center col-span-2 justify-self-center w-1/2 text-5xl"
+          className="botonGral uppercase hover:drop-shadow-[0_0_10px_#00ffff] text-center  justify-self-center text-5xl"
         >
           Partida Competitiva
         </Link>

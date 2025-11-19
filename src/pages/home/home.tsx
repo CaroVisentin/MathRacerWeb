@@ -53,7 +53,7 @@ export const Home = () => {
               <BatteryStatus />
               <CoinsDisplay coins={homeData.user.coins} />
             </div>
-            <Link to="/perfil" className="drop-shadow-[0_0_10px_#00ffff] animate-pulse-heartbeat hover:animate-coin-flip" >
+            <Link to="/perfil" className="drop-shadow-[0_0_10px_#00ffff] pulse-heartbeat hover:agrandar" >
               <ProfileCard imageUrl={homeData.activeItems.profile.imageUrl}  />
             </Link>
           </div>

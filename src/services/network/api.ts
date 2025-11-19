@@ -75,4 +75,5 @@ export const API_URLS = {
     friends: "/friendship",
     energy: "/energy",
     wildcards: "/wildcards",
+    gameInvitation: "/gameinvitation",
 };

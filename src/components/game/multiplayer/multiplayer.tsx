@@ -388,8 +388,12 @@ export const MultiplayerGame = () => {
       navigate("/menu");
     };
 
-    // Registrar el listener para "GameUpdate"
-    on("GameUpdate", gameUpdateHandler);
+    // Registrar el listener para "GameUpdate" en todas las variantes que el backend puede enviar
+    // SignalR en C# automáticamente convierte PascalCase a camelCase
+    on("GameUpdate", gameUpdateHandler);      // PascalCase original
+    on("gameUpdate", gameUpdateHandler);      // camelCase (conversión automática de SignalR)
+    on("game-update", gameUpdateHandler);     // kebab-case
+    on("gameupdate", gameUpdateHandler);      // lowercase sin separador
     
     // Registrar listeners para errores (el backend puede usar "Error" o "error")
     on("Error", errorHandler);
@@ -408,6 +412,9 @@ export const MultiplayerGame = () => {
     // Función de limpieza para quitar el listener
     return () => {
       off("GameUpdate", gameUpdateHandler);
+      off("gameUpdate", gameUpdateHandler);
+      off("game-update", gameUpdateHandler);
+      off("gameupdate", gameUpdateHandler);
       off("Error", errorHandler);
       off("error", errorHandler);
       //  off("PowerUpUsed", powerUpUsedHandler);

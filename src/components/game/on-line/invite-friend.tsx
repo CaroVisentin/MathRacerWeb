@@ -1,6 +1,6 @@
 
 import { useState, useEffect, useCallback } from "react";
-import { useNavigate, useParams, useLocation, Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { StarsBackground } from "../../../shared/backgrounds/starBackground";
 import { friendshipService } from "../../../services/friendship/friendshipService";
 import { gameInvitationService } from "../../../services/game/gameInvitationService";
@@ -15,9 +15,6 @@ import mathi from "../../../assets/images/mathi.png";
 export default function InviteFriends() {
   const { player } = useAuth();
   const navigate = useNavigate();
-  const { gameId } = useParams<{ gameId: string }>();
-  const location = useLocation();
-  const password = location.state?.password;
   const { playBackSound } = useAudio();
 
   const [friends, setFriends] = useState<Friend[]>([]);
@@ -25,6 +22,8 @@ export default function InviteFriends() {
   const [error, setError] = useState<string | null>(null);
   const [sendingTo, setSendingTo] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedDifficulty, setSelectedDifficulty] = useState("Medio");
+  const [selectedExpectedResult, setSelectedExpectedResult] = useState("Mayor");
 
   const fetchFriends = useCallback(async () => {
     if (!player?.id) return;
@@ -51,33 +50,30 @@ export default function InviteFriends() {
   }, [fetchFriends]);
 
   const handleInvite = async (friendId: number) => {
-    if (!player?.id || !gameId) return;
+    if (!player?.id) return;
 
     setSendingTo(friendId);
     setError(null);
 
     try {
-      await gameInvitationService.sendInvitation({
-        fromPlayerId: player.id,
-        toPlayerId: friendId,
-        gameId: parseInt(gameId, 10),
+      // El backend ahora crea la partida automáticamente y envía la invitación
+      const response = await gameInvitationService.sendInvitation({
+        invitedFriendId: friendId,
+        difficulty: selectedDifficulty,
+        expectedResult: selectedExpectedResult,
       });
 
-      alert("¡Invitación enviada exitosamente!");
+      console.log("Invitación enviada:", response);
+      
+      // Navegar directamente al juego con el gameId devuelto
+      navigate(`/multijugador/${response.gameId}`, {
+        state: { password: null } // La partida por invitación no usa password
+      });
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : "Error al enviar invitación.";
       setError(errorMessage);
-    } finally {
       setSendingTo(null);
-    }
-  };
-
-  const handleGoToGame = () => {
-    if (gameId) {
-      navigate(`/multijugador/${gameId}`, {
-        state: { password }
-      });
     }
   };
 
@@ -100,22 +96,39 @@ export default function InviteFriends() {
           Invitar amigo
         </h1>
 
-        <div className="text-center mb-4">
-          {gameId ? (
-            <>
-              <p className="text-gray-400 text-xl">Partida ID: {gameId}</p>
-              <p className="text-cyan-400 text-lg mt-2">
-                Seleccioná un amigo para invitarlo a jugar
-              </p>
-            </>
-          ) : (
-            <div className="bg-yellow-500/20 border border-yellow-500 rounded-lg p-4">
-              <p className="text-yellow-300 text-lg font-bold mb-2">⚠️ No hay partida activa</p>
-              <p className="text-white text-base">
-                Para invitar amigos, primero creá una partida desde el menú "Crear Partida"
-              </p>
-            </div>
-          )}
+        <div className="text-center mb-6">
+          <p className="text-cyan-400 text-lg">
+            Seleccioná la dificultad y el resultado esperado, luego elegí un amigo para invitarlo
+          </p>
+        </div>
+
+        {/* Selectores de configuración del juego */}
+        <div className="grid grid-cols-2 gap-4 mb-6">
+          <div>
+            <label className="block text-cyan-400 text-xl mb-2">Dificultad:</label>
+            <select
+              value={selectedDifficulty}
+              onChange={(e) => setSelectedDifficulty(e.target.value)}
+              className="w-full p-3 rounded bg-black/90 border-2 border-cyan-400 text-white text-xl"
+            >
+              <option value="Facil">Fácil</option>
+              <option value="Medio">Medio</option>
+              <option value="Dificil">Difícil</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-cyan-400 text-xl mb-2">Resultado esperado:</label>
+            <select
+              value={selectedExpectedResult}
+              onChange={(e) => setSelectedExpectedResult(e.target.value)}
+              className="w-full p-3 rounded bg-black/90 border-2 border-cyan-400 text-white text-xl"
+            >
+              <option value="Mayor">Mayor</option>
+              <option value="Menor">Menor</option>
+              <option value="Igual">Igual</option>
+            </select>
+          </div>
         </div>
 
         {/* Buscador */}
@@ -181,8 +194,8 @@ export default function InviteFriends() {
                     <td className="p-2 text-xl">
                       <button
                         onClick={() => handleInvite(friend.id)}
-                        disabled={sendingTo === friend.id || !gameId}
-                        title={!gameId ? "Creá una partida primero" : "Invitar a jugar"}
+                        disabled={sendingTo === friend.id}
+                        title="Invitar a jugar"
                         className="bg-[#5df9f9] text-black font-extralight hover:bg-[#f95ec8] w-24 h-8 py-1 rounded text-xl leading-relaxed hover:drop-shadow-[0_0_10px_#00ffff] disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         {sendingTo === friend.id ? "..." : "Invitar"}
@@ -195,31 +208,18 @@ export default function InviteFriends() {
           </table>
         )}
 
-        <div className="flex justify-between mt-3 pt-2 border-t border-gray-700">
+        <div className="flex justify-center mt-3 pt-2 border-t border-gray-700">
           <Link
             to="/menu"
             onClick={playBackSound}
-            className="bg-[#00f0ff] text-black text-2xl border-2 border-white px-3 py-1
+            className="bg-[#00f0ff] text-black text-2xl border-2 border-white px-6 py-2
                        tracking-wider transition-all duration-300 
                        hover:bg-cyan-400 shadow-[0_0_10px_rgba(0,217,255,0.3)] 
                        hover:shadow-[0_0_20px_rgba(0,217,255,0.6)]"
             style={{ marginTop: "20px", marginBottom: "20px" }}
           >
-            Volver
+            Volver al Menú
           </Link>
-
-          {gameId && (
-            <button
-              onClick={handleGoToGame}
-              className="bg-[#f95ec8] text-white text-2xl border-2 border-white px-6 py-1
-                         tracking-wider transition-all duration-300 
-                         hover:bg-pink-500 shadow-[0_0_10px_rgba(249,94,200,0.3)] 
-                         hover:shadow-[0_0_20px_rgba(249,94,200,0.6)]"
-              style={{ marginTop: "20px", marginBottom: "20px" }}
-            >
-              IR AL JUEGO →
-            </button>
-          )}
         </div>
       </div>
     </div>

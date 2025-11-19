@@ -230,17 +230,38 @@ body {
   animation: correr 5s linear infinite;
 }
 
- keyframes: {
-        'pulse-heartbeat': {
-          '0%, 100%': { transform: 'scale(1)' },
-          '50%': { transform: 'scale(1.05)' },
-        },
-        'coin-flip': {
-          '0%': { transform: 'rotateY(0deg)' },
-          '100%': { transform: 'rotateY(360deg)' },
-        },
-      },
-      animation: {
-        'pulse-heartbeat': 'pulse-heartbeat 2s ease-in-out infinite',
-        'coin-flip': 'coin-flip 0.6s ease-in-out',
-      },
+@keyframes latir {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes agrandar {
+  0% {
+    transform: rotateY(0deg);
+  }
+  100% {
+    transform: rotateY(360deg);
+  }
+}
+
+.pulse-heartbeat {
+  animation: latir 2s ease-in-out infinite;
+}
+
+.coin-flip {
+  animation: agrandar 0.6s ease-in-out;
+}
+
+.botonBrillante {
+  animation: latir 1s infinite;
+  box-shadow: 0 0 20px #00ffff, 0 0 40px #00ffff;
+  border: 2px solid #00ffff;
+}
+.botonBrillante:hover {
+  box-shadow: 0 0 30px #ff00ff, 0 0 60px #ff00ff;
+  border: 2px solid #ff00ff;
+}
