@@ -74,10 +74,11 @@ console.log("Creando partida con datos:", request);
 
       console.log("Partida creada:", response);
       
-      // Navegar a la pantalla del juego multijugador con el gameId
-      // Pasar la contraseña en el state si la partida es privada
+      // va a multijugador 
+      // si es privada pasa contraseña
       navigate(`/multijugador/${response.gameId}`, {
         state: { 
+          gameId: response.gameId,
           password: formData.privacidad === 'privada' ? formData.contraseña : undefined 
         }
       });

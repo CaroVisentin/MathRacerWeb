@@ -4,7 +4,7 @@ import { ActionButton } from "../../shared/buttons/actionButton";
 import { BatteryStatus } from "../../components/home/batteryStatus";
 import { CoinsDisplay } from "../../components/home/coinsDisplay";
 import { ProfileCard } from "../../components/home/profileCard";
-import { InfoBox } from "../../components/home/infoBox";
+//import { InfoBox } from "../../components/home/infoBox";
 import { CarDisplay } from "../../components/home/carDisplay";
 import fondoHome from "../../assets/images/fondocity.png";
 //import { Link,useNavigate  } from "react-router-dom";
@@ -53,12 +53,12 @@ export const Home = () => {
               <BatteryStatus />
               <CoinsDisplay coins={homeData.user.coins} />
             </div>
-            <Link to="/perfil">
-              <ProfileCard imageUrl={homeData.activeItems.profile.imageUrl} />
+            <Link to="/perfil" className="drop-shadow-[0_0_10px_#00ffff] animate-pulse-heartbeat hover:animate-coin-flip" >
+              <ProfileCard imageUrl={homeData.activeItems.profile.imageUrl}  />
             </Link>
           </div>
-          <InfoBox>Nivel {homeData.user.level}</InfoBox>
-          <InfoBox>{homeData.user.ranking}</InfoBox>
+          {/* <InfoBox>Nivel {homeData.user.level}</InfoBox>
+          <InfoBox>{homeData.user.ranking}</InfoBox> */}
           <p className="text-[#5df9f9] drop-shadow-[0_0_10px_#00ffff] text-3xl mt-2">Hola, {homeData.user.name} 👋</p>
         </div>
         <img src={mathi} alt="Mathi" className="absolute top-80 left-190 w-40 h-40 z-10 drop-shadow-[0_0_10px_#00ffff] " />

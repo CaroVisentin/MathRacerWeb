@@ -6,6 +6,7 @@ import { useConnection } from "../../../services/signalR/connection";
 import ErrorConnection from "../../../shared/modals/errorConnection";
 import { useAudio } from "../../../contexts/AudioContext";
 import mathi from "../../../assets/images/mathi.png";
+import { getAuth } from "firebase/auth";
 export const QuickGame: React.FC = () => {
   const { player } = usePlayer();
   const navigate = useNavigate();
@@ -19,36 +20,36 @@ export const QuickGame: React.FC = () => {
   useEffect(() => {
     if (!conn) return;
 
-    // Escuchar evento de partida encontrada
-    on("MatchFound", (gameData: { gameId?: number; GameId?: number; password?: string; Password?: string }) => {
+    const handleMatchFound = (gameData: { gameId?: number; GameId?: number; password?: string; Password?: string }) => {
       console.log("¡Partida encontrada!", gameData);
       setMatchFound(true);
       setSearching(false);
-      
-      // Navegar a la pantalla del juego multijugador con el gameId
-      const gameId = gameData.gameId || gameData.GameId;
-      
+      const gid = gameData.gameId || gameData.GameId;
       setTimeout(() => {
-        navigate(`/multijugador/${gameId}`);
+        navigate(`/multijugador/${gid}`);
       }, 1500);
-    });
+    };
 
-    // Escuchar errores
-    on("Error", (errorMessage: string) => {
+    const handleError = (errorMessage: string) => {
       console.error("Error del servidor:", errorMessage);
       setError(errorMessage);
       setShowModal(true);
       setSearching(false);
-    });
+    };
+
+    on("MatchFound", handleMatchFound);
+    on("Error", handleError);
 
     return () => {
-      off("MatchFound", () => {});
-      off("Error", () => {});
+      off("MatchFound", handleMatchFound);
+      off("Error", handleError);
     };
   }, [conn, navigate, on, off]);
 
   const handleFindMatch = async () => {
-    if (!player?.name) {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    if (!user) {
       setError("Debes iniciar sesión para buscar una partida");
       setShowModal(true);
       return;
@@ -58,11 +59,11 @@ export const QuickGame: React.FC = () => {
       setSearching(true);
       setError(null);
       setMatchFound(false);
-
-      console.log(`Buscando partida competitiva para: ${player.name}`);
+      const uid = user.uid;
+      console.log(`Buscando partida competitiva matchmaking para UID: ${uid} (nombre: ${player?.name || ""})`);
       
-      // Invocar el método FindMatch de SignalR con el nombre del jugador
-      await invoke("FindMatch", player.name);
+      // Invocar el método FindMatch de SignalR con el UID del jugador (no el nombre)
+      await invoke("FindMatchWithMatchmaking", uid);
       
     } catch (err) {
       console.error("Error al buscar partida:", err);

@@ -229,3 +229,18 @@ body {
 .correr-imagen {
   animation: correr 5s linear infinite;
 }
+
+ keyframes: {
+        'pulse-heartbeat': {
+          '0%, 100%': { transform: 'scale(1)' },
+          '50%': { transform: 'scale(1.05)' },
+        },
+        'coin-flip': {
+          '0%': { transform: 'rotateY(0deg)' },
+          '100%': { transform: 'rotateY(360deg)' },
+        },
+      },
+      animation: {
+        'pulse-heartbeat': 'pulse-heartbeat 2s ease-in-out infinite',
+        'coin-flip': 'coin-flip 0.6s ease-in-out',
+      },

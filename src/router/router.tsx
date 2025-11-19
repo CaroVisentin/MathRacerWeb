@@ -21,6 +21,8 @@ import { MultiplayerGame } from "../components/game/multiplayer/multiplayer";
 import { ProtectedRoute } from "../components/auth/ProtectedRoute";
 import { PublicRoute } from "../components/auth/PublicRoute";
 import { TutorialPage } from "../pages/tutorial/tutorial";
+import { InviteFriendsWrapper } from "../pages/game/multiplayer/invite-friends-wrapper";
+import { GameInvitations } from "../pages/game/multiplayer/game-invitations";
 
 const router = createBrowserRouter([
   {
@@ -60,7 +62,15 @@ const router = createBrowserRouter([
     element: <ProtectedRoute><CreateGame /></ProtectedRoute>
   },
   {
-    path: "/invitar-amigo",
+    path: "/invitar-amigos/:gameId",
+    element: <ProtectedRoute><InviteFriendsWrapper /></ProtectedRoute>
+  },
+  {
+    path: "/invitaciones",
+    element: <ProtectedRoute><GameInvitations /></ProtectedRoute>
+  },
+  {
+    path: "/invitar-amigo/:gameId?",
     element: <ProtectedRoute><InviteFriend /></ProtectedRoute>
   },
   {
