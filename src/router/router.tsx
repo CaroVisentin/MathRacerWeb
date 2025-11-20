@@ -19,6 +19,7 @@ import { StorePage } from "../pages/store/store";
 import { ProductDetailsPage } from "../pages/store/product/[id]";
 import CartPage from "../pages/cart/cart";
 import { MultiplayerGame } from "../components/game/multiplayer/multiplayer";
+import { MultiplayerMatchmaking } from "../components/game/multiplayer/multiplayerMatchmaking";
 import { ProtectedRoute } from "../components/auth/ProtectedRoute";
 import { PublicRoute } from "../components/auth/PublicRoute";
 import { TutorialPage } from "../pages/tutorial/tutorial";
@@ -41,6 +42,10 @@ const router = createBrowserRouter([
     element: <ProtectedRoute><MultiplayerGame /></ProtectedRoute>
   },
   {
+    path: "/matchmaking/:gameId",
+    element: <ProtectedRoute><MultiplayerMatchmaking /></ProtectedRoute>
+  },
+  {
     path: "/menu",
     element: <ProtectedRoute><Menu /></ProtectedRoute>
   },
@@ -60,14 +65,6 @@ const router = createBrowserRouter([
     path: "/crear",
     element: <ProtectedRoute><CreateGame /></ProtectedRoute>
   },
-//  {
- //   path: "/invitar-amigos/:gameId",
- //   element: <ProtectedRoute><InviteFriendsWrapper /></ProtectedRoute>
-//  },
- // {
-  //  path: "/invitaciones",
-  //  element: <ProtectedRoute><GameInvitations /></ProtectedRoute>
-  //},
   {
     path: "/invitar-amigo",
     element: <ProtectedRoute><InviteFriend /></ProtectedRoute>

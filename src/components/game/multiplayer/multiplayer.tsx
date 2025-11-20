@@ -58,56 +58,28 @@ export const MultiplayerGame = () => {
   const [mensajeComodin, setMensajeComodin] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const joinRetries = useRef(0);
-  const haConectado = useRef(false); // Rastrear si ya intentamos conectar
+  const haConectado = useRef(false);
 
   // Usar el nombre del jugador desde el contexto
   const nombreJugador = player?.name || "";
 
   const conectarJugador = useCallback(async () => {
-    // Verificar que la conexión esté establecida
-    if (!conn || conn.state !== "Connected") {
-      console.log("⏳ Esperando a que la conexión SignalR esté lista...");
-      return;
-    }
-
-    // Evitar llamadas duplicadas
-    if (partidaId) {
-      console.log("✅ Ya conectado a la partida", partidaId);
-      return;
-    }
-
-    console.log("=== INICIANDO CONEXIÓN A PARTIDA ===");
-    console.log("GameId desde URL:", gameId);
-    console.log("Player:", player);
-    console.log("Nombre jugador:", nombreJugador);
-    console.log("Estado conexión SignalR:", conn.state);
-
-    // Si hay gameId, unirse a esa partida específica
+       
     if (gameId) {
       const partidaIdNum = parseInt(gameId, 10);
       if (!isNaN(partidaIdNum)) {
         try {
-          console.log("=== 🎮 INTENTANDO JOINGAME ===");
-          console.log("GameId:", partidaIdNum);
-          console.log("Password:", password ? "***" : "null");
-          console.log("Estado conexión:", conn.state);
-          console.log("ConnectionId:", conn.connectionId);
-          
-          // Marcar que ya intentamos conectar
+                      
           haConectado.current = true;
-          
-          console.log("⏰ Invocando JoinGame AHORA...");
+                   
           await invoke("JoinGame", partidaIdNum, password || null);
           
           setPartidaId(partidaIdNum);
-          console.log("✅ JoinGame completado sin errores - esperando GameUpdate");
-        } catch (error) {
-          console.error("❌ ERROR COMPLETO AL UNIRSE:", error);
-          const err = error as { constructor?: { name: string }; message?: string; stack?: string };
-          console.error("Tipo de error:", err.constructor?.name);
-          console.error("Mensaje:", err.message);
-          console.error("Stack:", err.stack);
           
+        } catch (error) {
+          
+          const err = error as { constructor?: { name: string }; message?: string; stack?: string };
+                    
           // Mostrar error al usuario y volver al menú
           setError(err.message || "No se pudo unir a la partida");
           setTimeout(() => {
@@ -115,22 +87,20 @@ export const MultiplayerGame = () => {
           }, 2000);
         }
       } else {
-        console.error("❌ GameId inválido:", gameId);
+        setError("ID de partida inválido");
         navigate('/menu');
       }
     } else {
       // Si no hay gameId, buscar partida rápida (matchmaking)
       if (nombreJugador.trim()) {
-        console.log(`🔍 Buscando partida rápida para ${nombreJugador}`);
-        
+                
         // Marcar que ya intentamos conectar
         haConectado.current = true;
         
         try {
           await invoke("FindMatch", nombreJugador);
-          console.log("✅ Búsqueda de partida rápida iniciada");
-        } catch (error) {
-          console.error("❌ Error en FindMatch:", error);
+          
+        } catch (error) {          
           setError("No se pudo buscar partida");
         }
       }
@@ -242,16 +212,12 @@ export const MultiplayerGame = () => {
     setTimeout(() => sendAnswer(opcion), 200);
   };
 
-  // Conectar automáticamente cuando el componente se monte y la conexión esté lista
+  
   useEffect(() => {
-    // Condiciones para intentar conectar:
-    // 1. Conexión SignalR establecida
-    // 2. Si es quick match (sin gameId) requerimos nombre; si es join por URL, no lo requerimos
-    // 3. No estamos ya conectados a una partida
-    const requireName = !gameId; // solo exigimos nombre cuando NO hay gameId (matchmaking)
+    
+    const requireName = !gameId; 
     const hasName = requireName ? (nombreJugador.trim() !== "") : true;
-
-    // IMPORTANTE: Si tenemos gameId en la URL, intentar conectar aunque partidaId aún no esté asignado
+  
     const shouldConnect = 
       conn && 
       isConnected && 
@@ -259,18 +225,9 @@ export const MultiplayerGame = () => {
       !haConectado.current; // cambiado de !partidaId a !haConectado.current
 
     if (shouldConnect) {
-      console.log("✅ Condiciones cumplidas - conectando jugador...");
-      console.log("Estado antes de conectar:", { gameId, partidaId, conn: conn.state, isConnected });
+      
       conectarJugador();
-    } else {
-      console.log("⏸️ Esperando condiciones:", {
-        conexionActiva: isConnected,
-        connState: conn?.state,
-        condNombre: hasName,
-        noConectado: !haConectado.current,
-        gameIdPresente: !!gameId
-      });
-    }
+    } 
   }, [conn, isConnected, nombreJugador, gameId, partidaId, conectarJugador]);
 
   // Reintento automático de JoinGame si la conexión ya está activa pero aún no hay partidaId
@@ -285,7 +242,7 @@ export const MultiplayerGame = () => {
     const t = setTimeout(async () => {
       try {
         joinRetries.current += 1;
-        console.log(`🔁 Reintento JoinGame #${joinRetries.current}`);
+        
         await conectarJugador();
       } catch {
         // noop, el propio conectarJugador registra errores
@@ -299,7 +256,12 @@ export const MultiplayerGame = () => {
     if (!conn) return; // Esperar a que la conexión esté inicializada
 
     const gameUpdateHandler = (data: GameUpdateDto) => {
-      console.log("GameUpdate recibido:", data);
+          
+      // Ocultar modal de búsqueda cuando hay 2 jugadores
+      if (data.players && data.players.length >= 2) {
+        setBuscandoRival(false);
+      }
+      
       setJugadoresPartida(data.players);
 
       // Intentar identificar al jugador usando Firebase UID (cuando backend lo envíe en p.uid)
@@ -362,8 +324,6 @@ export const MultiplayerGame = () => {
           setGanador(false);
         }
       }
-
-      if (data.players.length >= 2) setBuscandoRival(false);
 
       if (data.currentQuestion) {
         setPartidaId(data.gameId);
@@ -439,7 +399,6 @@ export const MultiplayerGame = () => {
         p.name.trim() &&
         p.name.trim().toLowerCase() !== nombreJugador.trim().toLowerCase()
     )?.name ?? "Rival";
-
   return (
     <div className="juego w-full h-full bg-black text-white relative">
       {/* HEADER */}

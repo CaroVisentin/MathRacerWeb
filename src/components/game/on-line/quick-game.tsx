@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { StarsBackground } from "../../../shared/backgrounds/starBackground";
 import { usePlayer } from "../../../hooks/usePlayer";
 import { useConnection } from "../../../services/signalR/connection";
@@ -7,66 +7,85 @@ import ErrorConnection from "../../../shared/modals/errorConnection";
 import { useAudio } from "../../../contexts/AudioContext";
 import mathi from "../../../assets/images/mathi.png";
 import { getAuth } from "firebase/auth";
+import { MultiplayerMatchmaking } from "../multiplayer/multiplayerMatchmaking";
+
 export const QuickGame: React.FC = () => {
   const { player } = usePlayer();
-  const navigate = useNavigate();
   const { conn, errorConexion, invoke, on, off } = useConnection();
   const { playBackSound } = useAudio();
   const [searching, setSearching] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [matchFound, setMatchFound] = useState(false);
+  const [gameIdFound, setGameIdFound] = useState<number | null>(null);
+  const [initialGameData, setInitialGameData] = useState<any>(null);
   const fallbackTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (!conn) return;
 
     const handleMatchFound = (gameData: { gameId?: number; GameId?: number; password?: string; Password?: string }) => {
-      console.log("¡Partida encontrada!", gameData);
-      setMatchFound(true);
-      setSearching(false);
-      if (fallbackTimerRef.current) {
-        clearTimeout(fallbackTimerRef.current);
-      }
       const gid = gameData.gameId || gameData.GameId;
-      setTimeout(() => {
-        navigate(`/multijugador/${gid}`);
-      }, 1500);
+      
+      
+      if (gid) {
+        setMatchFound(true);
+        setSearching(false);
+        if (fallbackTimerRef.current) {
+          clearTimeout(fallbackTimerRef.current);
+        }       
+              }
     };
 
     const handleError = (errorMessage: string) => {
-      console.error("Error del servidor:", errorMessage);
+      console.error("❌ Error del servidor:", errorMessage);
       setError(errorMessage);
       setShowModal(true);
       setSearching(false);
     };
 
-    // Listener temporal para gameUpdate mientras se busca partida
-    // Esto evita el warning cuando el backend envía gameUpdate antes de navegar
+    // Listener para GameUpdate
     const handleGameUpdate = (data: any) => {
-      console.log("GameUpdate recibido durante búsqueda (ignorado):", data);
-      // No hacemos nada, solo evitamos el warning
-      // El componente multiplayer.tsx manejará los updates una vez que naveguemos
+      
+      const gid = data.gameId || data.GameId;
+      const status = data.status || data.Status;
+      const players = data.players || data.Players || [];
+      const playerCount = players.length;
+      
+      // Iniciar juego si el status es InProgress O si hay 2 jugadores
+      if (status === "InProgress" || playerCount >= 2) {
+        setInitialGameData(data);
+        setGameIdFound(gid);
+        setMatchFound(true);
+        setSearching(false);
+        if (fallbackTimerRef.current) {
+          clearTimeout(fallbackTimerRef.current);
+        }
+      } 
     };
 
+   
     on("MatchFound", handleMatchFound);
     on("Error", handleError);
     
-    // Registrar todos los formatos posibles de gameUpdate
+    // Registrar todas las variantes de GameUpdate
     on("GameUpdate", handleGameUpdate);
     on("gameUpdate", handleGameUpdate);
     on("game-update", handleGameUpdate);
     on("gameupdate", handleGameUpdate);
 
     return () => {
+      
+      if (!gameIdFound) {
+        off("GameUpdate", handleGameUpdate);
+        off("gameUpdate", handleGameUpdate);
+        off("game-update", handleGameUpdate);
+        off("gameupdate", handleGameUpdate);
+      }
       off("MatchFound", handleMatchFound);
       off("Error", handleError);
-      off("GameUpdate", handleGameUpdate);
-      off("gameUpdate", handleGameUpdate);
-      off("game-update", handleGameUpdate);
-      off("gameupdate", handleGameUpdate);
     };
-  }, [conn, navigate, on, off, fallbackTimerRef]);
+  }, [conn, on, off, fallbackTimerRef, gameIdFound]);
 
   const handleFindMatch = async () => {
     const auth = getAuth();
@@ -82,14 +101,12 @@ export const QuickGame: React.FC = () => {
       setError(null);
       setMatchFound(false);
       const uid = user.uid;
-      console.log(`Buscando partida competitiva matchmaking para UID: ${uid} (nombre: ${player?.name || ""})`);
-      
-      // Usar FindMatchWithMatchmaking que busca partidas existentes primero
-      // y solo crea una nueva si no hay ninguna disponible
       await invoke("FindMatchWithMatchmaking", uid);
       
+     
+      
     } catch (err) {
-      console.error("Error al buscar partida:", err);
+      
       setError(errorConexion || "No se pudo conectar al servidor de matchmaking");
       setShowModal(true);
       setSearching(false);
@@ -101,8 +118,13 @@ export const QuickGame: React.FC = () => {
     if (fallbackTimerRef.current) {
       clearTimeout(fallbackTimerRef.current);
     }
-    // TODO: Cancelar búsqueda en el servidor si es necesario
+    
   };
+
+  // Si ya encontramos partida, mostrar el componente de juego
+  if (gameIdFound) {
+    return <MultiplayerMatchmaking gameIdProp={gameIdFound} initialData={initialGameData} />;
+  }
 
   return (
     <div className="h-screen w-screen bg-[#1C092D] flex items-center justify-center p-4 overflow-hidden">
@@ -111,16 +133,16 @@ export const QuickGame: React.FC = () => {
       </div>
       <img src={mathi} alt="Mathi" className="absolute top-4 left-4 w-20 h-20 z-10 correr-imagen" />
 
-      <div className="w-full max-w-2xl mx-auto bg-black/90 text-[#5df9f9] p-8 rounded-lg shadow-lg relative z-10">
-        <h1 className="text-6xl text-[#f95ec8] uppercase text-center mb-10 drop-shadow-[0_0_10px_#00ffff]">
+      <div className="w-full max-w-6xl mx-auto bg-black/90 text-[#5df9f9] p-8 rounded-lg shadow-lg relative z-10">
+        <h1 className="text-8xl text-[#f95ec8] uppercase text-center mb-10 drop-shadow-[0_0_8px_#00ffff]">
           Partida Competitiva
         </h1>
 
         <div className="text-center mb-8">
-          <p className="text-2xl text-white mb-4">
-            Jugador: <span className="text-[#5df9f9] font-bold">{player?.name || "Invitado"}</span>
+          <p className="text-5xl text-white mb-4 ">
+            Jugador: <span className="text-[#5df9f9] ">{player?.name || "Invitado"}</span>
           </p>
-          <p className="text-lg text-gray-300">
+          <p className="text-lg text-gray-300 font-sans">
             Se te emparejará automáticamente con otro jugador disponible
           </p>
         </div>
@@ -142,10 +164,10 @@ export const QuickGame: React.FC = () => {
         )}
 
         {!searching && !matchFound && (
-          <div className="space-y-6">
+          <div className="space-y-6 pt-4 ">
             <div className="bg-black/70 border-2 border-[#5df9f9] rounded-lg p-6">
-              <h3 className="text-2xl text-[#f95ec8] mb-4">Reglas de la Partida Competitiva:</h3>
-              <ul className="text-white space-y-2">
+              <h3 className="text-4xl text-[#f95ec8] mb-4">Reglas de la Partida Competitiva:</h3>
+              <ul className="text-white text-2xl font-sans space-y-2">
                 <li>• Matchmaking automático con jugadores en línea</li>
                 <li>• Dificultad y configuración aleatoria</li>
                 <li>• Gana el primero en completar todas las preguntas correctamente</li>
@@ -153,7 +175,7 @@ export const QuickGame: React.FC = () => {
               </ul>
             </div>
 
-            <div className="flex gap-4 justify-center">
+            <div className="flex gap-4 justify-center pt-4">
               <Link
                 to="/menu"
                 onClick={playBackSound}

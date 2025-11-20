@@ -16,7 +16,7 @@ interface EndOfMultiplayerModeModalProps {
 
 export const EndOfMultiplayerModeModal: React.FC<
   EndOfMultiplayerModeModalProps
-> = ({ players, currentPlayer, onClose, onRetry }) => {
+> = ({ players, currentPlayer, onRetry }) => {
   const { playWinnerSound, playGameOverSound } = useAudio();
 
   // position 1 = ganador
@@ -94,19 +94,13 @@ export const EndOfMultiplayerModeModal: React.FC<
           ))}
         </ul>
 
-        {/* Botones */}
-        <div className="flex justify-between mt-6">
-          <button
-            onClick={onClose}
-            className="bg-gray-600 px-6 py-2 rounded hover:bg-gray-500"
-          >
-            Regresar
-          </button>
+        {/* Botón */}
+        <div className="flex justify-center mt-6">
           <button
             onClick={onRetry}
-            className="bg-teal-600 px-6 py-2 rounded hover:bg-teal-500"
+            className="bg-teal-600 px-8 py-3 rounded hover:bg-teal-500 text-xl"
           >
-            Volver a jugar
+            Volver
           </button>
         </div>
       </div>
