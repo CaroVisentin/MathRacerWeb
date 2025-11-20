@@ -5,6 +5,8 @@ import { AmigosSection } from "../../components/profile/sections/friendsSection"
 import { AjustesSection } from "../../components/profile/sections/settingsSection";
 import { useNavigate } from "react-router-dom";
 import { RulesButton } from "../../shared/buttons/buttonReglas";
+import { StarsBackground } from "../../shared/backgrounds/starBackground";
+//import mathi from "../../assets/images/mathi.png";
 
 export const ProfilePage = () => {
   const [activeSection, setActiveSection] = useState<
@@ -13,7 +15,14 @@ export const ProfilePage = () => {
   const navigate = useNavigate();
 
   return (
+  
+        
+
     <div className="min-h-screen w-full bg-black flex flex-col relative">
+      <div className="absolute inset-0 z-0 pointer-events-none">
+          <StarsBackground />
+        </div>
+      
       <TabPanel
         activeSection={activeSection}
         setActiveSection={setActiveSection}
