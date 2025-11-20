@@ -25,7 +25,7 @@ const fondos = [
 
 interface MultiplayerMatchmakingProps {
   gameIdProp?: number;
-  initialData?: any;
+  initialData?: GameUpdateDto;
 }
 
 export const MultiplayerMatchmaking = ({ gameIdProp, initialData }: MultiplayerMatchmakingProps) => {
@@ -177,9 +177,10 @@ export const MultiplayerMatchmaking = ({ gameIdProp, initialData }: MultiplayerM
 
   
   useEffect(() => {
+    if (!initialData) return;
     
-    const players = initialData.players || initialData.Players || [];
-    const gid = initialData.gameId || initialData.GameId;
+    const players = initialData.players || [];
+    const gid = initialData.gameId;
       
       if (players.length > 0) {
          setJugadoresPartida(players);
@@ -210,7 +211,7 @@ export const MultiplayerMatchmaking = ({ gameIdProp, initialData }: MultiplayerM
         }
         
         // También procesar la pregunta si viene
-        if (initialData.currentQuestion) {
+        if (initialData?.currentQuestion) {
           setOpciones(initialData.currentQuestion.options);
           setInstruccion(initialData.expectedResult);
         }

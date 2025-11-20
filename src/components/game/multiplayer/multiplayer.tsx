@@ -100,12 +100,12 @@ export const MultiplayerGame = () => {
         try {
           await invoke("FindMatch", nombreJugador);
           
-        } catch (error) {          
+        } catch {
           setError("No se pudo buscar partida");
         }
       }
     }
-  }, [gameId, player, nombreJugador, password, invoke, conn, partidaId, navigate]);
+  }, [gameId, nombreJugador, password, invoke, navigate]);
 
   const reiniciarJuego = () => {
     setGanador(false);

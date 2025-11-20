@@ -8,6 +8,7 @@ import { useAudio } from "../../../contexts/AudioContext";
 import mathi from "../../../assets/images/mathi.png";
 import { getAuth } from "firebase/auth";
 import { MultiplayerMatchmaking } from "../multiplayer/multiplayerMatchmaking";
+import type { GameUpdateDto } from "../../../models/domain/signalR/gameUpdateDto";
 
 export const QuickGame: React.FC = () => {
   const { player } = usePlayer();
@@ -18,7 +19,7 @@ export const QuickGame: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [matchFound, setMatchFound] = useState(false);
   const [gameIdFound, setGameIdFound] = useState<number | null>(null);
-  const [initialGameData, setInitialGameData] = useState<any>(null);
+  const [initialGameData, setInitialGameData] = useState<GameUpdateDto | null>(null);
   const fallbackTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
@@ -45,11 +46,11 @@ export const QuickGame: React.FC = () => {
     };
 
     // Listener para GameUpdate
-    const handleGameUpdate = (data: any) => {
+    const handleGameUpdate = (data: GameUpdateDto) => {
       
-      const gid = data.gameId || data.GameId;
-      const status = data.status || data.Status;
-      const players = data.players || data.Players || [];
+      const gid = data.gameId;
+      const status = data.status;
+      const players = data.players || [];
       const playerCount = players.length;
       
       // Iniciar juego si el status es InProgress O si hay 2 jugadores
@@ -105,7 +106,7 @@ export const QuickGame: React.FC = () => {
       
      
       
-    } catch (err) {
+    } catch {
       
       setError(errorConexion || "No se pudo conectar al servidor de matchmaking");
       setShowModal(true);
@@ -123,7 +124,7 @@ export const QuickGame: React.FC = () => {
 
   // Si ya encontramos partida, mostrar el componente de juego
   if (gameIdFound) {
-    return <MultiplayerMatchmaking gameIdProp={gameIdFound} initialData={initialGameData} />;
+    return <MultiplayerMatchmaking gameIdProp={gameIdFound} initialData={initialGameData || undefined} />;
   }
 
   return (

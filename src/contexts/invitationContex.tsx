@@ -8,13 +8,14 @@ type InvitationContextType = {
     checkInvitations: () => Promise<void>;
 };
 
-export const InvitationContext = createContext<InvitationContextType>({
+const InvitationContext = createContext<InvitationContextType>({
     hasInvitation: false,
     // no-op default implementation matching the Dispatch signature
-    setHasInvitation: (_value: SetStateAction<boolean>) => { },
+    setHasInvitation: () => { },
     checkInvitations: async () => { },
 });
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useInvitation = () => useContext(InvitationContext);
 
 export const InvitationProvider=({ children }: { children: ReactNode }) => {
