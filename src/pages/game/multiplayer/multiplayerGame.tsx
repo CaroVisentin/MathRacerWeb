@@ -1,42 +1,95 @@
-
 import { Link } from "react-router-dom";
+import { StarsBackground } from "../../../shared/backgrounds/starBackground";
+import { useAudio } from "../../../contexts/AudioContext";
+import { useInvitation } from "../../../contexts/invitationContex";
+import mathi from "../../../assets/images/mathi.png";
 
 export const Menu = () => {
-
+  const { playButtonSound, playBackSound } = useAudio();
+  const { hasInvitation } = useInvitation();
   
-  const botonVolver = "bg-red-600 text-black text-xl  py-2 px-4 rounded-[6px] hover:bg-red-700 transition duration-300 mx-auto block mt-10";
-
-
   return (
+    // Contenedor principal
 
-    <div
-      className="h-screen w-screen multijugadorContenedor fondo-multijugador"    >
-      <h1 className=" titulo text-pink-400 text-5xl  flex justify-center tracking-wide  mb-8 drop-shadow-lg">Multijugador</h1>
-      <div className="contenedorMenu bg-white/10 rounded-lg p-8 flex flex-col items-center">
-
-
-        <Link to="/crear" className="botonGral" style={{gridArea:"crear"}}>Crear Partida</Link>
-        <Link to="/unirse-partida" className="botonGral" style={{gridArea: "unirse"}}>Unirse a Partida</Link>
-        {/* <Link to="/partida-rapida" className="botonGral">Partida Rápida</Link> */}
-        <Link to="/invitar-amigo" className="botonGral" style={{gridArea:"invitar"}}>Invitar a un Amigo</Link>
-        <Link to="/ranking" className="botonGral" style={{gridArea:"ranking"}}>Ranking</Link>
-        <Link to="/multijugador" className="botonGral" style={{gridArea:"competitiva",
-          width:"50%",
-          justifySelf:"center",
-        }}>Partida Competitiva</Link>
-
-
-
+    <div className="h-screen w-screen bg-[#1C092D] flex flex-col items-center justify-between p-4 overflow-hidden">
+      
+      <div className="absolute inset-0 z-20 pointer-events-none">
+        <img src={mathi} alt="Mathi" className="w-20 h-20  drop-shadow-[0_0_10px_#00ffff] " />
+        <StarsBackground />
       </div>
-      <div className="arreglo">
+     
 
+      <h1 className="text-pink-400 text-8xl text-center uppercase tracking-wide mb-12 drop-shadow-[0_0_10px_#00ffff]">
+        Multijugador
+      </h1>
 
-      <Link to="/" className={botonVolver}>Volver al Menú</Link>
-</div>
+      <div className=" rounded-lg p-8 grid grid-cols-2 gap-6 w-4/5 max-w-screen-lg">
+        
+        <Link
+          to="/crear"
+          onClick={playButtonSound}
+          className="botonGral uppercase tracking-wider transition-all duration-300 ease-out hover:drop-shadow-[0_0_10px_#00ffff] text-center text-5xl"
+        >
+          Crear Partida
+        </Link>
+
+        <Link
+          to="/unirse-partida"
+          onClick={playButtonSound}
+          className="botonGral uppercase hover:drop-shadow-[0_0_10px_#00ffff] text-center text-5xl"
+        >
+          Unirse a Partida
+        </Link>
+
+        <Link
+          to="/invitar-amigo"
+          onClick={playButtonSound}
+          className="botonGral uppercase hover:drop-shadow-[0_0_10px_#00ffff] text-center text-5xl"
+        >
+          Invitar a un Amigo
+        </Link>
+
+        <Link
+          to="/invitaciones"
+          onClick={playButtonSound}
+          className={`botonGral uppercase hover:drop-shadow-[0_0_10px_#00ffff] text-center text-5xl ${hasInvitation ? 'botonBrillante' : ''}`}
+        >
+          Buzón de Invitaciones
+        </Link>
+
+        <Link
+          to="/ranking"
+          onClick={playButtonSound}
+          className="botonGral uppercase hover:drop-shadow-[0_0_10px_#00ffff] text-center text-5xl"
+        >
+          Ranking
+        </Link>
+
+        <Link
+          to="/partida-rapida"
+          onClick={playButtonSound}
+          className="botonGral uppercase hover:drop-shadow-[0_0_10px_#00ffff] text-center  text-5xl"
+        >
+          Partida Competitiva
+        </Link>
+      </div>
+
+      <div className="m-16">
+        <Link
+          to="/home"
+          onClick={playBackSound}
+          className="bg-[#00f0ff] text-2xl border-2 border-white px-3 py-1
+                tracking-wider transition-all duration-300 
+                 hover:bg-cyan-400 shadow-[0_0_10px_rgba(0,217,255,0.3)] 
+                 hover:shadow-[0_0_20px_rgba(0,217,255,0.6)]
+                 disabled:opacity-50"
+        >
+          Volver
+        </Link>
+      </div>
+      
     </div>
-
-
-  )
+  );
 };
 
 export default Menu;

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { sumar } from '../utils/sumar';
+import { sumar } from '../shared/utils/sumar';
 
 describe('sumar', () => {
     it('suma dos números correctamente', () => {

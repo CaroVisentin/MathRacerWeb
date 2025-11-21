@@ -1,19 +1,79 @@
 // Configuración del cliente HTTP (axios/fetch)
-
 import axios from "axios";
+import { getAuth } from "firebase/auth";
 
 // Detectar entorno
-const baseURL =
-    import.meta.env.MODE === "development"
-        ? import.meta.env.VITE_API_URL_LOCAL
-        : import.meta.env.VITE_API_URL_PROD;
+const baseURL = import.meta.env.VITE_API_URL;
+
+// Validar que la URL base esté definida
+if (!baseURL) {
+    throw new Error('API URL no configurada. Verifica las variables de entorno.');
+}
 
 // Exportar instancia base de axios
 export const api = axios.create({
     baseURL: `${baseURL}/api`,
 });
 
+// Variable para mantener el token actual
+let currentToken: string | null = null;
+
+// Interceptor para añadir el token a las peticiones
+export const setAuthToken = (token: string | null) => {
+    currentToken = token;
+    if (token) {
+        api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    } else {
+        delete api.defaults.headers.common['Authorization'];
+    }
+};
+
+// Interceptor de REQUEST para asegurar que siempre se envíe el token más reciente
+api.interceptors.request.use(
+    async (config) => {
+        // Si hay un token guardado, asegurarse de que esté en el header
+        if (currentToken) {
+            config.headers.Authorization = `Bearer ${currentToken}`;
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
+
+export const getAuthToken = async () => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    if (user) {
+        const token = await user.getIdToken();
+        setAuthToken(token);
+    }
+}
+
+// Interceptor para manejar errores de autenticación
+api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        if (error.response?.status === 401) {
+            // Token inválido o expirado
+            setAuthToken(null);
+        }
+        return Promise.reject(error);
+    }
+);
+
 // Exportar los endpoints organizados por módulo
 export const API_URLS = {
-    games: "/games",
+    games: "/games", 
+    player: "/player",
+    worlds: "/worlds",
+    levels: "/levels",
+    online: "/online",
+    storyModeGame: "/solo",
+    chest: "/chest",
+    friends: "/friendship",
+    energy: "/energy",
+    wildcards: "/wildcards",
+    gameInvitation: "/gameinvitation",
 };

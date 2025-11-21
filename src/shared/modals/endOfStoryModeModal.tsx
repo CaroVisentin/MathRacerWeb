@@ -1,30 +1,37 @@
-import React from "react";
+import React, { useEffect } from "react";
 import coinImg from "../../assets/images/coin.png";
 import carImg from "../../assets/images/auto.png";
 import grayRectangle from "../../assets/images/gray-rectangle.png";
 import yellowRectangle from "../../assets/images/yellow-rectangle.png";
 import iconoEnergia from "../../assets/images/icono-energia.png";
+import mathi from "../../assets/images/mathi.png";
+import mathiTriste from "../../assets/images/mathiTriste.png";
+import { useAudio } from "../../contexts/AudioContext";
 
 interface EndOfStoryModeModalProps {
     level: number;
     reward: number;
     won: boolean;
     onClose: () => void;
-    onNext: () => void;
+    onNext?: () => void;
     remainingLives: number;
 }
 
-export const EndOfStoryModeModal: React.FC<EndOfStoryModeModalProps> = ({
-    level,
-    reward,
-    won,
-    onClose,
-    onNext,
-    remainingLives
-}) => {
+export const EndOfStoryModeModal: React.FC<EndOfStoryModeModalProps> = ({ level, reward, won, onClose, onNext, remainingLives }) => {
+    const { playWinnerSound, playGameOverSound } = useAudio();
+
+    useEffect(() => {
+        // Reproducir sonido según el resultado
+        if (won) {
+            playWinnerSound();
+        } else {
+            playGameOverSound();
+        }
+    }, [won, playWinnerSound, playGameOverSound]);
+
     return (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/60 z-50">
-            <div className="bg-[#484848] text-white rounded-lg p-6 w-[400px] max-w-full">
+        <div className="fixed inset-0 flex items-center justify-center bg-black z-50">
+            <div className="bg-[#484848] text-white border-4 border-white p-6 w-[400px] max-w-full">
                 {/* Nivel */}
                 <div className="mt-4 text-center">
                     <span className="inline-block bg-[#5C7339] text-white px-6 rounded text-lg">
@@ -33,21 +40,24 @@ export const EndOfStoryModeModal: React.FC<EndOfStoryModeModalProps> = ({
                 </div>
 
                 {/* Título */}
+                <div className="flex items-center justify-center gap-4">
+                    <img 
+                    src={won ? mathi : mathiTriste} 
+                    alt="Mathi" 
+                    className={`w-25 h-30 drop-shadow-[0_0_5px_#00FFFF] ${won ? "animate-bounce" : "opacity-80 "}`}  
+                    />
                 <h2
-                    className={`text-center text-5xl ${won ? "text-[#A6FF00]" : "text-[#FB2828]"
-                        }`}
+                    className={`text-center text-5xl ${won ? "text-[#A6FF00]" : "text-[#FB2828]"}`}
                 >
                     {won ? "¡GANASTE!" : "¡PERDISTE!"}
                 </h2>
+                
+                </div>
 
                 {/* Contenido */}
-                <div className="mt-4 text-center">
+                <div className="mt-4 flex flex-col items-center text-center">
                     <div className="mt-4">
-                        <img
-                            src={carImg}
-                            alt="auto"
-                            className="mx-auto w-44 h-32 object-contain"
-                        />
+                        <img src={carImg} alt="auto" className="mx-auto w-44 h-32 object-contain" />
                     </div>
 
                     {won ? (
@@ -61,7 +71,7 @@ export const EndOfStoryModeModal: React.FC<EndOfStoryModeModalProps> = ({
                     ) : (
                         <>
                             <p className="mt-4 text-xl">Vida restante</p>
-                            <div className="flex items-center justify-center gap-2 mt-2">
+                            <div className="flex items-center justify-center gap-2 pb-3 mt-2">
                                 <img src={iconoEnergia} alt="energias" className="w-6 h-6" />
                                 {Array.from({ length: 3 }).map((_, index) => (
                                     <img
@@ -77,19 +87,19 @@ export const EndOfStoryModeModal: React.FC<EndOfStoryModeModalProps> = ({
                 </div>
 
                 {/* Botones */}
-                <div className="flex justify-between mt-6">
-                    <button
-                        onClick={onClose}
-                        className="bg-gray-600 px-6 py-2 rounded hover:bg-gray-500"
-                    >
+                <div className="flex justify-center mt-6">
+                    <button onClick={onClose} className="bg-gray-600 px-6 py-2 rounded hover:bg-gray-500">
                         Regresar
                     </button>
-                    <button
-                        onClick={onNext}
-                        className="bg-teal-600 px-6 py-2 rounded hover:bg-teal-500"
-                    >
-                        Siguiente
-                    </button>
+
+                    {onNext && (
+                        <button
+                            onClick={onNext}
+                            className="bg-teal-600 px-6 py-2 rounded hover:bg-teal-500"
+                        >
+                            Siguiente
+                        </button>
+                    )}
                 </div>
             </div>
         </div>

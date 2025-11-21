@@ -1,99 +1,173 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { FriendList } from "../components/friendsList";
-
-export interface Friend {
-    id: number;
-    nombre: string;
-    puntos: number;
-    avatarUrl: string;
-    carUrl: string;
-}
+//import { usePlayer } from "../../../hooks/usePlayer";
+import { useAuth } from "../../../hooks/useAuth";
+import type { FriendDto } from "../../../models/domain/profile/friends/friendDto";
+import type { Friend } from "../../../models/ui/profile/friends/friend";
+import { friendshipService } from "../../../services/friendship/friendshipService";
+import { friendMapper } from "../../../models/mappers/friendMapper";
+import { AddFriendModal } from "../components/addFriendModal";
+import Spinner from "../../../shared/spinners/spinner";
+import { FriendRequestsModal } from "../components/friendRequestsModal";
+import { ConfirmModal } from "../components/confirmDeleteFriendModal";
 
 export const AmigosSection = () => {
-    const [friends, setFriends] = useState<Friend[]>([
-        {
-            id: 1,
-            nombre: "Amigo1",
-            puntos: 10253,
-            avatarUrl: "/avatar1.png",
-            carUrl: "/carro.png",
-        },
-        {
-            id: 2,
-            nombre: "SegundoAmigo",
-            puntos: 9563,
-            avatarUrl: "/avatar2.png",
-            carUrl: "/carro.png",
-        },
-        {
-            id: 3,
-            nombre: "Amigo3",
-            puntos: 11238,
-            avatarUrl: "/avatar3.png",
-            carUrl: "/carro.png",
-        },
-        {
-            id: 3,
-            nombre: "4toAmigo",
-            puntos: 11238,
-            avatarUrl: "/avatar3.png",
-            carUrl: "/carro.png",
-        },
-        {
-            id: 3,
-            nombre: "888jugador",
-            puntos: 11238,
-            avatarUrl: "/avatar3.png",
-            carUrl: "/carro.png",
-        },
-    ]);
+  //const { player } = usePlayer();
+  const { player } = useAuth();
+  const [friends, setFriends] = useState<Friend[]>([]);
+  const [pendingRequests, setPendingRequests] = useState<Friend[]>([]);
+  const [pendingCount, setPendingCount] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [showModal, setShowModal] = useState(false);
+  const [showRequestsModal, setShowRequestsModal] = useState(false);
 
-    const handleRemove = (id: number) => {
-        setFriends((prev) => prev.filter((friend) => friend.id !== id));
-    };
+  const [friendToDelete, setFriendToDelete] = useState<Friend | null>(null);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
-    const handleAdd = () => {
-        // 1. Mostrar modal para buscar un amigo en el juego
-        // 2. Llamar al back para guardar amigo
-        // 3. Refrescar la tabla
-        const newFriend: Friend = {
-            id: Date.now(), // ID único
-            nombre: "NuevoAmigo",
-            puntos: Math.floor(Math.random() * 10000),
-            avatarUrl: "/avatarDefault.png",
-            carUrl: "/carro.png",
-        };
-        setFriends((prev) => [...prev, newFriend]);
-    };
+  const fetchFriends = useCallback(async () => {
+    if (!player?.id) return;
+    setLoading(true);
+    setError(null);
 
-    return (
-        <div className="w-full h-full flex flex-col items-center gap-6 bg-black py-6">
-            {/* Título centrado */}
-            <span className="text-white text-xl">
-                Lista de amigos
-            </span>
+    try {
+      const data: FriendDto[] = await friendshipService.getFriends(player.id);
+      const mappedFriends = friendMapper.fromDtoList(data);
+      setFriends(mappedFriends);
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : "Error al obtener lista de amigos.";
+      setError(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  }, [player]);
 
-            {/* Tabla centrada */}
-            <div className="w-full">
-                <FriendList
-                    friends={friends}
-                    onRemove={handleRemove}
-                />
-            </div>
+  const fetchPendingRequests = useCallback(async () => {
+    if (!player?.id) return;
+    try {
+      const data: FriendDto[] = await friendshipService.getFriendRequests(
+        player.id
+      );
+      const mappedRequests = friendMapper.fromDtoList(data);
+      setPendingRequests(mappedRequests);
+      setPendingCount(mappedRequests.length);
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error ? err.message : "Error al obtener solicitudes.";
+      setError(errorMessage);
+    }
+  }, [player]);
 
-            {/* Botón centrado */}
+  useEffect(() => {
+    fetchFriends();
+    fetchPendingRequests();
+  }, [fetchFriends, fetchPendingRequests]);
+
+  const handleRemove = (friend: Friend) => {
+    setFriendToDelete(friend);
+    setShowConfirmModal(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!player || !friendToDelete) return;
+    setError(null);
+    try {
+      const dto = { fromPlayerId: player.id, toPlayerId: friendToDelete.id };
+      await friendshipService.deleteFriend(dto);
+      setShowConfirmModal(false);
+      setFriendToDelete(null);
+      await fetchFriends();
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error ? err.message : "Error al eliminar amigo.";
+      setError(errorMessage);
+    }
+  };
+
+  return (
+    <div className="flex flex-col items-center w-full h-full bg-black">
+      <div className="w-full max-w-2xl flex flex-col h-[calc(100vh-180px)]">
+        <div className="sticky top-0 z-40 bg-black flex flex-col items-center gap-4 py-4">
+          <span className="text-white text-3xl">Lista de amigos</span>
+
+          <div className="w-full flex justify-between items-center">
             <button
-                className="bg-[#00f0ff] text-slate-950 border-2 border-white px-8 py-2
-                text-xl tracking-wider transition-all duration-300 
-                hover:bg-cyan-400 shadow-[0_0_10px_rgba(0,217,255,0.3)] 
-                hover:shadow-[0_0_20px_rgba(0,217,255,0.6)]
-                mt-4"
-                onClick={handleAdd}
+              onClick={() => setShowModal(true)}
+              className="bg-[#00f0ff] text-slate-950 border-2 border-white px-8 py-2
+                                text-xl tracking-wider transition-all duration-300 
+                                hover:bg-cyan-400 shadow-[0_0_10px_rgba(0,217,255,0.3)] 
+                                hover:shadow-[0_0_20px_rgba(0,217,255,0.6)]"
             >
-                AGREGAR AMIGO
+              AGREGAR AMIGO
             </button>
+
+            <button
+              onClick={() => setShowRequestsModal(true)}
+              className="relative bg-[#f95ec8] text-white border-2 border-white px-4 py-2
+                            text-xl tracking-wider transition-all duration-300 
+                            hover:bg-pink-500 shadow-[0_0_10px_rgba(249,94,200,0.3)] 
+                            hover:shadow-[0_0_20px_rgba(249,94,200,0.6)]"
+            >
+              <i className="ri-inbox-2-fill text-2xl"></i>
+
+              {pendingCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-600 text-white text-sm rounded-full w-5 h-5 flex items-center justify-center">
+                  {pendingCount}
+                </span>
+              )}
+            </button>
+          </div>
         </div>
 
-    );
+        <div className="flex-1 overflow-y-auto custom-scrollbar">
+          {loading && <Spinner />}
 
-}
+          {error && (
+            <div className="text-red-400 p-4 text-center">Error: {error}</div>
+          )}
+
+          {!loading &&
+            !error &&
+            (friends.length > 0 ? (
+              <FriendList friends={friends} onRemove={handleRemove} />
+            ) : (
+              <div className="text-gray-400 p-8 text-center text-3xl">
+                Aún no agregaste a nadie a tu lista de amigos
+                <br />
+                ¡Envía una solicitud!
+              </div>
+            ))}
+        </div>
+      </div>
+
+      {player && (
+        <>
+          <AddFriendModal
+            show={showModal}
+            onClose={() => setShowModal(false)}
+            fromPlayerId={player.id}
+          />
+          <FriendRequestsModal
+            show={showRequestsModal}
+            onClose={() => setShowRequestsModal(false)}
+            requests={pendingRequests}
+            onRequestsUpdated={() => {
+              fetchFriends();
+              fetchPendingRequests();
+            }}
+          />
+
+          <ConfirmModal
+            show={showConfirmModal}
+            message={`¿Estás seguro de eliminar a ${friendToDelete?.name || "este amigo"} de tu lista de amigos?`}
+            onConfirm={confirmDelete}
+            onCancel={() => setShowConfirmModal(false)}
+          />
+        </>
+      )}
+    </div>
+  );
+};

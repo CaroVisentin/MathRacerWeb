@@ -1,0 +1,121 @@
+import { useEffect, useState } from "react";
+import { Topbar } from "../../components/store/topbar";
+import { SpecialOffer } from "../../components/store/specialOffer";
+import { ProductsSection } from "../../components/store/productsSection";
+import { CategorySelector } from "../../components/store/categorySelector";
+import { usePlayer } from "../../hooks/usePlayer";
+import {
+  getCars,
+  getCharacters,
+  getBackgrounds,
+} from "../../services/player/storeService";
+import type { ProductDto } from "../../models/domain/store/productDto";
+
+export const StorePage = () => {
+  const [activeCategory, setActiveCategory] = useState<
+    "cars" | "characters" | "backgrounds" | "coins" | "energy"
+  >("cars");
+  const { player } = usePlayer();
+  const [products, setProducts] = useState<ProductDto[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      if (!player?.id) return;
+
+      setLoading(true);
+      setError(null);
+
+      try {
+        let response;
+
+        switch (activeCategory) {
+          case "cars":
+            response = await getCars(player.id);
+            break;
+          case "characters":
+            response = await getCharacters(player.id);
+            break;
+          case "backgrounds":
+            response = await getBackgrounds(player.id);
+            break;
+          default:
+            // Para coins y energy, no hay endpoint aún
+            setProducts([]);
+            setLoading(false);
+            return;
+        }
+
+        setProducts(response.items);
+      } catch (err) {
+        console.error("Error al cargar productos:", err);
+        setError("No se pudieron cargar los productos");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, [activeCategory, player?.id]);
+
+  const getCategoryTitle = () => {
+    switch (activeCategory) {
+      case "cars":
+        return "Autos";
+      case "characters":
+        return "Personajes";
+      case "backgrounds":
+        return "Fondos";
+      case "coins":
+        return "Monedas";
+      case "energy":
+        return "Energía";
+      default:
+        return "";
+    }
+  };
+
+  return (
+    <div className="min-h-screen w-screen flex flex-col bg-black">
+      {/* Topbar */}
+      <Topbar />
+      <CategorySelector
+        activeCategory={activeCategory}
+        setActiveCategory={setActiveCategory}
+      />
+
+      {/* Contenido principal */}
+      <div className="flex-1 flex flex-col overflow-y-auto px-4 gap-6">
+        {/* Oferta especial */}
+        <SpecialOffer />
+
+        {/* Sección de productos */}
+        {loading && (
+          <div className="text-white text-center py-8">
+            Cargando productos...
+          </div>
+        )}
+
+        {error && <div className="text-red-500 text-center py-8">{error}</div>}
+
+        {!loading && !error && products.length > 0 && (
+          <ProductsSection
+            categories={[
+              {
+                title: getCategoryTitle(),
+                products: products,
+              },
+            ]}
+          />
+        )}
+
+        {!loading && !error && products.length === 0 && (
+          <div className="text-white text-center py-8">
+            No hay productos disponibles
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};

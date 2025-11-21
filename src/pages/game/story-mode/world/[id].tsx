@@ -1,77 +1,105 @@
-// Muestro el mapa de los niveles de cada mundo, pasándole el ID del mundo por url
-
-import { useRef, useState, useEffect } from "react";
-import type { Level } from "../../../../models/ui/level";
 import { TopBar } from "../../../../components/game/story-mode/topBar";
-import { SvgPathLevels } from "../../../../components/game/story-mode/svgPathLevels";
+import { LevelsGrid } from "../../../../components/game/story-mode/levelsGrid";
 import { BottomUI } from "../../../../components/game/story-mode/bottomUI";
-// import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { getWorldLevels } from "../../../../services/game/story-mode/levelService";
+import type { PlayerWorldLevelsResponseDto } from "../../../../models/domain/story-mode/playerWorldLevelsResponseDto";
+import { mapOperations } from "../../../../models/mappers/operationMapper";
+import { mapLevels } from "../../../../models/mappers/levelMapper";
+import type { LevelDtoUi } from "../../../../models/ui/story-mode/levelDtoUi";
+import { StarsBackground } from "../../../../components/game/story-mode/starsBackground";
+import Spinner from "../../../../shared/spinners/spinner";
+import type { PlayerWildcardDto } from "../../../../models/domain/player/playerWildcardDto";
+import { getMyWildcards } from "../../../../services/wildcard/wildcardService";
+import type { WildcardQuantities } from "../../../../models/ui/story-mode/wildcardQuantities";
 
 export const LevelMap = () => {
-    const pathRef = useRef<SVGPathElement>(null)
-    const [nodePositions, setNodePositions] = useState<{ x: number; y: number }[]>([])
+  const { id } = useParams();
+  const worldId = Number(id);
+  const location = useLocation();
+  const worldOperations: string[] = location.state?.worldOperations ?? [];
 
-    // const { id } = useParams();
+  const [levels, setLevels] = useState<LevelDtoUi[]>([]);
+  const [playerWorldLevels, setPlayerWorldLevels] =
+    useState<PlayerWorldLevelsResponseDto>();
 
-    // Se obtiene la cantidad de niveles para el mundo en el que entró,
-    // y último nivel completado del jugador
-    const levels: Level[] = [
-        { id: 1, worldId: 1, number: 1 },
-        { id: 2, worldId: 1, number: 2 },
-        { id: 3, worldId: 1, number: 3 },
-        { id: 4, worldId: 1, number: 4 },
-        { id: 5, worldId: 1, number: 5 },
-        { id: 6, worldId: 1, number: 6 },
-        { id: 7, worldId: 1, number: 7 },
-        { id: 8, worldId: 1, number: 8 },
-        { id: 9, worldId: 1, number: 9 },
-        { id: 10, worldId: 1, number: 10 },
-        { id: 11, worldId: 1, number: 11 },
-        { id: 12, worldId: 1, number: 12 },
-        { id: 13, worldId: 1, number: 13 },
-        { id: 14, worldId: 1, number: 14 },
-        { id: 15, worldId: 1, number: 15 },
-        { id: 16, worldId: 1, number: 16 },
-        { id: 17, worldId: 1, number: 17 },
-        { id: 18, worldId: 1, number: 18 },
-        { id: 19, worldId: 1, number: 19 },
-        { id: 20, worldId: 1, number: 20 },
-    ];
+  const [wildcardQuantities, setWildcardQuantities] =
+    useState<WildcardQuantities>({
+      fireExtinguisher: 0,
+      changeEquation: 0,
+      doubleCount: 0,
+    });
 
-    useEffect(() => {
-        if (pathRef.current) {
-            const path = pathRef.current
-            const length = path.getTotalLength()
-            const positions = levels.map((_, i) => {
-                const point = path.getPointAtLength((length / (levels.length - 1)) * i)
-                return { x: point.x, y: point.y }
-            })
-            setNodePositions(positions)
-        }
-    }, [levels])
+  const [isLoading, setIsLoading] = useState(false);
 
-    return (
-        <div className="relative flex h-screen w-full flex-col overflow-hidden bg-gradient-to-br from-[#0a0520] via-[#1a0f3a] to-[#0f0828]">
-            {/* Background buildings pattern */}
-            <div className="pointer-events-none absolute inset-0 opacity-20">
-                <div className="absolute left-[5%] top-[10%] h-32 w-24 -skew-y-12 transform bg-gradient-to-b from-purple-900/50 to-purple-700/30" />
-                <div className="absolute left-[15%] top-[5%] h-40 w-20 skew-y-6 transform bg-gradient-to-b from-fuchsia-900/50 to-fuchsia-700/30" />
-                <div className="absolute right-[10%] top-[8%] h-48 w-28 -skew-y-6 transform bg-gradient-to-b from-purple-900/50 to-purple-700/30" />
-                <div className="absolute right-[25%] top-[12%] h-36 w-22 skew-y-12 transform bg-gradient-to-b from-fuchsia-900/50 to-fuchsia-700/30" />
-            </div>
+  useEffect(() => {
+    async function fetchLevelsScreenInfo() {
+      setIsLoading(true);
+      try {
+        const playerWorldLevelsResponse: PlayerWorldLevelsResponseDto =
+          await getWorldLevels(worldId);
+        setPlayerWorldLevels(playerWorldLevelsResponse);
 
-            {/* Top bar - Fixed */}
-            {/* Pasarle el mundo y las vidas restantes del jugador (sacar de un context) */}
-            <TopBar headerText="Mundo 1" remainingLives={7} />
+        const mappedLevels = mapLevels(
+          playerWorldLevelsResponse.levels,
+          playerWorldLevelsResponse.lastCompletedLevelId
+        );
+        setLevels(mappedLevels);
 
-            {/* Pasarle los niveles por props */}
-            <SvgPathLevels levels={levels} nodePositions={nodePositions} pathRef={pathRef} />
+        const playerWildcardsResponse: PlayerWildcardDto[] =
+          await getMyWildcards();
 
-            {/* Bottom UI - Fixed */}
-            {/* Pasarle la cantidad de cada comodín del jugador por props */}
-            <div className="p-4">
-                <BottomUI fireExtinguisherQuant={2} changeEquationQuant={3} dobleCountQuant={4} />
-            </div>
-        </div>
-    )
-}
+        const wildcards: WildcardQuantities = {
+          fireExtinguisher:
+            playerWildcardsResponse.find((w) => w.wildcardId === 1)?.quantity ||
+            0, // Matafuego
+          changeEquation:
+            playerWildcardsResponse.find((w) => w.wildcardId === 2)?.quantity ||
+            0, // Cambio de pregunta
+          doubleCount:
+            playerWildcardsResponse.find((w) => w.wildcardId === 3)?.quantity ||
+            0, // Nitro
+        };
+
+        setWildcardQuantities(wildcards);
+      } catch (error) {
+        console.error("Error fetching levels:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchLevelsScreenInfo();
+  }, [worldId]);
+
+  return (
+    <div className="relative flex h-screen w-full flex-col overflow-hidden bg-gradient-to-br from-[#0a0520] via-[#1a0f3a] to-[#0f0828]">
+      {isLoading && <Spinner />}
+
+      {/* Fondo de estrellas */}
+      <StarsBackground />
+
+      {/* Top br que contiene el nombre del mundo y las vidas del jugador */}
+      <TopBar
+        headerText={playerWorldLevels?.worldName || ""}
+        remainingLives={7}
+      />
+
+      {/* Grilla de niveles */}
+      <div className="flex-1 overflow-auto">
+        <LevelsGrid levels={levels} />
+      </div>
+
+      {/* Bottom bar que contiene las operaciones y la cantidad de comodines */}
+      <div className="p-4 sticky bottom-0 z-20">
+        <BottomUI
+          operations={mapOperations(worldOperations)}
+          fireExtinguisherQuant={wildcardQuantities.fireExtinguisher}
+          changeEquationQuant={wildcardQuantities.changeEquation}
+          dobleCountQuant={wildcardQuantities.doubleCount}
+        />
+      </div>
+    </div>
+  );
+};

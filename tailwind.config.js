@@ -11,6 +11,11 @@ module.exports = {
         pinkCustom: "#f95ec8",
         tealCustom: "#00a0a0",
       },
+      fontFamily: {
+        jersey: ["Jersey 10", "sans serif"],
+        audiowide: ["Audiowide", "sans serif"],
+      },
+     
     },
   },
   plugins: [],

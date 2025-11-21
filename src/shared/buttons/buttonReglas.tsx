@@ -11,8 +11,9 @@ export const RulesButton = ({ onClick }: RulesButtonProps) => {
     const handleClick = onClick ?? (() => navigate("/reglas"));
 
     return (
-        <>
-            <div className="flex justify-end w-full px-6 py-4 mb-8">
+        
+
+            <div className="fixed bottom-4 right-6 z-50">
                 <button
                     className="border border-cyan-400 p-2 rounded text-cyan-400 hover:text-[#f95ec8] transition"
                     onClick={handleClick}
@@ -20,6 +21,6 @@ export const RulesButton = ({ onClick }: RulesButtonProps) => {
                     <FontAwesomeIcon icon={faQuestion} />
                 </button>
             </div>
-        </>
+        
     )
 }

@@ -1,453 +1,641 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from "react";
+import { getAuth } from "firebase/auth";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { HubConnection } from "@microsoft/signalr";
-import { buildConnection } from '../../../services/signalR/connection';
-import type { QuestionDto } from '../../../models/domain/questionDto';
-import { LookingForRivalModal } from '../../../shared/modals/lookingForRivalModal';
-import type { PlayerDto } from '../../../models/domain/playerDto';
-import { EndOfMultiplayerModeModal } from '../../../shared/modals/endOfMultiplayerModeModal';
-import { Wildcards } from '../../../shared/wildcards/wildcards';
-import auto1 from "../../../assets/images/auto.png";
+import type { QuestionDto } from "../../../models/domain/signalR/questionDto";
+import { LookingForRivalModal } from "../../../shared/modals/lookingForRivalModal";
+import type { PlayerDto } from "../../../models/domain/signalR/playerDto";
+import { EndOfMultiplayerModeModal } from "../../../shared/modals/endOfMultiplayerModeModal";
+import { Wildcards } from "../../../shared/wildcards/wildcards";
+import auto1 from "../../../assets/images/auto-pista.png";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
-import type { GameUpdateDto } from '../../../models/domain/gameUpdateDto';
-import { motion } from 'framer-motion';
+import type { GameUpdateDto } from "../../../models/domain/signalR/gameUpdateDto";
+import { useConnection } from "../../../services/signalR/connection";
+import { PowerUpType } from "../../../models/enums/powerUpType";
+import mathi from "../../../assets/images/mathi.png";
+import { usePlayer } from "../../../hooks/usePlayer";
 
-
-    const fondos = [
-        'pista-noche.png',
-        'pista-dia.png',
-        'pista-atardecer.png',
-        'pista-city.png',
-        'pista-montana.png',
-         'pista-pastel.png',
-    ];
-
+const fondos = [
+  "pista-noche.png",
+  "pista-dia.png",
+  "pista-atardecer.png",
+  "pista-city.png",
+  "pista-montana.png",
+  "pista-pastel.png",
+];
 
 export const MultiplayerGame = () => {
+  const { gameId } = useParams<{ gameId: string }>();
+  const location = useLocation();
+  const { player } = usePlayer();
+  const navigate = useNavigate();
+  const { conn, errorConexion, isConnected, invoke, on, off } = useConnection();
+  
+  // Obtener la contraseña del state si fue pasada desde create-game o join-game
+  const password = location.state?.password as string | undefined;
+  const [ecuacion, setEcuacion] = useState<QuestionDto>();
+  const [opciones, setOpciones] = useState<number[]>();
+  const [respuestaSeleccionada, setRespuestaSeleccionada] = useState<
+    number | null
+  >(null);
+  const [resultado, setResultado] = useState<"acierto" | "error" | null>(null);
+  const [posicionAuto1, setPosicionAuto1] = useState<number>(0);
+  const [posicionAuto2, setPosicionAuto2] = useState<number>(0);
+  const [ganador, setGanador] = useState<boolean>(false);
+  const [jugadoresPartida, setJugadoresPartida] = useState<PlayerDto[]>([]);
+  const [buscandoRival, setBuscandoRival] = useState(true);
+  const [jugadorId, setJugadorId] = useState<number | null>(null);
+  const [partidaId, setPartidaId] = useState<number | null>(null);
+  const [instruccion, setInstruccion] = useState<string>("");
+  const [perdedor, setPerdedor] = useState<boolean>(false);
+  const [penalizado, setPenalizado] = useState<boolean>(false);
+  const [fondoJugador, setFondoJugador] = useState<string>("");
+  const [fondoRival, setFondoRival] = useState<string>("");
+  const cerrarModal = () => setGanador(false);
+  const [eliminaOpciones, setEliminaOpciones] = useState(false);
+  const [powerUsePosition, setPowerUsePosition] = useState(false);
+  const [powerUseOrden, setPowerUseOrden] = useState(false);
+  const [mensajeComodin, setMensajeComodin] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const joinRetries = useRef(0);
+  const haConectado = useRef(false);
 
-    const [connection, setConnection] = useState<HubConnection | null>(null);
+  // Usar el nombre del jugador desde el contexto
+  const nombreJugador = player?.name || "";
 
-    const [ecuacion, setEcuacion] = useState<QuestionDto>();
-    const [opciones, setOpciones] = useState<number[]>();
-    // const [respuestaCorrecta, setRespuestaCorrecta] = useState<boolean>(false);
-    const [respuestaSeleccionada, setRespuestaSeleccionada] = useState<number | null>(null);
-
-    const [resultado, setResultado] = useState<"acierto" | "error" | null>(null);
-    const [posicionAuto1, setPosicionAuto1] = useState<number>(0);
-    const [posicionAuto2, setPosicionAuto2] = useState<number>(0);
-    const [ganador, setGanador] = useState<boolean>(false);
-
-    const [jugadoresPartida, setJugadoresPartida] = useState<PlayerDto[]>([]);
-    const [buscandoRival, setBuscandoRival] = useState(true);
-    const [jugadorId, setJugadorId] = useState<number | null>(null);
-
-    const [nombreJugador, setNombreJugador] = useState<string>("");
-    const [partidaId, setPartidaId] = useState<number | null>(null);
-    const [instruccion, setInstruccion] = useState<string>("");
-    const [perdedor, setPerdedor] = useState<boolean>(false);
-    const [penalizado, setPenalizado] = useState<boolean>(false);
-    const [errorConexion, setErrorConexion] = useState<string | null>(null);
-    const [mensajeResultado, setMensajeResultado] = useState<string | null>(null);
-
-    const [fondoJugador, setFondoJugador] = useState<string>('');
-    const [fondoRival, setFondoRival] = useState<string>('');
-
-
-    const cerrarModal = () => setGanador(false);
-
-    // useCallback para evitar re-creaciones innecesarias
-    const conectarJugador = useCallback(async () => {
-        if (!nombreJugador.trim() || !connection) return; // Verificar si la conexión está lista
-
+  const conectarJugador = useCallback(async () => {
+       
+    if (gameId) {
+      const partidaIdNum = parseInt(gameId, 10);
+      if (!isNaN(partidaIdNum)) {
         try {
-            await connection.invoke("FindMatch", nombreJugador);
-            setErrorConexion(null); // Limpiar error si la conexión es exitosa
+                      
+          haConectado.current = true;
+                   
+          await invoke("JoinGame", partidaIdNum, password || null);
+          
+          setPartidaId(partidaIdNum);
+          
         } catch (error) {
-            setErrorConexion("Error de conexión... volvamos a intentarlo");
-            console.error("Error al buscar partida:", error);
+          
+          const err = error as { constructor?: { name: string }; message?: string; stack?: string };
+                    
+          // Mostrar error al usuario y volver al menú
+          setError(err.message || "No se pudo unir a la partida");
+          setTimeout(() => {
+            navigate('/menu');
+          }, 2000);
         }
-    }, [nombreJugador, connection]); // Depende de connection y nombreJugador
+      } else {
+        setError("ID de partida inválido");
+        navigate('/menu');
+      }
+    } else {
+      // Si no hay gameId, buscar partida rápida (matchmaking)
+      if (nombreJugador.trim()) {
+                
+        // Marcar que ya intentamos conectar
+        haConectado.current = true;
+        
+        try {
+          await invoke("FindMatch", nombreJugador);
+          
+        } catch {
+          setError("No se pudo buscar partida");
+        }
+      }
+    }
+  }, [gameId, nombreJugador, password, invoke, navigate]);
 
-    const reiniciarJuego = () => {
-        setGanador(false);
-        setPerdedor(false);
-        setPosicionAuto1(0);
-        setPosicionAuto2(0);
-        setResultado(null);
-        setRespuestaSeleccionada(null);
-        setBuscandoRival(true);
-        conectarJugador(); // Llama a la función ahora con useCallback
+  const reiniciarJuego = () => {
+    setGanador(false);
+    setPerdedor(false);
+    setPosicionAuto1(0);
+    setPosicionAuto2(0);
+    setResultado(null);
+    setRespuestaSeleccionada(null);
+    setBuscandoRival(true);
+    haConectado.current = false; // Resetear para permitir reconexión
+    joinRetries.current = 0; // Resetear reintentos
+    
+    // Si vino de una partida específica, volver al menú
+    if (gameId) {
+      navigate('/menu');
+    } else {
+      conectarJugador();
+    }
+  };
+
+  const handleVolver = () => {
+    // Abandonar partida y volver al menú
+    setGanador(false);
+    setPerdedor(true);
+    navigate('/menu');
+  };
+
+  const handleFireExtinguisher = () => {
+    if (eliminaOpciones || !ecuacion) return;
+
+    const opcionesIncorrectas = ecuacion.options.filter(
+      (opt) => opt !== ecuacion.correctAnswer
+    );
+    // Seleccionar dos opciones incorrectas al azar
+    const unaIncorrecta =
+      opcionesIncorrectas[
+        Math.floor(Math.random() * opcionesIncorrectas.length)
+      ];
+
+    setOpciones(
+      [ecuacion.correctAnswer, unaIncorrecta].sort(() => Math.random() - 0.5)
+    );
+    setEliminaOpciones(true);
+    setMensajeComodin("Se han eliminado dos opciones incorrectas.");
+  };
+
+  const handleChangeEquation = async () => {
+    if (!partidaId || !jugadorId) return;
+
+    try {
+      await invoke(
+        "UsePowerUp",
+        partidaId,
+        jugadorId,
+        PowerUpType.ShuffleRival
+      );
+      setPowerUseOrden(true);
+      setMensajeComodin(
+        "Se han mezclado las opciones de la ecuación del rival."
+      );
+      setTimeout(() => setMensajeComodin(null), 2000);
+    } catch (error) {
+      console.error("Error using Change Equation power-up:", error);
+    }
+  };
+
+  const handleDobleCount = async () => {
+    if (!partidaId || !jugadorId) return;
+
+    try {
+      await invoke(
+        "UsePowerUp",
+        partidaId,
+        jugadorId,
+        PowerUpType.DoublePoints
+      );
+      setPowerUsePosition(true);
+      setMensajeComodin("si contestas bien moves 2 lugares");
+      setTimeout(() => setMensajeComodin(null), 2000);
+    } catch (error) {
+      console.error("Error using Doble Count power-up:", error);
+    }
+  };
+
+  const sendAnswer = useCallback(
+    async (respuestaSeleccionada: number | null) => {
+      if (!partidaId || respuestaSeleccionada === null || !jugadorId) return;
+      await invoke("SendAnswer", partidaId, jugadorId, respuestaSeleccionada);
+    },
+    [partidaId, jugadorId, invoke]
+  );
+
+  const manejarRespuesta = async (opcion: number) => {
+    setRespuestaSeleccionada(opcion);
+
+    if (ecuacion && opcion === ecuacion.correctAnswer) {
+      setResultado("acierto");
+      setPenalizado(false);
+    } else {
+      setResultado("error");
+      setPenalizado(true);
     }
 
-    const handleVolver = () => {
-        // Agregar lógica para abandonar partida
-        
-        setGanador(false);
-        setPerdedor(true);
-        if (connection) connection.stop();
-        
-        
-        // Detener la conexión manualmente, antes de que se desmonte el componente
-    };
+    setTimeout(() => sendAnswer(opcion), 200);
+  };
 
-    const sendAnswer = useCallback(async (respuestaSeleccionada: number | null) => {
-        if (ganador || !partidaId || respuestaSeleccionada === null || !connection) return;
-        try {
-            await connection.invoke("SendAnswer", partidaId, jugadorId, respuestaSeleccionada);
-        } catch (error) {
-            console.error("Error al enviar respuesta:", error);
+  
+  useEffect(() => {
+    
+    const requireName = !gameId; 
+    const hasName = requireName ? (nombreJugador.trim() !== "") : true;
+  
+    const shouldConnect = 
+      conn && 
+      isConnected && 
+      hasName && 
+      !haConectado.current; // cambiado de !partidaId a !haConectado.current
+
+    if (shouldConnect) {
+      
+      conectarJugador();
+    } 
+  }, [conn, isConnected, nombreJugador, gameId, partidaId, conectarJugador]);
+
+  // Reintento automático de JoinGame si la conexión ya está activa pero aún no hay partidaId
+  useEffect(() => {
+    if (!conn || !isConnected) return;
+    if (!gameId) return;
+    if (partidaId) return;
+
+    // limitar a 3 reintentos
+    if (joinRetries.current >= 3) return;
+
+    const t = setTimeout(async () => {
+      try {
+        joinRetries.current += 1;
+        
+        await conectarJugador();
+      } catch {
+        // noop, el propio conectarJugador registra errores
+      }
+    }, 1500);
+
+    return () => clearTimeout(t);
+  }, [conn, isConnected, gameId, partidaId, conectarJugador]);
+
+  useEffect(() => {
+    if (!conn) return; // Esperar a que la conexión esté inicializada
+
+    const gameUpdateHandler = (data: GameUpdateDto) => {
+          
+      // Ocultar modal de búsqueda cuando hay 2 jugadores
+      if (data.players && data.players.length >= 2) {
+        setBuscandoRival(false);
+      }
+      
+      setJugadoresPartida(data.players);
+
+      // Intentar identificar al jugador usando Firebase UID (cuando backend lo envíe en p.uid)
+      const auth = getAuth();
+      const myUid = auth.currentUser?.uid;
+
+      let jugadorActual: PlayerDto | undefined;
+      if (myUid) {
+        jugadorActual = data.players.find(p => p.uid === myUid);
+      }
+
+      // Fallback por nombre exacto si uid aún no está disponible
+      if (!jugadorActual) {
+        jugadorActual = data.players.find(p => p.name?.trim() === nombreJugador.trim());
+      }
+      // Fallback final: case-insensitive o reutilizar jugadorId previo si hubo ambigüedad
+      if (!jugadorActual) {
+        const candidatos = data.players.filter(p => p.name?.trim().toLowerCase() === nombreJugador.trim().toLowerCase());
+        if (candidatos.length === 1) {
+          jugadorActual = candidatos[0];
+        } else if (candidatos.length > 1 && jugadorId) {
+          jugadorActual = candidatos.find(p => p.id === jugadorId) ?? candidatos[0];
         }
-    }, [ganador, partidaId, jugadorId, connection]);
+      }
+      const otroJugador = data.players.find((p: PlayerDto) => p.id !== jugadorActual?.id);
 
-    const manejarRespuesta =  async(opcion: number) => {
-        setRespuestaSeleccionada(opcion);
+      if (jugadorActual) {
+        setJugadorId(jugadorActual.id);
+        const avance = (jugadorActual.correctAnswers / 10) * 100;
+        setPosicionAuto1(avance);
+      }
+      if (otroJugador) {
+        const avanceOtro = (otroJugador.correctAnswers / 10) * 100;
+        setPosicionAuto2(avanceOtro);
+      }
 
-        if (ecuacion && opcion === ecuacion.correctAnswer) {
-            setResultado("acierto");
+      // Lógica de Penalización
+      if (jugadorActual?.penaltyUntil) {
+        const ahora = new Date();
+        const penalizacionTermina = new Date(jugadorActual.penaltyUntil);
+
+        if (penalizacionTermina > ahora) {
+          setPenalizado(true);
+
+          const msRestantes = penalizacionTermina.getTime() - ahora.getTime();
+          setTimeout(() => {
             setPenalizado(false);
-            setMensajeResultado("¡Correcto!");
-            setTimeout(() => setMensajeResultado(null),1500);
+          }, msRestantes);
         } else {
-            setResultado("error");
-            setPenalizado(true);
-            setMensajeResultado(" Fallaste!! penalizado por 2 segundos ");
-            setTimeout(() => setMensajeResultado(null),1500);
+          setPenalizado(false);
         }
-          setTimeout(async() => {
+      }
 
-             await sendAnswer(opcion);
-        }, 1500); // Espera 2 segundos antes de resetear
+      if (data.winnerId && jugadorActual) {
+        if (data.winnerId === jugadorActual.id) {
+          setGanador(true);
+          setPerdedor(false);
+        } else {
+          setPerdedor(true);
+          setGanador(false);
+        }
+      }
 
-
+      if (data.currentQuestion) {
+        setPartidaId(data.gameId);
+        setRespuestaSeleccionada(null);
+        setResultado(null);
+        setEcuacion({
+          id: data.currentQuestion.id,
+          equation: data.currentQuestion.equation,
+          options: data.currentQuestion.options,
+          correctAnswer: data.currentQuestion.correctAnswer,
+        });
+        setOpciones(data.currentQuestion.options);
+        setInstruccion(data.expectedResult);
+      }
     };
 
-    // ***********************************************
-    // 1. INICIAR CONEXIÓN Y LIMPIEZA AL DESMONTAJE
-    // ***********************************************
-    useEffect(() => {
-        const newConnection = buildConnection();
-        setConnection(newConnection);
+    // Handler para errores del servidor
+    const errorHandler = (message: string) => {
+      console.error("Error del servidor SignalR:", message);
+      alert(`Error: ${message}`);
+      // Volver al menú si hay un error crítico
+      navigate("/menu");
+    };
 
-        newConnection.start()
-            .then(() => {
-                setErrorConexion(null);
-            })
-            .catch((err) => {
-                setErrorConexion("Error al iniciar la conexión con SignalR.");
-                console.error("Error al conectar con el servidor de SignalR: ", err);
-            });
+    // Registrar el listener para "GameUpdate" en todas las variantes que el backend puede enviar
+    // SignalR en C# automáticamente convierte PascalCase a camelCase
+    on("GameUpdate", gameUpdateHandler);      // PascalCase original
+    on("gameUpdate", gameUpdateHandler);      // camelCase (conversión automática de SignalR)
+    on("game-update", gameUpdateHandler);     // kebab-case
+    on("gameupdate", gameUpdateHandler);      // lowercase sin separador
+    
+    // Registrar listeners para errores (el backend puede usar "Error" o "error")
+    on("Error", errorHandler);
+    on("error", errorHandler);
+    
+    // on("PowerUpUsed", powerUpUsedHandler);
 
-        // Función de limpieza: Se ejecuta al desmontar el componente.
-        return () => {
-            newConnection.stop();
-        };
-    }, []); // Array vacío para ejecución única al montar/desmontar
+    // Manejar errores del servidor
+    if (conn) {
+      conn.onclose((error) => {
+        console.error("Conexión SignalR cerrada:", error);
+        setBuscandoRival(false);
+      });
+    }
 
-    // ***********************************************
-    // 2. CONFIGURAR LISTENERS DE SIGNALR
-    // ***********************************************
-    useEffect(() => {
-        if (!connection) return; // Esperar a que la conexión esté inicializada
+    // Función de limpieza para quitar el listener
+    return () => {
+      off("GameUpdate", gameUpdateHandler);
+      off("gameUpdate", gameUpdateHandler);
+      off("game-update", gameUpdateHandler);
+      off("gameupdate", gameUpdateHandler);
+      off("Error", errorHandler);
+      off("error", errorHandler);
+      //  off("PowerUpUsed", powerUpUsedHandler);
+    };
+  }, [conn, on, off, nombreJugador, navigate, jugadorId, setPartidaId, setJugadoresPartida]);
 
-        const gameUpdateHandler = (data: GameUpdateDto) => {
+  useEffect(() => {
+    const indexJugador = Math.floor(Math.random() * fondos.length);
+    const indexRival =
+      (indexJugador + 1 + Math.floor(Math.random() * (fondos.length - 1))) %
+      fondos.length;
 
-            setJugadoresPartida(data.players);
+    setFondoJugador(fondos[indexJugador]);
+    setFondoRival(fondos[indexRival]);
+  }, []);
 
-            // Comparación de nombres
-            const jugadorActual = data.players.find(
-                (p: PlayerDto) => p.name?.trim().toLowerCase() === nombreJugador.trim().toLowerCase());
-            const otroJugador = data.players.find((p: PlayerDto) => p.id !== jugadorActual?.id);
+  // compute opponent name
+  const opponentName =
+    jugadoresPartida.find(
+      (p) =>
+        p.name &&
+        p.name.trim() &&
+        p.name.trim().toLowerCase() !== nombreJugador.trim().toLowerCase()
+    )?.name ?? "Rival";
+  return (
+    <div className="juego w-full h-full bg-black text-white relative">
+      {/* HEADER */}
+      <div className="flex justify-between items-center bg-black absolute top-0 left-0 w-full z-10">
+        <button onClick={handleVolver} className="px-3 py-1 rounded">
+          <FontAwesomeIcon icon={faArrowLeft} />
+        </button>
+      </div>
 
-            // Actualizar posiciones en porcentaje
-            if (jugadorActual) {
+      {/*modal de busqueda de rival*/}
+      {buscandoRival && !gameId && (
+        <LookingForRivalModal
+          playerId={nombreJugador}
+          setPlayerId={() => {}} // El nombre viene del contexto, no se puede cambiar aquí
+          onConnection={conectarJugador}
+        />
+      )}
 
-                setJugadorId(jugadorActual.id);
-                const avance = (jugadorActual.correctAnswers / 10) * 100;
-                setPosicionAuto1(avance);
+      {/* Mensaje de espera cuando hay gameId pero aún busca rival */}
+      {buscandoRival && gameId && !error && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80">
+          <div className="bg-black/90 border-2 border-cyan-400 rounded-lg p-8 text-center">
+            <div className="animate-spin rounded-full h-20 w-20 border-t-4 border-b-4 border-[#5df9f9] mx-auto mb-4"></div>
+            <h2 className="text-3xl text-[#f95ec8] mb-4">Esperando rival...</h2>
+            <p className="text-white text-xl">{nombreJugador}</p>
+            <p className="text-gray-400 mt-2">Partida ID: {gameId}</p>
+          </div>
+        </div>
+      )}
 
-                // Lógica de Penalización
-                if (jugadorActual?.penaltyUntil) {
-                    const ahora = new Date();
-                    const penalizacionTermina = new Date(jugadorActual.penaltyUntil);
+      {/* Modal de error de conexión */}
+      {error && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80">
+          <div className="bg-black/90 border-2 border-red-500 rounded-lg p-8 text-center max-w-md">
+            <h2 className="text-3xl text-red-500 mb-4">❌ Error</h2>
+            <p className="text-white text-xl mb-6">{error}</p>
+            <button
+              onClick={() => navigate('/menu')}
+              className="bg-[#5df9f9] text-black px-6 py-3 rounded text-xl hover:bg-[#f95ec8] transition-colors"
+            >
+              Volver al Menú
+            </button>
+          </div>
+        </div>
+      )}
 
-                    if (penalizacionTermina > ahora) {
-                        setPenalizado(true);
+      {/* Modal de fin de partida (Ganador) */}
+      {ganador && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <EndOfMultiplayerModeModal
+            players={jugadoresPartida}
+            currentPlayer={nombreJugador}
+            won={true}
+            onClose={cerrarModal}
+            onRetry={reiniciarJuego}
+          />
+        </div>
+      )}
 
-                        const msRestantes = penalizacionTermina.getTime() - ahora.getTime();
-                        setTimeout(() => {
-                            setPenalizado(false);
-                        }, msRestantes);
-                    } else {
-                        setPenalizado(false);
-                    }
-                }
-            }
+      {/* Modal de fin de partida (Perdedor) */}
+      {perdedor && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <EndOfMultiplayerModeModal
+            players={jugadoresPartida}
+            currentPlayer={nombreJugador}
+            won={false}
+            onClose={cerrarModal}
+            onRetry={reiniciarJuego}
+          />
+        </div>
+      )}
 
-            if (otroJugador) {
-                const avanceOtro = (otroJugador.correctAnswers / 10) * 100;
-                setPosicionAuto2(avanceOtro);
-            }
+      {/* Ruta */}
+      <div className="mt-20 flex flex-col gap-3 justify-end">
+        <div
+          className="flex justify-center items-center fondoRuta w-full relative mt-20 border-3 border-[#5df9f9] rounded-lg"
+          style={{
+            backgroundImage: `url('../src/assets/images/${fondoRival}')`,
+          }}
+        >
+          {/* Nombre del Jugador 2 (Rival) */}
+          <div
+            className="absolute text-[#000000] text-l ml-2 px-2 py-1 rounded bg-[#5df9f9]"
+            style={{
+              left: "0px",
+              top: "-2%",
+            }}
+          >
+            {opponentName}
+          </div>
 
-            // Lógica de Ganador
-            if (data.winnerId && jugadorActual) {
-                if (data.winnerId === jugadorActual.id) {
-                    setGanador(true);
-                    setPerdedor(false);
-                } else {
-                    setPerdedor(true);
-                    setGanador(false);
-                }
-            }
+          {/* Auto 2 */}
+          <img
+            src={auto1}
+            alt="Auto 2"
+            className="absolute bottom-[180px] auto auto2"
+            style={{ left: `${posicionAuto2}%` }}
+          />
+        </div>
 
-            // Iniciar juego si hay 2 jugadores
-            if (data.players.length >= 2) setBuscandoRival(false);
+        <div
+          className="flex justify-center items-center fondoRuta w-full relative mt-20 border-3 border-[#f95ec8] rounded-lg"
+          style={{
+            backgroundImage: `url('../src/assets/images/${fondoJugador}')`,
+          }}
+        >
+          {/* Nombre del Jugador 1 (Vos) */}
+          <div
+            className="absolute text-white text-l ml-2 px-2 py-1 rounded bg-[#f95ec8]"
+            style={{
+              left: "0px",
+              top: "-2%",
+            }}
+          >
+            {nombreJugador}
+          </div>
 
-            // Actualizar pregunta
-            if (data.currentQuestion) {
-                setPartidaId(data.gameId);
-                setRespuestaSeleccionada(null);
-                setResultado(null);
-
-                setEcuacion({
-                    id: data.currentQuestion.id,
-                    equation: data.currentQuestion.equation,
-                    options: data.currentQuestion.options,
-                    correctAnswer: data.currentQuestion.correctAnswer,
-                });
-                setOpciones(data.currentQuestion.options);
-                // setTimeout(()=>{
-                //         setRespuestaSeleccionada(null);
-                // setResultado(null);
-
-                // },3000);
-
-                setInstruccion(data.expectedResult);
-            }
-        };
-
-        connection.on("GameUpdate", gameUpdateHandler);
-
-        // Función de limpieza para quitar el listener
-        return () => connection.off("GameUpdate", gameUpdateHandler);
-
-    }, [connection, nombreJugador]); // Depende de 'connection' y 'nombreJugador'
-
-    //fondos aleatorios para jugadores
-    useEffect(() => {
-        const indexJugador = Math.floor(Math.random() * fondos.length);
-        const indexRival = (indexJugador + 1 + Math.floor(Math.random() * (fondos.length - 1))) % fondos.length;
-
-        setFondoJugador(fondos[indexJugador]);
-        setFondoRival(fondos[indexRival]);
-    }, []); 
-
-    return (
-
-        <div className="juego w-full h-full bg-black text-white relative">
-
-            {/* HEADER */}
-            <div className="flex justify-between items-center bg-black absolute top-0 left-0 w-full z-10">
-                <button
-                    onClick={handleVolver}
-                    className="px-3 py-1 rounded"
-                >
-                    <FontAwesomeIcon icon={faArrowLeft} />
-                </button>
-            </div>
-
-            {/*modal de busqueda de rival*/}
-            {buscandoRival && (
-                <LookingForRivalModal
-                    playerId={nombreJugador}
-                    setPlayerId={setNombreJugador}
-                    onConnection={conectarJugador}
-                />
-            )}
-
-            {/* Modal de fin de partida (Ganador) */}
-            {ganador && (
-                <div className="absolute inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-                    <EndOfMultiplayerModeModal
-                        players={jugadoresPartida}
-                        currentPlayer={nombreJugador}
-                        won={true}
-                        onClose={cerrarModal}
-                        onRetry={reiniciarJuego}
-                    />
-                </div>
-            )}
-
-            {/* Modal de fin de partida (Perdedor) */}
-            {perdedor && (
-                <div className="absolute inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-                    <EndOfMultiplayerModeModal
-                        players={jugadoresPartida}
-                        currentPlayer={nombreJugador}
-                        won={false}
-                        onClose={cerrarModal}
-                        onRetry={reiniciarJuego}
-                    />
-                </div>
-            )}
-
-            {/* Ruta */}
-            <div className="mt-20 flex flex-col gap-3 justify-end">
-                <div className="flex justify-center items-center fondoRuta w-full relative mt-20 border-3 border-[#5df9f9] rounded-lg"
-                    style={{
-                        backgroundImage: `url('../src/assets/images/${fondoRival}')`,
-                    }}>
-                    {/* Nombre del Jugador 2 (Rival) */}
-                    <div
-                        className="absolute text-[#000000] text-l ml-2 px-2 py-1 rounded bg-[#5df9f9]"
-                        style={{
-                            left: '0px',
-                            top: '-2%',
-
-                        }}
-                    >
-                        Rival
-                    </div>
-
-                    {/* Auto 2 */}
-                    <img
-                        src={auto1}
-                        alt="Auto 2"
-                        className="absolute bottom-[180px] auto auto2"
-                        style={{ left: `${posicionAuto2}%` }}
-                    />
-                </div>
-
-                <div className="flex justify-center items-center fondoRuta w-full relative mt-20 border-3 border-[#f95ec8] rounded-lg"
-                    style={{
-                        backgroundImage: `url('../src/assets/images/${fondoJugador}')`,
-                    }}>
-
-                    {/* Nombre del Jugador 1 (Vos) */}
-                    <div
-                        className="absolute text-white text-l ml-2 px-2 py-1 rounded bg-[#f95ec8]"
-                        style={{
-                            left: '0px',
-                            top: '-2%',
-                        }}
-                    >
-                        {nombreJugador}
-                    </div>
-
-                    {/* Auto 1 */}
-                    <img
-                        src={auto1}
-                        alt="Auto 1"
-                        className="absolute auto transition-all duration-500"
-                        style={{ left: `${posicionAuto1}%` }}
-                    />
-
-                </div>
-            </div>
+          {/* Auto 1 */}
+          <img
+            src={auto1}
+            alt="Auto 1"
+            className="absolute auto transition-all duration-500"
+            style={{ left: `${posicionAuto1}%` }}
+          />
+        </div>
+      </div>
 
             {/* Instrucciones y Comodines */}
             <div className="flex justify-center items-center gridComodin mt-4">
-                <div className="instruccion">
+
+                <div className="instruccion text-3xl text-center">
                     {instruccion
-                        ? `Elegí la opción para que Y sea ${instruccion.toUpperCase()}`
-                        : "esperando instruccion"}
+                        ? ( 
+                            <>
+                            Elegí la opción para que {" "}
+      <span className="text-cyan-400 drop-shadow-[0_0_5px_#00ffff] ">
+        Y
+      </span>{" "}                            
+                              sea {" "}
+                            <span className="text-cyan-400  ">
+                             {instruccion.toUpperCase()}
+                             </span>
+                             </>
+                             )
+                        : ("Esperando instrucción")}
 
                 </div>
                 <div className="comodin">
                     <Wildcards
-                        fireExtinguisher={3}
-                        changeEquation={1}
-                        dobleCount={5}
+                        fireExtinguisher={eliminaOpciones ? 0 : 1}
+                        changeEquation={powerUseOrden ? 0 : 1}
+                        dobleCount={powerUsePosition ? 0 : 1}
+                        onFireExtinguisher={handleFireExtinguisher}
+                        onChangeEquation={handleChangeEquation}
+                        onDobleCount={handleDobleCount}
                     />
+
+
                 </div>
             </div>
 
-            {/* Ecuación */}
-            <div className="flex flex-col justify-center items-center h-full gap-10 mb-10">
-                <div className="flex justify-center mb-6">
-                    <div className="inline-block border-2 border-white rounded-lg text-6xl px-6 py-3">
-                        {/* Mostrar ecuación solo si está definida */}
-                        {ecuacion?.equation && <span>{ecuacion.equation}</span>}
-                    </div>
-                </div>
-                {/* si anda mal error de conexion */}
-                {errorConexion && (
-                    <div className="text-red-600 text-lg mt-4">
-                        {errorConexion}
-                    </div>
+      {/* Ecuación */}
+      <div className="flex flex-col justify-center items-center h-full gap-5 mb-10 mt-4">
+        {mensajeComodin && (
+          <div className="w-full flex justify-end px-4">
+            <div className="text-cyan-200 font-mono  text-xl  text-center drop-shadow-[0_0_5px_#00ffff] animate-fade-in">
+              {mensajeComodin}
+            </div>
+          </div>
+        )}
+        <div className="flex justify-center mb-6">
+          <div className="inline-block border-2 border-white rounded-lg text-6xl px-6 py-3">
+            {ecuacion?.equation && <span>{ecuacion.equation}</span>}
+          </div>
+        </div>
+        {/* si anda mal error de conexion */}
+        {errorConexion && (
+          <div className="text-red-600 text-lg mt-4">{errorConexion}</div>
+        )}
+
+        {/* Opciones */}
+        <div className="flex justify-center items-center mt-6 gap-6 opciones">
+          {opciones?.map((opcion, i) => {
+            let clases = `border-2 border-white rounded-lg text-4xl transition 
+                        w-20 h-20 `;
+
+            if (respuestaSeleccionada !== null) {
+              if (resultado === "acierto" && opcion === respuestaSeleccionada) {
+                clases += "bg-green-400"; //es correcta
+              } else if (
+                resultado === "error" &&
+                opcion === respuestaSeleccionada
+              ) {
+                clases += "bg-red-500 opacity-50 cursor-not-allowed"; // dice que es incorrecta
+              } else if (
+                resultado === "error" &&
+                opcion === ecuacion?.correctAnswer
+              ) {
+                clases += "bg-green-400 opacity-50 cursor-not-allowed"; // muestra cual seria la correcta
+              } else {
+                clases += "bg-transparent";
+              }
+            } else if (penalizado) {
+              clases += "opacity-50 cursor-not-allowed";
+            } else {
+              clases += "bg-transparent hover:bg-blue-500";
+            }
+
+            const mostrarMascota =
+              respuestaSeleccionada !== null &&
+              ((resultado === "acierto" && opcion === respuestaSeleccionada) ||
+                (resultado === "error" && opcion === ecuacion?.correctAnswer));
+
+            return (
+              <div key={i} className="flex flex-col items-center">
+                {/* Mascota arriba del botón */}
+                {mostrarMascota && (
+                  <img
+                    src={mathi}
+                    alt="Mascota celebrando"
+                    className="w-16 h-16 mb-2 animate-bounce drop-shadow-[0_0_10px_#00ffff]"
+                  />
                 )}
 
-                {/* Opciones */}
-                <div className="flex justify-center items-center mt-6 gap-6 opciones">
-                    {opciones?.map((opcion, i) => {
-                        let clases = "border-2 border-white px-6 py-3 rounded-lg text-xl transition ";
-
-
-                        if (respuestaSeleccionada !== null) {
-                        //     if (respuestaSeleccionada === opcion) {
-                        //         clases += resultado === "acierto" ? "bg-green-400" : "bg-red-500";
-                        //     } else if (
-                        //         resultado === "error") {
-                        //         clases += "bg-green-400";// mostrar cuál era la correcta
-
-
-                        //     } else {
-                        //         clases += "bg-transparent";
-                        //     }
-                        // } else {
-                        //     clases += "bg-transparent hover:bg-blue-500";
-                        // }
-                          if (resultado === "acierto" && opcion === respuestaSeleccionada) {
-                                clases +=  "bg-green-400" ; //es correcta
-
-                            } else if (
-                                resultado === "error" && opcion === respuestaSeleccionada) {
-                                clases += "bg-red-500";// dice que es incorrecta
-
-                                }
-                                else if (resultado === "error" && opcion === ecuacion?.correctAnswer){
-                                    clases+= "bg-green-400"; // muestra cual seria la correcta
-
-                              } else {
-                                clases += "bg-transparent";
-                            }
-                        } else {
-                            clases += "bg-transparent hover:bg-blue-500";
-                        }
-                        return (
-                            <button
-                                key={i}
-                                onClick={() => manejarRespuesta(opcion)}
-                                className={clases}
-                                disabled={!!respuestaSeleccionada || penalizado} // Deshabilitar si ya respondió o si está penalizado
-                            >
-                                {opcion}
-                            </button>
-                        );
-                    })}
-                    {mensajeResultado && (
-    <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.4 }}
-        className={`text-xl mt-6  ${
-            resultado === "acierto" ? "text-green-400" : "text-red-500"
-        }`}
-    >
-        {mensajeResultado}
-    </motion.div>
-)}
-                    {/* {penalizado && (
-                        <div className="text-red-500 text-xl mt-4">
-                            ¡Respuesta incorrecta! Penalización de 2 segundos.
-                        </div>
-                    )} */}
-
-                </div>
-            </div>
-
+                <button
+                  key={i}
+                  onClick={() => manejarRespuesta(opcion)}
+                  className={clases}
+                  disabled={!!respuestaSeleccionada || penalizado}
+                >
+                  {opcion}
+                </button>
+              </div>
+            );
+          })}
         </div>
-    );
+      </div>
+    </div>
+  );
 };
-
-
