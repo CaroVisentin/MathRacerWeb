@@ -4,6 +4,7 @@ import { SelectionSidebar } from "../../components/garage/sidebar";
 import { Topbar } from "../../components/garage/topbar";
 import type { ItemSelectable } from "../../models/ui/garage/garage";
 import { usePlayer } from "../../hooks/usePlayer";
+import { useAudio } from "../../contexts/AudioContext";
 import {
   getPlayerBackgrounds,
   getPlayerCars,
@@ -18,6 +19,7 @@ import ErrorConnection from "../../shared/modals/errorConnection";
 
 export const GaragePage = () => {
   const { player, setPlayer } = usePlayer();
+  const { playPurchaseSound } = useAudio();
   const [activeCategory, setActiveCategory] = useState<
     "cars" | "characters" | "backgrounds"
   >("cars");
@@ -123,6 +125,10 @@ export const GaragePage = () => {
     if (!selected?.isOwned || selected.isActive) return; // seguridad
     try {
       await activatePlayerItem(player.id, selectedItemId, type);
+      
+      // Reproducir sonido de activación
+      playPurchaseSound();
+      
       // Actualizar estado local: desactivar todos y activar solo el seleccionado
       const updateActive = (arr: ItemSelectable[]) =>
         arr.map((it) => ({
@@ -164,74 +170,76 @@ export const GaragePage = () => {
     }
   };
 
-  return (
-    <div className="relative h-screen w-screen flex flex-col p-2">
-      {/* Fondo dinámico */}
-      <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-700"
-        style={{
-          backgroundImage: `url(${
-            activeCategory === "backgrounds" && selectedItem
-              ? selectedItem.image
-              : fondoGarage
-          })`,
-        }}
-      >
-        <div className="absolute pointer-events-none inset-0 bg-black/60"></div>
-      </div>
+    return (
+        <div className="relative h-screen w-screen flex flex-col bg-black overflow-hidden">
+            {/* Fondo dinámico */}
+            <div
+                className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-700"
+                style={{
+                    backgroundImage: `url(${activeCategory === "backgrounds" && selectedItem
+                            ? selectedItem.image
+                            : fondoGarage
+                        })`,
+                }}
+            >
+                <div className="absolute inset-0 bg-black/60"></div>
+            </div>
 
-      {/* Contenido principal */}
-      <div className="relative z-20 h-full flex flex-col">
-        {/* Topbar */}
-        <Topbar
-          activeCategory={activeCategory}
-          setActiveCategory={setActiveCategory}
-        />
+            {/* Contenido principal */}
+            <div className="relative z-20 flex flex-col h-full">
+                {/* Topbar */}
+                <Topbar
+                    activeCategory={activeCategory}
+                    setActiveCategory={setActiveCategory}
+                />
 
-        {/* Área principal */}
-        <div className="flex flex-1 p-2">
-          {/* Sidebar */}
-          <SelectionSidebar
-            title={
-              activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1)
-            }
-            items={selectedData}
-            selectedItemId={selectedItemId}
-            setSelectedItemId={setSelectedItemId}
-          />
+                {/* Área principal (contenido y sidebar) */}
+                <div className="flex flex-1 overflow-hidden p-2">
+                    {/* Sidebar */}
+                    <SelectionSidebar
+                        title={
+                            activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1)
+                        }
+                        items={selectedData}
+                        selectedItemId={selectedItemId}
+                        setSelectedItemId={setSelectedItemId}
+                    />
 
-          {/* Elemento central */}
-          <div className="flex-1 flex justify-center items-center">
-            {activeCategory !== "backgrounds" && selectedItem && (
-              <img
-                src={selectedItem.image}
-                alt={selectedItem.name}
-                className="w-140 h-100 object-contain transition-transform duration-500"
-              />
-            )}
-          </div>
-        </div>
-        <div className="p-2 flex justify-center">
-          <button
-            type="button"
-            disabled={!selectedItem?.isOwned || selectedItem?.isActive}
-            className={`text-black text-lg py-2 px-4 rounded transition-colors
-                            ${
-                              !selectedItem?.isOwned || selectedItem?.isActive
-                                ? "bg-gray-500 cursor-not-allowed"
-                                : "bg-cyan-400 hover:bg-cyan-300"
+                    {/* Elemento central */}
+                    <div className="flex-1 flex justify-center items-center overflow-hidden">
+                        {activeCategory !== "backgrounds" && selectedItem && (
+                            <img
+                                src={selectedItem.image}
+                                alt={selectedItem.name}
+                                className="w-140 h-100 object-contain transition-transform duration-500"
+                            />
+                        )}
+                    </div>
+                </div>
+
+                {/* Botón inferior */}
+                <div className="p-3 flex justify-center bg-black/60 items-center">
+                    <button
+                        type="button"
+                        disabled={!selectedItem?.isOwned || selectedItem?.isActive}
+                        onClick={handleActivate}
+                        className={`
+                                text-black text-lg tracking-wider transition-all duration-300 
+                                px-3 py-1 border-2
+                                ${!selectedItem?.isOwned || selectedItem?.isActive
+                                ? "bg-gray-500 border-gray-400 cursor-not-allowed opacity-80"
+                                : "bg-[#00f0ff] border-white hover:bg-cyan-400 shadow-[0_0_10px_rgba(0,217,255,0.3)] hover:shadow-[0_0_20px_rgba(0,217,255,0.6)]"
                             }
-                        `}
-            onClick={handleActivate}
-          >
-            {selectedItem?.isActive
-              ? "Ya activo"
-              : !selectedItem?.isOwned
-                ? "No adquirido"
-                : "Activar seleccionado"}
-          </button>
-        </div>
-      </div>
+    `}
+                    >
+                        {selectedItem?.isActive
+                            ? "Ya activo"
+                            : !selectedItem?.isOwned
+                                ? "No adquirido"
+                                : "Activar seleccionado"}
+                    </button>
+                </div>
+            </div>
 
       {loading && (
         <div className="absolute inset-0 bg-black/70 flex items-center justify-center z-30">

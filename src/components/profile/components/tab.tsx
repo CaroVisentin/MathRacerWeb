@@ -1,6 +1,7 @@
 import React from "react";
 import { BackButton } from "../../../shared/buttons/backButton";
-import { useNavigate } from "react-router-dom";
+import mathi from "../../../assets/images/mathi.png";
+//import { useNavigate } from "react-router-dom";
 
 interface TabPanelProps {
     activeSection: "perfil" | "amigos" | "ajustes";
@@ -10,7 +11,7 @@ interface TabPanelProps {
 }
 
 export const TabPanel = ({ activeSection, setActiveSection }: TabPanelProps) => {
-    const navigate = useNavigate();
+   // const navigate = useNavigate();
     const tabs: { label: string; key: "perfil" | "amigos" | "ajustes" }[] = [
         { label: "Perfil", key: "perfil" },
         { label: "Amigos", key: "amigos" },
@@ -18,27 +19,33 @@ export const TabPanel = ({ activeSection, setActiveSection }: TabPanelProps) => 
     ];
 
     return (
-        <div className="w-full flex items-center justify-between mb-8">
-            <BackButton
-                onClick={() => navigate(-1)}
-            />
+        <div className="w-full flex items-center justify-between  mb-8 ">
+            <div className="pt-4 pl-4 hover:scale-105 transition-transform duration-200 cursor-pointer hover:drop-shadow-2xl">
+            <BackButton/>
+            
+            </div>
 
             {/* Tabs */}
-            <div className="flex gap-6">
+            <div className="flex gap-6 justify-center flex-2">
                 {tabs.map((tab) => (
                     <span
                         key={tab.key}
                         onClick={() => setActiveSection(tab.key)}
-                        className={`text-2xl cursor-pointer px-4 py-2 rounded transition-colors duration-300 ${activeSection === tab.key ? "text-[#f95ec8]" : "text-[#00f0ff]"
+                        className={`text-4xl cursor-pointer px-4 py-2 rounded hover:drop-shadow-[0_0_5px_#00ffff] hover:scale-125 transition-colors duration-300 ${activeSection === tab.key ? "text-[#f95ec8]" : "text-[#00f0ff]"
                             }`}
                     >
                         {tab.label}
+
                     </span>
                 ))}
+               
             </div>
+            
 
             {/* Placeholder para mantener centrado */}
-            <div className="w-10" />
-        </div>
+            <div/>
+             <img src={mathi} alt="Mathi" className="w-20 h-20 pt-2 pr-2 items-end " />
+
+        </div >
     );
 };

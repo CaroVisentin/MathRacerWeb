@@ -49,15 +49,22 @@ export const RegisterPage = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        console.log("=== INICIANDO REGISTRO ===");
+        
         if (!validateInputs()) {
+            console.log("Validación de inputs falló");
             setShowErrorModal(true);
             return;
         }
 
         try {
+            console.log("Llamando a register...");
             await register(email, password, username)
-            navigate("/tutorial");
+            console.log("Register exitoso, navegando al home...");
+            // El ProtectedRoute se encargará de redirigir al tutorial si lastlevelId === 0
+            navigate("/home");
         } catch (error) {
+            console.error("Error en handleSubmit:", error);
             setErrorMessage((error as Error).message || "Error desconocido");
             setShowErrorModal(true);
         }
@@ -66,7 +73,8 @@ export const RegisterPage = () => {
     const handleGoogleLogin = async () => {
         try {
             await loginWithGoogle()
-            navigate('/')
+            // El ProtectedRoute redirigirá al tutorial si es usuario nuevo (lastlevelId === 0)
+            navigate('/home')
         } catch {
             setErrorMessage('Error al iniciar sesión con Google')
             setShowErrorModal(true)

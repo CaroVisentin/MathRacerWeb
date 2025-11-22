@@ -19,7 +19,7 @@ export const Topbar = () => {
     }
 
     return (
-        <div className="w-full relative z-30 flex flex-col p-2">
+        <div className="w-screen relative z-30 flex flex-col p-2">
             {/* Fila superior: Back, Título, Monedas */}
             <div className="h-16 flex items-center justify-between px-4">
                 <BackButton />

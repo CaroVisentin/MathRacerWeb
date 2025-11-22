@@ -13,7 +13,7 @@ import type { SubmitInfiniteAnswerRequestDto } from "../../../models/domain/infi
 import type { InfiniteQuestionDto } from "../../../models/domain/infinite/infiniteQuestionDto";
 import type { InfiniteGameStatusResponseDto } from "../../../models/domain/infinite/infiniteGameStatusResponseDto";
 import { InfiniteModeGameHeader } from "../../../components/game/infinite-mode/infiniteModeGameHeader";
-import ConfirmActionModal from "../../../shared/modals/confirmModal";
+import ConfirmActionModal from "../../../shared/modals/confirmModalAction";
 import { useNavigate } from "react-router-dom";
 import Spinner from "../../../shared/spinners/spinner";
 

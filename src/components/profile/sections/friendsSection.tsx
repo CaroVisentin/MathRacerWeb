@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { FriendList } from "../components/friendsList";
-import { usePlayer } from "../../../hooks/usePlayer";
+//import { usePlayer } from "../../../hooks/usePlayer";
+import { useAuth } from "../../../hooks/useAuth";
 import type { FriendDto } from "../../../models/domain/profile/friends/friendDto";
 import type { Friend } from "../../../models/ui/profile/friends/friend";
 import { friendshipService } from "../../../services/friendship/friendshipService";
@@ -11,7 +12,8 @@ import { FriendRequestsModal } from "../components/friendRequestsModal";
 import { ConfirmModal } from "../components/confirmDeleteFriendModal";
 
 export const AmigosSection = () => {
-  const { player } = usePlayer();
+  //const { player } = usePlayer();
+  const { player } = useAuth();
   const [friends, setFriends] = useState<Friend[]>([]);
   const [pendingRequests, setPendingRequests] = useState<Friend[]>([]);
   const [pendingCount, setPendingCount] = useState(0);

@@ -86,7 +86,7 @@ export const RankingPage = () => {
       <StarsBackground />
 
       {/* Contenido de la página */}
-      <div className="w-full z-10">
+      <div className="w-full z-10 left-4 top-4 absolute ">
         <BackButton />
       </div>
 
