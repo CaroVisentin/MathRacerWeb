@@ -56,7 +56,7 @@ export default function InviteFriends() {
     setError(null);
 
     try {
-      // El backend ahora crea la partida automáticamente y envía la invitación
+      
       const response = await gameInvitationService.sendInvitation({
         invitedFriendId: friendId,
         difficulty: selectedDifficulty,

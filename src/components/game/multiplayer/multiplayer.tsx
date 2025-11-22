@@ -31,7 +31,7 @@ export const MultiplayerGame = () => {
   const navigate = useNavigate();
   const { conn, errorConexion, isConnected, invoke, on, off } = useConnection();
 
-  // Obtener la contraseña del state si fue pasada desde create-game o join-game
+ 
   const password = location.state?.password as string | undefined;
   const [ecuacion, setEcuacion] = useState<QuestionDto>();
   const [opciones, setOpciones] = useState<number[]>();
@@ -60,7 +60,7 @@ export const MultiplayerGame = () => {
   const joinRetries = useRef(0);
   const haConectado = useRef(false);
 
-  // Usar el nombre del jugador desde el contexto
+ 
   const nombreJugador = player?.name || "";
 
   const conectarJugador = useCallback(async () => {
@@ -80,7 +80,7 @@ export const MultiplayerGame = () => {
 
           const err = error as { constructor?: { name: string }; message?: string; stack?: string };
 
-          // Mostrar error al usuario y volver al menú
+          
           setError(err.message || "No se pudo unir a la partida");
           setTimeout(() => {
             navigate('/menu');
@@ -91,10 +91,8 @@ export const MultiplayerGame = () => {
         navigate('/menu');
       }
     } else {
-      // Si no hay gameId, buscar partida rápida (matchmaking)
+      
       if (nombreJugador.trim()) {
-
-        // Marcar que ya intentamos conectar
         haConectado.current = true;
 
         try {
@@ -115,10 +113,10 @@ export const MultiplayerGame = () => {
     setResultado(null);
     setRespuestaSeleccionada(null);
     setBuscandoRival(true);
-    haConectado.current = false; // Resetear para permitir reconexión
-    joinRetries.current = 0; // Resetear reintentos
+    haConectado.current = false; 
+    joinRetries.current = 0; 
 
-    // Si vino de una partida específica, volver al menú
+    
     if (gameId) {
       navigate('/menu');
     } else {
@@ -127,7 +125,7 @@ export const MultiplayerGame = () => {
   };
 
   const handleVolver = () => {
-    // Abandonar partida y volver al menú
+    
     setGanador(false);
     setPerdedor(true);
     navigate('/menu');
@@ -139,7 +137,7 @@ export const MultiplayerGame = () => {
     const opcionesIncorrectas = ecuacion.options.filter(
       (opt) => opt !== ecuacion.correctAnswer
     );
-    // Seleccionar dos opciones incorrectas al azar
+    
     const unaIncorrecta =
       opcionesIncorrectas[
       Math.floor(Math.random() * opcionesIncorrectas.length)
@@ -222,7 +220,7 @@ export const MultiplayerGame = () => {
       conn &&
       isConnected &&
       hasName &&
-      !haConectado.current; // cambiado de !partidaId a !haConectado.current
+      !haConectado.current;
 
     if (shouldConnect) {
 
@@ -230,13 +228,13 @@ export const MultiplayerGame = () => {
     }
   }, [conn, isConnected, nombreJugador, gameId, partidaId, conectarJugador]);
 
-  // Reintento automático de JoinGame si la conexión ya está activa pero aún no hay partidaId
+  
   useEffect(() => {
     if (!conn || !isConnected) return;
     if (!gameId) return;
     if (partidaId) return;
 
-    // limitar a 3 reintentos
+    
     if (joinRetries.current >= 3) return;
 
     const t = setTimeout(async () => {
@@ -245,7 +243,7 @@ export const MultiplayerGame = () => {
 
         await conectarJugador();
       } catch {
-        // noop, el propio conectarJugador registra errores
+        
       }
     }, 1500);
 
@@ -253,18 +251,17 @@ export const MultiplayerGame = () => {
   }, [conn, isConnected, gameId, partidaId, conectarJugador]);
 
   useEffect(() => {
-    if (!conn) return; // Esperar a que la conexión esté inicializada
+    if (!conn) return; 
 
     const gameUpdateHandler = (data: GameUpdateDto) => {
-
-      // Ocultar modal de búsqueda cuando hay 2 jugadores
+      
       if (data.players && data.players.length >= 2) {
         setBuscandoRival(false);
       }
 
       setJugadoresPartida(data.players);
 
-      // Intentar identificar al jugador usando Firebase UID (cuando backend lo envíe en p.uid)
+      
       const auth = getAuth();
       const myUid = auth.currentUser?.uid;
 
@@ -273,11 +270,11 @@ export const MultiplayerGame = () => {
         jugadorActual = data.players.find(p => p.uid === myUid);
       }
 
-      // Fallback por nombre exacto si uid aún no está disponible
+      
       if (!jugadorActual) {
         jugadorActual = data.players.find(p => p.name?.trim() === nombreJugador.trim());
       }
-      // Fallback final: case-insensitive o reutilizar jugadorId previo si hubo ambigüedad
+    
       if (!jugadorActual) {
         const candidatos = data.players.filter(p => p.name?.trim().toLowerCase() === nombreJugador.trim().toLowerCase());
         if (candidatos.length === 1) {
@@ -340,28 +337,27 @@ export const MultiplayerGame = () => {
       }
     };
 
-    // Handler para errores del servidor
+    
     const errorHandler = (message: string) => {
       console.error("Error del servidor SignalR:", message);
       alert(`Error: ${message}`);
-      // Volver al menú si hay un error crítico
+      
       navigate("/menu");
     };
 
-    // Registrar el listener para "GameUpdate" en todas las variantes que el backend puede enviar
-    // SignalR en C# automáticamente convierte PascalCase a camelCase
-    on("GameUpdate", gameUpdateHandler);      // PascalCase original
-    on("gameUpdate", gameUpdateHandler);      // camelCase (conversión automática de SignalR)
-    on("game-update", gameUpdateHandler);     // kebab-case
-    on("gameupdate", gameUpdateHandler);      // lowercase sin separador
+    
+    on("GameUpdate", gameUpdateHandler);     
+    on("gameUpdate", gameUpdateHandler);      
+    on("game-update", gameUpdateHandler);     
+    on("gameupdate", gameUpdateHandler);      
 
-    // Registrar listeners para errores (el backend puede usar "Error" o "error")
+    
     on("Error", errorHandler);
     on("error", errorHandler);
 
-    // on("PowerUpUsed", powerUpUsedHandler);
+    
 
-    // Manejar errores del servidor
+    
     if (conn) {
       conn.onclose((error) => {
         console.error("Conexión SignalR cerrada:", error);
@@ -369,7 +365,7 @@ export const MultiplayerGame = () => {
       });
     }
 
-    // Función de limpieza para quitar el listener
+    
     return () => {
       off("GameUpdate", gameUpdateHandler);
       off("gameUpdate", gameUpdateHandler);
@@ -377,7 +373,7 @@ export const MultiplayerGame = () => {
       off("gameupdate", gameUpdateHandler);
       off("Error", errorHandler);
       off("error", errorHandler);
-      //  off("PowerUpUsed", powerUpUsedHandler);
+      
     };
   }, [conn, on, off, nombreJugador, navigate, jugadorId, setPartidaId, setJugadoresPartida]);
 

@@ -67,7 +67,7 @@ const router = createBrowserRouter([
     element: <ProtectedRoute><CreateGame /></ProtectedRoute>
   },
   {
-    path: "/invitar-amigo/:gameId",
+    path: "/invitar-amigo",
     element: <ProtectedRoute><InviteFriend /></ProtectedRoute>
   },
   {
