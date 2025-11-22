@@ -5,6 +5,8 @@ import { CartProvider } from './contexts/cartContext'
 import { EnergyProvider } from './contexts/energyContext';
 import { AppRouter } from './router/router'
 import { InvitationProvider } from './contexts/invitationContex';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 function App() {
@@ -14,7 +16,18 @@ function App() {
         <CartProvider>
           <EnergyProvider>
             <InvitationProvider>
-            <AppRouter />
+              <AppRouter />
+              <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop
+                closeOnClick
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="dark"
+              />
             </InvitationProvider>
           </EnergyProvider>
         </CartProvider>

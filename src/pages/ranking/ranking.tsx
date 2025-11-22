@@ -1,9 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import { BackButton } from "../../shared/buttons/backButton";
 import jugador1 from "../../assets/images/jugador1.png";
 import jugador2 from "../../assets/images/jugador2.png";
 import jugador3 from "../../assets/images/jugador3.png";
 import type { RankingPlayer } from "../../models/ui/ranking/ranking";
+import { useConnection } from "../../services/signalR/connection";
+import { toast } from "react-toastify";
 import { StarsBackground } from "../../shared/backgrounds/starBackground";
 import { getRankingTop10 } from "../../services/player/rankingService";
 import { usePlayer } from "../../hooks/usePlayer";
@@ -14,6 +16,8 @@ export const RankingPage = () => {
   const { player } = usePlayer();
   const [players, setPlayers] = useState<RankingPlayer[]>([]);
   const [currentPlayerPosition, setCurrentPlayerPosition] = useState<number>(0);
+  const [onlineIds, setOnlineIds] = useState<number[]>([]);
+  const { invoke, on, off } = useConnection();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -31,6 +35,7 @@ export const RankingPage = () => {
           username: p.name,
           score: p.points,
           image: avatars[idx % avatars.length],
+          isOnline: onlineIds.includes(p.playerId),
         }));
         setPlayers(mapped);
         setCurrentPlayerPosition(data.currentPlayerPosition);
@@ -50,7 +55,31 @@ export const RankingPage = () => {
       }
     };
     fetchRanking();
-  }, [player?.id]);
+  }, [player?.id, onlineIds]);
+
+  // Escucha de presencia en tiempo real
+  useEffect(() => {
+    const handler = (ids: number[]) => {
+      setOnlineIds(ids || []);
+    };
+    on<number[]>("PlayersOnline", handler);
+    return () => {
+      off<number[]>("PlayersOnline", handler);
+    };
+  }, [on, off]);
+
+  const handleDuel = useCallback(async (target: RankingPlayer) => {
+    if (!player) return;
+    if (player.id === target.id) return;
+    if (!target.isOnline) return;
+    try {
+      await invoke("RequestCompetitiveDuel", player.id, target.id);
+      toast.success(`Desafío enviado a ${target.username}`);
+    } catch (err) {
+      console.error("Error enviando duelo:", err);
+      toast.error("No se pudo enviar el duelo (ver backend)");
+    }
+  }, [invoke, player]);
 
   // Ordenamos por puntaje desc si hiciera falta y construimos podio visual 2-1-3
   const rankings = useMemo(
@@ -161,9 +190,9 @@ export const RankingPage = () => {
 
       {/* Rankings List */}
       <div className="w-full max-w-2xl text-3xl space-y-3">
-        {rankings.map((player, index) => (
+        {rankings.map((rkPlayer, index) => (
           <div
-            key={player.id}
+            key={rkPlayer.id}
             className={`!mb-5 border-2 p-3 flex items-center justify-between ${
               getColor(index + 1) === "cyan"
                 ? "border-cyan-400"
@@ -187,8 +216,8 @@ export const RankingPage = () => {
 
               {/* Imagen jugador */}
               <img
-                src={player.image}
-                alt={player.username}
+                src={rkPlayer.image}
+                alt={rkPlayer.username}
                 className="w-6 h-6 object-contain rounded-full"
               />
 
@@ -201,20 +230,40 @@ export const RankingPage = () => {
                       : "text-red-500"
                 }`}
               >
-                {player.username}
+                {rkPlayer.username}
               </span>
             </div>
-            <span
-              className={`text-xl ${
-                getColor(index + 1) === "cyan"
-                  ? "text-cyan-400"
-                  : getColor(index + 1) === "yellow"
-                    ? "text-yellow-400"
-                    : "text-red-500"
-              }`}
-            >
-              {player.score.toLocaleString()}
-            </span>
+            <div className="flex items-center gap-4">
+              <span
+                className={`h-3 w-3 rounded-full ${rkPlayer.isOnline ? "bg-green-500 animate-pulse" : "bg-gray-500"}`}
+                title={rkPlayer.isOnline ? "En línea" : "Offline"}
+              />
+              <span
+                className={`text-xl ${
+                  getColor(index + 1) === "cyan"
+                    ? "text-cyan-400"
+                    : getColor(index + 1) === "yellow"
+                      ? "text-yellow-400"
+                      : "text-red-500"
+                }`}
+              >
+                {rkPlayer.score.toLocaleString()}
+              </span>
+              <button
+                disabled={!rkPlayer.isOnline || rkPlayer.id === player?.id}
+                onClick={() => handleDuel(rkPlayer)}
+                className="px-4 py-1 rounded text-sm font-semibold border border-cyan-400 text-cyan-400 hover:bg-cyan-600 hover:text-black disabled:opacity-40 disabled:cursor-not-allowed transition"
+                title={
+                  rkPlayer.id === player?.id
+                    ? "Este sos vos"
+                    : rkPlayer.isOnline
+                      ? "Desafiar a duelo competitivo"
+                      : "Jugador offline"
+                }
+              >
+                DUELO
+              </button>
+            </div>
           </div>
         ))}
       </div>

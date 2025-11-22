@@ -3,4 +3,5 @@ export interface RankingPlayer {
   username: string;
   score: number;
   image: string;
+  isOnline?: boolean; // estado opcional
 }
