@@ -4,8 +4,10 @@ import { AudioProvider } from './contexts/AudioContext';
 import { CartProvider } from './contexts/cartContext'
 import { EnergyProvider } from './contexts/energyContext';
 import { AppRouter } from './router/router'
+import { initMercadoPago } from '@mercadopago/sdk-react';
 import { InvitationProvider } from './contexts/invitationContex';
 
+initMercadoPago(import.meta.env.VITE_MP_PUBLIC_KEY); 
 
 function App() {
   return (

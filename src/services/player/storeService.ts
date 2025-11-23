@@ -1,5 +1,6 @@
 import { api } from "../network/api";
 import type { StoreProductsResponse } from "../../models/domain/store/storeProductsResponseDto";
+import type { CoinPackageDto } from "../../models/domain/store/coinPackageDto";
 
 /**
  * Obtiene todos los autos disponibles en la tienda
@@ -96,6 +97,22 @@ export async function buyBackground(
     await api.post(`/players/${playerId}/backgrounds/${backgroundId}`);
   } catch (error) {
     console.error("Error al comprar el fondo:", error);
+    throw error;
+  }
+}
+
+
+
+/**
+ * Obtiene todos los paquetes de monedas disponibles
+ * @returns Lista de paquetes de monedas
+ */
+export async function getCoinsPackage(): Promise<CoinPackageDto[]> {
+  try {
+    const { data } = await api.get(`/coins/packages`);
+    return data;
+  } catch (error) {
+    console.error("Error al obtener los paquetes de monedas:", error);
     throw error;
   }
 }
