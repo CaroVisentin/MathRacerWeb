@@ -19,6 +19,7 @@ interface RewardScreenProps {
   chestTitle?: string;
   firstMessage?: string;
   secondMessage?: string;
+  onContinue?: () => void | Promise<void>;
 }
 
 export const RewardScreen = ({
@@ -35,6 +36,7 @@ export const RewardScreen = ({
   chestTitle,
   firstMessage,
   secondMessage,
+  onContinue,
 }: RewardScreenProps) => {
   return (
     <RewardBackground>
@@ -60,6 +62,7 @@ export const RewardScreen = ({
               setRewards={setRewards}
               setObtainedChest={setObtainedChest}
               setIsPendingChest={setIsPendingChest}
+              onContinue={onContinue}
             />
           </div>
         )}

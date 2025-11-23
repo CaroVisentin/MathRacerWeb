@@ -1,4 +1,4 @@
-import { Navigate, useLocation } from 'react-router-dom';
+import { Navigate} from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 
 interface ProtectedRouteProps {
@@ -7,7 +7,7 @@ interface ProtectedRouteProps {
 
 export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     const { user, loading, player } = useAuth();
-    const location = useLocation();
+    //const location = useLocation();
 
     if (loading) {
         return (
@@ -30,11 +30,12 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
         );
     }
 
-    // Si el usuario no ha completado el tutorial (lastlevelId === 0) y no está ya en la página del tutorial
-    if (player.lastlevelId === 0 && location.pathname !== '/tutorial') {
-        console.log('Usuario nuevo detectado, redirigiendo al tutorial...');
-        return <Navigate to="/tutorial" replace />;
-    }
+    // Nuevo criterio: si NO tiene los 3 productos básicos (car, background, character) debe hacer el tutorial
+    // const lacksBasics = !player.car || !player.background || !player.character;
+    // if (lacksBasics && location.pathname !== '/tutorial') {
+    //     console.log('Jugador sin productos básicos, redirigiendo al tutorial...');
+    //     return <Navigate to="/tutorial" replace />;
+    // }
 
     return <>{children}</>;
 };
