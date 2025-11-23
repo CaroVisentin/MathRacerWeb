@@ -83,17 +83,17 @@ export default function JoinGame() {
       console.log("=== HANDLE JOIN GAME ===");
       console.log("GameId:", gameId);
       console.log("Password:", pwd);
-      
+
       // NO hacer petición HTTP, solo navegar al juego
       // El componente multiplayer.tsx se encargará de hacer JoinGame por SignalR
       console.log("Navegando a multiplayer para unirse por SignalR...");
-      
+
       // Navegar a la pantalla del juego multijugador con el gameId
       // Pasar la contraseña en el state si existe
       navigate(`/multijugador/${gameId}`, {
         state: { password: pwd }
       });
-      
+
     } catch (err) {
       console.error("Error al unirse a la partida:", err);
       const error = err as { response?: { data?: { error?: string } }; message?: string };
@@ -112,7 +112,7 @@ export default function JoinGame() {
   };
 
   return (
-     <div className="h-screen w-screen bg-[#1C092D] flex  items-center justify-center p-4 overflow-hidden">
+    <div className="h-screen w-screen bg-[#1C092D] flex  items-center justify-center p-4 overflow-hidden">
       <div className="absolute inset-0 z-0 pointer-events-none">
         <StarsBackground />
       </div>
@@ -184,11 +184,10 @@ export default function JoinGame() {
                         <button
                           onClick={() => handleJoinClick(game)}
                           disabled={game.isFull}
-                          className={`bg-[#5df9f9] text-black font-extralight w-15 h-8 py-1 rounded text-xl leading-relaxed ${
-                            game.isFull 
-                              ? 'opacity-50 cursor-not-allowed' 
+                          className={`bg-[#5df9f9] text-black font-extralight w-15 h-8 py-1 rounded text-xl leading-relaxed ${game.isFull
+                              ? 'opacity-50 cursor-not-allowed'
                               : 'hover:bg-[#f95ec8] hover:drop-shadow-[0_0_10px_#00ffff]'
-                          }`}
+                            }`}
                         >
                           {game.isFull ? 'Llena' : 'Unirse'}
                         </button>
@@ -200,7 +199,7 @@ export default function JoinGame() {
             </table>
 
             <div className="flex justify-around items-center text-2xl mt-10 space-x-4 text-white hover:drop-shadow-[0_0_10px_#00ffff] hover:text-[#f95ec8]">
-              <button 
+              <button
                 onClick={() => setCurrentPage(p => Math.max(p - 1, 1))}
                 disabled={currentPage === 1}
                 className={currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}
@@ -208,7 +207,7 @@ export default function JoinGame() {
                 &lt;-
               </button>
               <span>Página {currentPage} de {totalPages || 1}</span>
-              <button 
+              <button
                 onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))}
                 disabled={currentPage === totalPages || totalPages === 0}
                 className={currentPage === totalPages || totalPages === 0 ? 'opacity-50 cursor-not-allowed' : ''}
@@ -220,10 +219,10 @@ export default function JoinGame() {
         )}
 
         <div className="flex justify-between mt-3 pt-2 ">
-          <Link 
-            to="/menu" 
+          <Link
+            to="/menu"
             onClick={playBackSound}
-            className="bg-[#5df9f9] text-black font-extralight border-2 border-white transition-all duration-300 hover:bg-red-700 w-20 h-10 px-4 content-center rounded text-2xl hover:drop-shadow-[0_0_10px_#00ffff]" 
+            className="bg-[#5df9f9] text-black font-extralight border-2 border-white transition-all duration-300 hover:bg-red-700 w-20 h-10 px-4 content-center rounded text-2xl hover:drop-shadow-[0_0_10px_#00ffff]"
             style={{ marginTop: '20px', marginBottom: '20px' }}
           >
             Volver

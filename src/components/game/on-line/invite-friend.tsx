@@ -56,7 +56,7 @@ export default function InviteFriends() {
     setError(null);
 
     try {
-      // El backend ahora crea la partida automáticamente y envía la invitación
+      
       const response = await gameInvitationService.sendInvitation({
         invitedFriendId: friendId,
         difficulty: selectedDifficulty,
@@ -64,7 +64,7 @@ export default function InviteFriends() {
       });
 
       console.log("Invitación enviada:", response);
-      
+
       // Navegar directamente al juego con el gameId devuelto
       navigate(`/multijugador/${response.gameId}`, {
         state: { password: null } // La partida por invitación no usa password

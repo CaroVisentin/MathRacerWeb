@@ -441,7 +441,7 @@ export const StoryModeGame = () => {
                         />
                     )}
 
-                    {/* Modal de Error */}
+                    {/* Modal de Error durante la partida */}
                     {errorMessageDuringGame && (
                         <ErrorModalDuringGame
                             title="¡Oops!"
@@ -450,7 +450,7 @@ export const StoryModeGame = () => {
                         />
                     )}
 
-                    {/* Modal de Error durante la partida */}
+                    {/* Modal de Ganador */}
                     {winnerModal && (
                         <EndOfStoryModeModal
                             level={level?.number ?? 0}

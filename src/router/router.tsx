@@ -23,6 +23,10 @@ import { MultiplayerMatchmaking } from "../components/game/multiplayer/multiplay
 import { ProtectedRoute } from "../components/auth/ProtectedRoute";
 import { PublicRoute } from "../components/auth/PublicRoute";
 import { TutorialPage } from "../pages/tutorial/tutorial";
+import PaymentFailure from "../pages/store/payments/payment-failure";
+import PaymentSuccess from "../pages/store/payments/payment-success";
+import PaymentPending from "../pages/store/payments/payment-pending";
+import { InfiniteModeGame } from "../pages/game/infinite-mode/infiniteMode";
 
 const router = createBrowserRouter([
   {
@@ -66,7 +70,7 @@ const router = createBrowserRouter([
     element: <ProtectedRoute><CreateGame /></ProtectedRoute>
   },
   {
-    path: "/invitar-amigo/:gameId",
+    path: "/invitar-amigo",
     element: <ProtectedRoute><InviteFriend /></ProtectedRoute>
   },
   {
@@ -122,6 +126,22 @@ const router = createBrowserRouter([
     path: "/tutorial",
     element: <ProtectedRoute> <TutorialPage /> </ProtectedRoute>
   },
+  {
+    path: "/payment-success",
+    element: <PaymentSuccess />
+  },
+  {
+    path: "/payment-failure",
+    element: <PaymentFailure />
+  },
+  {
+    path: "/payment-pending",
+    element: <PaymentPending />
+  },
+  {
+    path: "/modo-infinito",
+    element: <ProtectedRoute> <InfiniteModeGame /> </ProtectedRoute>
+  }
 ]);
 
 export function AppRouter() {

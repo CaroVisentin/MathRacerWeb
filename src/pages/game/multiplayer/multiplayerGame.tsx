@@ -3,28 +3,34 @@ import { StarsBackground } from "../../../shared/backgrounds/starBackground";
 import { useAudio } from "../../../contexts/AudioContext";
 import { useInvitation } from "../../../contexts/invitationContex";
 import mathi from "../../../assets/images/mathi.png";
+import { useEffect } from "react";
+import { useAuth } from "../../../hooks/useAuth";
 
 export const Menu = () => {
   const { playButtonSound, playBackSound } = useAudio();
-  const { hasInvitation } = useInvitation();
-  
-  return (
-    // Contenedor principal
+  const { hasInvitation, checkInvitations } = useInvitation();
+  const { user } = useAuth();
 
+  
+  useEffect(() => {
+    // Solo verificar invitaciones si el usuario está autenticado
+    if (user) {
+      checkInvitations();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
+
+  return (
+  
     <div className="h-screen w-screen bg-[#1C092D] flex flex-col items-center justify-between p-4 overflow-hidden">
-      
       <div className="absolute inset-0 z-20 pointer-events-none">
         <img src={mathi} alt="Mathi" className="w-20 h-20  drop-shadow-[0_0_10px_#00ffff] " />
         <StarsBackground />
       </div>
-     
-
       <h1 className="text-pink-400 text-8xl text-center uppercase tracking-wide mb-12 drop-shadow-[0_0_10px_#00ffff]">
         Multijugador
       </h1>
-
       <div className=" rounded-lg p-8 grid grid-cols-2 gap-6 w-4/5 max-w-screen-lg">
-        
         <Link
           to="/crear"
           onClick={playButtonSound}
@@ -32,7 +38,6 @@ export const Menu = () => {
         >
           Crear Partida
         </Link>
-
         <Link
           to="/unirse-partida"
           onClick={playButtonSound}
@@ -40,7 +45,6 @@ export const Menu = () => {
         >
           Unirse a Partida
         </Link>
-
         <Link
           to="/invitar-amigo"
           onClick={playButtonSound}
@@ -48,7 +52,6 @@ export const Menu = () => {
         >
           Invitar a un Amigo
         </Link>
-
         <Link
           to="/invitaciones"
           onClick={playButtonSound}
@@ -56,7 +59,6 @@ export const Menu = () => {
         >
           Buzón de Invitaciones
         </Link>
-
         <Link
           to="/ranking"
           onClick={playButtonSound}
@@ -64,7 +66,6 @@ export const Menu = () => {
         >
           Ranking
         </Link>
-
         <Link
           to="/partida-rapida"
           onClick={playButtonSound}
@@ -73,7 +74,6 @@ export const Menu = () => {
           Partida Competitiva
         </Link>
       </div>
-
       <div className="m-16">
         <Link
           to="/home"
@@ -87,7 +87,6 @@ export const Menu = () => {
           Volver
         </Link>
       </div>
-      
     </div>
   );
 };

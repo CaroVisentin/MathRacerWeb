@@ -19,31 +19,31 @@ import fondo4 from "../../assets/images/18.png";
 import fondo5 from "../../assets/images/19.png";
 // Maps por tipo -> id numérico a asset local
 const carImages: Record<number, string> = {
-  1: auto1,
-  2: auto2,
-  3: auto3,
-  4: auto4,
-  5: auto5,
-  6: auto6,
-  7: auto7,
-  8: auto8,
+  6: auto1,
+  9: auto2,
+  12: auto3,
+  15: auto4,
+  18: auto5,
+  19: auto6,
+  20: auto7,
+  3: auto8,
 };
 
 // Los ProductId de personajes van del 9 al 14
 const characterImages: Record<number, string> = {
-  6: jugador1,  
+  4: jugador1,  
   10: jugador2, 
-  11: jugador3, 
-  12: jugador4, 
-  13: jugador5, 
-  14: jugador6, 
+  7: jugador3, 
+  13: jugador4, 
+  16: jugador5, 
+  17: jugador6, 
 };
 
 // Los ProductId de fondos van del 15 al 19
 const backgroundImages: Record<number, string> = {
-  15: fondo1, 
-  16: fondo2, 
-  17: fondo3, 
+  8: fondo1, 
+  5: fondo2, 
+  13: fondo3, 
   18: fondo4, 
   19: fondo5,
 };
@@ -75,10 +75,9 @@ function fallback(type: ProductVisualType): string {
   }
 }
 
-const productFolderMap: Record<number, string> = {
+export const productFolderMap: Record<number, string> = {
   1: "cars",
   2: "characters",
   3: "backgrounds",
 };
 
-export { productFolderMap };

@@ -19,7 +19,7 @@ export default function CreateGame() {
     privacidad: 'publica',
     contraseña: '',
     dificultad: 'FACIL' as "FACIL" | "MEDIO" | "DIFICIL",
-    tipodeResultado: 'MAYOR' as "MAYOR" | "MENOR" ,
+    tipodeResultado: 'MAYOR' as "MAYOR" | "MENOR",
   });
 
   const [loading, setLoading] = useState(false);
@@ -36,7 +36,7 @@ export default function CreateGame() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.nombrePartida.trim()) {
       setError("El nombre de la partida es requerido");
       setShowModal(true);
@@ -67,19 +67,19 @@ export default function CreateGame() {
         ... (formData.privacidad === 'privada' && formData.contraseña ? { password: formData.contraseña } : {}),
         difficulty: formData.dificultad,
         expectedResult: formData.tipodeResultado,
-        
+
       };
-console.log("Creando partida con datos:", request);
+      console.log("Creando partida con datos:", request);
       const response = await createCustomGame(request);
 
       console.log("Partida creada:", response);
-      
+
       // va a multijugador 
       // si es privada pasa contraseña
       navigate(`/multijugador/${response.gameId}`, {
-        state: { 
+        state: {
           gameId: response.gameId,
-          password: formData.privacidad === 'privada' ? formData.contraseña : undefined 
+          password: formData.privacidad === 'privada' ? formData.contraseña : undefined
         }
       });
 
@@ -91,7 +91,7 @@ console.log("Creando partida con datos:", request);
     } finally {
       setLoading(false);
     }
-  }; 
+  };
 
   return (
 
@@ -100,8 +100,8 @@ console.log("Creando partida con datos:", request);
     //   style={{ backgroundImage: `url(${StarsBackground})` }}
     // >
     <div className="h-screen w-screen bg-[#1C092D] flex  items-center justify-center p-4 overflow-hidden">
-          <div className="absolute inset-0 z-0 pointer-events-none">
-        
+      <div className="absolute inset-0 z-0 pointer-events-none">
+
         <StarsBackground />
       </div>
       <img src={mathi} alt="Mathi" className="absolute top-4 left-4 w-20 h-20 z-10" />
@@ -167,21 +167,20 @@ console.log("Creando partida con datos:", request);
           >
             <option value="Mayor">Mayor</option>
             <option value="Menor">Menor</option>
-           
+
           </select>
         </label>
         <div className="flex justify-between mt-6 pt-5 border-t border-gray-700">
           <Link to="/menu"
-          onClick={playBackSound}
+            onClick={playBackSound}
             className="bg-[#5df9f9] text-black  border-2 border-white hover:bg-red-700 w-30 h-10 px-4 content-center rounded text-2xl hover:drop-shadow-[0_0_10px_#00ffff]">
             ← Volver
           </Link>
           <button
             type="submit"
             disabled={loading}
-            className={`bg-[#5df9f9] text-black border-2 border-white w-30 h-10 px-4 rounded text-2xl leading-relaxed hover:drop-shadow-[0_0_10px_#00ffff] ${
-              loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-[#f95ec8]'
-            }`}
+            className={`bg-[#5df9f9] text-black border-2 border-white w-30 h-10 px-4 rounded text-2xl leading-relaxed hover:drop-shadow-[0_0_10px_#00ffff] ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-[#f95ec8]'
+              }`}
           >
             {loading ? 'Creando...' : 'Crear'}
           </button>

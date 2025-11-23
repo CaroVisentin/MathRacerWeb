@@ -9,13 +9,13 @@ interface ConfirmModalProps {
     onCancel: () => void;
 }
 
-const ConfirmModal: React.FC<ConfirmModalProps> = ({ 
-    title, 
-    message, 
-    confirmText, 
-    cancelText, 
-    onConfirm, 
-    onCancel 
+const ConfirmModal: React.FC<ConfirmModalProps> = ({
+    title,
+    message,
+    confirmText,
+    cancelText,
+    onConfirm,
+    onCancel
 }) => {
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black/80 z-[999]">
@@ -33,7 +33,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
                     >
                         {cancelText}
                     </button>
-                    
+
                     <button
                         onClick={onConfirm}
                         className="bg-[#5df9f9] text-black hover:bg-[#4de8e8] px-6 py-2 rounded text-xl hover:drop-shadow-[0_0_10px_#00ffff] transition font-bold"

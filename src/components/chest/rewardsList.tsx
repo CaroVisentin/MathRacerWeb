@@ -2,6 +2,8 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import type { ChestResponseDto } from "../../models/domain/chest/chestResponseDto";
 import type { ChestItemDto } from "../../models/domain/chest/chestItemDto";
+import { productFolderMap } from "../../shared/utils/imageResolver";
+import { isLightColor } from "../../shared/utils/colorUtil";
 
 interface RewardsListProps {
   obtainedChest: ChestResponseDto | null;
@@ -29,16 +31,18 @@ export const RewardsList: React.FC<RewardsListProps> = ({
         {obtainedChest?.items.map((item: ChestItemDto, index) => {
           let title = "";
           let description = "";
-          let color = "#fffff";
+          let color = "#000000";
           let imageSrc = "";
           let quantity = 0;
+
+          console.log("Chest item:", item);
 
           switch (item.type) {
             case "Product":
               title = item.product?.name ?? "Producto misterioso";
               description = item.product?.description ?? "";
               color = item.product?.rarityColor ?? "#c0be9a";
-              imageSrc = `/images/products/${item.product?.id}.png`;
+              imageSrc = `/images/${productFolderMap[item.product?.productType ?? 0] ?? "product"}/${item.product?.id}.png`;
               quantity = item.quantity;
               break;
 
@@ -74,12 +78,12 @@ export const RewardsList: React.FC<RewardsListProps> = ({
                 className="w-24 h-24 object-contain mb-2"
               />
               <h3
-                className={`text-lg font-bold text-center ${color === "#ffff" ? "text-black" : "text-white"}`}
+                className={`text-lg font-bold text-center ${isLightColor(color) ? "text-black" : "text-white"}`}
               >
                 {title} x{quantity}
               </h3>
               {description && (
-                <p className="text-sm text-center opacity-80">{description}</p>
+                <p className={`text-sm text-center opacity-80 ${isLightColor(color) ? "text-black" : "text-white"}`}>{description}</p>
               )}
             </div>
           );

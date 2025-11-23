@@ -31,7 +31,7 @@ export const FriendList = ({ friends, onRemove }: FriendListProps) => {
             {/* Columna 2: Auto (centrado) */}
             {/* <div className="flex justify-center">
                             <img src={friend.carUrl} alt="carro" className="w-14 h-8" />
-                        </div> */}
+                        </div> 
 
             {/* Columna 3: Puntuación (centrada) */}
             <div className="flex justify-center">

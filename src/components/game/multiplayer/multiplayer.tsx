@@ -7,7 +7,8 @@ import { LookingForRivalModal } from "../../../shared/modals/lookingForRivalModa
 import type { PlayerDto } from "../../../models/domain/signalR/playerDto";
 import { EndOfMultiplayerModeModal } from "../../../shared/modals/endOfMultiplayerModeModal";
 import { Wildcards } from "../../../shared/wildcards/wildcards";
-import auto1 from "../../../assets/images/auto-pista.png";
+import autoDefault from "../../../assets/images/auto-pista.png";
+import { resolveImageUrl } from "../../../shared/utils/imageResolver";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import type { GameUpdateDto } from "../../../models/domain/signalR/gameUpdateDto";
 import { useConnection } from "../../../services/signalR/connection";
@@ -15,14 +16,9 @@ import { PowerUpType } from "../../../models/enums/powerUpType";
 import mathi from "../../../assets/images/mathi.png";
 import { usePlayer } from "../../../hooks/usePlayer";
 
-const fondos = [
-  "pista-noche.png",
-  "pista-dia.png",
-  "pista-atardecer.png",
-  "pista-city.png",
-  "pista-montana.png",
-  "pista-pastel.png",
-];
+// IDs para fallback aleatorio (según imageResolver)
+const fondoFallbackIds = [8,5,13,18,19];
+const autoFallbackIds = [6,9,12,15,18,19,20,3];
 
 export const MultiplayerGame = () => {
   const { gameId } = useParams<{ gameId: string }>();
@@ -30,8 +26,8 @@ export const MultiplayerGame = () => {
   const { player } = usePlayer();
   const navigate = useNavigate();
   const { conn, errorConexion, isConnected, invoke, on, off } = useConnection();
-  
-  // Obtener la contraseña del state si fue pasada desde create-game o join-game
+
+ 
   const password = location.state?.password as string | undefined;
   const [ecuacion, setEcuacion] = useState<QuestionDto>();
   const [opciones, setOpciones] = useState<number[]>();
@@ -51,6 +47,8 @@ export const MultiplayerGame = () => {
   const [penalizado, setPenalizado] = useState<boolean>(false);
   const [fondoJugador, setFondoJugador] = useState<string>("");
   const [fondoRival, setFondoRival] = useState<string>("");
+  const [carJugador, setCarJugador] = useState<string>(autoDefault);
+  const [carRival, setCarRival] = useState<string>(autoDefault);
   const cerrarModal = () => setGanador(false);
   const [eliminaOpciones, setEliminaOpciones] = useState(false);
   const [powerUsePosition, setPowerUsePosition] = useState(false);
@@ -60,27 +58,27 @@ export const MultiplayerGame = () => {
   const joinRetries = useRef(0);
   const haConectado = useRef(false);
 
-  // Usar el nombre del jugador desde el contexto
+ 
   const nombreJugador = player?.name || "";
 
   const conectarJugador = useCallback(async () => {
-       
+
     if (gameId) {
       const partidaIdNum = parseInt(gameId, 10);
       if (!isNaN(partidaIdNum)) {
         try {
-                      
+
           haConectado.current = true;
-                   
+
           await invoke("JoinGame", partidaIdNum, password || null);
-          
+
           setPartidaId(partidaIdNum);
-          
+
         } catch (error) {
-          
+
           const err = error as { constructor?: { name: string }; message?: string; stack?: string };
-                    
-          // Mostrar error al usuario y volver al menú
+
+          
           setError(err.message || "No se pudo unir a la partida");
           setTimeout(() => {
             navigate('/menu');
@@ -91,15 +89,13 @@ export const MultiplayerGame = () => {
         navigate('/menu');
       }
     } else {
-      // Si no hay gameId, buscar partida rápida (matchmaking)
+      
       if (nombreJugador.trim()) {
-                
-        // Marcar que ya intentamos conectar
         haConectado.current = true;
-        
+
         try {
           await invoke("FindMatch", nombreJugador);
-          
+
         } catch {
           setError("No se pudo buscar partida");
         }
@@ -115,10 +111,10 @@ export const MultiplayerGame = () => {
     setResultado(null);
     setRespuestaSeleccionada(null);
     setBuscandoRival(true);
-    haConectado.current = false; // Resetear para permitir reconexión
-    joinRetries.current = 0; // Resetear reintentos
+    haConectado.current = false; 
+    joinRetries.current = 0; 
+
     
-    // Si vino de una partida específica, volver al menú
     if (gameId) {
       navigate('/menu');
     } else {
@@ -126,11 +122,30 @@ export const MultiplayerGame = () => {
     }
   };
 
-  const handleVolver = () => {
-    // Abandonar partida y volver al menú
-    setGanador(false);
-    setPerdedor(true);
-    navigate('/menu');
+  const handleVolver = async () => {
+    if (!partidaId || !jugadorId) {
+      navigate('/menu');
+      return;
+    }
+
+    try {
+      // Desconectar del grupo de SignalR
+      if (conn) {
+        await conn.stop();
+      }
+      
+      // Marcar como perdedor y mostrar el modal
+      setPerdedor(true);
+      setGanador(false);
+      
+      // Después de un breve delay para que se muestre el modal, volver al menú
+      setTimeout(() => {
+        navigate('/menu');
+      }, 3000);
+    } catch (error) {
+      console.error("Error al abandonar la partida:", error);
+      navigate('/menu');
+    }
   };
 
   const handleFireExtinguisher = () => {
@@ -139,10 +154,10 @@ export const MultiplayerGame = () => {
     const opcionesIncorrectas = ecuacion.options.filter(
       (opt) => opt !== ecuacion.correctAnswer
     );
-    // Seleccionar dos opciones incorrectas al azar
+    
     const unaIncorrecta =
       opcionesIncorrectas[
-        Math.floor(Math.random() * opcionesIncorrectas.length)
+      Math.floor(Math.random() * opcionesIncorrectas.length)
       ];
 
     setOpciones(
@@ -212,40 +227,40 @@ export const MultiplayerGame = () => {
     setTimeout(() => sendAnswer(opcion), 200);
   };
 
-  
+
   useEffect(() => {
-    
-    const requireName = !gameId; 
+
+    const requireName = !gameId;
     const hasName = requireName ? (nombreJugador.trim() !== "") : true;
-  
-    const shouldConnect = 
-      conn && 
-      isConnected && 
-      hasName && 
-      !haConectado.current; // cambiado de !partidaId a !haConectado.current
+
+    const shouldConnect =
+      conn &&
+      isConnected &&
+      hasName &&
+      !haConectado.current;
 
     if (shouldConnect) {
-      
+
       conectarJugador();
-    } 
+    }
   }, [conn, isConnected, nombreJugador, gameId, partidaId, conectarJugador]);
 
-  // Reintento automático de JoinGame si la conexión ya está activa pero aún no hay partidaId
+  
   useEffect(() => {
     if (!conn || !isConnected) return;
     if (!gameId) return;
     if (partidaId) return;
 
-    // limitar a 3 reintentos
+    
     if (joinRetries.current >= 3) return;
 
     const t = setTimeout(async () => {
       try {
         joinRetries.current += 1;
-        
+
         await conectarJugador();
       } catch {
-        // noop, el propio conectarJugador registra errores
+        //noop, el propio conectarJugador maneja el error
       }
     }, 1500);
 
@@ -253,18 +268,17 @@ export const MultiplayerGame = () => {
   }, [conn, isConnected, gameId, partidaId, conectarJugador]);
 
   useEffect(() => {
-    if (!conn) return; // Esperar a que la conexión esté inicializada
+    if (!conn) return; 
 
     const gameUpdateHandler = (data: GameUpdateDto) => {
-          
-      // Ocultar modal de búsqueda cuando hay 2 jugadores
+      
       if (data.players && data.players.length >= 2) {
         setBuscandoRival(false);
       }
-      
+
       setJugadoresPartida(data.players);
 
-      // Intentar identificar al jugador usando Firebase UID (cuando backend lo envíe en p.uid)
+      
       const auth = getAuth();
       const myUid = auth.currentUser?.uid;
 
@@ -273,11 +287,11 @@ export const MultiplayerGame = () => {
         jugadorActual = data.players.find(p => p.uid === myUid);
       }
 
-      // Fallback por nombre exacto si uid aún no está disponible
+      
       if (!jugadorActual) {
         jugadorActual = data.players.find(p => p.name?.trim() === nombreJugador.trim());
       }
-      // Fallback final: case-insensitive o reutilizar jugadorId previo si hubo ambigüedad
+    
       if (!jugadorActual) {
         const candidatos = data.players.filter(p => p.name?.trim().toLowerCase() === nombreJugador.trim().toLowerCase());
         if (candidatos.length === 1) {
@@ -286,16 +300,30 @@ export const MultiplayerGame = () => {
           jugadorActual = candidatos.find(p => p.id === jugadorId) ?? candidatos[0];
         }
       }
-      const otroJugador = data.players.find((p: PlayerDto) => p.id !== jugadorActual?.id);
+      const otroJugador = data.players.find(p => p.id !== jugadorActual?.id);
 
       if (jugadorActual) {
         setJugadorId(jugadorActual.id);
         const avance = (jugadorActual.correctAnswers / 10) * 100;
         setPosicionAuto1(avance);
+        // Apariencia jugador (solo cambiar si viene equipado, mantener si null)
+        if (jugadorActual.equippedBackground?.id) {
+          setFondoJugador(resolveImageUrl("background", jugadorActual.equippedBackground.id));
+        }
+        if (jugadorActual.equippedCar?.id) {
+          setCarJugador(resolveImageUrl("car", jugadorActual.equippedCar.id));
+        }
       }
       if (otroJugador) {
         const avanceOtro = (otroJugador.correctAnswers / 10) * 100;
         setPosicionAuto2(avanceOtro);
+        // Apariencia rival (solo cambiar si viene equipado)
+        if (otroJugador.equippedBackground?.id) {
+          setFondoRival(resolveImageUrl("background", otroJugador.equippedBackground.id));
+        }
+        if (otroJugador.equippedCar?.id) {
+          setCarRival(resolveImageUrl("car", otroJugador.equippedCar.id));
+        }
       }
 
       // Lógica de Penalización
@@ -340,28 +368,27 @@ export const MultiplayerGame = () => {
       }
     };
 
-    // Handler para errores del servidor
+    
     const errorHandler = (message: string) => {
       console.error("Error del servidor SignalR:", message);
       alert(`Error: ${message}`);
-      // Volver al menú si hay un error crítico
+      
       navigate("/menu");
     };
 
-    // Registrar el listener para "GameUpdate" en todas las variantes que el backend puede enviar
-    // SignalR en C# automáticamente convierte PascalCase a camelCase
-    on("GameUpdate", gameUpdateHandler);      // PascalCase original
-    on("gameUpdate", gameUpdateHandler);      // camelCase (conversión automática de SignalR)
-    on("game-update", gameUpdateHandler);     // kebab-case
-    on("gameupdate", gameUpdateHandler);      // lowercase sin separador
     
-    // Registrar listeners para errores (el backend puede usar "Error" o "error")
+    on("GameUpdate", gameUpdateHandler);     
+    on("gameUpdate", gameUpdateHandler);      
+    on("game-update", gameUpdateHandler);     
+    on("gameupdate", gameUpdateHandler);      
+
+    
     on("Error", errorHandler);
     on("error", errorHandler);
-    
-    // on("PowerUpUsed", powerUpUsedHandler);
 
-    // Manejar errores del servidor
+    
+
+    
     if (conn) {
       conn.onclose((error) => {
         console.error("Conexión SignalR cerrada:", error);
@@ -369,7 +396,7 @@ export const MultiplayerGame = () => {
       });
     }
 
-    // Función de limpieza para quitar el listener
+    
     return () => {
       off("GameUpdate", gameUpdateHandler);
       off("gameUpdate", gameUpdateHandler);
@@ -377,19 +404,24 @@ export const MultiplayerGame = () => {
       off("gameupdate", gameUpdateHandler);
       off("Error", errorHandler);
       off("error", errorHandler);
-      //  off("PowerUpUsed", powerUpUsedHandler);
+      
     };
   }, [conn, on, off, nombreJugador, navigate, jugadorId, setPartidaId, setJugadoresPartida]);
 
-  useEffect(() => {
-    const indexJugador = Math.floor(Math.random() * fondos.length);
-    const indexRival =
-      (indexJugador + 1 + Math.floor(Math.random() * (fondos.length - 1))) %
-      fondos.length;
+  // Helpers de random y resolución
+  const randomFrom = (arr: number[]) => arr[Math.floor(Math.random() * arr.length)];
 
-    setFondoJugador(fondos[indexJugador]);
-    setFondoRival(fondos[indexRival]);
-  }, []);
+  // Inicializar apariencia local (jugador) y fallback para rival
+  useEffect(() => {
+    const resolvedBg = resolveImageUrl("background", player?.equippedBackground?.id || player?.background?.id || randomFrom(fondoFallbackIds));
+    setFondoJugador(resolvedBg);
+    // Fallback del rival: usar el mismo fondo del jugador si el rival no trae uno
+    setFondoRival(resolvedBg);
+    const resolvedCar = resolveImageUrl("car", player?.equippedCar?.id || player?.car?.id || randomFrom(autoFallbackIds));
+    setCarJugador(resolvedCar);
+    // Fallback del rival: usar el mismo auto del jugador si el rival no trae uno
+    setCarRival(resolvedCar);
+  }, [player]);
 
   // compute opponent name
   const opponentName =
@@ -412,7 +444,7 @@ export const MultiplayerGame = () => {
       {buscandoRival && !gameId && (
         <LookingForRivalModal
           playerId={nombreJugador}
-          setPlayerId={() => {}} // El nombre viene del contexto, no se puede cambiar aquí
+          setPlayerId={() => { }} // El nombre viene del contexto, no se puede cambiar aquí
           onConnection={conectarJugador}
         />
       )}
@@ -465,8 +497,14 @@ export const MultiplayerGame = () => {
             players={jugadoresPartida}
             currentPlayer={nombreJugador}
             won={false}
-            onClose={cerrarModal}
-            onRetry={reiniciarJuego}
+            onClose={() => {
+              setPerdedor(false);
+              navigate('/menu');
+            }}
+            onRetry={() => {
+              setPerdedor(false);
+              navigate('/menu');
+            }}
           />
         </div>
       )}
@@ -475,9 +513,7 @@ export const MultiplayerGame = () => {
       <div className="mt-20 flex flex-col gap-3 justify-end">
         <div
           className="flex justify-center items-center fondoRuta w-full relative mt-20 border-3 border-[#5df9f9] rounded-lg"
-          style={{
-            backgroundImage: `url('../src/assets/images/${fondoRival}')`,
-          }}
+          style={{ backgroundImage: `url('${fondoRival}')` }}
         >
           {/* Nombre del Jugador 2 (Rival) */}
           <div
@@ -491,19 +527,12 @@ export const MultiplayerGame = () => {
           </div>
 
           {/* Auto 2 */}
-          <img
-            src={auto1}
-            alt="Auto 2"
-            className="absolute bottom-[180px] auto auto2"
-            style={{ left: `${posicionAuto2}%` }}
-          />
+          <img src={carRival} alt="Auto 2" className="absolute bottom-[180px] auto auto2" style={{ left: `${posicionAuto2}%` }} />
         </div>
 
         <div
           className="flex justify-center items-center fondoRuta w-full relative mt-20 border-3 border-[#f95ec8] rounded-lg"
-          style={{
-            backgroundImage: `url('../src/assets/images/${fondoJugador}')`,
-          }}
+          style={{ backgroundImage: `url('${fondoJugador}')` }}
         >
           {/* Nombre del Jugador 1 (Vos) */}
           <div
@@ -517,54 +546,49 @@ export const MultiplayerGame = () => {
           </div>
 
           {/* Auto 1 */}
-          <img
-            src={auto1}
-            alt="Auto 1"
-            className="absolute auto transition-all duration-500"
-            style={{ left: `${posicionAuto1}%` }}
-          />
+          <img src={carJugador} alt="Auto 1" className="absolute auto transition-all duration-500" style={{ left: `${posicionAuto1}%` }} />
         </div>
       </div>
 
-            {/* Instrucciones y Comodines */}
-            <div className="flex justify-center items-center gridComodin mt-4">
+      {/* Instrucciones y Comodines */}
+      <div className="flex justify-center items-center gridComodin mt-4">
 
-                <div className="instruccion text-3xl text-center">
-                    {instruccion
-                        ? ( 
-                            <>
-                            Elegí la opción para que {" "}
-      <span className="text-cyan-400 drop-shadow-[0_0_5px_#00ffff] ">
-        Y
-      </span>{" "}                            
-                              sea {" "}
-                            <span className="text-cyan-400  ">
-                             {instruccion.toUpperCase()}
-                             </span>
-                             </>
-                             )
-                        : ("Esperando instrucción")}
+        <div className="instruccion text-3xl text-center">
+          {instruccion
+            ? (
+              <>
+                Elegí la opción para que {" "}
+                <span className="text-cyan-400 drop-shadow-[0_0_5px_#00ffff] ">
+                  Y
+                </span>{" "}
+                sea {" "}
+                <span className="text-cyan-400  ">
+                  {instruccion.toUpperCase()}
+                </span>
+              </>
+            )
+            : ("Esperando instrucción")}
 
-                </div>
-                <div className="comodin">
-                    <Wildcards
-                        fireExtinguisher={eliminaOpciones ? 0 : 1}
-                        changeEquation={powerUseOrden ? 0 : 1}
-                        dobleCount={powerUsePosition ? 0 : 1}
-                        onFireExtinguisher={handleFireExtinguisher}
-                        onChangeEquation={handleChangeEquation}
-                        onDobleCount={handleDobleCount}
-                    />
+        </div>
+        <div className="comodin">
+          <Wildcards
+            fireExtinguisher={eliminaOpciones ? 0 : 1}
+            changeEquation={powerUseOrden ? 0 : 1}
+            dobleCount={powerUsePosition ? 0 : 1}
+            onFireExtinguisher={handleFireExtinguisher}
+            onChangeEquation={handleChangeEquation}
+            onDobleCount={handleDobleCount}
+          />
 
 
-                </div>
-            </div>
+        </div>
+      </div>
 
       {/* Ecuación */}
       <div className="flex flex-col justify-center items-center h-full gap-5 mb-10 mt-4">
         {mensajeComodin && (
           <div className="w-full flex justify-end px-4">
-            <div className="text-cyan-200 font-mono  text-xl  text-center drop-shadow-[0_0_5px_#00ffff] animate-fade-in">
+            <div className="text-cyan-200 text-xl  text-center drop-shadow-[0_0_5px_#00ffff] animate-fade-in">
               {mensajeComodin}
             </div>
           </div>

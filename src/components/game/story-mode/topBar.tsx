@@ -34,7 +34,7 @@ export const TopBar = ({ headerText }: TopBarProps) => {
 
           {/* Contenedor principal del cartel */}
           <div className="relative bg-[#1a0a2e] border-4 border-cyan-400 px-8 py-3 pixel-corners">
-            <h1 className="text-2xl font-bold text-cyan-400 tracking-wider retro-text">
+            <h1 className="text-2xl font-bold text-cyan-400 tracking-wider">
               {headerText}
             </h1>
           </div>
