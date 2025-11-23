@@ -4,11 +4,16 @@ import { ActionButton } from "../../shared/buttons/actionButton";
 import { BatteryStatus } from "../../components/home/batteryStatus";
 import { CoinsDisplay } from "../../components/home/coinsDisplay";
 import { ProfileCard } from "../../components/home/profileCard";
-import { InfoBox } from "../../components/home/infoBox";
+//import { InfoBox } from "../../components/home/infoBox";
 import { CarDisplay } from "../../components/home/carDisplay";
 import fondoHome from "../../assets/images/fondocity.png";
+//import { Link,useNavigate  } from "react-router-dom";
+//import ErrorConnection from "../../shared/modals/errorConnection";
 import { Link } from "react-router-dom";
 import { useHomeData } from "../../hooks/useHomeData";
+//import { useAuth } from "../../hooks/useAuth";
+import mathi from "../../assets/images/mathisentado.png";
+
 
 export const Home = () => {
   const { homeData } = useHomeData();
@@ -30,7 +35,7 @@ export const Home = () => {
       >
         <div className="absolute pointer-events-none inset-0 bg-black/60"></div>
       </div>
-
+      
       <div className="relative z-10 h-full flex flex-col">
         {/* Isologo */}
         <div className="absolute top-4 left-10">
@@ -42,19 +47,24 @@ export const Home = () => {
         </div>
 
         {/* Esquina superior derecha - Monedas, Perfil, Nivel y Ranking */}
-        <div className="absolute top-4 right-4 flex flex-col items-end gap-3">
-          <div className="flex items-start gap-5">
-            <div className="flex flex-col gap-3">
+        <div className="absolute top-4 right-4 flex flex-col items-end gap-3 border-amber-300 border-2 rounded-lg p-4">
+          <div className="flex  items-start gap-5">
+            <Link to="/perfil" className="drop-shadow-[0_0_10px_#00ffff]  hover:scale-95" >
+              <ProfileCard imageUrl={homeData.activeItems.profile.imageUrl}  />
+            </Link>
+            <div className="flex flex-col gap-3 ">
+              <div className="  items-center">
               <BatteryStatus />
               <CoinsDisplay coins={homeData.user.coins} />
+              </div>
             </div>
-            <Link to="/perfil">
-              <ProfileCard imageUrl={homeData.activeItems.profile.imageUrl} />
-            </Link>
+            
           </div>
-          <InfoBox>Nivel {homeData.user.level}</InfoBox>
-          <InfoBox>{homeData.user.ranking}</InfoBox>
+          {/* <InfoBox>Nivel {homeData.user.level}</InfoBox>
+          <InfoBox>{homeData.user.ranking}</InfoBox> */}
+          <p className="text-[#5df9f9] drop-shadow-[0_0_10px_#00ffff] text-3xl mt-2">Hola, {homeData.user.name} 👋</p>
         </div>
+        <img src={mathi} alt="Mathi" className="absolute top-80 left-190 w-40 h-40 z-10 drop-shadow-[0_0_10px_#00ffff] " />
 
         {/* Esquina inferior izquierda - Modos de juego */}
         <div className="flex flex-1 items-end justify-between px-4 pb-8">
@@ -68,6 +78,9 @@ export const Home = () => {
 
           {/* Esquina inferior derecha - Navegación a otras páginas */}
           <div className="flex flex-col gap-3 items-end">
+            {/* <ActionButton size="small" onClick={handleLogout}>
+                  <i className="ri-logout-box-r-line"></i>               
+                </ActionButton> */}
             <ActionButton to="/ranking" size="small">
               <i className="ri-trophy-fill"></i>
             </ActionButton>

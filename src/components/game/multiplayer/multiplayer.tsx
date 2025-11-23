@@ -1,4 +1,6 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { getAuth } from "firebase/auth";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import type { QuestionDto } from "../../../models/domain/signalR/questionDto";
 import { LookingForRivalModal } from "../../../shared/modals/lookingForRivalModal";
@@ -11,6 +13,8 @@ import type { GameUpdateDto } from "../../../models/domain/signalR/gameUpdateDto
 import { useConnection } from "../../../services/signalR/connection";
 import { PowerUpType } from "../../../models/enums/powerUpType";
 import mathi from "../../../assets/images/mathi.png";
+import { usePlayer } from "../../../hooks/usePlayer";
+
 const fondos = [
   "pista-noche.png",
   "pista-dia.png",
@@ -21,7 +25,14 @@ const fondos = [
 ];
 
 export const MultiplayerGame = () => {
-  const { errorConexion, invoke, on, off } = useConnection();
+  const { gameId } = useParams<{ gameId: string }>();
+  const location = useLocation();
+  const { player } = usePlayer();
+  const navigate = useNavigate();
+  const { conn, errorConexion, isConnected, invoke, on, off } = useConnection();
+
+  // Obtener la contraseña del state si fue pasada desde create-game o join-game
+  const password = location.state?.password as string | undefined;
   const [ecuacion, setEcuacion] = useState<QuestionDto>();
   const [opciones, setOpciones] = useState<number[]>();
   const [respuestaSeleccionada, setRespuestaSeleccionada] = useState<
@@ -34,7 +45,6 @@ export const MultiplayerGame = () => {
   const [jugadoresPartida, setJugadoresPartida] = useState<PlayerDto[]>([]);
   const [buscandoRival, setBuscandoRival] = useState(true);
   const [jugadorId, setJugadorId] = useState<number | null>(null);
-  const [nombreJugador, setNombreJugador] = useState<string>("");
   const [partidaId, setPartidaId] = useState<number | null>(null);
   const [instruccion, setInstruccion] = useState<string>("");
   const [perdedor, setPerdedor] = useState<boolean>(false);
@@ -46,11 +56,56 @@ export const MultiplayerGame = () => {
   const [powerUsePosition, setPowerUsePosition] = useState(false);
   const [powerUseOrden, setPowerUseOrden] = useState(false);
   const [mensajeComodin, setMensajeComodin] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const joinRetries = useRef(0);
+  const haConectado = useRef(false);
+
+  // Usar el nombre del jugador desde el contexto
+  const nombreJugador = player?.name || "";
 
   const conectarJugador = useCallback(async () => {
-    if (!nombreJugador.trim()) return;
-    await invoke("FindMatch", nombreJugador);
-  }, [nombreJugador, invoke]);
+
+    if (gameId) {
+      const partidaIdNum = parseInt(gameId, 10);
+      if (!isNaN(partidaIdNum)) {
+        try {
+
+          haConectado.current = true;
+
+          await invoke("JoinGame", partidaIdNum, password || null);
+
+          setPartidaId(partidaIdNum);
+
+        } catch (error) {
+
+          const err = error as { constructor?: { name: string }; message?: string; stack?: string };
+
+          // Mostrar error al usuario y volver al menú
+          setError(err.message || "No se pudo unir a la partida");
+          setTimeout(() => {
+            navigate('/menu');
+          }, 2000);
+        }
+      } else {
+        setError("ID de partida inválido");
+        navigate('/menu');
+      }
+    } else {
+      // Si no hay gameId, buscar partida rápida (matchmaking)
+      if (nombreJugador.trim()) {
+
+        // Marcar que ya intentamos conectar
+        haConectado.current = true;
+
+        try {
+          await invoke("FindMatch", nombreJugador);
+
+        } catch {
+          setError("No se pudo buscar partida");
+        }
+      }
+    }
+  }, [gameId, nombreJugador, password, invoke, navigate]);
 
   const reiniciarJuego = () => {
     setGanador(false);
@@ -60,13 +115,22 @@ export const MultiplayerGame = () => {
     setResultado(null);
     setRespuestaSeleccionada(null);
     setBuscandoRival(true);
-    conectarJugador();
+    haConectado.current = false; // Resetear para permitir reconexión
+    joinRetries.current = 0; // Resetear reintentos
+
+    // Si vino de una partida específica, volver al menú
+    if (gameId) {
+      navigate('/menu');
+    } else {
+      conectarJugador();
+    }
   };
 
   const handleVolver = () => {
-    // Agregar lógica para abandonar partida
+    // Abandonar partida y volver al menú
     setGanador(false);
     setPerdedor(true);
+    navigate('/menu');
   };
 
   const handleFireExtinguisher = () => {
@@ -78,7 +142,7 @@ export const MultiplayerGame = () => {
     // Seleccionar dos opciones incorrectas al azar
     const unaIncorrecta =
       opcionesIncorrectas[
-        Math.floor(Math.random() * opcionesIncorrectas.length)
+      Math.floor(Math.random() * opcionesIncorrectas.length)
       ];
 
     setOpciones(
@@ -148,19 +212,81 @@ export const MultiplayerGame = () => {
     setTimeout(() => sendAnswer(opcion), 200);
   };
 
+
   useEffect(() => {
-    if (!useConnection) return; // Esperar a que la conexión esté inicializada
+
+    const requireName = !gameId;
+    const hasName = requireName ? (nombreJugador.trim() !== "") : true;
+
+    const shouldConnect =
+      conn &&
+      isConnected &&
+      hasName &&
+      !haConectado.current; // cambiado de !partidaId a !haConectado.current
+
+    if (shouldConnect) {
+
+      conectarJugador();
+    }
+  }, [conn, isConnected, nombreJugador, gameId, partidaId, conectarJugador]);
+
+  // Reintento automático de JoinGame si la conexión ya está activa pero aún no hay partidaId
+  useEffect(() => {
+    if (!conn || !isConnected) return;
+    if (!gameId) return;
+    if (partidaId) return;
+
+    // limitar a 3 reintentos
+    if (joinRetries.current >= 3) return;
+
+    const t = setTimeout(async () => {
+      try {
+        joinRetries.current += 1;
+
+        await conectarJugador();
+      } catch {
+        // noop, el propio conectarJugador registra errores
+      }
+    }, 1500);
+
+    return () => clearTimeout(t);
+  }, [conn, isConnected, gameId, partidaId, conectarJugador]);
+
+  useEffect(() => {
+    if (!conn) return; // Esperar a que la conexión esté inicializada
 
     const gameUpdateHandler = (data: GameUpdateDto) => {
+
+      // Ocultar modal de búsqueda cuando hay 2 jugadores
+      if (data.players && data.players.length >= 2) {
+        setBuscandoRival(false);
+      }
+
       setJugadoresPartida(data.players);
 
-      const jugadorActual = data.players.find(
-        (p: PlayerDto) =>
-          p.name?.trim().toLowerCase() === nombreJugador.trim().toLowerCase()
-      );
-      const otroJugador = data.players.find(
-        (p: PlayerDto) => p.id !== jugadorActual?.id
-      );
+      // Intentar identificar al jugador usando Firebase UID (cuando backend lo envíe en p.uid)
+      const auth = getAuth();
+      const myUid = auth.currentUser?.uid;
+
+      let jugadorActual: PlayerDto | undefined;
+      if (myUid) {
+        jugadorActual = data.players.find(p => p.uid === myUid);
+      }
+
+      // Fallback por nombre exacto si uid aún no está disponible
+      if (!jugadorActual) {
+        jugadorActual = data.players.find(p => p.name?.trim() === nombreJugador.trim());
+      }
+      // Fallback final: case-insensitive o reutilizar jugadorId previo si hubo ambigüedad
+      if (!jugadorActual) {
+        const candidatos = data.players.filter(p => p.name?.trim().toLowerCase() === nombreJugador.trim().toLowerCase());
+        if (candidatos.length === 1) {
+          jugadorActual = candidatos[0];
+        } else if (candidatos.length > 1 && jugadorId) {
+          jugadorActual = candidatos.find(p => p.id === jugadorId) ?? candidatos[0];
+        }
+      }
+      const otroJugador = data.players.find((p: PlayerDto) => p.id !== jugadorActual?.id);
 
       if (jugadorActual) {
         setJugadorId(jugadorActual.id);
@@ -199,8 +325,6 @@ export const MultiplayerGame = () => {
         }
       }
 
-      if (data.players.length >= 2) setBuscandoRival(false);
-
       if (data.currentQuestion) {
         setPartidaId(data.gameId);
         setRespuestaSeleccionada(null);
@@ -216,14 +340,46 @@ export const MultiplayerGame = () => {
       }
     };
 
-    // Registrar el listener para "GameUpdate"
-    on("GameUpdate", gameUpdateHandler);
+    // Handler para errores del servidor
+    const errorHandler = (message: string) => {
+      console.error("Error del servidor SignalR:", message);
+      alert(`Error: ${message}`);
+      // Volver al menú si hay un error crítico
+      navigate("/menu");
+    };
+
+    // Registrar el listener para "GameUpdate" en todas las variantes que el backend puede enviar
+    // SignalR en C# automáticamente convierte PascalCase a camelCase
+    on("GameUpdate", gameUpdateHandler);      // PascalCase original
+    on("gameUpdate", gameUpdateHandler);      // camelCase (conversión automática de SignalR)
+    on("game-update", gameUpdateHandler);     // kebab-case
+    on("gameupdate", gameUpdateHandler);      // lowercase sin separador
+
+    // Registrar listeners para errores (el backend puede usar "Error" o "error")
+    on("Error", errorHandler);
+    on("error", errorHandler);
+
     // on("PowerUpUsed", powerUpUsedHandler);
 
+    // Manejar errores del servidor
+    if (conn) {
+      conn.onclose((error) => {
+        console.error("Conexión SignalR cerrada:", error);
+        setBuscandoRival(false);
+      });
+    }
+
     // Función de limpieza para quitar el listener
-    return () => off("GameUpdate", gameUpdateHandler);
-    //  off("PowerUpUsed", powerUpUsedHandler);
-  }, [on, off, nombreJugador]); // Depende de 'connection' y 'nombreJugador'
+    return () => {
+      off("GameUpdate", gameUpdateHandler);
+      off("gameUpdate", gameUpdateHandler);
+      off("game-update", gameUpdateHandler);
+      off("gameupdate", gameUpdateHandler);
+      off("Error", errorHandler);
+      off("error", errorHandler);
+      //  off("PowerUpUsed", powerUpUsedHandler);
+    };
+  }, [conn, on, off, nombreJugador, navigate, jugadorId, setPartidaId, setJugadoresPartida]);
 
   useEffect(() => {
     const indexJugador = Math.floor(Math.random() * fondos.length);
@@ -243,7 +399,6 @@ export const MultiplayerGame = () => {
         p.name.trim() &&
         p.name.trim().toLowerCase() !== nombreJugador.trim().toLowerCase()
     )?.name ?? "Rival";
-
   return (
     <div className="juego w-full h-full bg-black text-white relative">
       {/* HEADER */}
@@ -254,12 +409,40 @@ export const MultiplayerGame = () => {
       </div>
 
       {/*modal de busqueda de rival*/}
-      {buscandoRival && (
+      {buscandoRival && !gameId && (
         <LookingForRivalModal
           playerId={nombreJugador}
-          setPlayerId={setNombreJugador}
+          setPlayerId={() => { }} // El nombre viene del contexto, no se puede cambiar aquí
           onConnection={conectarJugador}
         />
+      )}
+
+      {/* Mensaje de espera cuando hay gameId pero aún busca rival */}
+      {buscandoRival && gameId && !error && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80">
+          <div className="bg-black/90 border-2 border-cyan-400 rounded-lg p-8 text-center">
+            <div className="animate-spin rounded-full h-20 w-20 border-t-4 border-b-4 border-[#5df9f9] mx-auto mb-4"></div>
+            <h2 className="text-3xl text-[#f95ec8] mb-4">Esperando rival...</h2>
+            <p className="text-white text-xl">{nombreJugador}</p>
+            <p className="text-gray-400 mt-2">Partida ID: {gameId}</p>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de error de conexión */}
+      {error && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80">
+          <div className="bg-black/90 border-2 border-red-500 rounded-lg p-8 text-center max-w-md">
+            <h2 className="text-3xl text-red-500 mb-4">❌ Error</h2>
+            <p className="text-white text-xl mb-6">{error}</p>
+            <button
+              onClick={() => navigate('/menu')}
+              className="bg-[#5df9f9] text-black px-6 py-3 rounded text-xl hover:bg-[#f95ec8] transition-colors"
+            >
+              Volver al Menú
+            </button>
+          </div>
+        </div>
       )}
 
       {/* Modal de fin de partida (Ganador) */}
@@ -343,45 +526,45 @@ export const MultiplayerGame = () => {
         </div>
       </div>
 
-            {/* Instrucciones y Comodines */}
-            <div className="flex justify-center items-center gridComodin mt-4">
+      {/* Instrucciones y Comodines */}
+      <div className="flex justify-center items-center gridComodin mt-4">
 
-                <div className="instruccion text-3xl text-center">
-                    {instruccion
-                        ? ( 
-                            <>
-                            Elegí la opción para que {" "}
-      <span className="text-cyan-400 drop-shadow-[0_0_5px_#00ffff] ">
-        Y
-      </span>{" "}                            
-                              sea {" "}
-                            <span className="text-cyan-400  ">
-                             {instruccion.toUpperCase()}
-                             </span>
-                             </>
-                             )
-                        : ("Esperando instrucción")}
+        <div className="instruccion text-3xl text-center">
+          {instruccion
+            ? (
+              <>
+                Elegí la opción para que {" "}
+                <span className="text-cyan-400 drop-shadow-[0_0_5px_#00ffff] ">
+                  Y
+                </span>{" "}
+                sea {" "}
+                <span className="text-cyan-400  ">
+                  {instruccion.toUpperCase()}
+                </span>
+              </>
+            )
+            : ("Esperando instrucción")}
 
-                </div>
-                <div className="comodin">
-                    <Wildcards
-                        fireExtinguisher={eliminaOpciones ? 0 : 1}
-                        changeEquation={powerUseOrden ? 0 : 1}
-                        dobleCount={powerUsePosition ? 0 : 1}
-                        onFireExtinguisher={handleFireExtinguisher}
-                        onChangeEquation={handleChangeEquation}
-                        onDobleCount={handleDobleCount}
-                    />
+        </div>
+        <div className="comodin">
+          <Wildcards
+            fireExtinguisher={eliminaOpciones ? 0 : 1}
+            changeEquation={powerUseOrden ? 0 : 1}
+            dobleCount={powerUsePosition ? 0 : 1}
+            onFireExtinguisher={handleFireExtinguisher}
+            onChangeEquation={handleChangeEquation}
+            onDobleCount={handleDobleCount}
+          />
 
 
-                </div>
-            </div>
+        </div>
+      </div>
 
       {/* Ecuación */}
       <div className="flex flex-col justify-center items-center h-full gap-5 mb-10 mt-4">
         {mensajeComodin && (
           <div className="w-full flex justify-end px-4">
-            <div className="text-cyan-200 font-mono  text-xl  text-center drop-shadow-[0_0_5px_#00ffff] animate-fade-in">
+            <div className="text-cyan-200 text-xl  text-center drop-shadow-[0_0_5px_#00ffff] animate-fade-in">
               {mensajeComodin}
             </div>
           </div>

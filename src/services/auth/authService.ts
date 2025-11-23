@@ -53,27 +53,42 @@ class AuthService {
   async registerWithEmail(email: string, password: string, username: string) {
     let userCredential = null;
     try {
+      console.log("=== REGISTER SERVICE ===");
+      console.log("1. Creando usuario en Firebase...");
+      
       // 1. Crear usuario en Firebase
       userCredential = await createUserWithEmailAndPassword(
         auth,
         email,
         password
       );
+      console.log("Usuario Firebase creado:", userCredential.user.uid);
+      
       const idToken = await userCredential.user.getIdToken();
       setAuthToken(idToken);
       const uid = userCredential.user.uid;
+      
+      console.log("2. Registrando en backend...");
+      console.log("Datos enviados:", { username, email, uid });
+      
       // 2. Crear el usuario en el backend con todos los datos requeridos
       const response = await api.post("/player/register", {
         username,
         email,
         uid,
       });
+      
+      console.log("3. Registro backend exitoso:", response.data);
       return response.data;
     } catch (error) {
       console.error("Error en registro:", error);
+      const err = error as { response?: { data?: unknown; status?: number } };
+      console.error("Error response:", err.response?.data);
+      console.error("Error status:", err.response?.status);
 
       // Si el usuario de Firebase se creó pero falló el backend, eliminarlo
       if (userCredential?.user) {
+        console.log("Limpiando usuario de Firebase por error en backend...");
         try {
           await userCredential.user.delete();
           setAuthToken(null);

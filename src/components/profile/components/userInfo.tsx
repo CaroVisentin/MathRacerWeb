@@ -3,7 +3,7 @@ import React from "react";
 interface UserCardProps {
     username: string;
     email: string;
-    partidas: number;
+    monedas: number;
     puntuacion: number;
     avatarUrlId?: string;
 }
@@ -11,7 +11,7 @@ interface UserCardProps {
 export const UserInfoSection: React.FC<UserCardProps> = ({
     username,
     email,
-    partidas,
+    monedas,
     puntuacion,
     avatarUrlId,
 }) => {
@@ -29,8 +29,8 @@ export const UserInfoSection: React.FC<UserCardProps> = ({
             {/* Cards estadísticas */}
             <div className="grid grid-cols-2 gap-4 w-full max-w-2xl">
                 <div className="border border-cyan-400 rounded p-4 text-center">
-                    <p className="text-cyan-400 text-3xl">Niveles completados</p>
-                    <p className="text-white text-3xl">{partidas}</p>
+                    <p className="text-cyan-400 text-3xl">Monedas</p>
+                    <p className="text-white text-3xl">{monedas}</p>
                 </div>
 
                 <div className="border border-cyan-400 rounded p-4 text-center">

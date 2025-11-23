@@ -9,7 +9,7 @@ export const friendMapper = {
       name: dto.name ?? "Jugador",
       email: dto.email,
       points: dto.points ?? 0,
-      avatarUrl: `/images/characters/${dto.character.id}.png`,
+      avatarUrl: dto.character?.id ? `/images/characters/${dto.character.id}.png` : '/images/characters/1.png',
       // carUrl: "/images/cars/1.png",
     };
   },
@@ -24,7 +24,7 @@ export const friendMapper = {
       name: dto.name ?? "Jugador",
       email: dto.email,
       points: dto.points ?? 0,
-      avatarUrl: `/images/characters/${dto.character.id}.png`,
+      avatarUrl: dto.character?.id ? `/images/characters/${dto.character.id}.png` : '/images/characters/1.png',
       // carUrl: "/images/cars/1.png",
     };
   },

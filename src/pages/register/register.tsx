@@ -49,15 +49,22 @@ export const RegisterPage = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        console.log("=== INICIANDO REGISTRO ===");
+        
         if (!validateInputs()) {
+            console.log("Validación de inputs falló");
             setShowErrorModal(true);
             return;
         }
 
         try {
+            console.log("Llamando a register...");
             await register(email, password, username)
-            navigate("/tutorial");
+            console.log("Register exitoso, navegando al home...");
+            // El ProtectedRoute se encargará de redirigir al tutorial si lastlevelId === 0
+            navigate("/home");
         } catch (error) {
+            console.error("Error en handleSubmit:", error);
             setErrorMessage((error as Error).message || "Error desconocido");
             setShowErrorModal(true);
         }
@@ -66,7 +73,8 @@ export const RegisterPage = () => {
     const handleGoogleLogin = async () => {
         try {
             await loginWithGoogle()
-            navigate('/')
+            // El ProtectedRoute redirigirá al tutorial si es usuario nuevo (lastlevelId === 0)
+            navigate('/home')
         } catch {
             setErrorMessage('Error al iniciar sesión con Google')
             setShowErrorModal(true)
@@ -187,7 +195,7 @@ export const RegisterPage = () => {
                             type="button"
                             onClick={handleGoogleLogin}
                             className="w-full py-2 bg-white hover:bg-gray-100 text-gray-800 transition-all flex items-center justify-center !gap-3 shadow-lg
-                            text-2xl"
+                            text-2xl hover:scale-[1.02] active:scale-[0.98]"
                         >
                             <svg className="w-5 h-5" viewBox="0 0 24 24">
                                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -201,7 +209,7 @@ export const RegisterPage = () => {
                 </form>
 
                 {/* Registro */}
-                <p className="!mt-5 text-center font-audiowide text-white text-xl">
+                <p className="!mt-5 text-center text-white text-xl">
                     ¿Ya tenés cuenta?{" "}
                     <Link to="/login"
                         className="text-[#FFE50C]  hover:text-orange-300 transition-colors hover:drop-shadow-[0_0_10px_#00ffff]"

@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Topbar } from "../../components/cart/topbar";
 import coinImg from "../../assets/images/coin.png";
 import { usePlayer } from "../../hooks/usePlayer";
+import { useAudio } from "../../contexts/AudioContext";
 import { buyBackground, buyCar, buyCharacter } from "../../services/player/storeService";
 import { getPlayerData } from "../../services/player/playerService";
 import ErrorModal from "../../shared/modals/errorModal";
@@ -14,6 +15,7 @@ import { useState } from "react";
 export default function CartPage() {
     const { cart, updateQuantity, removeFromCart, clearCart } = useCart();
     const { player, setPlayer } = usePlayer();
+    const { playPurchaseSound, playRemoveFromCartSound } = useAudio();
     const navigate = useNavigate();
 
     const [isPurchasing, setIsPurchasing] = useState(false);
@@ -62,6 +64,9 @@ export default function CartPage() {
             }
 
             if (failed.length === 0) {
+                // Reproducir sonido de compra exitosa
+                playPurchaseSound();
+                
                 // Éxito total - recargar datos del player
                 try {
                     const updatedPlayer = await getPlayerData(player.id);
@@ -145,7 +150,10 @@ export default function CartPage() {
 
                                             <button
                                                 type="button"
-                                                onClick={() => removeFromCart(item.id)}
+                                                onClick={() => {
+                                                    playRemoveFromCartSound();
+                                                    removeFromCart(item.id);
+                                                }}
                                                 className="text-destructive hover:text-destructive hover:bg-destructive/10 border-2 border-destructive flex items-center gap-1 px-2 py-1 text-sm text-[#F20505]"
                                             >
                                                 <FontAwesomeIcon icon={faTrash} className="h-4 w-4" />

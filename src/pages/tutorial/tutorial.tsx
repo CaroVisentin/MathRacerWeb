@@ -5,18 +5,20 @@ import fondoJugador from "../../assets/images/pista-noche.png";
 import auto1 from "../../assets/images/auto-pista.png";
 import cofre from "../../assets/images/cofre.png";
 import cofreAbierto from "../../assets/images/cofre-abierto.png";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Wildcards } from "../../shared/wildcards/wildcards";
 import type { QuestionDto } from "../../models/domain/signalR/questionDto";
 import { FuelIndicator } from "../../shared/energy/energy";
 import { useNavigate } from "react-router-dom";
 import { EndOfStoryModeModal } from "../../shared/modals/endOfStoryModeModal";
 import { tutorialService } from "../../services/player/tutorialService";
+import { getPlayerData } from "../../services/player/playerService";
 import type { ChestResponseDto } from "../../models/domain/chest/chestResponseDto";
 import mathi from "../../assets/images/mathi.png";
 import { RewardScreen } from "../../components/chest/rewardScreen";
 import { getErrorMessage } from "../../shared/utils/manageErrors";
 import ErrorModal from "../../shared/modals/errorModal";
+import { useAuth } from "../../hooks/useAuth";
 
 export const TutorialPage = () => {
   const [posicionAuto1, setPosicionAuto1] = useState<number>(0);
@@ -43,12 +45,22 @@ export const TutorialPage = () => {
   );
   const instruccion = "Elegí la opción para que la Y sea mayor";
   const navigate = useNavigate();
+  const { player, setPlayer } = useAuth();
   const [mostrarCofre, setMostrarCofre] = useState(false);
   const [isCofreOpen, setIsCofreOpen] = useState(false);
   const [recompensas, setRecompensas] = useState(false);
   const [chest, setChest] = useState<ChestResponseDto | null>(null);
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [tutorialCompletado, setTutorialCompletado] = useState(false);
+
+  // Cuando el cofre se cierre (después de mostrar recompensas), redirigir al home
+  useEffect(() => {
+    if (!mostrarCofre && tutorialCompletado) {
+      console.log('Tutorial finalizado, redirigiendo al home...');
+      navigate('/home');
+    }
+  }, [mostrarCofre, tutorialCompletado, navigate]);
 
   const handleFinalizarTutorial = async () => {
     setMostrarCofre(true);
@@ -56,6 +68,15 @@ export const TutorialPage = () => {
     try {
       const response = await tutorialService.completeTutorial();
       setChest(response);
+      setTutorialCompletado(true);
+      
+      // Refrescar el player completo desde el backend (incluye coins actualizados y lastlevelId)
+      if (player) {
+        const updatedPlayerFromBackend = await getPlayerData(player.id);
+        setPlayer(updatedPlayerFromBackend);
+        localStorage.setItem("player", JSON.stringify(updatedPlayerFromBackend));
+        console.log("Tutorial completado, player refrescado desde backend:", updatedPlayerFromBackend);
+      }
     } catch (error: unknown) {
       const message = getErrorMessage(error);
       setErrorMessage(message);

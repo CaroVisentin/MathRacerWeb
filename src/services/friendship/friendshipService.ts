@@ -2,6 +2,7 @@ import { api, API_URLS } from "../network/api";
 import type { FriendDto } from "../../models/domain/profile/friends/friendDto";
 import type { FriendRequestDto } from "../../models/domain/profile/friends/friendRequestDto";
 import type { AxiosError } from "axios";
+import type { PlayerProfileDto } from "../../models/domain/profile/playerProfileDto";
 
 export const friendshipService = {
   async getFriends(playerId: number) {
@@ -75,4 +76,18 @@ export const friendshipService = {
       );
     }
   },
+
+   async getProfileByEmail(email: string): Promise<PlayerProfileDto> {
+      try {
+        const response = await api.get(`/player/email/${email}`);
+        return response.data;
+      } catch (error: unknown) {
+        console.error("Error al obtener el perfil:", error);
+        throw new Error(
+          (error as AxiosError<{ message: string }>).response?.data?.message ||
+            "No se pudo obtener el perfil del jugador"
+        );
+      }
+    },
+ 
 };

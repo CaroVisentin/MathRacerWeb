@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../hooks/useAuth";
 import { BottomUI } from "../../../components/game/story-mode/bottomUI";
 import { WorldMap } from "../../../components/game/story-mode/worldMap";
 import { TopBar } from "../../../components/game/story-mode/topBar";
@@ -9,9 +11,13 @@ import type { WorldDtoUi } from "../../../models/ui/story-mode/worldDtoUi";
 import type { PlayerWildcardDto } from "../../../models/domain/player/playerWildcardDto";
 import { getMyWildcards } from "../../../services/wildcard/wildcardService";
 import type { WildcardQuantities } from "../../../models/ui/story-mode/wildcardQuantities";
+import ConfirmModal from "../../../shared/modals/confirmModal";
 
 export const StoryMode = () => {
   const [mappedWorlds, setMappedWorlds] = useState<WorldDtoUi[]>([]);
+  const navigate = useNavigate();
+  const { player } = useAuth();
+  const [showTutorialModal, setShowTutorialModal] = useState(false);
 
   const [wildcardQuantities, setWildcardQuantities] =
     useState<WildcardQuantities>({
@@ -19,6 +25,15 @@ export const StoryMode = () => {
       changeEquation: 0,
       doubleCount: 0,
     });
+
+  // Verificar si el jugador completó el tutorial antes de cargar el modo historia
+  useEffect(() => {
+    if (player && player.lastlevelId === 0) {
+      console.log("Usuario sin tutorial detectado (lastlevelId: 0), mostrando modal...");
+      setShowTutorialModal(true);
+      return;
+    }
+  }, [player]);
 
   useEffect(() => {
     async function fetchPlayerWorldsScreenInfo() {
@@ -73,17 +88,34 @@ export const StoryMode = () => {
         };
 
         setWildcardQuantities(wildcards);
+
+        // Ya no verificamos wildcards aquí, usamos lastlevelId del player
       } catch (error: unknown) {
         console.error("Error cargando mundos y niveles:", error);
       }
     }
 
-    fetchPlayerWorldsScreenInfo();
-  }, []);
+    // Solo cargar si el jugador completó el tutorial
+    if (player && player.lastlevelId > 0) {
+      fetchPlayerWorldsScreenInfo();
+    }
+  }, [player]);
 
   return (
-    <div className="relative flex h-screen w-full flex-col overflow-hidden bg-gradient-to-br from-[#0a0520] via-[#1a0f3a] to-[#0f0828]">
-      <TopBar headerText="Mundos" remainingLives={7} />
+    <>
+      {showTutorialModal && (
+        <ConfirmModal
+          title="Tutorial requerido"
+          message="Para jugar al modo historia necesitás completar el tutorial primero y obtener tus comodines iniciales."
+          confirmText="Ir al tutorial"
+          cancelText="Volver"
+          onConfirm={() => navigate('/tutorial')}
+          onCancel={() => navigate('/home')}
+        />
+      )}
+
+      <div className="relative flex h-screen w-full flex-col overflow-hidden bg-gradient-to-br from-[#0a0520] via-[#1a0f3a] to-[#0f0828]">
+        <TopBar headerText="Mundos" remainingLives={7} />
 
       {mappedWorlds.length > 0 && <WorldMap mappedWorlds={mappedWorlds} />}
 
@@ -95,5 +127,6 @@ export const StoryMode = () => {
         />
       </div>
     </div>
+    </>
   );
 };

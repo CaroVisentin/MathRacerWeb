@@ -1,12 +1,23 @@
 import { Link } from "react-router-dom";
 import { StarsBackground } from "../../../shared/backgrounds/starBackground";
+import { useAudio } from "../../../contexts/AudioContext";
+import { useInvitation } from "../../../contexts/invitationContex";
+import mathi from "../../../assets/images/mathi.png";
+
 export const Menu = () => {
+  const { playButtonSound, playBackSound } = useAudio();
+  const { hasInvitation } = useInvitation();
+  
   return (
     // Contenedor principal
+
     <div className="h-screen w-screen bg-[#1C092D] flex flex-col items-center justify-between p-4 overflow-hidden">
-      <div className="absolute inset-0 z-0 pointer-events-none">
+      
+      <div className="absolute inset-0 z-20 pointer-events-none">
+        <img src={mathi} alt="Mathi" className="w-20 h-20  drop-shadow-[0_0_10px_#00ffff] " />
         <StarsBackground />
       </div>
+     
 
       <h1 className="text-pink-400 text-8xl text-center uppercase tracking-wide mb-12 drop-shadow-[0_0_10px_#00ffff]">
         Multijugador
@@ -16,6 +27,7 @@ export const Menu = () => {
         
         <Link
           to="/crear"
+          onClick={playButtonSound}
           className="botonGral uppercase tracking-wider transition-all duration-300 ease-out hover:drop-shadow-[0_0_10px_#00ffff] text-center text-5xl"
         >
           Crear Partida
@@ -23,6 +35,7 @@ export const Menu = () => {
 
         <Link
           to="/unirse-partida"
+          onClick={playButtonSound}
           className="botonGral uppercase hover:drop-shadow-[0_0_10px_#00ffff] text-center text-5xl"
         >
           Unirse a Partida
@@ -30,13 +43,23 @@ export const Menu = () => {
 
         <Link
           to="/invitar-amigo"
+          onClick={playButtonSound}
           className="botonGral uppercase hover:drop-shadow-[0_0_10px_#00ffff] text-center text-5xl"
         >
           Invitar a un Amigo
         </Link>
 
         <Link
+          to="/invitaciones"
+          onClick={playButtonSound}
+          className={`botonGral uppercase hover:drop-shadow-[0_0_10px_#00ffff] text-center text-5xl ${hasInvitation ? 'botonBrillante' : ''}`}
+        >
+          Buzón de Invitaciones
+        </Link>
+
+        <Link
           to="/ranking"
+          onClick={playButtonSound}
           className="botonGral uppercase hover:drop-shadow-[0_0_10px_#00ffff] text-center text-5xl"
         >
           Ranking
@@ -44,7 +67,8 @@ export const Menu = () => {
 
         <Link
           to="/partida-rapida"
-          className="botonGral uppercase hover:drop-shadow-[0_0_10px_#00ffff] text-center col-span-2 justify-self-center w-1/2 text-5xl"
+          onClick={playButtonSound}
+          className="botonGral uppercase hover:drop-shadow-[0_0_10px_#00ffff] text-center  text-5xl"
         >
           Partida Competitiva
         </Link>
@@ -53,6 +77,7 @@ export const Menu = () => {
       <div className="m-16">
         <Link
           to="/home"
+          onClick={playBackSound}
           className="bg-[#00f0ff] text-2xl border-2 border-white px-3 py-1
                 tracking-wider transition-all duration-300 
                  hover:bg-cyan-400 shadow-[0_0_10px_rgba(0,217,255,0.3)] 

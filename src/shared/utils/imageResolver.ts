@@ -31,7 +31,7 @@ const carImages: Record<number, string> = {
 
 // Los ProductId de personajes van del 9 al 14
 const characterImages: Record<number, string> = {
-  9: jugador1,  
+  6: jugador1,  
   10: jugador2, 
   11: jugador3, 
   12: jugador4, 

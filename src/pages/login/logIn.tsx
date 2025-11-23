@@ -127,7 +127,7 @@ export const LoginPage = () => {
               type="button"
               onClick={handleGoogleLogin}
               className="w-full py-2 bg-white hover:bg-gray-100 text-gray-800 transition-all flex items-center justify-center !gap-3 shadow-lg
-                            text-xl"
+                            text-xl hover:scale-[1.02] active:scale-[0.98]"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24">
                 <path
@@ -153,7 +153,7 @@ export const LoginPage = () => {
         </form>
 
         {/* Registro */}
-        <p className="!mt-5 text-center text-white text-xl font-audiowide">
+        <p className="!mt-5 text-center text-white text-xl">
           ¿No tenés cuenta?{" "}
           <Link
             to="/registro"

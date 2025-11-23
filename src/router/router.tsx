@@ -6,7 +6,9 @@ import { Menu } from "../pages/game/multiplayer/multiplayerGame";
 import { StoryMode } from "../pages/game/story-mode/storyMode";
 import CreateGame from "../components/game/on-line/create-game";
 import InviteFriend from "../components/game/on-line/invite-friend";
+import InvitationsInbox from "../components/game/on-line/invitations-inbox";
 import JoinGame from "../components/game/on-line/join-game";
+import { QuickGame } from "../components/game/on-line/quick-game";
 import { LevelMap } from "../pages/game/story-mode/world/[id]";
 import { StoryModeGame } from "../pages/game/story-mode/level/[id]";
 import { LoginPage } from "../pages/login/logIn";
@@ -17,12 +19,14 @@ import { StorePage } from "../pages/store/store";
 import { ProductDetailsPage } from "../pages/store/product/[id]";
 import CartPage from "../pages/cart/cart";
 import { MultiplayerGame } from "../components/game/multiplayer/multiplayer";
+import { MultiplayerMatchmaking } from "../components/game/multiplayer/multiplayerMatchmaking";
 import { ProtectedRoute } from "../components/auth/ProtectedRoute";
 import { PublicRoute } from "../components/auth/PublicRoute";
 import { TutorialPage } from "../pages/tutorial/tutorial";
 import PaymentFailure from "../pages/store/payments/payment-failure";
 import PaymentSuccess from "../pages/store/payments/payment-success";
 import PaymentPending from "../pages/store/payments/payment-pending";
+import { InfiniteModeGame } from "../pages/game/infinite-mode/infiniteMode";
 
 const router = createBrowserRouter([
   {
@@ -36,6 +40,14 @@ const router = createBrowserRouter([
   {
     path: "/multijugador",
     element: <ProtectedRoute><MultiplayerGame /></ProtectedRoute>
+  },
+  {
+    path: "/multijugador/:gameId",
+    element: <ProtectedRoute><MultiplayerGame /></ProtectedRoute>
+  },
+  {
+    path: "/matchmaking/:gameId",
+    element: <ProtectedRoute><MultiplayerMatchmaking /></ProtectedRoute>
   },
   {
     path: "/menu",
@@ -58,8 +70,12 @@ const router = createBrowserRouter([
     element: <ProtectedRoute><CreateGame /></ProtectedRoute>
   },
   {
-    path: "/invitar-amigo",
+    path: "/invitar-amigo/:gameId",
     element: <ProtectedRoute><InviteFriend /></ProtectedRoute>
+  },
+  {
+    path: "/invitaciones",
+    element: <ProtectedRoute><InvitationsInbox /></ProtectedRoute>
   },
   {
     path: "/unirse-partida",
@@ -67,7 +83,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/partida-rapida",
-    element: <ProtectedRoute><MultiplayerGame /></ProtectedRoute>
+    element: <ProtectedRoute><QuickGame /></ProtectedRoute>
   },
   {
     path: "/reglas",
@@ -121,6 +137,10 @@ const router = createBrowserRouter([
   {
     path: "/payment-pending",
     element: <PaymentPending />
+  },
+  {
+    path: "/modo-infinito",
+    element: <ProtectedRoute> <InfiniteModeGame /> </ProtectedRoute>
   }
 ]);
 

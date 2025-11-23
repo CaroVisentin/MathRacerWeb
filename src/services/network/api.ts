@@ -15,14 +15,32 @@ export const api = axios.create({
     baseURL: `${baseURL}/api`,
 });
 
+// Variable para mantener el token actual
+let currentToken: string | null = null;
+
 // Interceptor para añadir el token a las peticiones
 export const setAuthToken = (token: string | null) => {
+    currentToken = token;
     if (token) {
         api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     } else {
         delete api.defaults.headers.common['Authorization'];
     }
 };
+
+// Interceptor de REQUEST para asegurar que siempre se envíe el token más reciente
+api.interceptors.request.use(
+    async (config) => {
+        // Si hay un token guardado, asegurarse de que esté en el header
+        if (currentToken) {
+            config.headers.Authorization = `Bearer ${currentToken}`;
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
 
 export const getAuthToken = async () => {
     const auth = getAuth();
@@ -47,7 +65,7 @@ api.interceptors.response.use(
 
 // Exportar los endpoints organizados por módulo
 export const API_URLS = {
-    games: "/games", 
+    games: "/games",
     player: "/player",
     worlds: "/worlds",
     levels: "/levels",
@@ -57,4 +75,6 @@ export const API_URLS = {
     friends: "/friendship",
     energy: "/energy",
     wildcards: "/wildcards",
+    infinite: "/infinite",
+    gameInvitation: "/gameinvitation",
 };

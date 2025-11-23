@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import medallaOro from "../../assets/images/medalla1.png";
 import medallaPlata from "../../assets/images/medalla2.png";
 import type { PlayerDto } from "../../models/domain/signalR/playerDto";
 import auto1 from "../../assets/images/auto.png";
 import mathi from "../../assets/images/mathi.png";
+import { useAudio } from "../../contexts/AudioContext";
+
 interface EndOfMultiplayerModeModalProps {
   players: PlayerDto[];
   won: boolean;
@@ -14,7 +16,9 @@ interface EndOfMultiplayerModeModalProps {
 
 export const EndOfMultiplayerModeModal: React.FC<
   EndOfMultiplayerModeModalProps
-> = ({ players, currentPlayer, onClose, onRetry }) => {
+> = ({ players, currentPlayer, onRetry }) => {
+  const { playWinnerSound, playGameOverSound } = useAudio();
+
   // position 1 = ganador
   const jugadoresOrdenados = [...players].sort(
     (a, b) => a.position - b.position
@@ -25,6 +29,15 @@ export const EndOfMultiplayerModeModal: React.FC<
 
   // Determinar si ganó (posición = 1)
   const won = jugadorActual?.position === 1;
+
+  // Reproducir sonido al montar el modal
+  useEffect(() => {
+    if (won) {
+      playWinnerSound();
+    } else {
+      playGameOverSound();
+    }
+  }, [won, playWinnerSound, playGameOverSound]);
 
   // Medallas por posición (solo ejemplo)
   const medallas = [medallaOro, medallaPlata];
@@ -81,19 +94,13 @@ export const EndOfMultiplayerModeModal: React.FC<
           ))}
         </ul>
 
-        {/* Botones */}
-        <div className="flex justify-between mt-6">
-          <button
-            onClick={onClose}
-            className="bg-gray-600 px-6 py-2 rounded hover:bg-gray-500"
-          >
-            Regresar
-          </button>
+        {/* Botón */}
+        <div className="flex justify-center mt-6">
           <button
             onClick={onRetry}
-            className="bg-teal-600 px-6 py-2 rounded hover:bg-teal-500"
+            className="bg-teal-600 px-8 py-3 rounded hover:bg-teal-500 text-xl"
           >
-            Volver a jugar
+            Volver
           </button>
         </div>
       </div>

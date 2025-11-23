@@ -15,6 +15,7 @@ module.exports = {
         jersey: ["Jersey 10", "sans serif"],
         audiowide: ["Audiowide", "sans serif"],
       },
+     
     },
   },
   plugins: [],
