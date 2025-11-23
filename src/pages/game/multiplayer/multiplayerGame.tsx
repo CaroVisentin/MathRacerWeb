@@ -4,15 +4,21 @@ import { useAudio } from "../../../contexts/AudioContext";
 import { useInvitation } from "../../../contexts/invitationContex";
 import mathi from "../../../assets/images/mathi.png";
 import { useEffect } from "react";
+import { useAuth } from "../../../hooks/useAuth";
 
 export const Menu = () => {
   const { playButtonSound, playBackSound } = useAudio();
   const { hasInvitation, checkInvitations } = useInvitation();
+  const { user } = useAuth();
 
   
   useEffect(() => {
-    checkInvitations();
-  }, []);
+    // Solo verificar invitaciones si el usuario está autenticado
+    if (user) {
+      checkInvitations();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   return (
   

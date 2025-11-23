@@ -7,7 +7,8 @@ import { LookingForRivalModal } from "../../../shared/modals/lookingForRivalModa
 import type { PlayerDto } from "../../../models/domain/signalR/playerDto";
 import { EndOfMultiplayerModeModal } from "../../../shared/modals/endOfMultiplayerModeModal";
 import { Wildcards } from "../../../shared/wildcards/wildcards";
-import auto1 from "../../../assets/images/auto-pista.png";
+import autoDefault from "../../../assets/images/auto-pista.png";
+import { resolveImageUrl } from "../../../shared/utils/imageResolver";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import type { GameUpdateDto } from "../../../models/domain/signalR/gameUpdateDto";
 import { useConnection } from "../../../services/signalR/connection";
@@ -15,14 +16,9 @@ import { PowerUpType } from "../../../models/enums/powerUpType";
 import mathi from "../../../assets/images/mathi.png";
 import { usePlayer } from "../../../hooks/usePlayer";
 
-const fondos = [
-  "pista-noche.png",
-  "pista-dia.png",
-  "pista-atardecer.png",
-  "pista-city.png",
-  "pista-montana.png",
-  "pista-pastel.png",
-];
+// IDs para fallback aleatorio (según imageResolver)
+const fondoFallbackIds = [8,5,13,18,19];
+const autoFallbackIds = [6,9,12,15,18,19,20,3];
 
 export const MultiplayerGame = () => {
   const { gameId } = useParams<{ gameId: string }>();
@@ -51,6 +47,8 @@ export const MultiplayerGame = () => {
   const [penalizado, setPenalizado] = useState<boolean>(false);
   const [fondoJugador, setFondoJugador] = useState<string>("");
   const [fondoRival, setFondoRival] = useState<string>("");
+  const [carJugador, setCarJugador] = useState<string>(autoDefault);
+  const [carRival, setCarRival] = useState<string>(autoDefault);
   const cerrarModal = () => setGanador(false);
   const [eliminaOpciones, setEliminaOpciones] = useState(false);
   const [powerUsePosition, setPowerUsePosition] = useState(false);
@@ -124,11 +122,30 @@ export const MultiplayerGame = () => {
     }
   };
 
-  const handleVolver = () => {
-    
-    setGanador(false);
-    setPerdedor(true);
-    navigate('/menu');
+  const handleVolver = async () => {
+    if (!partidaId || !jugadorId) {
+      navigate('/menu');
+      return;
+    }
+
+    try {
+      // Desconectar del grupo de SignalR
+      if (conn) {
+        await conn.stop();
+      }
+      
+      // Marcar como perdedor y mostrar el modal
+      setPerdedor(true);
+      setGanador(false);
+      
+      // Después de un breve delay para que se muestre el modal, volver al menú
+      setTimeout(() => {
+        navigate('/menu');
+      }, 3000);
+    } catch (error) {
+      console.error("Error al abandonar la partida:", error);
+      navigate('/menu');
+    }
   };
 
   const handleFireExtinguisher = () => {
@@ -243,7 +260,7 @@ export const MultiplayerGame = () => {
 
         await conectarJugador();
       } catch {
-        
+        //noop, el propio conectarJugador maneja el error
       }
     }, 1500);
 
@@ -283,16 +300,30 @@ export const MultiplayerGame = () => {
           jugadorActual = candidatos.find(p => p.id === jugadorId) ?? candidatos[0];
         }
       }
-      const otroJugador = data.players.find((p: PlayerDto) => p.id !== jugadorActual?.id);
+      const otroJugador = data.players.find(p => p.id !== jugadorActual?.id);
 
       if (jugadorActual) {
         setJugadorId(jugadorActual.id);
         const avance = (jugadorActual.correctAnswers / 10) * 100;
         setPosicionAuto1(avance);
+        // Apariencia jugador (solo cambiar si viene equipado, mantener si null)
+        if (jugadorActual.equippedBackground?.id) {
+          setFondoJugador(resolveImageUrl("background", jugadorActual.equippedBackground.id));
+        }
+        if (jugadorActual.equippedCar?.id) {
+          setCarJugador(resolveImageUrl("car", jugadorActual.equippedCar.id));
+        }
       }
       if (otroJugador) {
         const avanceOtro = (otroJugador.correctAnswers / 10) * 100;
         setPosicionAuto2(avanceOtro);
+        // Apariencia rival (solo cambiar si viene equipado)
+        if (otroJugador.equippedBackground?.id) {
+          setFondoRival(resolveImageUrl("background", otroJugador.equippedBackground.id));
+        }
+        if (otroJugador.equippedCar?.id) {
+          setCarRival(resolveImageUrl("car", otroJugador.equippedCar.id));
+        }
       }
 
       // Lógica de Penalización
@@ -377,15 +408,20 @@ export const MultiplayerGame = () => {
     };
   }, [conn, on, off, nombreJugador, navigate, jugadorId, setPartidaId, setJugadoresPartida]);
 
-  useEffect(() => {
-    const indexJugador = Math.floor(Math.random() * fondos.length);
-    const indexRival =
-      (indexJugador + 1 + Math.floor(Math.random() * (fondos.length - 1))) %
-      fondos.length;
+  // Helpers de random y resolución
+  const randomFrom = (arr: number[]) => arr[Math.floor(Math.random() * arr.length)];
 
-    setFondoJugador(fondos[indexJugador]);
-    setFondoRival(fondos[indexRival]);
-  }, []);
+  // Inicializar apariencia local (jugador) y fallback para rival
+  useEffect(() => {
+    const resolvedBg = resolveImageUrl("background", player?.equippedBackground?.id || player?.background?.id || randomFrom(fondoFallbackIds));
+    setFondoJugador(resolvedBg);
+    // Fallback del rival: usar el mismo fondo del jugador si el rival no trae uno
+    setFondoRival(resolvedBg);
+    const resolvedCar = resolveImageUrl("car", player?.equippedCar?.id || player?.car?.id || randomFrom(autoFallbackIds));
+    setCarJugador(resolvedCar);
+    // Fallback del rival: usar el mismo auto del jugador si el rival no trae uno
+    setCarRival(resolvedCar);
+  }, [player]);
 
   // compute opponent name
   const opponentName =
@@ -461,8 +497,14 @@ export const MultiplayerGame = () => {
             players={jugadoresPartida}
             currentPlayer={nombreJugador}
             won={false}
-            onClose={cerrarModal}
-            onRetry={reiniciarJuego}
+            onClose={() => {
+              setPerdedor(false);
+              navigate('/menu');
+            }}
+            onRetry={() => {
+              setPerdedor(false);
+              navigate('/menu');
+            }}
           />
         </div>
       )}
@@ -471,9 +513,7 @@ export const MultiplayerGame = () => {
       <div className="mt-20 flex flex-col gap-3 justify-end">
         <div
           className="flex justify-center items-center fondoRuta w-full relative mt-20 border-3 border-[#5df9f9] rounded-lg"
-          style={{
-            backgroundImage: `url('../src/assets/images/${fondoRival}')`,
-          }}
+          style={{ backgroundImage: `url('${fondoRival}')` }}
         >
           {/* Nombre del Jugador 2 (Rival) */}
           <div
@@ -487,19 +527,12 @@ export const MultiplayerGame = () => {
           </div>
 
           {/* Auto 2 */}
-          <img
-            src={auto1}
-            alt="Auto 2"
-            className="absolute bottom-[180px] auto auto2"
-            style={{ left: `${posicionAuto2}%` }}
-          />
+          <img src={carRival} alt="Auto 2" className="absolute bottom-[180px] auto auto2" style={{ left: `${posicionAuto2}%` }} />
         </div>
 
         <div
           className="flex justify-center items-center fondoRuta w-full relative mt-20 border-3 border-[#f95ec8] rounded-lg"
-          style={{
-            backgroundImage: `url('../src/assets/images/${fondoJugador}')`,
-          }}
+          style={{ backgroundImage: `url('${fondoJugador}')` }}
         >
           {/* Nombre del Jugador 1 (Vos) */}
           <div
@@ -513,12 +546,7 @@ export const MultiplayerGame = () => {
           </div>
 
           {/* Auto 1 */}
-          <img
-            src={auto1}
-            alt="Auto 1"
-            className="absolute auto transition-all duration-500"
-            style={{ left: `${posicionAuto1}%` }}
-          />
+          <img src={carJugador} alt="Auto 1" className="absolute auto transition-all duration-500" style={{ left: `${posicionAuto1}%` }} />
         </div>
       </div>
 

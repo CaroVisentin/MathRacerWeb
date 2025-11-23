@@ -67,7 +67,7 @@ export const friendshipService = {
 
   async deleteFriend(request: FriendRequestDto) {
     try {
-      const res = await api.post(`${API_URLS.friends}/delete`, request);
+      const res = await api.delete(`${API_URLS.friends}/delete`, { data: request });
       return res.status === 200;
     } catch (err: unknown) {
       const axiosError = err as AxiosError;
