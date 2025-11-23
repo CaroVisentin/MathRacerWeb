@@ -52,9 +52,9 @@ export default function InvitationsInbox() {
 
       if (response.accepted && response.gameId) {
         playJoinCreateSound();
-        // Actualizar estado del contexto antes de navegar
+        
         await checkInvitations();
-        // Navegar al juego
+        
         navigate(`/multijugador/${response.gameId}`);
       }
     } catch (err) {
@@ -75,7 +75,7 @@ export default function InvitationsInbox() {
         accept: false,
       });
 
-      // Refrescar la lista y actualizar el contexto
+     
       await fetchInvitations();
       await checkInvitations();
       setRespondingTo(null);

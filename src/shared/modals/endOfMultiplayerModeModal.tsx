@@ -5,6 +5,7 @@ import type { PlayerDto } from "../../models/domain/signalR/playerDto";
 import auto1 from "../../assets/images/auto.png";
 import mathi from "../../assets/images/mathi.png";
 import { useAudio } from "../../contexts/AudioContext";
+import { resolveImageUrl } from "../utils/imageResolver";
 
 interface EndOfMultiplayerModeModalProps {
   players: PlayerDto[];
@@ -84,9 +85,9 @@ export const EndOfMultiplayerModeModal: React.FC<
               </div>
 
               {/* Auto */}
-              {/* Auto hardcodeado */}
+              
               <img
-                src={auto1} // la imagen que pusiste en public
+                src={j.equippedCar?.id ? resolveImageUrl("car", j.equippedCar.id) : auto1} 
                 alt={`Auto de ${j.name}`}
                 className={`${i === 0 ? "w-28 h-20" : "w-20 h-16"} object-contain`}
               />

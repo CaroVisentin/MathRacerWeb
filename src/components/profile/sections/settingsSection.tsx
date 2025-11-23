@@ -1,14 +1,34 @@
+import { useState } from "react";
 import { AudioControls } from "../components/soundControl";
 import { useAuth } from "../../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
+import ConfirmModal from "../../../shared/modals/confirmModal";
+import { deleteAccount } from "../../../services/player/playerService";
+import ErrorModal from "../../../shared/modals/errorModal";
 
 export const AjustesSection = () => {
   const { logout } = useAuth();
   const navigate = useNavigate();
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleLogout = async () => {
     await logout();
     navigate("/login");
+  };
+
+  const handleDeleteAccount = async () => {
+    try {
+      await deleteAccount();
+      await logout();
+      navigate("/register");
+    } catch (error) {
+      console.error("Error al eliminar cuenta:", error);
+      setErrorMessage("No se pudo eliminar la cuenta. Inténtalo de nuevo.");
+      setShowDeleteModal(false);
+      setShowErrorModal(true);
+    }
   };
 
   return (
@@ -26,10 +46,32 @@ export const AjustesSection = () => {
           Cerrar sesión
         </button>
 
-        <button className="bg-black border-2 border-red-600 text-red-600 px-8 py-2 rounded text-xl tracking-wider transition-all duration-300 hover:bg-red-600 hover:text-white">
+        <button 
+          className="bg-black border-2 border-red-600 text-red-600 px-8 py-2 rounded text-xl tracking-wider transition-all duration-300 hover:bg-red-600 hover:text-white"
+          onClick={() => setShowDeleteModal(true)}
+        >
           Eliminar cuenta
         </button>
       </div>
+
+      {/* Modal de confirmación de eliminación */}
+      {showDeleteModal && (
+        <ConfirmModal
+          title="Eliminar cuenta"
+          message="¿Estás seguro que querés eliminar tu cuenta? Esta acción no se puede deshacer."
+          confirmText="Eliminar"
+          cancelText="Cancelar"
+          onConfirm={handleDeleteAccount}
+          onCancel={() => setShowDeleteModal(false)}
+        />
+      )}
+
+      {/* Modal de error */}
+      {showErrorModal && (
+        <ErrorModal
+          message={errorMessage}
+          onClose={() => setShowErrorModal(false)} title={""}        />
+      )}
     </div>
   );
 };

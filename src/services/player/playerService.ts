@@ -32,3 +32,16 @@ export async function refreshPlayerCoins(playerId: number): Promise<number> {
     throw error;
   }
 }
+
+/**
+ * Elimina la cuenta del jugador autenticado
+ * Realiza una baja lógica en el backend
+ */
+export async function deleteAccount(): Promise<void> {
+  try {
+    await api.delete("/player/delete");
+  } catch (error) {
+    console.error("Error al eliminar cuenta:", error);
+    throw error;
+  }
+}

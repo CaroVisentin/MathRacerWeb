@@ -1,5 +1,13 @@
 import type { PowerUpDto } from "./powerUpDto";
 
+// Datos de un producto equipado básico (coincide parcialmente con modelo UI PlayerItem)
+export interface EquippedProductDto {
+  id: number;
+  name: string;
+  description: string;
+  // Backend actual no envía imageUrl ni productType, se infiere por nombre.
+}
+
 export interface PlayerDto {
   id: number;
   name: string;
@@ -11,4 +19,7 @@ export interface PlayerDto {
   finishedAt: Date;
   availablePowerUps: PowerUpDto[];
   hasDoublePointsActive: boolean;
+  equippedBackground?: EquippedProductDto | null;
+  equippedCar?: EquippedProductDto | null;
+  equippedCharacter?: EquippedProductDto | null;
 }

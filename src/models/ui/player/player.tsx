@@ -16,4 +16,8 @@ export interface Player {
   background: PlayerItem | null;
   car: PlayerItem | null;
   character: PlayerItem | null;
+  // Campos opcionales para alinearse con PlayerDto del backend
+  equippedBackground?: PlayerItem | null;
+  equippedCar?: PlayerItem | null;
+  equippedCharacter?: PlayerItem | null;
 }

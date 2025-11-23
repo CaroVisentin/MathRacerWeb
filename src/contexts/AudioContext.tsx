@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, useRef, type ReactNode } from 'react';
+import { useAuth } from '../hooks/useAuth';
 
 // Importar los sonidos
 import musicaFondo from '../assets/audios/sounds/musciaintro2.mp3';
@@ -38,6 +39,8 @@ interface AudioContextType {
 const AudioContext = createContext<AudioContextType | undefined>(undefined);
 
 export const AudioProvider = ({ children }: { children: ReactNode }) => {
+  const { user } = useAuth();
+  
   // Cargar volúmenes desde localStorage o usar valores por defecto
   const [soundVolume, setSoundVolumeState] = useState<number>(() => {
     const saved = localStorage.getItem('soundVolume');
@@ -59,7 +62,16 @@ export const AudioProvider = ({ children }: { children: ReactNode }) => {
     backgroundMusicRef.current.loop = true;
     backgroundMusicRef.current.volume = musicVolume / 100;
 
-    // Iniciar música automáticamente
+    return () => {
+      backgroundMusicRef.current?.pause();
+      backgroundMusicRef.current = null;
+    };
+  }, [musicVolume]);
+
+  // Reproducir música solo cuando el usuario esté autenticado
+  useEffect(() => {
+    if (!user || !backgroundMusicRef.current) return;
+
     const playMusic = async () => {
       try {
         if (musicVolume > 0) {
@@ -71,12 +83,7 @@ export const AudioProvider = ({ children }: { children: ReactNode }) => {
     };
 
     playMusic();
-
-    return () => {
-      backgroundMusicRef.current?.pause();
-      backgroundMusicRef.current = null;
-    };
-  }, [musicVolume]);
+  }, [user, musicVolume]);
 
   // Actualizar volumen de música de fondo cuando cambia
   useEffect(() => {

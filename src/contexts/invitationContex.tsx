@@ -1,4 +1,4 @@
-import { createContext,useContext,useState, useEffect} from "react";
+import { createContext,useContext,useState} from "react";
  import type {ReactNode, Dispatch, SetStateAction } from "react";
 import { gameInvitationService } from "../services/game/gameInvitationService";
 
@@ -31,16 +31,6 @@ export const InvitationProvider=({ children }: { children: ReactNode }) => {
             setHasInvitation(false);
         }
     };
-
-    // Verificar invitaciones al montar el provider
-    useEffect(() => {
-        checkInvitations();
-        
-        // Verificar cada 30 segundos si hay nuevas invitaciones
-        const interval = setInterval(checkInvitations, 30000);
-        
-        return () => clearInterval(interval);
-    }, []);
 
     return (
         <InvitationContext.Provider value={{ hasInvitation, setHasInvitation, checkInvitations }}>
