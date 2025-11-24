@@ -4,3 +4,7 @@ export type StoryModeContextType = {
     spendLife: () => void
     isLoading: boolean
 }
+
+export interface AbandonGameResponse {
+    message: string;
+}

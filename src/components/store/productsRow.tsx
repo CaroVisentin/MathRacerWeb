@@ -7,8 +7,9 @@ import PurchaseSuccessModal from "../../shared/modals/purchaseSuccessModal";
 import ErrorModal from "../../shared/modals/errorModal";
 import { buyCar, buyCharacter, buyBackground } from "../../services/player/storeService";
 import { usePlayer } from "../../hooks/usePlayer";
-import { getPlayerData, getPlayerDataByEmail } from "../../services/player/playerService";
+import { getPlayerData } from "../../services/player/playerService";
 import { useNavigate } from "react-router-dom";
+import { getErrorMessage } from "../../shared/utils/manageErrors";
 
 interface ProductsRowProps {
   title: string;
@@ -42,21 +43,8 @@ export const ProductsRow = ({ title, products }: ProductsRowProps) => {
       const updatedPlayer = await getPlayerData();
       setPlayer(updatedPlayer);
       localStorage.setItem("player", JSON.stringify(updatedPlayer));
-    } catch (error) {
-      // Respaldo por email si el endpoint por ID no existe/retorna 404
-      try {
-        if (player?.email) {
-          const updatedByEmail = await getPlayerDataByEmail(player.email);
-          setPlayer(updatedByEmail);
-          localStorage.setItem("player", JSON.stringify(updatedByEmail));
-          return;
-        }
-      } catch (innerErr) {
-        if (import.meta.env.DEV) {
-          console.debug("Fallback por email también falló", innerErr);
-        }
-      }
-      console.warn("No se pudo actualizar el jugador tras la compra", error);
+    } catch (error: unknown) {
+      setErrorMessage(getErrorMessage(error))
     }
   };
 
