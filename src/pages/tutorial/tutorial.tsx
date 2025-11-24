@@ -16,7 +16,7 @@ import { getPlayerData } from "../../services/player/playerService";
 import type { ChestResponseDto } from "../../models/domain/chest/chestResponseDto";
 import mathi from "../../assets/images/mathi.png";
 import { RewardScreen } from "../../components/chest/rewardScreen";
-import { getErrorMessage } from "../../shared/utils/manageErrors";
+import { getErrorMessage, manageError } from "../../shared/utils/manageErrors";
 import ErrorModal from "../../shared/modals/errorModal";
 import { useAuth } from "../../hooks/useAuth";
 
@@ -88,7 +88,9 @@ export const TutorialPage = () => {
             setPlayer(updatedPlayer);
             localStorage.setItem("player", JSON.stringify(updatedPlayer));
             navigate('/home');
-          } catch { }
+          } catch (error) {
+            manageError(error);
+          }
         }
       } else {
         setErrorMessage(message);
