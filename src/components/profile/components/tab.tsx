@@ -1,7 +1,5 @@
 import React from "react";
 import { BackButton } from "../../../shared/buttons/backButton";
-import mathi from "../../../assets/images/mathi.png";
-//import { useNavigate } from "react-router-dom";
 
 interface TabPanelProps {
     activeSection: "perfil" | "amigos" | "ajustes";
@@ -26,12 +24,12 @@ export const TabPanel = ({ activeSection, setActiveSection }: TabPanelProps) => 
             </div>
 
             {/* Tabs */}
-            <div className="flex gap-6 justify-center flex-2">
+            <div className="flex gap-6 justify-center pt-2 flex-2">
                 {tabs.map((tab) => (
                     <span
                         key={tab.key}
                         onClick={() => setActiveSection(tab.key)}
-                        className={`text-4xl cursor-pointer px-4 py-2 rounded hover:drop-shadow-[0_0_5px_#00ffff] hover:scale-125 transition-colors duration-300 ${activeSection === tab.key ? "text-[#f95ec8]" : "text-[#00f0ff]"
+                        className={`text-4xl cursor-pointer px-4 py-2 rounded hover:drop-shadow-[0_0_5px_#00ffff] hover:scale-125 transition-colors duration-300 ${activeSection === tab.key ? "text-[#f95ec8] bg-[#f95ec829]" : "text-[#00f0ff] bg-[#00f0ff29]"
                             }`}
                     >
                         {tab.label}
@@ -44,7 +42,6 @@ export const TabPanel = ({ activeSection, setActiveSection }: TabPanelProps) => 
 
             {/* Placeholder para mantener centrado */}
             <div/>
-             <img src={mathi} alt="Mathi" className="w-20 h-20 pt-2 pr-2 items-end " />
 
         </div >
     );

@@ -18,7 +18,7 @@ export const FriendList = ({ friends, onRemove }: FriendListProps) => {
           >
             {/* Columna 1: Avatar + nombre (izquierda) */}
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full border border-pink-500 overflow-hidden">
+              <div className="w-10 h-10  overflow-hidden">
                 <img
                   src={friend.avatarUrl}
                   alt={friend.name}
@@ -27,11 +27,6 @@ export const FriendList = ({ friends, onRemove }: FriendListProps) => {
               </div>
               <span className="text-cyan-400 text-xl">{friend.name}</span>
             </div>
-
-            {/* Columna 2: Auto (centrado) */}
-            {/* <div className="flex justify-center">
-                            <img src={friend.carUrl} alt="carro" className="w-14 h-8" />
-                        </div> 
 
             {/* Columna 3: Puntuación (centrada) */}
             <div className="flex justify-center">

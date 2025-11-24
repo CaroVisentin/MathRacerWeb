@@ -1,7 +1,6 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { StarsBackground } from "../../../shared/backgrounds/starBackground";
 import { friendshipService } from "../../../services/friendship/friendshipService";
 import { gameInvitationService } from "../../../services/game/gameInvitationService";
 import { friendMapper } from "../../../models/mappers/friendMapper";
@@ -10,7 +9,6 @@ import type { Friend } from "../../../models/ui/profile/friends/friend";
 import type { FriendDto } from "../../../models/domain/profile/friends/friendDto";
 import Spinner from "../../../shared/spinners/spinner";
 import { useAudio } from "../../../contexts/AudioContext";
-import mathi from "../../../assets/images/mathi.png";
 
 export default function InviteFriends() {
   const { player } = useAuth();
@@ -85,14 +83,10 @@ export default function InviteFriends() {
   );
 
   return (
-    <div className="h-screen w-screen bg-[#1C092D] flex flex-col items-center justify-center p-4 overflow-hidden">
-      <div className="absolute inset-0 z-0 pointer-events-none">
-        <StarsBackground />
-      </div>
-      <img src={mathi} alt="Mathi" className="absolute top-4 left-4 w-20 h-20 z-10" />
-
-      <div className="w-full max-w-5xl mx-auto bg-black/90 text-[#5df9f9] p-6 pb-2 rounded-lg shadow-lg">
-        <h1 className="text-6xl text-[#f95ec8] uppercase text-center mb-10 pb-5 drop-shadow-[0_0_10px_#00ffff]">
+    <div className="h-screen w-screen fondo-city flex flex-col items-center justify-center p-4 overflow-hidden">
+    
+      <div className="w-full max-w-5xl mx-auto bg-black/60 text-[#5df9f9] p-6 pb-2 rounded-lg shadow-lg">
+        <h1 className="text-6xl text-[#5df9f9]  text-center mb-10 pb-5 drop-shadow-[0_0_10px_#00ffff]">
           Invitar amigo
         </h1>
 
@@ -109,7 +103,7 @@ export default function InviteFriends() {
             <select
               value={selectedDifficulty}
               onChange={(e) => setSelectedDifficulty(e.target.value)}
-              className="w-full p-3 rounded bg-black/90 border-2 border-cyan-400 text-white text-xl"
+              className="w-full p-3 rounded bg-black/60 border-2 border-cyan-400 text-white text-xl"
             >
               <option value="Facil">Fácil</option>
               <option value="Medio">Medio</option>
@@ -122,7 +116,7 @@ export default function InviteFriends() {
             <select
               value={selectedExpectedResult}
               onChange={(e) => setSelectedExpectedResult(e.target.value)}
-              className="w-full p-3 rounded bg-black/90 border-2 border-cyan-400 text-white text-xl"
+              className="w-full p-3 rounded bg-black/60 border-2 border-cyan-400 text-white text-xl"
             >
               <option value="Mayor">Mayor</option>
               <option value="Menor">Menor</option>
@@ -132,13 +126,13 @@ export default function InviteFriends() {
         </div>
 
         {/* Buscador */}
-        <div className="mb-4">
+        <div className="mb-4 pt-4 pb-4">
           <input
             type="text"
             placeholder="Buscar amigo por nombre o email..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full p-3 rounded bg-black/90 border-2 border-cyan-400 text-white text-xl placeholder-gray-500"
+            className="w-full p-3 rounded bg-black/60 border-2 border-cyan-400 text-white text-xl placeholder-gray-500"
           />
         </div>
 
@@ -212,13 +206,15 @@ export default function InviteFriends() {
           <Link
             to="/menu"
             onClick={playBackSound}
-            className="bg-[#00f0ff] text-black text-2xl border-2 border-white px-6 py-2
-                       tracking-wider transition-all duration-300 
-                       hover:bg-cyan-400 shadow-[0_0_10px_rgba(0,217,255,0.3)] 
-                       hover:shadow-[0_0_20px_rgba(0,217,255,0.6)]"
+            className="bg-[#00f0ff] text-black text-2xl border-2 border-white px-3 py-1
+                tracking-wider transition-all duration-300 
+                 hover:bg-cyan-400 shadow-[0_0_10px_rgba(0,217,255,0.3)] 
+                 hover:shadow-[0_0_20px_rgba(0,217,255,0.6)]
+                 disabled:opacity-50"
             style={{ marginTop: "20px", marginBottom: "20px" }}
           >
-            Volver al Menú
+           <i className="ri-arrow-left-line mr-2"></i> Volver
+
           </Link>
         </div>
       </div>

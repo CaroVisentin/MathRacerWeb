@@ -1,6 +1,7 @@
 import type { FriendDto } from "../domain/profile/friends/friendDto";
 import type { PlayerProfileDto } from "../domain/profile/playerProfileDto";
 import type { Friend } from "../ui/profile/friends/friend";
+import { resolveImageUrl } from "../../shared/utils/imageResolver";
 
 export const friendMapper = {
   fromDto(dto: FriendDto): Friend {
@@ -9,7 +10,7 @@ export const friendMapper = {
       name: dto.name ?? "Jugador",
       email: dto.email,
       points: dto.points ?? 0,
-      avatarUrl: dto.character?.id ? `/images/characters/${dto.character.id}.png` : '/images/characters/1.png',
+      avatarUrl: resolveImageUrl("character", dto.character?.id),
       // carUrl: "/images/cars/1.png",
     };
   },
@@ -24,7 +25,7 @@ export const friendMapper = {
       name: dto.name ?? "Jugador",
       email: dto.email,
       points: dto.points ?? 0,
-      avatarUrl: dto.character?.id ? `/images/characters/${dto.character.id}.png` : '/images/characters/1.png',
+      avatarUrl: resolveImageUrl("character", dto.character?.id),
       // carUrl: "/images/cars/1.png",
     };
   },

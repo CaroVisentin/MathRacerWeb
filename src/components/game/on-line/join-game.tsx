@@ -1,12 +1,12 @@
 
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { StarsBackground } from "../../../shared/backgrounds/starBackground";
 import { getAvailableGames } from "../../../services/game/multiplayer-mode/onlineService";
 import type { AvailableGameDto } from "../../../models/domain/signalR/availbleGameDto";
 import ErrorConnection from "../../../shared/modals/errorConnection";
 import { useAudio } from "../../../contexts/AudioContext";
-import mathi from "../../../assets/images/mathi.png";
+
+
 export default function JoinGame() {
   const navigate = useNavigate();
   const { playBackSound } = useAudio();
@@ -112,14 +112,11 @@ export default function JoinGame() {
   };
 
   return (
-    <div className="h-screen w-screen bg-[#1C092D] flex  items-center justify-center p-4 overflow-hidden">
-      <div className="absolute inset-0 z-0 pointer-events-none">
-        <StarsBackground />
-      </div>
-      <img src={mathi} alt="Mathi" className="absolute top-4 left-4 w-20 h-20 z-10" />
+    <div className="h-screen w-screen fondo-city flex  items-center justify-center p-4 overflow-hidden">
 
-      <div className="w-full max-w-3xl mx-auto bg-black/90 text-[#5df9f9] p-6 pb-2 rounded-lg shadow-lg ">
-        <h1 className="text-6xl text-[#f95ec8] uppercase text-center mb-10 pb-5 drop-shadow-[0_0_10px_#00ffff] ">
+
+      <div className="w-full max-w-3xl mx-auto bg-black/60 text-[#5df9f9] p-6 pb-2 rounded-lg shadow-lg ">
+        <h1 className="text-6xl text-[#5df9f9]  text-center mb-10 pb-5 drop-shadow-[0_0_10px_#00ffff] ">
           Unirse a partida
         </h1>
 
@@ -222,14 +219,22 @@ export default function JoinGame() {
           <Link
             to="/menu"
             onClick={playBackSound}
-            className="bg-[#5df9f9] text-black font-extralight border-2 border-white transition-all duration-300 hover:bg-red-700 w-20 h-10 px-4 content-center rounded text-2xl hover:drop-shadow-[0_0_10px_#00ffff]"
+            className="bg-[#00f0ff] text-black text-2xl border-2 border-white px-3 py-1
+                tracking-wider transition-all duration-300 
+                 hover:bg-cyan-400 shadow-[0_0_10px_rgba(0,217,255,0.3)] 
+                 hover:shadow-[0_0_20px_rgba(0,217,255,0.6)]
+                 disabled:opacity-50"
             style={{ marginTop: '20px', marginBottom: '20px' }}
           >
-            Volver
+           <i className="ri-arrow-left-line mr-2"></i> Volver
           </Link>
           <button
             onClick={loadGames}
-            className="bg-[#5df9f9] text-black font-extralight border-2 border-white hover:bg-[#f95ec8] w-30 h-10 px-4 rounded text-2xl hover:drop-shadow-[0_0_10px_#00ffff]"
+            className="bg-[#00f0ff] text-black text-2xl border-2 border-white px-3 py-1
+                tracking-wider transition-all duration-300 
+                 hover:bg-cyan-400 shadow-[0_0_10px_rgba(0,217,255,0.3)] 
+                 hover:shadow-[0_0_20px_rgba(0,217,255,0.6)]
+                 disabled:opacity-50"
             style={{ marginTop: '20px', marginBottom: '20px' }}
           >
             Actualizar

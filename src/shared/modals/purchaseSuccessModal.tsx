@@ -18,15 +18,8 @@ const PurchaseSuccessModal: React.FC<PurchaseSuccessModalProps> = ({
 }) => {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/80 z-[999]">
-      <div className="relative bg-black/90 text-[#5df9f9] p-8 rounded-lg shadow-lg w-full max-w-md text-center border-2 border-[#5df9f9]">
-        {/* Botón X */}
-        <button
-          onClick={onClose}
-          className="absolute top-3 right-3 text-[#5df9f9] text-2xl font-bold"
-          aria-label="Cerrar"
-        >
-          ×
-        </button>
+      <div className="relative flex flex-col gap-3 bg-black/90 text-[#5df9f9] p-8 rounded-lg shadow-lg w-full max-w-md text-center border-2 border-[#5df9f9]">
+
 
         {/* Imagen */}
         {imageSrc && (
@@ -44,14 +37,18 @@ const PurchaseSuccessModal: React.FC<PurchaseSuccessModalProps> = ({
           {onGoToGarage && (
             <button
               onClick={onGoToGarage}
-              className="bg-[#5df9f9] text-black w-40 py-2 rounded text-xl hover:drop-shadow-[0_0_10px_#00ffff] transition border border-white"
-            >
+              className="bg-[#00f0ff] text-black text-xl border-2 border-white px-3 py-1
+                tracking-wider transition-all duration-300 
+                 hover:bg-cyan-400 shadow-[0_0_10px_rgba(0,217,255,0.3)] 
+                 hover:shadow-[0_0_20px_rgba(0,217,255,0.6)]
+                 disabled:opacity-50"            >
               Ir al Garage
             </button>
           )}
           <button
             onClick={onClose}
-            className="bg-transparent text-white w-32 py-2 rounded text-xl hover:bg-white/10 transition border border-white"
+            className="bg-transparent text-white text-xl border-2 border-white px-3 py-1
+                tracking-wider transition-all duration-300 "
           >
             Cerrar
           </button>

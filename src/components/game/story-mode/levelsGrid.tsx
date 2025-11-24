@@ -1,6 +1,7 @@
 import React, { useState } from "react"
 import type { LevelDtoUi } from "../../../models/ui/story-mode/levelDtoUi";
 import { useNavigate } from "react-router-dom";
+import lock from "../../../assets/images/lock-gold.png";
 
 interface LevelsGridProps {
     levels: LevelDtoUi[];
@@ -47,11 +48,7 @@ export const LevelsGrid: React.FC<LevelsGridProps> = ({ levels }: LevelsGridProp
                     <div className="mb-8 flex justify-center">
                         <div className="relative">
                             <div className="absolute inset-0 bg-yellow-400 blur-md opacity-50" />
-                            <div className="relative flex gap-2 py-4">
-                                {[...Array(9)].map((_, i) => (
-                                    <div key={i} className="w-3 h-3 bg-yellow-400 pixel-corners" />
-                                ))}
-                            </div>
+                          
                         </div>
                     </div>
 
@@ -93,9 +90,17 @@ export const LevelsGrid: React.FC<LevelsGridProps> = ({ levels }: LevelsGridProp
                                                 </div>
                                             )}
 
+                                            {!level.completed && !level.unlocked && (
+                                                <img
+                                                    src={lock}
+                                                    alt="Nivel bloqueado"
+                                                    className="absolute -top-2 -right-2 w-8 h-8 "
+                                                />
+                                            )}
+
                                             {/* Level number */}
                                             <div
-                                                className={`text-6xl font-bold retro-text
+                                                className={`text-6xl font-bold 
                                                     ${!level.unlocked
                                                         ? "text-gray-500"
                                                         : level.completed
@@ -118,7 +123,7 @@ export const LevelsGrid: React.FC<LevelsGridProps> = ({ levels }: LevelsGridProp
                                     {hoveredLevel === level.id && level.unlocked && (
                                         <div className="absolute -top-12 left-1/2 -translate-x-1/2 whitespace-nowrap animate-bounce-slow">
                                             <div className="bg-[#1a0a2e] border-4 border-cyan-400 px-4 py-2 pixel-corners">
-                                                <p className="text-cyan-400 font-bold text-sm retro-text">NIVEL {level.id}</p>
+                                                <p className="text-cyan-400  text-sm t">NIVEL {level.id}</p>
                                             </div>
                                         </div>
                                     )}
@@ -131,11 +136,7 @@ export const LevelsGrid: React.FC<LevelsGridProps> = ({ levels }: LevelsGridProp
                     <div className="flex justify-center">
                         <div className="relative">
                             <div className="absolute inset-0 bg-yellow-400 blur-md opacity-50" />
-                            <div className="relative flex gap-2 py-4">
-                                {[...Array(9)].map((_, i) => (
-                                    <div key={i} className="w-3 h-3 bg-yellow-400 pixel-corners" />
-                                ))}
-                            </div>
+                            
                         </div>
                     </div>
                 </div>
