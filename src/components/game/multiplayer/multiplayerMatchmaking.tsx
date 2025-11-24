@@ -266,8 +266,37 @@ export const MultiplayerMatchmaking = ({ gameIdProp, initialData }: MultiplayerM
       setCarRival(resolvedCar);
     }, [player]);
 
-  const handleVolver = () => {
-    navigate('/menu');
+  const handleVolver = async () => {
+    // Si aún no tenemos IDs simplemente salir
+    if (!partidaId || !jugadorId) {
+      navigate('/menu');
+      return;
+    }
+
+    try {
+      console.log("[Matchmaking] Abandono manual. Marcando perdedor local y preparando desconexión...");
+
+      // Marcar localmente como perdedor para mostrar feedback inmediato
+      setPerdedor(true);
+      setGanador(false);
+
+      // Dar un pequeño margen para que el servidor procese la desconexión y
+      // envíe el GameUpdate al rival con winnerId.
+      setTimeout(async () => {
+        try {
+          if (conn) {
+            await conn.stop();
+          }
+        } catch (e) {
+          console.warn("[Matchmaking] Error al detener conexión:", e);
+        } finally {
+          navigate('/menu');
+        }
+      }, 1200); // ~1.2s de margen
+    } catch (error) {
+      console.error("Error al abandonar la partida:", error);
+      navigate('/menu');
+    }
   };
 
   const reiniciarJuego = () => {
