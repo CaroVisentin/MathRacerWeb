@@ -14,39 +14,40 @@ import type { WildcardQuantities } from "../../../models/ui/story-mode/wildcardQ
 
 export const StoryMode = () => {
   const [mappedWorlds, setMappedWorlds] = useState<WorldDtoUi[]>([]);
- // const navigate = useNavigate();
   const { player } = useAuth();
 
-  const [wildcardQuantities, setWildcardQuantities] =
-    useState<WildcardQuantities>({
-      fireExtinguisher: 0,
-      changeEquation: 0,
-      doubleCount: 0,
-    });
+  const [wildcardQuantities, setWildcardQuantities] = useState<WildcardQuantities>({
+    fireExtinguisher: 0,
+    changeEquation: 0,
+    doubleCount: 0,
+  });
 
   useEffect(() => {
     async function fetchPlayerWorldsScreenInfo() {
       try {
-        const playerWorldsResponse: PlayerWorldsResponseDto =
-          await getPlayerWorlds();
+        const playerWorldsResponse: PlayerWorldsResponseDto = await getPlayerWorlds();
 
         const enrichedWorlds: WorldDtoUi[] = await Promise.all(
           playerWorldsResponse.worlds.map(async (world) => {
             let completedLevels = 0;
+            let totalLevels = 0;
 
-            // Solo traemos niveles si el mundo está desbloqueado
             if (world.id <= playerWorldsResponse.lastAvailableWorldId) {
               const worldLevelsResponse = await getWorldLevels(world.id);
-              completedLevels = worldLevelsResponse.lastCompletedLevelId || 0;
+
+              const levelList = worldLevelsResponse.levels;
+
+              totalLevels = levelList.length;
+              completedLevels = levelList.filter((level) => level.isCompleted).length;
             }
 
-            const completed = completedLevels >= 15;
+            const completed = totalLevels > 0 && completedLevels === totalLevels;
 
             return {
               ...world,
               unlocked: world.id <= playerWorldsResponse.lastAvailableWorldId,
               completedLevels,
-              totalLevels: 15,
+              totalLevels,
               completed,
             };
           })
@@ -61,8 +62,7 @@ export const StoryMode = () => {
 
         setMappedWorlds(enrichedWorlds);
 
-        const playerWildcardsResponse: PlayerWildcardDto[] =
-          await getMyWildcards();
+        const playerWildcardsResponse: PlayerWildcardDto[] = await getMyWildcards();
 
         const wildcards: WildcardQuantities = {
           fireExtinguisher:
@@ -77,14 +77,11 @@ export const StoryMode = () => {
         };
 
         setWildcardQuantities(wildcards);
-
-        // Ya no verificamos wildcards aquí, usamos lastlevelId del player
       } catch (error: unknown) {
         console.error("Error cargando mundos y niveles:", error);
       }
     }
 
-    // ProtectedRoute ya verifica que el jugador tenga los productos básicos
     if (player) {
       fetchPlayerWorldsScreenInfo();
     }
@@ -106,3 +103,4 @@ export const StoryMode = () => {
     </div>
   );
 };
+
