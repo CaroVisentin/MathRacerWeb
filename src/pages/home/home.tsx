@@ -59,7 +59,7 @@ export const Home = () => {
           <div className="flex flex-col gap-3">
             <ActionButton to="/menu">Multijugador</ActionButton>
             <ActionButton to="/modo-historia">Historia</ActionButton>
-            <ActionButton to="/infinite-game">
+            <ActionButton to="/modo-infinito">
               Práctica Libre
             </ActionButton>
           </div>

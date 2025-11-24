@@ -7,19 +7,20 @@ interface ConfirmModalProps {
     cancelText: string;
     onConfirm: () => void;
     onCancel: () => void;
+    className?: string;
 }
-
 const ConfirmModal: React.FC<ConfirmModalProps> = ({
     title,
     message,
     confirmText,
     cancelText,
     onConfirm,
-    onCancel
+    onCancel,
+    className
 }) => {
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black/80 z-[999]">
-            <div className="relative flex flex-col gap-6 bg-black/90 text-white p-8 rounded-lg shadow-lg w-full max-w-md text-center border-2 border-[#5df9f9]">
+            <div className={`relative flex flex-col gap-6 bg-neutral-900/90 text-white p-8 rounded-lg shadow-lg w-full max-w-md text-center border-2 border-[#5df9f9] ${className}`}>
                 <h2 className="text-3xl text-[#00f0ff] mb-6 drop-shadow-[0_0_10px_#00ffff]">
                     {title}
                 </h2>
