@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { getAuth } from "firebase/auth";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import type { QuestionDto } from "../../../models/domain/signalR/questionDto";
 import { LookingForRivalModal } from "../../../shared/modals/lookingForRivalModal";
 import type { PlayerDto } from "../../../models/domain/signalR/playerDto";
@@ -9,7 +8,6 @@ import { EndOfMultiplayerModeModal } from "../../../shared/modals/endOfMultiplay
 import { Wildcards } from "../../../shared/wildcards/wildcards";
 import autoDefault from "../../../assets/images/auto-pista.png";
 import { resolveImageUrl } from "../../../shared/utils/imageResolver";
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import type { GameUpdateDto } from "../../../models/domain/signalR/gameUpdateDto";
 import { useConnection } from "../../../services/signalR/connection";
 import { PowerUpType } from "../../../models/enums/powerUpType";

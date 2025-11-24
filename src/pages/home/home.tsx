@@ -66,9 +66,7 @@ export const Home = () => {
 
           {/* Esquina inferior derecha - Navegación a otras páginas */}
           <div className="flex flex-col gap-3 items-end">
-            {/* <ActionButton size="small" onClick={handleLogout}>
-                  <i className="ri-logout-box-r-line"></i>               
-                </ActionButton> */}
+       
             <ActionButton to="/ranking" size="small">
               <i className="ri-trophy-fill"></i>
             </ActionButton>
