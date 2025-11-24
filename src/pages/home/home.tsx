@@ -1,18 +1,9 @@
 import isologo from "/images/mathi_racer_logo.png";
 import auto from "../../assets/images/auto.png";
 import { ActionButton } from "../../shared/buttons/actionButton";
-import { BatteryStatus } from "../../components/home/batteryStatus";
-import { CoinsDisplay } from "../../components/home/coinsDisplay";
-import { ProfileCard } from "../../components/home/profileCard";
-//import { InfoBox } from "../../components/home/infoBox";
 import { CarDisplay } from "../../components/home/carDisplay";
 import fondoHome from "../../assets/images/fondocity.png";
-//import { Link,useNavigate  } from "react-router-dom";
-//import ErrorConnection from "../../shared/modals/errorConnection";
-import { Link } from "react-router-dom";
 import { useHomeData } from "../../hooks/useHomeData";
-//import { useAuth } from "../../hooks/useAuth";
-import mathi from "../../assets/images/mathisentado.png";
 import { PlayerStatusPanel } from "../../components/home/playerStatusPanel";
 
 

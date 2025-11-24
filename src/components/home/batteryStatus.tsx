@@ -24,7 +24,7 @@ export const BatteryStatus = () => {
     <div className="flex items-end gap-3">
       <div className="flex flex-col justify-space-between align-space-between">
         <img src={batteryIcons.pilabolt} alt="bolt" className="h-7" />
-        <span className="text-base h-6 text-white">{time}</span>
+        <span className="text-2xl h-6 text-center text-white">{time}</span>
       </div>
 
       <div className="flex items-end gap-1">

@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 import { BatteryStatus } from "./batteryStatus";
 import { CoinsDisplay } from "./coinsDisplay";
 import { ProfileCard } from "./profileCard";
-import { InfoBox } from "./infoBox";
 
 interface PlayerStatusPanelProps {
   coins: number;

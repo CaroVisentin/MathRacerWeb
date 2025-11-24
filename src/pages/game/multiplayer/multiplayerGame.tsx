@@ -1,8 +1,6 @@
 import { Link } from "react-router-dom";
-import { StarsBackground } from "../../../shared/backgrounds/starBackground";
 import { useAudio } from "../../../contexts/AudioContext";
 import { useInvitation } from "../../../contexts/invitationContex";
-import mathi from "../../../assets/images/mathi.png";
 import { useEffect } from "react";
 import { useAuth } from "../../../hooks/useAuth";
 

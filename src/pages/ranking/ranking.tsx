@@ -81,7 +81,7 @@ export const RankingPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#1a0a2e] text-white flex flex-col items-center">
+    <div className="min-h-screen max-w-screen bg-[#1a0a2e] text-white flex flex-col items-center overflow-hidden relative py-8 px-4">
       {/* Fondo de estrellas */}
       <StarsBackground />
 
@@ -93,7 +93,7 @@ export const RankingPage = () => {
       {/* Ranking Header */}
       <div className="relative mb-12">
         <div className="px-12 py-3 rounded-lg">
-          <h1 className="text-white text-9xl tracking-wider drop-shadow-[0_0_10px_#00ffff]">
+          <h1 className="text-[#00ffff] text-7xl tracking-wider drop-shadow-[0_0_10px_#00ffff]">
             RANKING
           </h1>
           {currentPlayerPosition > 0 && (

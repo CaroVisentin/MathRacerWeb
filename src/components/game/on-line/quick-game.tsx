@@ -1,11 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import { StarsBackground } from "../../../shared/backgrounds/starBackground";
 import { usePlayer } from "../../../hooks/usePlayer";
 import { useConnection } from "../../../services/signalR/connection";
 import ErrorConnection from "../../../shared/modals/errorConnection";
 import { useAudio } from "../../../contexts/AudioContext";
-import mathi from "../../../assets/images/mathi.png";
 import { getAuth } from "firebase/auth";
 import { MultiplayerMatchmaking } from "../multiplayer/multiplayerMatchmaking";
 import type { GameUpdateDto } from "../../../models/domain/signalR/gameUpdateDto";

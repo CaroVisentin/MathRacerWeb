@@ -1,7 +1,6 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { StarsBackground } from "../../../shared/backgrounds/starBackground";
 import { friendshipService } from "../../../services/friendship/friendshipService";
 import { gameInvitationService } from "../../../services/game/gameInvitationService";
 import { friendMapper } from "../../../models/mappers/friendMapper";
@@ -10,7 +9,6 @@ import type { Friend } from "../../../models/ui/profile/friends/friend";
 import type { FriendDto } from "../../../models/domain/profile/friends/friendDto";
 import Spinner from "../../../shared/spinners/spinner";
 import { useAudio } from "../../../contexts/AudioContext";
-import mathi from "../../../assets/images/mathi.png";
 
 export default function InviteFriends() {
   const { player } = useAuth();
@@ -134,7 +132,7 @@ export default function InviteFriends() {
             placeholder="Buscar amigo por nombre o email..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full p-3 rounded bg-black/6s0 border-2 border-cyan-400 text-white text-xl placeholder-gray-500"
+            className="w-full p-3 rounded bg-black/60 border-2 border-cyan-400 text-white text-xl placeholder-gray-500"
           />
         </div>
 

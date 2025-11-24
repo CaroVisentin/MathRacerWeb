@@ -1,5 +1,3 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import { useAudio } from "../../contexts/AudioContext";
 
@@ -19,9 +17,9 @@ export const BackButton = ({onClick}: BackButtonProps) => {
     return (
         <button
             onClick={handleClick} // -1 significa "una página atrás"
-            className="text-white text-xl px-2 py-1 border  border-white  hover:text-[#f95ec8] hover:animate-coin-flip    drop-shadow-[0_0_10px_#00ffff] "
+            className="inline-flex h-12 w-12 items-center justify-center text-white text-xl border border-white hover:text-[#f95ec8] hover:animate-coin-flip drop-shadow-[0_0_10px_#00ffff]"
         >
-            <FontAwesomeIcon icon={faArrowLeft} className="h-20 w-20 px-1 py-1 " />
+              <i className="ri-arrow-left-line text-2xl"></i>
         </button>
     )
 };

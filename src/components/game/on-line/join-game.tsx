@@ -1,12 +1,12 @@
 
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { StarsBackground } from "../../../shared/backgrounds/starBackground";
 import { getAvailableGames } from "../../../services/game/multiplayer-mode/onlineService";
 import type { AvailableGameDto } from "../../../models/domain/signalR/availbleGameDto";
 import ErrorConnection from "../../../shared/modals/errorConnection";
 import { useAudio } from "../../../contexts/AudioContext";
-import mathi from "../../../assets/images/mathi.png";
+
+
 export default function JoinGame() {
   const navigate = useNavigate();
   const { playBackSound } = useAudio();

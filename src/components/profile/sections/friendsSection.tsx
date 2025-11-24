@@ -8,19 +8,17 @@ import { friendshipService } from "../../../services/friendship/friendshipServic
 import { friendMapper } from "../../../models/mappers/friendMapper";
 import { AddFriendModal } from "../components/addFriendModal";
 import Spinner from "../../../shared/spinners/spinner";
-import { FriendRequestsModal } from "../components/friendRequestsModal";
 import { ConfirmModal } from "../components/confirmDeleteFriendModal";
+import { FriendRequestsList } from "../components/friendRequestsList";
 
 export const AmigosSection = () => {
   //const { player } = usePlayer();
   const { player } = useAuth();
   const [friends, setFriends] = useState<Friend[]>([]);
   const [pendingRequests, setPendingRequests] = useState<Friend[]>([]);
-  const [pendingCount, setPendingCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
-  const [showRequestsModal, setShowRequestsModal] = useState(false);
 
   const [friendToDelete, setFriendToDelete] = useState<Friend | null>(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -53,7 +51,6 @@ export const AmigosSection = () => {
       );
       const mappedRequests = friendMapper.fromDtoList(data);
       setPendingRequests(mappedRequests);
-      setPendingCount(mappedRequests.length);
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : "Error al obtener solicitudes.";
@@ -87,39 +84,59 @@ export const AmigosSection = () => {
     }
   };
 
+  const handleAcceptRequest = async (fromPlayerId: number) => {
+    if (!player?.id) return;
+    setError(null);
+    try {
+      await friendshipService.acceptFriendRequest({
+        fromPlayerId,
+        toPlayerId: player.id,
+      });
+      setPendingRequests((prev) => prev.filter((req) => req.id !== fromPlayerId));
+      await fetchFriends();
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : "Error al aceptar la solicitud.";
+      setError(errorMessage);
+    }
+  };
+
+  const handleRejectRequest = async (fromPlayerId: number) => {
+    if (!player?.id) return;
+    setError(null);
+    try {
+      await friendshipService.rejectFriendRequest({
+        fromPlayerId,
+        toPlayerId: player.id,
+      });
+      setPendingRequests((prev) => prev.filter((req) => req.id !== fromPlayerId));
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : "Error al rechazar la solicitud.";
+      setError(errorMessage);
+    }
+  };
+
   return (
     <div className="flex flex-col items-center w-full h-full bg-[#1a0a2e]">
-      <div className="w-full max-w-2xl flex flex-col h-[calc(100vh-180px)]">
-        <div className="sticky top-0 z-40 bg-[#1a0a2e] flex flex-col items-center gap-4 py-4">
+      <div className="w-full gap-6 pt-10 max-w-2xl flex flex-col h-[calc(100vh-180px)]">
+
+            {!loading && !error && (
+            <FriendRequestsList
+              requests={pendingRequests}
+              onAccept={handleAcceptRequest}
+              onReject={handleRejectRequest}
+              className="mx-4 mt-4"
+            />
+          )}
+        <div className="sticky top-0 z-40 bg-[#1a0a2e] flex flex-col gap-4">
           <span className="text-white text-3xl">Lista de amigos</span>
 
-          <div className="w-full flex justify-between items-center">
-            <button
-              onClick={() => setShowModal(true)}
-              className="bg-[#00f0ff] text-slate-950 border-2 border-white px-8 py-2
-                                text-xl tracking-wider transition-all duration-300 
-                                hover:bg-cyan-400 shadow-[0_0_10px_rgba(0,217,255,0.3)] 
-                                hover:shadow-[0_0_20px_rgba(0,217,255,0.6)]"
-            >
-              AGREGAR AMIGO
-            </button>
-
-            <button
-              onClick={() => setShowRequestsModal(true)}
-              className="relative bg-[#f95ec8] text-white border-2 border-white px-4 py-2
-                            text-xl tracking-wider transition-all duration-300 
-                            hover:bg-pink-500 shadow-[0_0_10px_rgba(249,94,200,0.3)] 
-                            hover:shadow-[0_0_20px_rgba(249,94,200,0.6)]"
-            >
-              <i className="ri-inbox-2-fill text-2xl"></i>
-
-              {pendingCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-600 text-white text-sm rounded-full w-5 h-5 flex items-center justify-center">
-                  {pendingCount}
-                </span>
-              )}
-            </button>
-          </div>
+         
         </div>
 
         <div className="flex-1 overflow-y-auto custom-scrollbar">
@@ -128,6 +145,8 @@ export const AmigosSection = () => {
           {error && (
             <div className="text-red-400 p-4 text-center">Error: {error}</div>
           )}
+
+      
 
           {!loading &&
             !error &&
@@ -141,6 +160,18 @@ export const AmigosSection = () => {
               </div>
             ))}
         </div>
+         <div className="w-full flex pt-3 justify-center">
+            <button
+              onClick={() => setShowModal(true)}
+              className="bg-[#00f0ff] text-slate-950 border-2 border-white px-8 py-2
+                                text-xl tracking-wider transition-all duration-300 
+                                hover:bg-cyan-400 shadow-[0_0_10px_rgba(0,217,255,0.3)] 
+                                hover:shadow-[0_0_20px_rgba(0,217,255,0.6)]"
+            >
+              AGREGAR AMIGO
+            </button>
+
+          </div>
       </div>
 
       {player && (
@@ -150,16 +181,6 @@ export const AmigosSection = () => {
             onClose={() => setShowModal(false)}
             fromPlayerId={player.id}
           />
-          <FriendRequestsModal
-            show={showRequestsModal}
-            onClose={() => setShowRequestsModal(false)}
-            requests={pendingRequests}
-            onRequestsUpdated={() => {
-              fetchFriends();
-              fetchPendingRequests();
-            }}
-          />
-
           <ConfirmModal
             show={showConfirmModal}
             message={`¿Estás seguro de eliminar a ${friendToDelete?.name || "este amigo"} de tu lista de amigos?`}
