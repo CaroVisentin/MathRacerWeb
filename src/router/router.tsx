@@ -16,8 +16,6 @@ import { RegisterPage } from "../pages/register/register";
 import { RankingPage } from "../pages/ranking/ranking";
 import { GaragePage } from "../pages/garage/garage";
 import { StorePage } from "../pages/store/store";
-import { ProductDetailsPage } from "../pages/store/product/[id]";
-import CartPage from "../pages/cart/cart";
 import { MultiplayerGame } from "../components/game/multiplayer/multiplayer";
 import { MultiplayerMatchmaking } from "../components/game/multiplayer/multiplayerMatchmaking";
 import { ProtectedRoute } from "../components/auth/ProtectedRoute";
@@ -113,14 +111,6 @@ const router = createBrowserRouter([
   {
     path: "/store",
     element: <ProtectedRoute> <StorePage /> </ProtectedRoute>
-  },
-  {
-    path: "/store/product/:id",
-    element: <ProtectedRoute> <ProductDetailsPage /> </ProtectedRoute>
-  },
-  {
-    path: "/cart",
-    element: <ProtectedRoute> <CartPage /> </ProtectedRoute>
   },
   {
     path: "/tutorial",

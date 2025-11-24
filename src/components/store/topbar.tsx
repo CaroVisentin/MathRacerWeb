@@ -2,14 +2,11 @@ import { BackButton } from "../../shared/buttons/backButton";
 import { CoinsDisplay } from "../home/coinsDisplay";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faShoppingCart } from "@fortawesome/free-solid-svg-icons";
-import { useCart } from "../../hooks/useCart";
 import { useNavigate } from "react-router-dom";
 import { usePlayer } from "../../hooks/usePlayer";
 
 export const Topbar = () => {
-    const { cart } = useCart();
     const { player } = usePlayer();
-    const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
     const coins = player?.coins ?? 0;
     const navigate = useNavigate();
 
@@ -29,18 +26,7 @@ export const Topbar = () => {
                 </div>
 
                 <div className="flex items-center gap-4">
-                    <button
-                        type="button"
-                        className="relative flex items-center justify-center w-12 h-12 border border-[#00FCFC]"
-                        onClick={() => handleClickCartButton()}
-                    >
-                        <FontAwesomeIcon icon={faShoppingCart} className="text-white h-6 w-6" />
-                        {totalItems > 0 && (
-                            <span className="absolute -top-1 -right-1 flex items-center justify-center w-5 h-5 text-lg text-white bg-[#FF51C2]">
-                                {totalItems}
-                            </span>
-                        )}
-                    </button>
+                 
 
                     <CoinsDisplay coins={coins} />
                 </div>
