@@ -21,3 +21,18 @@ export interface Player {
   equippedCar?: PlayerItem | null;
   equippedCharacter?: PlayerItem | null;
 }
+
+export type BackendPlayer = {
+  id?: number;
+  name?: string;
+  email?: string;
+  lastlevelId?: number;
+  points?: number;
+  coins?: number;
+  background?: PlayerItem | null;
+  car?: PlayerItem | null;
+  character?: PlayerItem | null;
+  equippedBackground?: PlayerItem | null;
+  equippedCar?: PlayerItem | null;
+  equippedCharacter?: PlayerItem | null;
+};

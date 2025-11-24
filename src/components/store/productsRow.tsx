@@ -37,9 +37,9 @@ export const ProductsRow = ({ title, products }: ProductsRowProps) => {
     setSelectedProduct(null);
   };
 
-  const refreshPlayerData = async (playerId: number) => {
+  const refreshPlayerData = async () => {
     try {
-      const updatedPlayer = await getPlayerData(playerId);
+      const updatedPlayer = await getPlayerData();
       setPlayer(updatedPlayer);
       localStorage.setItem("player", JSON.stringify(updatedPlayer));
     } catch (error) {
@@ -80,7 +80,7 @@ export const ProductsRow = ({ title, products }: ProductsRowProps) => {
       );
       setSuccessProductName(selectedProduct.name);
       setSelectedProduct(null);
-      await refreshPlayerData(player.id);
+      await refreshPlayerData();
     } catch (error) {
       console.error("No se pudo completar la compra", error);
       setErrorMessage("No se pudo completar la compra. Intenta nuevamente.");
@@ -117,38 +117,37 @@ export const ProductsRow = ({ title, products }: ProductsRowProps) => {
         {products.map((product) => {
           const isOwned = product.isOwned || newlyOwnedIds.includes(product.id);
           return (
-          <div
-            key={product.id}
-            className={`bg-gray-900 rounded-lg p-2 flex-shrink-0 w-45 flex flex-col items-center border-2 ${getRarityColor(product.rarity)} relative ${
-              isOwned ? "cursor-not-allowed opacity-80" : "cursor-pointer hover:scale-105"
-            } transition-transform`}
-            onClick={() => handleProductClick(product)}
-          >
-            {/* Badge de propiedad */}
-            {isOwned && (
-              <div className="absolute top-2 right-2 bg-green-600 text-white text-xs px-2 py-1 rounded-full z-10">
-                ✓ Tuyo
+            <div
+              key={product.id}
+              className={`bg-gray-900 rounded-lg p-2 flex-shrink-0 w-45 flex flex-col items-center border-2 ${getRarityColor(product.rarity)} relative ${isOwned ? "cursor-not-allowed opacity-80" : "cursor-pointer hover:scale-105"
+                } transition-transform`}
+              onClick={() => handleProductClick(product)}
+            >
+              {/* Badge de propiedad */}
+              {isOwned && (
+                <div className="absolute top-2 right-2 bg-green-600 text-white text-xs px-2 py-1 rounded-full z-10">
+                  ✓ Tuyo
+                </div>
+              )}
+
+              {/* Badge de rareza */}
+              <div className="absolute top-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded z-10">
+                {product.rarity}
               </div>
-            )}
 
-            {/* Badge de rareza */}
-            <div className="absolute top-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded z-10">
-              {product.rarity}
+              <ProductImage product={product} />
+              <h3 className="text-white text-lg text-center">{product.name}</h3>
+              <p className="text-gray-400 text-sm text-center line-clamp-2 mb-2">
+                {product.description}
+              </p>
+              <div className="flex items-center text-white gap-1">
+                <img src={coinImg} className="w-4 h-4" alt="coin" />
+                <span>
+                  {product.price} {product.currency}
+                </span>
+              </div>
             </div>
-
-            <ProductImage product={product} />
-            <h3 className="text-white text-lg text-center">{product.name}</h3>
-            <p className="text-gray-400 text-sm text-center line-clamp-2 mb-2">
-              {product.description}
-            </p>
-            <div className="flex items-center text-white gap-1">
-              <img src={coinImg} className="w-4 h-4" alt="coin" />
-              <span>
-                {product.price} {product.currency}
-              </span>
-            </div>
-          </div>
-        );
+          );
         })}
       </div>
       {selectedProduct && (

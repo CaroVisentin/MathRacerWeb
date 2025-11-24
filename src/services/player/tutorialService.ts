@@ -8,10 +8,12 @@ export const tutorialService = {
       const response = await api.post<ChestResponseDto>(
         `${API_URLS.chest}/complete-tutorial`
       );
+
+      console.log("Response desde tutorialService: ", response)
       return response.data;
     } catch (error) {
+      console.log("Error desde tutorialService: ", error)
       manageError(error);
-      throw error;
     }
   },
 };
