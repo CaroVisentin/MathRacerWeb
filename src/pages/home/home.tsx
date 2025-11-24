@@ -27,7 +27,7 @@ export const Home = () => {
       >
         <div className="absolute pointer-events-none inset-0 bg-black/60"></div>
       </div>
-      
+
       <div className="relative z-10 h-full flex flex-col">
         {/* Isologo */}
         <div className="absolute top-4 left-10">
@@ -39,18 +39,18 @@ export const Home = () => {
         </div>
 
         {/* Esquina superior derecha - Monedas, Perfil, Nivel y Ranking */}
-       <div className={`relative flex flex-col items-end gap-3`}>
-        <div className={`pt-8 pr-6`}>
+        <div className={`relative flex flex-col items-end gap-3`}>
+          <div className={`pt-8 pr-6`}>
 
-        <PlayerStatusPanel
-          coins={homeData.user.coins}
-          level={homeData.user.level}
-          ranking={homeData.user.ranking}
-          backgroundImageUrl={homeData.activeItems.background.imageUrl}
-          profileImageUrl={homeData.activeItems.profile.imageUrl}
-        />
+            <PlayerStatusPanel
+              coins={homeData.user.coins}
+              level={homeData.user.level}
+              ranking={homeData.user.ranking}
+              backgroundImageUrl={homeData.activeItems.background.imageUrl}
+              profileImageUrl={homeData.activeItems.profile.imageUrl}
+            />
 
-        </div>
+          </div>
         </div>
 
 
@@ -66,14 +66,14 @@ export const Home = () => {
 
           {/* Esquina inferior derecha - Navegación a otras páginas */}
           <div className="flex flex-col gap-3 items-end">
-       
+
             <ActionButton to="/ranking" size="small">
               <i className="ri-trophy-fill"></i>
             </ActionButton>
             <ActionButton to="/garage" size="small">
               <i className="ri-store-2-fill"></i>
             </ActionButton>
-            <ActionButton to="/store" size="small">
+            <ActionButton to="/tienda" size="small">
               <i className="ri-shopping-cart-fill"></i>
             </ActionButton>
           </div>
