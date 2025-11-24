@@ -1,13 +1,11 @@
 
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { StarsBackground } from "../../../shared/backgrounds/starBackground";
 import { usePlayer } from "../../../hooks/usePlayer";
 import { createCustomGame } from "../../../services/game/multiplayer-mode/onlineService";
 import ErrorConnection from "../../../shared/modals/errorConnection";
 import type { CreateCustomGameRequestDto } from "../../../models/domain/signalR/createCustomGameDto";
 import { useAudio } from "../../../contexts/AudioContext";
-import mathi from "../../../assets/images/mathi.png";
 
 export default function CreateGame() {
   const { player } = usePlayer();
@@ -95,20 +93,13 @@ export default function CreateGame() {
 
   return (
 
-    // <div
-    //   className="min-h-screen flex items-center justify-center bg-cover bg-center bg-no-repeat px-2"
-    //   style={{ backgroundImage: `url(${StarsBackground})` }}
-    // >
-    <div className="h-screen w-screen bg-[#1C092D] flex  items-center justify-center p-4 overflow-hidden">
-      <div className="absolute inset-0 z-0 pointer-events-none">
-
-        <StarsBackground />
-      </div>
-      <img src={mathi} alt="Mathi" className="absolute top-4 left-4 w-20 h-20 z-10" />
+ 
+    <div className="h-screen w-screen fondo-city flex  items-center justify-center p-4 overflow-hidden">
+  
 
       <form onSubmit={handleSubmit}
-        className="w-full max-w-2xl mx-auto bg-black/90 text-[#5df9f9] p-6 pb-2 rounded-lg shadow-lg ">
-        <h2 className="text-6xl text-[#f95ec8] uppercase text-center mb-10 pb-5 drop-shadow-[0_0_10px_#00ffff]">Crear Partida</h2>
+        className="w-full max-w-2xl mx-auto bg-black/60 text-[#5df9f9] p-6 rounded-lg shadow-lg ">
+        <h2 className="text-6xl text-[#5df9f9] text-center mb-10 pb-5 drop-shadow-[0_0_10px_#00ffff]">Crear Partida</h2>
 
         <label className="block text-3xl font-normal ">
           Nombre de la Partida:
@@ -117,7 +108,7 @@ export default function CreateGame() {
             name="nombrePartida"
             value={formData.nombrePartida}
             onChange={handleChange}
-            className="w-full mt-1 p-2 rounded bg-black/90 border border-gray-600"
+            className="w-full mt-1 p-2 rounded bg-black/60 border border-gray-600"
           />
         </label>
         <label className="block text-3xl font-normal">
@@ -126,7 +117,7 @@ export default function CreateGame() {
             name="privacidad"
             value={formData.privacidad}
             onChange={handleChange}
-            className="w-full mt-1 p-2 rounded bg-black/90 border border-gray-600"
+            className="w-full mt-1 p-2 rounded bg-black/60 border border-gray-600"
           >
             <option value="publica">Pública</option>
             <option value="privada">Privada</option>
@@ -140,7 +131,7 @@ export default function CreateGame() {
               name="contraseña"
               value={formData.contraseña}
               onChange={handleChange}
-              className="w-full mt-1 p-2 rounded bg-black/90 border border-gray-600"
+              className="w-full mt-1 p-2 rounded bg-black/60 border border-gray-600"
             />
           </label>
         )}
@@ -150,7 +141,7 @@ export default function CreateGame() {
             name="dificultad"
             value={formData.dificultad}
             onChange={handleChange}
-            className="w-full mt-1 p-2 rounded bg-black/90 border border-gray-600"
+            className="w-full mt-1 p-2 rounded bg-black/60 border border-gray-600"
           >
             <option value="Facil">Fácil</option>
             <option value="Medio">Medio</option>
@@ -163,7 +154,7 @@ export default function CreateGame() {
             name="tipodeResultado"
             value={formData.tipodeResultado}
             onChange={handleChange}
-            className="w-full mt-1 p-2 rounded bg-black/90 border border-gray-600"
+            className="w-full mt-1 p-2 rounded bg-black/60 border border-gray-600"
           >
             <option value="Mayor">Mayor</option>
             <option value="Menor">Menor</option>
@@ -173,13 +164,21 @@ export default function CreateGame() {
         <div className="flex justify-between mt-6 pt-5 border-t border-gray-700">
           <Link to="/menu"
             onClick={playBackSound}
-            className="bg-[#5df9f9] text-black  border-2 border-white hover:bg-red-700 w-30 h-10 px-4 content-center rounded text-2xl hover:drop-shadow-[0_0_10px_#00ffff]">
-            ← Volver
+            className="text-black hover:bg-red-700 bg-[#00f0ff] text-2xl border-2 border-white px-3 py-1
+                tracking-wider transition-all duration-300 
+                 hover:bg-cyan-400 shadow-[0_0_10px_rgba(0,217,255,0.3)] 
+                 hover:shadow-[0_0_20px_rgba(0,217,255,0.6)]
+                 disabled:opacity-50">
+           <i className="ri-arrow-left-line mr-2"></i> Volver
           </Link>
           <button
             type="submit"
             disabled={loading}
-            className={`bg-[#5df9f9] text-black border-2 border-white w-30 h-10 px-4 rounded text-2xl leading-relaxed hover:drop-shadow-[0_0_10px_#00ffff] ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-[#f95ec8]'
+            className={`bg-[#00f0ff] text-black text-2xl border-2 border-white px-3 py-1
+                tracking-wider transition-all duration-300 
+                 hover:bg-cyan-400 shadow-[0_0_10px_rgba(0,217,255,0.3)] 
+                 hover:shadow-[0_0_20px_rgba(0,217,255,0.6)]
+                 disabled:opacity-50 ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-[#f95ec8]'
               }`}
           >
             {loading ? 'Creando...' : 'Crear'}

@@ -1,6 +1,4 @@
 import { RaceTrack } from "../../../components/game/infinite-mode/raceTrack"
-import playerBackground from "../../../assets/images/backgrounds/f1.png";
-import playerCar from "../../../assets/images/cars/a1.png";
 import { Instruction } from "../../../components/game/infinite-mode/instructions";
 import { QuestionSection } from "../../../components/game/infinite-mode/questionSection";
 import { useEffect, useState } from "react";
@@ -16,10 +14,17 @@ import { InfiniteModeGameHeader } from "../../../components/game/infinite-mode/i
 import ConfirmActionModal from "../../../shared/modals/confirmModalAction";
 import { useNavigate } from "react-router-dom";
 import Spinner from "../../../shared/spinners/spinner";
+import { usePlayer } from "../../../hooks/usePlayer";
+import { resolveImageUrl } from "../../../shared/utils/imageResolver";
 
 export const InfiniteModeGame = () => {
 
     const navigate = useNavigate();
+    const { player } = usePlayer();
+    const playerBackgroundId = player?.equippedBackground?.id ?? player?.background?.id;
+    const playerCarId = player?.equippedCar?.id ?? player?.car?.id;
+    const playerBackground = resolveImageUrl("background", playerBackgroundId);
+    const playerCar = resolveImageUrl("car", playerCarId);
     // Ponerle conitos en zigzag, efectos tipo vibraciones/humito/choque cada vez que responde mal
 
     const [gameData, setGameData] = useState<StartInfiniteGameResponseDto | null>(null);
@@ -116,7 +121,7 @@ export const InfiniteModeGame = () => {
     if (!currentQuestion) return null;
 
     return (
-        <div className="juego w-full h-full bg-black text-white relative">
+        <div className="juego w-full h-full bg-neutral-900 text-white relative">
 
             {isLoading && <Spinner />}
 

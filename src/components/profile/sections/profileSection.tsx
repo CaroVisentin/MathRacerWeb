@@ -27,6 +27,7 @@ export const ProfileSection = () => {
         email={player.email}
         monedas={player.coins}
         puntuacion={player.points}
+        backgroundUrl={homeData?.activeItems.background.imageUrl}
         avatarUrlId={homeData?.activeItems.profile.imageUrl}
       />
     </>

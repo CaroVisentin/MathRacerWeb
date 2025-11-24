@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { type WorldDtoUi } from "../../../models/ui/story-mode/worldDtoUi";
 import { mapOperations } from "../../../models/mappers/operationMapper";
+import lock from "../../../assets/images/lock-grey.png";
 
 interface WorldMapProps {
     mappedWorlds: WorldDtoUi[];
@@ -103,12 +104,10 @@ export const WorldMap = ({ mappedWorlds }: WorldMapProps) => {
                                                         }}
                                                     />
                                                     <div className="absolute inset-0 flex items-center justify-center">
-                                                        <span className="text-5xl font-bold retro-text-shadow text-white">
+                                                        <span className="text-6xl font-bold -shadow text-white">
                                                             {world.id}
                                                         </span>
                                                     </div>
-                                                    <div className="absolute bottom-2 left-4 w-6 h-6 bg-[#1a1a3e] border-2 border-white" />
-                                                    <div className="absolute bottom-2 right-4 w-6 h-6 bg-[#1a1a3e] border-2 border-white" />
                                                     {world.completed && (
                                                         <div className="absolute -top-8 left-1/2 -translate-x-1/2 w-12 h-12 bg-[#ffff00] border-4 border-[#ff9900] flex items-center justify-center animate-bounce-pixel">
                                                             <span className="text-2xl">🏆</span>
@@ -117,12 +116,7 @@ export const WorldMap = ({ mappedWorlds }: WorldMapProps) => {
                                                 </>
                                             ) : (
                                                 <div className="absolute inset-0 bg-[#444466] pixel-grid flex items-center justify-center">
-                                                    <div className="w-16 h-20 border-4 border-[#666688]">
-                                                        <div className="w-full h-8 border-b-4 border-[#666688]" />
-                                                        <div className="w-full h-12 flex items-center justify-center">
-                                                            <div className="w-4 h-6 bg-[#666688]" />
-                                                        </div>
-                                                    </div>
+                                                    <img src={lock} alt="Locked" className="w-13 opacity-50" />
                                                 </div>
                                             )}
                                         </div>
@@ -145,7 +139,7 @@ export const WorldMap = ({ mappedWorlds }: WorldMapProps) => {
 
                                     {/* Tarjeta info */}
                                     <div
-                                        className={`relative border-4 px-6 py-4 min-w-[240px] ${world.unlocked ? "bg-[#1a1a3e]" : "border-[#666688] bg-[#2a2a3e]"
+                                        className={`relative border-4 px-6 py-6 min-w-[240px] ${world.unlocked ? "bg-[#1a1a3e] border-[#F95EC8]" : "border-[#666688] bg-[#2a2a3e]"
                                             }`}
                                     >
                                         <div
@@ -166,7 +160,7 @@ export const WorldMap = ({ mappedWorlds }: WorldMapProps) => {
                                         />
 
                                         <h2
-                                            className={`text-center text-2xl mb-2 retro-text-shadow ${world.unlocked ? "text-[#F95EC8]" : "text-[#666688]"
+                                            className={`text-center text-2xl mb-2 -shadow ${world.unlocked ? "text-[#F95EC8]" : "text-[#666688]"
                                                 }`}
                                         >
                                             {world.name}

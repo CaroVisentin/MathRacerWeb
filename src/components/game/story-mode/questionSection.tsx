@@ -13,7 +13,7 @@ interface QuestionSectionProps {
 
 export const QuestionSection = ({ currentQuestion, selectedAnswer, answerResult, gameSubmitAnswer, handleAnswer, }: QuestionSectionProps) => {
     return (
-        <div className="flex flex-col justify-center items-center h-full gap-5 !mb-10 mt-4 bg-black">
+        <div className="flex flex-col justify-center items-center h-full gap-5 !mb-10 mt-4 bg-neutral-900">
             {/* Ecuación */}
             <EquationSection equation={currentQuestion.equation} />
 

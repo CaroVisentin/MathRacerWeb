@@ -32,7 +32,7 @@ export const AjustesSection = () => {
   };
 
   return (
-    <div className="w-full text-white flex flex-col items-center bg-black gap-6 px-6 pt-8 mt-20">
+    <div className="w-full text-white flex flex-col items-center bg-[#1a0a2e] gap-6 px-6 pt-8 mt-20">
       {/* Sección de sonido separada */}
       <AudioControls />
 
@@ -40,14 +40,14 @@ export const AjustesSection = () => {
       <div className="flex flex-col items-center gap-4 mt-10 mb-10">
         <p className="text-2xl">Cuenta</p>
         <button
-          className="bg-black text-white border-2 border-white px-8 py-2 rounded text-xl tracking-wider transition-all duration-300 hover:bg-white hover:text-black"
+          className="bg-[#1a0a2e] text-white border-2 border-white w-60 py-2 rounded text-xl tracking-wider transition-all duration-300 hover:bg-white hover:text-black"
           onClick={handleLogout}
         >
           Cerrar sesión
         </button>
 
         <button 
-          className="bg-black border-2 border-red-600 text-red-600 px-8 py-2 rounded text-xl tracking-wider transition-all duration-300 hover:bg-red-600 hover:text-white"
+          className="bg-[#1a0a2e] border-2 border-red-600 text-red-600 w-60  py-2 rounded text-xl tracking-wider transition-all duration-300 hover:bg-red-600 hover:text-white"
           onClick={() => setShowDeleteModal(true)}
         >
           Eliminar cuenta

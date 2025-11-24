@@ -1,11 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import { StarsBackground } from "../../../shared/backgrounds/starBackground";
 import { usePlayer } from "../../../hooks/usePlayer";
 import { useConnection } from "../../../services/signalR/connection";
 import ErrorConnection from "../../../shared/modals/errorConnection";
 import { useAudio } from "../../../contexts/AudioContext";
-import mathi from "../../../assets/images/mathi.png";
 import { getAuth } from "firebase/auth";
 import { MultiplayerMatchmaking } from "../multiplayer/multiplayerMatchmaking";
 import type { GameUpdateDto } from "../../../models/domain/signalR/gameUpdateDto";
@@ -128,14 +126,10 @@ export const QuickGame: React.FC = () => {
   }
 
   return (
-    <div className="h-screen w-screen bg-[#1C092D] flex items-center justify-center p-4 overflow-hidden">
-      <div className="absolute inset-0 z-0 pointer-events-none">
-        <StarsBackground />
-      </div>
-      <img src={mathi} alt="Mathi" className="absolute top-4 left-4 w-20 h-20 z-10 correr-imagen" />
+    <div className="h-screen w-screen fondo-city flex items-center justify-center p-4 overflow-hidden">
 
-      <div className="w-full max-w-6xl mx-auto bg-black/90 text-[#5df9f9] p-8 rounded-lg shadow-lg relative z-10">
-        <h1 className="text-8xl text-[#f95ec8] uppercase text-center mb-10 drop-shadow-[0_0_8px_#00ffff]">
+      <div className="w-full max-w-6xl mx-auto bg-black/60 text-[#5df9f9] p-8 rounded-lg shadow-lg relative z-10">
+        <h1 className="text-8xl text-[#5df9f9]  text-center mb-10 drop-shadow-[0_0_8px_#00ffff]">
           Partida Competitiva
         </h1>
 
@@ -182,7 +176,7 @@ export const QuickGame: React.FC = () => {
                 onClick={playBackSound}
                 className="bg-red-600 text-white border-2 border-white px-8 py-3 rounded text-2xl hover:bg-red-700 hover:drop-shadow-[0_0_10px_#ff0000] transition-all"
               >
-                ← Volver
+           <i className="ri-arrow-left-line mr-2"></i> Volver
               </Link>
               <button
                 onClick={handleFindMatch}

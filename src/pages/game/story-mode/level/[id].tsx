@@ -26,6 +26,7 @@ import ErrorModalDuringGame from "../../../../shared/modals/errorModalDuringGame
 import { RewardScreen } from "../../../../components/chest/rewardScreen";
 import { useEnergy } from "../../../../hooks/useEnergy";
 import { usePlayer } from "../../../../hooks/usePlayer";
+import { resolveImageUrl } from "../../../../shared/utils/imageResolver";
 
 export const StoryModeGame = () => {
     const { id } = useParams();
@@ -64,6 +65,10 @@ export const StoryModeGame = () => {
     const [obtainedChest, setObtainedChest] = useState<ChestResponseDto | null>(null);
 
     const { player } = usePlayer();
+    const playerBackgroundId = player?.equippedBackground?.id ?? player?.background?.id;
+    const playerCarId = player?.equippedCar?.id ?? player?.car?.id;
+    const fondoJugadorSrc = resolveImageUrl("background", playerBackgroundId);
+    const autoJugadorSrc = resolveImageUrl("car", playerCarId);
 
     // Guarda la pregunta que se autoenvió (por timeout)
     const [autoSubmittedQuestionIndex, setAutoSubmittedQuestionIndex] = useState<number | null>(null);
@@ -416,7 +421,7 @@ export const StoryModeGame = () => {
                     secondMessage={"Toca el cofre para verlo"}
                 />
             ) : (
-                <div className="juego w-full h-full bg-black text-white relative">
+                <div className="juego w-full h-full bg-neutral-900 text-white relative">
                     {/* Header */}
                     <StoryModeGameHeader
                         startMatch={startMatch}
@@ -468,9 +473,9 @@ export const StoryModeGame = () => {
                             <RaceTrack
                                 playerPosition={playerPosition}
                                 machinePosition={machinePosition}
-                                fondoJugador={`/images/backgrounds/${player?.background?.id}.png`}
+                                fondoJugador={fondoJugadorSrc}
                                 fondoRival={fondoRival}
-                                autoJugador={`/images/cars/${player?.car?.id}.png`}
+                                autoJugador={autoJugadorSrc}
                                 autoRival={auto1}
                             />
 
