@@ -22,54 +22,51 @@ export const Menu = () => {
 
   return (
   
-    <div className="h-screen w-screen bg-[#1C092D] flex flex-col items-center justify-between p-4 overflow-hidden">
-      <div className="absolute inset-0 z-20 pointer-events-none">
-        <img src={mathi} alt="Mathi" className="w-20 h-20  drop-shadow-[0_0_10px_#00ffff] " />
-        <StarsBackground />
-      </div>
-      <h1 className="text-pink-400 text-8xl text-center uppercase tracking-wide mb-12 drop-shadow-[0_0_10px_#00ffff]">
+    <div className="h-screen w-screen fondo-city flex flex-col items-center justify-between p-4 overflow-hidden">
+
+      <h1 className="text-[#5df9f9] text-8xl text-center tracking-wide mb-12 drop-shadow-[0_0_10px_#00ffff]">
         Multijugador
       </h1>
       <div className=" rounded-lg p-8 grid grid-cols-2 gap-6 w-4/5 max-w-screen-lg">
         <Link
           to="/crear"
           onClick={playButtonSound}
-          className="botonGral uppercase tracking-wider transition-all duration-300 ease-out hover:drop-shadow-[0_0_10px_#00ffff] text-center text-5xl"
+          className="botonGral  tracking-wider transition-all duration-300 ease-out hover:drop-shadow-[0_0_10px_#00ffff] text-center text-5xl"
         >
           Crear Partida
         </Link>
         <Link
           to="/unirse-partida"
           onClick={playButtonSound}
-          className="botonGral uppercase hover:drop-shadow-[0_0_10px_#00ffff] text-center text-5xl"
+          className="botonGral  hover:drop-shadow-[0_0_10px_#00ffff] text-center text-5xl"
         >
           Unirse a Partida
         </Link>
         <Link
           to="/invitar-amigo"
           onClick={playButtonSound}
-          className="botonGral uppercase hover:drop-shadow-[0_0_10px_#00ffff] text-center text-5xl"
+          className="botonGral  hover:drop-shadow-[0_0_10px_#00ffff] text-center text-5xl"
         >
           Invitar a un Amigo
         </Link>
         <Link
           to="/invitaciones"
           onClick={playButtonSound}
-          className={`botonGral uppercase hover:drop-shadow-[0_0_10px_#00ffff] text-center text-5xl ${hasInvitation ? 'botonBrillante' : ''}`}
+          className={`botonGral  hover:drop-shadow-[0_0_10px_#00ffff] text-center text-5xl ${hasInvitation ? 'botonBrillante' : ''}`}
         >
           Buzón de Invitaciones
         </Link>
         <Link
           to="/ranking"
           onClick={playButtonSound}
-          className="botonGral uppercase hover:drop-shadow-[0_0_10px_#00ffff] text-center text-5xl"
+          className="botonGral  hover:drop-shadow-[0_0_10px_#00ffff] text-center text-5xl"
         >
           Ranking
         </Link>
         <Link
           to="/partida-rapida"
           onClick={playButtonSound}
-          className="botonGral uppercase hover:drop-shadow-[0_0_10px_#00ffff] text-center  text-5xl"
+          className="botonGral  hover:drop-shadow-[0_0_10px_#00ffff] text-center  text-5xl"
         >
           Partida Competitiva
         </Link>

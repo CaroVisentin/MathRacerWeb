@@ -13,6 +13,7 @@ import { Link } from "react-router-dom";
 import { useHomeData } from "../../hooks/useHomeData";
 //import { useAuth } from "../../hooks/useAuth";
 import mathi from "../../assets/images/mathisentado.png";
+import { PlayerStatusPanel } from "../../components/home/playerStatusPanel";
 
 
 export const Home = () => {
@@ -47,31 +48,27 @@ export const Home = () => {
         </div>
 
         {/* Esquina superior derecha - Monedas, Perfil, Nivel y Ranking */}
-        <div className="absolute top-4 right-4 flex flex-col items-end gap-3 border-amber-300 border-2 rounded-lg p-4">
-          <div className="flex  items-start gap-5">
-            <Link to="/perfil" className="drop-shadow-[0_0_10px_#00ffff]  hover:scale-95" >
-              <ProfileCard imageUrl={homeData.activeItems.profile.imageUrl}  />
-            </Link>
-            <div className="flex flex-col gap-3 ">
-              <div className="  items-center">
-              <BatteryStatus />
-              <CoinsDisplay coins={homeData.user.coins} />
-              </div>
-            </div>
-            
-          </div>
-          {/* <InfoBox>Nivel {homeData.user.level}</InfoBox>
-          <InfoBox>{homeData.user.ranking}</InfoBox> */}
-          <p className="text-[#5df9f9] drop-shadow-[0_0_10px_#00ffff] text-3xl mt-2">Hola, {homeData.user.name} 👋</p>
+       <div className={`relative flex flex-col items-end gap-3`}>
+        <div className={`pt-8 pr-6`}>
+
+        <PlayerStatusPanel
+          coins={homeData.user.coins}
+          level={homeData.user.level}
+          ranking={homeData.user.ranking}
+          backgroundImageUrl={homeData.activeItems.background.imageUrl}
+          profileImageUrl={homeData.activeItems.profile.imageUrl}
+        />
+
         </div>
-        <img src={mathi} alt="Mathi" className="absolute top-80 left-190 w-40 h-40 z-10 drop-shadow-[0_0_10px_#00ffff] " />
+        </div>
+
 
         {/* Esquina inferior izquierda - Modos de juego */}
         <div className="flex flex-1 items-end justify-between px-4 pb-8">
           <div className="flex flex-col gap-3">
             <ActionButton to="/menu">Multijugador</ActionButton>
             <ActionButton to="/modo-historia">Historia</ActionButton>
-            <ActionButton className="pointer-events-none">
+            <ActionButton to="/infinite-game">
               Práctica Libre
             </ActionButton>
           </div>

@@ -44,7 +44,6 @@ export const TabPanel = ({ activeSection, setActiveSection }: TabPanelProps) => 
 
             {/* Placeholder para mantener centrado */}
             <div/>
-             <img src={mathi} alt="Mathi" className="w-20 h-20 pt-2 pr-2 items-end " />
 
         </div >
     );

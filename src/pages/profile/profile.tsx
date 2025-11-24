@@ -16,7 +16,7 @@ export const ProfilePage = () => {
 
   return (         
 
-    <div className="min-h-screen w-full bg-black flex flex-col relative">
+    <div className="min-h-screen w-full bg-[#1a0a2e] flex flex-col relative">
       
       <div className="absolute inset-0 z-0 pointer-events-none">
           <StarsBackground />

@@ -88,9 +88,9 @@ export const AmigosSection = () => {
   };
 
   return (
-    <div className="flex flex-col items-center w-full h-full bg-black">
+    <div className="flex flex-col items-center w-full h-full bg-[#1a0a2e]">
       <div className="w-full max-w-2xl flex flex-col h-[calc(100vh-180px)]">
-        <div className="sticky top-0 z-40 bg-black flex flex-col items-center gap-4 py-4">
+        <div className="sticky top-0 z-40 bg-[#1a0a2e] flex flex-col items-center gap-4 py-4">
           <span className="text-white text-3xl">Lista de amigos</span>
 
           <div className="w-full flex justify-between items-center">

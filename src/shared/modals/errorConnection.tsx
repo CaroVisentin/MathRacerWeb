@@ -1,4 +1,5 @@
 import React from "react";
+import { createPortal } from "react-dom";
 
 interface ErrorConnectionProps {
   message: string;
@@ -6,7 +7,11 @@ interface ErrorConnectionProps {
 }
 
 const ErrorConnection: React.FC<ErrorConnectionProps> = ({ message, onClose }) => {
-  return (
+  if (typeof document === "undefined") {
+    return null;
+  }
+
+  const modalContent = (
     <div className="fixed inset-0 flex items-center justify-center bg-black/70 z-[999]">
       <div className="relative bg-black/90 text-[#5df9f9] p-8 rounded-lg shadow-lg w-full max-w-md text-center">
         {/* Botón X arriba a la derecha */}
@@ -22,11 +27,11 @@ const ErrorConnection: React.FC<ErrorConnectionProps> = ({ message, onClose }) =
         </h2>
 
         <p className="text-xl mb-8">{message}</p>
-
-        
       </div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 };
 
 export default ErrorConnection;

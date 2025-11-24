@@ -23,8 +23,8 @@ export const BatteryStatus = () => {
   return (
     <div className="flex items-end gap-3">
       <div className="flex flex-col justify-space-between align-space-between">
-        <img src={batteryIcons.pilabolt} alt="bolt" className="h-4" />
-        <span className="text-base h-4 text-white">{time}</span>
+        <img src={batteryIcons.pilabolt} alt="bolt" className="h-7" />
+        <span className="text-base h-6 text-white">{time}</span>
       </div>
 
       <div className="flex items-end gap-1">
@@ -33,7 +33,7 @@ export const BatteryStatus = () => {
             key={i}
             src={lvl === "full" ? batteryIcons.pila : batteryIcons.pilaempty}
             alt={lvl}
-            className="w-4 h-8"
+            className="w-7 h-13"
           />
         ))}
       </div>

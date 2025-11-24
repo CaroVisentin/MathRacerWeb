@@ -87,11 +87,25 @@ body {
   padding-right: 20px;
 }
 
-.fondo-multijugador {
-  background-image: url("/src/assets/images/partidas.png");
-  background-size: contain;
+.fondo-city {
+  position: relative;
+  overflow: hidden;
+}
+
+.fondo-city::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("/src/assets/images/fondocity.png");
   background-position: center;
-  background-repeat: no-repeat;
+  background-size: cover;
+  filter: brightness(50%);
+  z-index: 0;
+}
+
+.fondo-city > * {
+  position: relative;
+  z-index: 1;
 }
 
 .titulo {
@@ -110,7 +124,7 @@ body {
 .botonGral {
   font-family: "Jersey 10";
   text-align: center;
-  background-color: rgba(0, 0, 0, 0.512);
+  background-color: rgba(0, 0, 0, 0.455);
   color: #5df9f9;
   border: 4px solid #5df9f9;
   border-radius: 6px;

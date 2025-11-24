@@ -112,14 +112,11 @@ export default function JoinGame() {
   };
 
   return (
-    <div className="h-screen w-screen bg-[#1C092D] flex  items-center justify-center p-4 overflow-hidden">
-      <div className="absolute inset-0 z-0 pointer-events-none">
-        <StarsBackground />
-      </div>
-      <img src={mathi} alt="Mathi" className="absolute top-4 left-4 w-20 h-20 z-10" />
+    <div className="h-screen w-screen fondo-city flex  items-center justify-center p-4 overflow-hidden">
 
-      <div className="w-full max-w-3xl mx-auto bg-black/90 text-[#5df9f9] p-6 pb-2 rounded-lg shadow-lg ">
-        <h1 className="text-6xl text-[#f95ec8] uppercase text-center mb-10 pb-5 drop-shadow-[0_0_10px_#00ffff] ">
+
+      <div className="w-full max-w-3xl mx-auto bg-black/60 text-[#5df9f9] p-6 pb-2 rounded-lg shadow-lg ">
+        <h1 className="text-6xl text-[#5df9f9]  text-center mb-10 pb-5 drop-shadow-[0_0_10px_#00ffff] ">
           Unirse a partida
         </h1>
 

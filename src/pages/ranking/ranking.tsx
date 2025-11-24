@@ -74,14 +74,14 @@ export const RankingPage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-black">
+      <div className="min-h-screen flex items-center justify-center bg-[#1a0a2e]">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-cyan-400" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col items-center">
+    <div className="min-h-screen bg-[#1a0a2e] text-white flex flex-col items-center">
       {/* Fondo de estrellas */}
       <StarsBackground />
 

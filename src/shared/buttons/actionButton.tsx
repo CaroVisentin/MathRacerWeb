@@ -30,8 +30,8 @@ export const ActionButton = ({
 
   const sizeClasses =
     size === "large"
-      ? "w-56 h-16 text-3xl"
-      : "w-16 h-16 text-2xl";
+      ? "w-90 h-20 text-5xl"
+      : "w-20 h-20 text-4xl";
 
   const baseClasses = `
     ${sizeClasses}
@@ -39,7 +39,7 @@ export const ActionButton = ({
     bg-black/50 rounded-sm border-[4px] border-[#5df9f9]
     text-[#5df9f9]
     shadow-[4px_4px_0_#0f0f0f]
-    uppercase tracking-wider font-retro
+    tracking-wider 
     transition-all duration-300 ease-out
     cursor-pointer
     ${className}
