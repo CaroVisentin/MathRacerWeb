@@ -44,10 +44,33 @@ function mapToUiPlayer(data: BackendPlayer): Player {
  */
 export async function getPlayerData(playerId: number): Promise<Player> {
   try {
-    const { data } = await api.get<BackendPlayer>(`/player/${playerId}`);
+    // Intentar con endpoint en plural (consistente con otros endpoints del módulo)
+    const { data } = await api.get<BackendPlayer>(`/players/${playerId}`);
+    return mapToUiPlayer(data);
+  } catch (errPlural: unknown) {
+    // Log sólo para desarrollo; ya que haremos fallback
+    if (import.meta.env.DEV) {
+      console.debug("Fallo /players/{id}, intentando /player/{id}", errPlural);
+    }
+    try {
+      const { data } = await api.get<BackendPlayer>(`/player/${playerId}`);
+      return mapToUiPlayer(data);
+    } catch (error) {
+      console.error("Error al obtener datos del jugador (fallback singular):", error);
+      throw error;
+    }
+  }
+}
+
+/**
+ * Obtiene los datos del jugador por email (respaldo útil cuando el ID no está disponible)
+ */
+export async function getPlayerDataByEmail(email: string): Promise<Player> {
+  try {
+    const { data } = await api.get<BackendPlayer>(`/player/email/${encodeURIComponent(email)}`);
     return mapToUiPlayer(data);
   } catch (error) {
-    console.error("Error al obtener datos del jugador:", error);
+    console.error("Error al obtener jugador por email:", error);
     throw error;
   }
 }
