@@ -14,7 +14,7 @@ export async function getPlayerData(): Promise<Player> {
     const { data } = await api.get<BackendPlayer>(`/player/${userUid}`);
     return mapToUiPlayer(data);
   } catch (error) {
-    console.error("Error al obtener datos del jugador:", error);
+    console.error("Error al obtener jugador por email:", error);
     throw error;
   }
 }
