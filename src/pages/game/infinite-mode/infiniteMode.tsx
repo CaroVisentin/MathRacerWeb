@@ -116,7 +116,7 @@ export const InfiniteModeGame = () => {
     if (!currentQuestion) return null;
 
     return (
-        <div className="juego w-full h-full bg-black text-white relative">
+        <div className="juego w-full h-full bg-neutral-900 text-white relative">
 
             {isLoading && <Spinner />}
 

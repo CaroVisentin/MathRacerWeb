@@ -26,7 +26,7 @@ export const Wildcard = ({
     const inactiveColor = "gray";
     return (
         <div
-            className="flex flex-col items-center justify-center rounded-lg border-2 bg-black transition ${isDisabled ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105 cursor-pointer'} p-2"
+            className="flex flex-col items-center justify-center rounded-lg border-2 bg-neutral-900 transition ${isDisabled ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105 cursor-pointer'} p-2"
             style={{ borderColor: isDisabled ? inactiveColor : color, width, height }}
             onClick={isDisabled ? undefined : onActivate}
         >

@@ -15,6 +15,7 @@ import { useConnection } from "../../../services/signalR/connection";
 import { PowerUpType } from "../../../models/enums/powerUpType";
 import mathi from "../../../assets/images/mathi.png";
 import { usePlayer } from "../../../hooks/usePlayer";
+import { BackButton } from "../../../shared/buttons/backButton";
 
 // IDs para fallback aleatorio (según imageResolver)
 const fondoFallbackIds = [8,5,13,18,19];
@@ -198,7 +199,7 @@ export const MultiplayerGame = () => {
         PowerUpType.DoublePoints
       );
       setPowerUsePosition(true);
-      setMensajeComodin("si contestas bien moves 2 lugares");
+      setMensajeComodin("Si contestas bien avanzas 2 lugares");
       setTimeout(() => setMensajeComodin(null), 2000);
     } catch (error) {
       console.error("Error using Doble Count power-up:", error);
@@ -432,12 +433,10 @@ export const MultiplayerGame = () => {
         p.name.trim().toLowerCase() !== nombreJugador.trim().toLowerCase()
     )?.name ?? "Rival";
   return (
-    <div className="juego w-full h-full bg-black text-white relative">
+    <div className="juego w-full h-full bg-neutral-900 text-white relative">
       {/* HEADER */}
-      <div className="flex justify-between items-center bg-black absolute top-0 left-0 w-full z-10">
-        <button onClick={handleVolver} className="px-3 py-1 rounded">
-          <FontAwesomeIcon icon={faArrowLeft} />
-        </button>
+      <div className="flex justify-between items-center p-1 bg-neutral-900 absolute top-0 left-0 w-full z-10">
+      <BackButton onClick={handleVolver} />
       </div>
 
       {/*modal de busqueda de rival*/}
@@ -471,7 +470,7 @@ export const MultiplayerGame = () => {
               onClick={() => navigate('/menu')}
               className="bg-[#5df9f9] text-black px-6 py-3 rounded text-xl hover:bg-[#f95ec8] transition-colors"
             >
-              Volver al Menú
+           <i className="ri-arrow-left-line mr-2"></i> Volver
             </button>
           </div>
         </div>
@@ -607,7 +606,7 @@ export const MultiplayerGame = () => {
         <div className="flex justify-center items-center mt-6 gap-6 opciones">
           {opciones?.map((opcion, i) => {
             let clases = `border-2 border-white rounded-lg text-4xl transition 
-                        w-20 h-20 `;
+                        w-20 h-20  `;
 
             if (respuestaSeleccionada !== null) {
               if (resultado === "acierto" && opcion === respuestaSeleccionada) {
@@ -623,12 +622,12 @@ export const MultiplayerGame = () => {
               ) {
                 clases += "bg-green-400 opacity-50 cursor-not-allowed"; // muestra cual seria la correcta
               } else {
-                clases += "bg-transparent";
+                clases += "bg-[#0F7079]";
               }
             } else if (penalizado) {
               clases += "opacity-50 cursor-not-allowed";
             } else {
-              clases += "bg-transparent hover:bg-blue-500";
+              clases += "bg-[#0F7079] hover:bg-blue-500";
             }
 
             const mostrarMascota =

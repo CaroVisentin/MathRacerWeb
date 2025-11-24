@@ -93,7 +93,7 @@ export const RankingPage = () => {
       {/* Ranking Header */}
       <div className="relative mb-12">
         <div className="px-12 py-3 rounded-lg">
-          <h1 className="text-[#00ffff] text-7xl tracking-wider drop-shadow-[0_0_10px_#00ffff]">
+          <h1 className="text-[#f95ec8] text-7xl tracking-wider drop-shadow-[0_0_10px_#ffffff]">
             RANKING
           </h1>
           {currentPlayerPosition > 0 && (
@@ -136,11 +136,11 @@ export const RankingPage = () => {
               <div
                 className={`w-full ${blockHeight} border-2 ${
                   color === "cyan"
-                    ? "border-cyan-400 bg-cyan-950"
+                    ? "border-cyan-400 bg-cyan-950 drop-shadow-[0_0_10px_#00ffff]"
                     : color === "yellow"
-                      ? "border-yellow-400 bg-yellow-950"
-                      : "border-red-500 bg-red-950"
-                } flex items-center drop-shadow-[0_0_10px_#00ffff] justify-center`}
+                      ? "border-yellow-400 bg-yellow-950 drop-shadow-[0_0_10px_#ffff00]"
+                      : "border-red-500 bg-red-950 drop-shadow-[0_0_10px_#ff0000]"
+                } flex items-center border-3  justify-center`}
               >
                 <span
                   className={`text-4xl ${

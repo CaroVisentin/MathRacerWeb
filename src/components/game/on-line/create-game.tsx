@@ -98,7 +98,7 @@ export default function CreateGame() {
   
 
       <form onSubmit={handleSubmit}
-        className="w-full max-w-2xl mx-auto bg-black/60 text-[#5df9f9] p-6 pb-2 rounded-lg shadow-lg ">
+        className="w-full max-w-2xl mx-auto bg-black/60 text-[#5df9f9] p-6 rounded-lg shadow-lg ">
         <h2 className="text-6xl text-[#5df9f9] text-center mb-10 pb-5 drop-shadow-[0_0_10px_#00ffff]">Crear Partida</h2>
 
         <label className="block text-3xl font-normal ">
@@ -164,13 +164,21 @@ export default function CreateGame() {
         <div className="flex justify-between mt-6 pt-5 border-t border-gray-700">
           <Link to="/menu"
             onClick={playBackSound}
-            className="bg-[#5df9f9] text-black  border-2 border-white hover:bg-red-700 w-30 h-10 px-4 content-center rounded text-2xl hover:drop-shadow-[0_0_10px_#00ffff]">
-            ← Volver
+            className="text-black hover:bg-red-700 bg-[#00f0ff] text-2xl border-2 border-white px-3 py-1
+                tracking-wider transition-all duration-300 
+                 hover:bg-cyan-400 shadow-[0_0_10px_rgba(0,217,255,0.3)] 
+                 hover:shadow-[0_0_20px_rgba(0,217,255,0.6)]
+                 disabled:opacity-50">
+           <i className="ri-arrow-left-line mr-2"></i> Volver
           </Link>
           <button
             type="submit"
             disabled={loading}
-            className={`bg-[#5df9f9] text-black border-2 border-white w-30 h-10 px-4 rounded text-2xl leading-relaxed hover:drop-shadow-[0_0_10px_#00ffff] ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-[#f95ec8]'
+            className={`bg-[#00f0ff] text-black text-2xl border-2 border-white px-3 py-1
+                tracking-wider transition-all duration-300 
+                 hover:bg-cyan-400 shadow-[0_0_10px_rgba(0,217,255,0.3)] 
+                 hover:shadow-[0_0_20px_rgba(0,217,255,0.6)]
+                 disabled:opacity-50 ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-[#f95ec8]'
               }`}
           >
             {loading ? 'Creando...' : 'Crear'}

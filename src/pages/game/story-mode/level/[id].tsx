@@ -416,7 +416,7 @@ export const StoryModeGame = () => {
                     secondMessage={"Toca el cofre para verlo"}
                 />
             ) : (
-                <div className="juego w-full h-full bg-black text-white relative">
+                <div className="juego w-full h-full bg-neutral-900 text-white relative">
                     {/* Header */}
                     <StoryModeGameHeader
                         startMatch={startMatch}

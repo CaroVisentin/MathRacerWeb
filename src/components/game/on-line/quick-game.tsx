@@ -176,7 +176,7 @@ export const QuickGame: React.FC = () => {
                 onClick={playBackSound}
                 className="bg-red-600 text-white border-2 border-white px-8 py-3 rounded text-2xl hover:bg-red-700 hover:drop-shadow-[0_0_10px_#ff0000] transition-all"
               >
-                ← Volver
+           <i className="ri-arrow-left-line mr-2"></i> Volver
               </Link>
               <button
                 onClick={handleFindMatch}

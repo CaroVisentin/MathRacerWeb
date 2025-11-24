@@ -79,7 +79,7 @@ export const Menu = () => {
                  hover:shadow-[0_0_20px_rgba(0,217,255,0.6)]
                  disabled:opacity-50"
         >
-          Volver
+           <i className="ri-arrow-left-line mr-2"></i> Volver
         </Link>
       </div>
     </div>

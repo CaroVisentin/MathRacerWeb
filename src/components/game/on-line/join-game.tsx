@@ -219,14 +219,22 @@ export default function JoinGame() {
           <Link
             to="/menu"
             onClick={playBackSound}
-            className="bg-[#5df9f9] text-black font-extralight border-2 border-white transition-all duration-300 hover:bg-red-700 w-20 h-10 px-4 content-center rounded text-2xl hover:drop-shadow-[0_0_10px_#00ffff]"
+            className="bg-[#00f0ff] text-black text-2xl border-2 border-white px-3 py-1
+                tracking-wider transition-all duration-300 
+                 hover:bg-cyan-400 shadow-[0_0_10px_rgba(0,217,255,0.3)] 
+                 hover:shadow-[0_0_20px_rgba(0,217,255,0.6)]
+                 disabled:opacity-50"
             style={{ marginTop: '20px', marginBottom: '20px' }}
           >
-            Volver
+           <i className="ri-arrow-left-line mr-2"></i> Volver
           </Link>
           <button
             onClick={loadGames}
-            className="bg-[#5df9f9] text-black font-extralight border-2 border-white hover:bg-[#f95ec8] w-30 h-10 px-4 rounded text-2xl hover:drop-shadow-[0_0_10px_#00ffff]"
+            className="bg-[#00f0ff] text-black text-2xl border-2 border-white px-3 py-1
+                tracking-wider transition-all duration-300 
+                 hover:bg-cyan-400 shadow-[0_0_10px_rgba(0,217,255,0.3)] 
+                 hover:shadow-[0_0_20px_rgba(0,217,255,0.6)]
+                 disabled:opacity-50"
             style={{ marginTop: '20px', marginBottom: '20px' }}
           >
             Actualizar

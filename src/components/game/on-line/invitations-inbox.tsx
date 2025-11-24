@@ -192,7 +192,8 @@ export default function InvitationsInbox() {
                        hover:shadow-[0_0_20px_rgba(0,217,255,0.6)]"
             style={{ marginTop: "20px", marginBottom: "20px" }}
           >
-            Volver al Menú
+           <i className="ri-arrow-left-line mr-2"></i> Volver
+
           </Link>
         </div>
       </div>

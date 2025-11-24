@@ -206,13 +206,15 @@ export default function InviteFriends() {
           <Link
             to="/menu"
             onClick={playBackSound}
-            className="bg-[#00f0ff] text-black text-2xl border-2 border-white px-6 py-2
-                       tracking-wider transition-all duration-300 
-                       hover:bg-cyan-400 shadow-[0_0_10px_rgba(0,217,255,0.3)] 
-                       hover:shadow-[0_0_20px_rgba(0,217,255,0.6)]"
+            className="bg-[#00f0ff] text-black text-2xl border-2 border-white px-3 py-1
+                tracking-wider transition-all duration-300 
+                 hover:bg-cyan-400 shadow-[0_0_10px_rgba(0,217,255,0.3)] 
+                 hover:shadow-[0_0_20px_rgba(0,217,255,0.6)]
+                 disabled:opacity-50"
             style={{ marginTop: "20px", marginBottom: "20px" }}
           >
-            Volver al Menú
+           <i className="ri-arrow-left-line mr-2"></i> Volver
+
           </Link>
         </div>
       </div>

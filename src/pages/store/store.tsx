@@ -89,7 +89,7 @@ export const StorePage = () => {
   };
 
   return (
-    <div className="min-h-screen w-screen flex flex-col bg-black">
+    <div className="min-h-screen w-screen flex flex-col bg-neutral-900">
       {/* Topbar */}
       <Topbar />
       <CategorySelector
