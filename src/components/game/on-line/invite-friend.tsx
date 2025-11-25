@@ -55,7 +55,7 @@ export default function InviteFriends() {
     setError(null);
 
     try {
-      
+
       const response = await gameInvitationService.sendInvitation({
         invitedFriendId: friendId,
         difficulty: selectedDifficulty,
@@ -85,14 +85,14 @@ export default function InviteFriends() {
 
   return (
     <div className="h-screen w-screen fondo-city flex flex-col items-center justify-start">
-    <AppHeader />
-      <div className="w-full max-w-5xl mx-auto bg-black/60 text-[#5df9f9] px-6 py-3 rounded-lg shadow-lg overflow-auto custom-scrollbar">
+      <AppHeader />
+      <div className="w-full max-w-5xl mx-auto bg-black/60 text-[#5df9f9] px-6 py-2 rounded-lg shadow-lg flex flex-col min-h-[calc(100vh-140px)] max-h-[calc(100vh-80px)]">
         <h1 className="text-6xl text-[#5df9f9]  text-center mb-10 pb-5 drop-shadow-[0_0_10px_#00ffff]">
           Invitar amigo
         </h1>
 
         <div className="text-center mb-6">
-          <p className="text-cyan-400 text-lg">
+          <p className="text-[#5df9f9] text-lg">
             Seleccioná la dificultad y el resultado esperado, luego elegí un amigo para invitarlo
           </p>
         </div>
@@ -100,11 +100,11 @@ export default function InviteFriends() {
         {/* Selectores de configuración del juego */}
         <div className="grid grid-cols-2 gap-4 mb-6">
           <div>
-            <label className="block text-cyan-400 text-xl mb-2">Dificultad:</label>
+            <label className="block text-[#5df9f9] text-xl mb-2">Dificultad:</label>
             <select
               value={selectedDifficulty}
               onChange={(e) => setSelectedDifficulty(e.target.value)}
-              className="w-full p-3 rounded bg-black/60 border-2 border-cyan-400 text-white text-xl"
+              className="w-full p-3 rounded bg-black/60 border-2 border-[#5df9f9] text-white text-xl"
             >
               <option value="Facil">Fácil</option>
               <option value="Medio">Medio</option>
@@ -113,11 +113,11 @@ export default function InviteFriends() {
           </div>
 
           <div>
-            <label className="block text-cyan-400 text-xl mb-2">Resultado esperado:</label>
+            <label className="block text-[#5df9f9] text-xl mb-2">Resultado esperado:</label>
             <select
               value={selectedExpectedResult}
               onChange={(e) => setSelectedExpectedResult(e.target.value)}
-              className="w-full p-3 rounded bg-black/60 border-2 border-cyan-400 text-white text-xl"
+              className="w-full p-3 rounded bg-black/60 border-2 border-[#5df9f9] text-white text-xl"
             >
               <option value="Mayor">Mayor</option>
               <option value="Menor">Menor</option>
@@ -133,7 +133,7 @@ export default function InviteFriends() {
             placeholder="Buscar amigo por nombre o email..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full p-3 rounded bg-black/60 border-2 border-cyan-400 text-white text-xl placeholder-gray-500"
+            className="w-full p-3 rounded bg-black/60 border-2 border-[#5df9f9]text-white text-xl placeholder-gray-500"
           />
         </div>
 
@@ -158,49 +158,55 @@ export default function InviteFriends() {
         )}
 
         {!loading && !error && friends.length > 0 && (
-          <table className="w-full text-left border border-white ">
-            <thead className="bg-cyan-300 text-black text-2xl drop-shadow-[0_0_10px_#00ffff]">
-              <tr>
-                <th className="p-2">Avatar</th>
-                <th className="p-2">Nombre</th>
-                <th className="p-2">Score</th>
-                <th className="p-2">Acción</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredFriends.length === 0 ? (
+          <div className="flex-1 overflow-auto custom-scrollbar">
+            <table className="w-full text-left border border-white">
+              <thead className="bg-[#00f0ff] text-black text-2xl drop-shadow-[0_0_10px_#00ffff]">
                 <tr>
-                  <td colSpan={4} className="p-4 text-center text-gray-400 text-xl">
-                    No se encontraron amigos con ese nombre
-                  </td>
+                  <th className="p-2">Avatar</th>
+                  <th className="p-2">Nombre</th>
+                  <th className="p-2 text-center">Score</th>
+                  <th className="p-2 text-end">Acción</th>
                 </tr>
-              ) : (
-                filteredFriends.map((friend) => (
-                  <tr key={friend.id} className="border-t border-cyan-500">
-                    <td className="p-2 text-xl">
-                      <img
-                        src={friend.avatarUrl}
-                        alt={friend.name}
-                        className="w-12 h-12 rounded-full object-cover border-2 border-cyan-400"
-                      />
-                    </td>
-                    <td className="p-2 text-xl">{friend.name}</td>
-                    <td className="p-2 text-xl">{friend.points}</td>
-                    <td className="p-2 text-xl">
-                      <button
-                        onClick={() => handleInvite(friend.id)}
-                        disabled={sendingTo === friend.id}
-                        title="Invitar a jugar"
-                        className="bg-[#5df9f9] text-black font-extralight hover:bg-[#f95ec8] w-24 h-8 py-1 rounded text-xl leading-relaxed hover:drop-shadow-[0_0_10px_#00ffff] disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        {sendingTo === friend.id ? "..." : "Invitar"}
-                      </button>
+              </thead>
+              <tbody>
+                {filteredFriends.length === 0 ? (
+                  <tr>
+                    <td colSpan={4} className="p-4 text-center text-gray-400 text-xl">
+                      No se encontraron amigos con ese nombre
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                ) : (
+                  filteredFriends.map((friend) => (
+                    <tr key={friend.id} className="border-t border-cyan-500">
+                      <td className="p-2 text-xl">
+                        <img
+                          src={friend.avatarUrl}
+                          alt={friend.name}
+                          className="w-12 h-12 rounded-full object-cover border-2 border-cyan-400"
+                        />
+                      </td>
+                      <td className="p-2 text-xl">{friend.name}</td>
+                      <td className="p-2 text-xl text-center">{friend.points}</td>
+                      <td className="p-2 text-xl text-end">
+                        <button
+                          onClick={() => handleInvite(friend.id)}
+                          disabled={sendingTo === friend.id}
+                          title="Invitar a jugar"
+                          className=" bg-[#00f0ff] text-black text-2xl border-2 border-white px-3 py-1
+                tracking-wider transition-all duration-300 
+                 hover:bg-cyan-400 shadow-[0_0_10px_rgba(0,217,255,0.3)] 
+                 hover:shadow-[0_0_20px_rgba(0,217,255,0.6)]
+                 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {sendingTo === friend.id ? "..." : "Invitar"}
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         )}
 
         <div className="flex justify-center mt-3 pt-2 border-t border-gray-700">
@@ -212,9 +218,9 @@ export default function InviteFriends() {
                  hover:bg-cyan-400 shadow-[0_0_10px_rgba(0,217,255,0.3)] 
                  hover:shadow-[0_0_20px_rgba(0,217,255,0.6)]
                  disabled:opacity-50"
-            style={{ marginTop: "20px", marginBottom: "20px" }}
+            style={{ marginTop: "20px", marginBottom: "10px" }}
           >
-           <i className="ri-arrow-left-line mr-2"></i> Volver
+            <i className="ri-arrow-left-line mr-2"></i> Volver
 
           </Link>
         </div>
