@@ -25,7 +25,7 @@ export const AppHeader = () => {
       <button
         type="button"
         onClick={handleLogoClick}
-        className="flex items-center gap-3 text-white font-semibold tracking-wide drop-shadow-[0_0_12px_rgba(0,255,255,0.7)]"
+        className="flex cursor-pointer items-center gap-3 text-white font-semibold tracking-wide drop-shadow-[0_0_12px_rgba(0,255,255,0.7)]"
       >
         <img src={ISOLOGO_SRC} alt="MathRacer" className="h-14 w-auto" />
       </button>
@@ -45,7 +45,7 @@ export const AppHeader = () => {
         <button
           type="button"
           onClick={handleProfileClick}
-          className="h-16 w-16 rounded-full border-4 border-[#f95ec8] overflow-hidden shadow-[0_0_15px_rgba(249,94,200,0.7)] hover:scale-105 transition"
+          className="h-16 w-16 rounded-full border-4 border-[#f95ec8] overflow-hidden shadow-[0_0_15px_rgba(249,94,200,0.7)] hover:scale-105 transition cursor-pointer"
         >
           <img src={profileImage} alt={player?.name ?? "Perfil"} className="w-full h-full object-cover" />
         </button>

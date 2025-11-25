@@ -17,6 +17,7 @@ import {
 import { resolveImageUrl } from "../../shared/utils/imageResolver";
 import ErrorConnection from "../../shared/modals/errorConnection";
 import { AppHeader } from "../../components/shared/appHeader";
+import { getPlayerData } from "../../services/player/playerService";
 
 export const GaragePage = () => {
   const { player, setPlayer } = usePlayer();
@@ -140,30 +141,28 @@ export const GaragePage = () => {
       if (activeCategory === "characters") setCharacters(updateActive);
       if (activeCategory === "backgrounds") setBackgrounds(updateActive);
 
-      // Actualizar el player en el contexto para que el home se actualice
+      // Refrescar player desde backend para reflejar cambios en todo el sitio
       if (player) {
-        const updatedPlayer = { ...player };
-        const newItem = {
-          id: selectedItemId,
-          name: selected.name,
-          description: "",
-          price: 0,
-          productType: type,
-        };
-
-        if (activeCategory === "cars") {
-          updatedPlayer.car = newItem;
-        } else if (activeCategory === "characters") {
-          updatedPlayer.character = newItem;
-        } else if (activeCategory === "backgrounds") {
-          updatedPlayer.background = newItem;
-        }
-        setPlayer(updatedPlayer);
-        // Actualizar localStorage también
         try {
-          localStorage.setItem("player", JSON.stringify(updatedPlayer));
-        } catch (e) {
-          console.warn("No se pudo actualizar player en storage:", e);
+          const latestPlayer = await getPlayerData();
+          const mergedPlayer = {
+            ...player,
+            car: latestPlayer.car ?? player.car,
+            background: latestPlayer.background ?? player.background,
+            character: latestPlayer.character ?? player.character,
+            equippedCar: latestPlayer.equippedCar ?? player.equippedCar,
+            equippedBackground:
+              latestPlayer.equippedBackground ?? player.equippedBackground,
+            equippedCharacter:
+              latestPlayer.equippedCharacter ?? player.equippedCharacter,
+          };
+          setPlayer(mergedPlayer);
+          localStorage.setItem("player", JSON.stringify(mergedPlayer));
+        } catch (fetchError) {
+          console.warn(
+            "No se pudo refrescar parcialmente el jugador tras activar un item",
+            fetchError
+          );
         }
       }
     } catch {

@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import type { ChestResponseDto } from "../../models/domain/chest/chestResponseDto";
 import type { ChestItemDto } from "../../models/domain/chest/chestItemDto";
-import { productFolderMap } from "../../shared/utils/imageResolver";
+import { productFolderMap, resolveImageUrl, type ProductVisualType } from "../../shared/utils/imageResolver";
 import { isLightColor } from "../../shared/utils/colorUtil";
 
 interface RewardsListProps {
@@ -44,7 +44,14 @@ export const RewardsList: React.FC<RewardsListProps> = ({
               title = item.product?.name ?? "Producto misterioso";
               description = item.product?.description ?? "";
               color = item.product?.rarityColor ?? "#c0be9a";
-              imageSrc = `/images/${productFolderMap[item.product?.productType ?? 0] ?? "product"}/${item.product?.id}.png`;
+              const folder = productFolderMap[item.product?.productType ?? 0];
+              const visualType: ProductVisualType =
+                folder === "cars"
+                  ? "car"
+                  : folder === "characters"
+                  ? "character"
+                  : "background";
+              imageSrc = resolveImageUrl(visualType, item.product?.id);
               quantity = item.quantity;
               break;
 
