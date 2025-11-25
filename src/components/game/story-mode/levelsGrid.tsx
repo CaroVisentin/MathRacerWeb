@@ -21,7 +21,7 @@ export const LevelsGrid: React.FC<LevelsGridProps> = ({ levels }: LevelsGridProp
     };
 
     return (
-        <div className="relative min-h-screen bg-[#1a0a2e] overflow-auto py-6">
+        <div className="relative min-h-screen bg-[#1a0a2e] py-6">
             {/* Scanline effect */}
             <div className="pointer-events-none absolute inset-0 z-50 opacity-10">
                 <div className="h-full w-full bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,#000_2px,#000_4px)]" />

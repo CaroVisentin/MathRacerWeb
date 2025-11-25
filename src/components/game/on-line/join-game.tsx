@@ -249,34 +249,37 @@ export default function JoinGame() {
 
         {/* Modal para contraseña */}
         {showPasswordModal && selectedGame && (
-          <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-            <div className="bg-black/90 border-2 border-cyan-400 rounded-lg p-6 max-w-md w-full mx-4">
-              <h2 className="text-2xl text-[#f95ec8] mb-4">Partida Privada</h2>
-              <p className="text-white mb-4">Esta partida requiere contraseña</p>
+          <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+            <div className="bg-gray-900 p-6 rounded w-full max-w-md mx-4 flex flex-col gap-4 border border-gray-800">
+              <h2 className="text-white text-center text-2xl">Partida Privada</h2>
+              <p className="text-gray-200 text-center">
+                Esta partida requiere contraseña
+              </p>
               <input
                 type="password"
                 value={password}
                 onChange={e => setPassword(e.target.value)}
                 placeholder="Ingresa la contraseña"
-                className="w-full p-2 bg-black border border-gray-600 text-white mb-4"
+                className="p-2 rounded w-full bg-gray-800 text-white border border-gray-700"
               />
-              <div className="flex gap-4">
+              <div className="flex flex-col items-center gap-3 sm:flex-row sm:gap-4 sm:justify-center">
                 <button
                   onClick={() => {
                     setShowPasswordModal(false);
                     setPassword('');
                   }}
-                  className="flex-1 bg-red-600 text-white py-2 rounded hover:bg-red-700"
+                  className="w-full sm:w-auto text-red-500 hover:text-red-600"
                 >
                   Cancelar
                 </button>
                 <button
                   onClick={handlePasswordSubmit}
-                  className="bg-[#00f0ff] text-black text-2xl border-2 border-white px-3 py-1
-                tracking-wider transition-all duration-300 
+                  className="w-full sm:w-auto bg-[#00f0ff] text-slate-950 border-2 border-white px-6 py-2
+                text-xl tracking-wider transition-all duration-300 
                  hover:bg-cyan-400 shadow-[0_0_10px_rgba(0,217,255,0.3)] 
                  hover:shadow-[0_0_20px_rgba(0,217,255,0.6)]
                  disabled:opacity-50"
+                  disabled={!password.trim()}
                 >
                   Unirse
                 </button>

@@ -89,7 +89,7 @@ export const LevelMap = () => {
       />
 
       {/* Grilla de niveles */}
-      <div className="flex-1 overflow-auto">
+      <div className="flex-1 overflow-auto custom-scrollbar">
         <LevelsGrid levels={levels} />
       </div>
 
