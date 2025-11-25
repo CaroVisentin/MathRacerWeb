@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { AppHeader } from "../../components/shared/appHeader";
-import { SpecialOffer } from "../../components/store/specialOffer";
 import { ProductsSection } from "../../components/store/productsSection";
 import { CoinsSection } from "../../components/store/coinsSection";
 import { CategorySelector } from "../../components/store/categorySelector";

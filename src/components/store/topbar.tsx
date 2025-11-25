@@ -1,5 +1,4 @@
 import { BackButton } from "../../shared/buttons/backButton";
-import { usePlayer } from "../../hooks/usePlayer";
 
 export const Topbar = () => {
 
