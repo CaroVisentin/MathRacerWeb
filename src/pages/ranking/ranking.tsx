@@ -9,6 +9,7 @@ import { getRankingTop10 } from "../../services/player/rankingService";
 import { usePlayer } from "../../hooks/usePlayer";
 import ErrorConnection from "../../shared/modals/errorConnection";
 import type { AxiosError } from "axios";
+import { AppHeader } from "../../components/shared/appHeader";
 
 export const RankingPage = () => {
   const { player } = usePlayer();
@@ -81,7 +82,10 @@ export const RankingPage = () => {
   }
 
   return (
-    <div className="min-h-screen max-w-screen bg-[#1a0a2e] text-white flex flex-col items-center overflow-hidden relative py-8 px-4">
+    <div className="bg-[#1a0a2e]">
+      <AppHeader />
+
+    <div className="min-h-screen max-w-screen  text-white flex flex-col items-center overflow-hidden relative py-8 px-4">
       {/* Fondo de estrellas */}
       <StarsBackground />
 
@@ -92,7 +96,7 @@ export const RankingPage = () => {
 
       {/* Ranking Header */}
       <div className="relative mb-12">
-        <div className="px-12 py-3 rounded-lg">
+        <div className="px-12 pb-3 rounded-lg">
           <h1 className="text-[#f95ec8] text-7xl tracking-wider drop-shadow-[0_0_10px_#ffffff]">
             RANKING
           </h1>
@@ -222,6 +226,7 @@ export const RankingPage = () => {
       {error && (
         <ErrorConnection message={error} onClose={() => setError(null)} />
       )}
+    </div>
     </div>
   );
 };

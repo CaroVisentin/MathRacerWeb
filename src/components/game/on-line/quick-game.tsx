@@ -129,15 +129,15 @@ export const QuickGame: React.FC = () => {
     <div className="h-screen w-screen fondo-city flex items-center justify-center p-4 overflow-hidden">
 
       <div className="w-full max-w-6xl mx-auto bg-black/60 text-[#5df9f9] p-8 rounded-lg shadow-lg relative z-10">
-        <h1 className="text-8xl text-[#5df9f9]  text-center mb-10 drop-shadow-[0_0_8px_#00ffff]">
+        <h1 className="text-7xl text-[#5df9f9]  text-center mb-10 drop-shadow-[0_0_8px_#00ffff]">
           Partida Competitiva
         </h1>
 
         <div className="text-center mb-8">
-          <p className="text-5xl text-white mb-4 ">
+          <p className="text-4xl text-white mb-4 ">
             Jugador: <span className="text-[#5df9f9] ">{player?.name || "Invitado"}</span>
           </p>
-          <p className="text-lg text-gray-300 font-sans">
+          <p className="text-lg text-gray-300">
             Se te emparejará automáticamente con otro jugador disponible
           </p>
         </div>
@@ -162,7 +162,7 @@ export const QuickGame: React.FC = () => {
           <div className="space-y-6 pt-4 ">
             <div className="bg-black/70 border-2 border-[#5df9f9] rounded-lg p-6">
               <h3 className="text-4xl text-[#f95ec8] mb-4">Reglas de la Partida Competitiva:</h3>
-              <ul className="text-white text-2xl font-sans space-y-2">
+              <ul className="text-white text-2xl space-y-2">
                 <li>• Matchmaking automático con jugadores en línea</li>
                 <li>• Dificultad y configuración aleatoria</li>
                 <li>• Gana el primero en completar todas las preguntas correctamente</li>

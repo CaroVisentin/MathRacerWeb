@@ -41,8 +41,6 @@ export const TopBar = ({ headerText }: TopBarProps) => {
         </div>
       </div>
 
-      {/* Vidas + temporizador */}
-      <LivesAndTimer />
     </div>
   );
 };

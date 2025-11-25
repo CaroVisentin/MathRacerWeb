@@ -5,6 +5,7 @@ import { getAvailableGames } from "../../../services/game/multiplayer-mode/onlin
 import type { AvailableGameDto } from "../../../models/domain/signalR/availbleGameDto";
 import ErrorConnection from "../../../shared/modals/errorConnection";
 import { useAudio } from "../../../contexts/AudioContext";
+import { AppHeader } from '../../shared/appHeader';
 
 
 export default function JoinGame() {
@@ -112,170 +113,180 @@ export default function JoinGame() {
   };
 
   return (
-    <div className="h-screen w-screen fondo-city flex  items-center justify-center p-4 overflow-hidden">
+    <div className="h-screen w-screen fondo-city flex flex-col items-center justify-start overflow-hidden">
+      <AppHeader />
+      <div className="pt-5 w-full flex flex-col items-center flex-1 overflow-auto ">
+        <div className="w-full max-w-5xl mx-auto bg-black/50 text-[#5df9f9] p-6 pb-2 rounded-lg shadow-lg mt-4">
+          <h1 className="text-6xl text-[#5df9f9]  text-center mb-10 pb-5 drop-shadow-[0_0_10px_#00ffff] ">
+            Unirse a partida
+          </h1>
 
+          <div className="grid grid-cols-3 gap-4 mb-4 mt-2.5">
+            <input
+              type="text"
+              placeholder="Nombre"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              className="w-full mt-1 p-2 rounded bg-black/90 border border-gray-600"
+            />
+            <select
+              value={difficulty}
+              onChange={e => setDifficulty(e.target.value)}
+              className="w-full mt-1 p-2 rounded bg-black/90 border border-gray-600"
+            >
+              <option value="">Todas las dificultades</option>
+              <option value="Facil">Fácil</option>
+              <option value="Medio">Media</option>
+              <option value="Dificil">Difícil</option>
+            </select>
+            <select
+              value={privacy}
+              onChange={e => setPrivacy(e.target.value)}
+              className="w-full mt-1 p-2 rounded bg-black/90 border border-gray-600"
+            >
+              <option value="">Todas</option>
+              <option value="Pública">Pública</option>
+              <option value="Privada">Privada</option>
+            </select>
+          </div>
 
-      <div className="w-full max-w-3xl mx-auto bg-black/60 text-[#5df9f9] p-6 pb-2 rounded-lg shadow-lg ">
-        <h1 className="text-6xl text-[#5df9f9]  text-center mb-10 pb-5 drop-shadow-[0_0_10px_#00ffff] ">
-          Unirse a partida
-        </h1>
-
-        <div className="grid grid-cols-3 gap-4 mb-4 mt-2.5">
-          <input
-            type="text"
-            placeholder="Nombre"
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            className="w-full mt-1 p-2 rounded bg-black/90 border border-gray-600"
-          />
-          <select
-            value={difficulty}
-            onChange={e => setDifficulty(e.target.value)}
-            className="w-full mt-1 p-2 rounded bg-black/90 border border-gray-600"
-          >
-            <option value="">Todas las dificultades</option>
-            <option value="Facil">Fácil</option>
-            <option value="Medio">Media</option>
-            <option value="Dificil">Difícil</option>
-          </select>
-          <select
-            value={privacy}
-            onChange={e => setPrivacy(e.target.value)}
-            className="w-full mt-1 p-2 rounded bg-black/90 border border-gray-600"
-          >
-            <option value="">Todas</option>
-            <option value="Pública">Pública</option>
-            <option value="Privada">Privada</option>
-          </select>
-        </div>
-
-        {loading ? (
-          <div className="text-center py-8 text-white">Cargando partidas...</div>
-        ) : (
-          <>
-            <table className="w-full text-left border border-white" style={{ marginTop: '20px' }}>
-              <thead className="bg-cyan-300 text-black drop-shadow-[0_0_10px_#00ffff]">
-                <tr>
-                  <th className="p-2">Nombre</th>
-                  <th className="p-2">Jugadores</th>
-                  <th className="p-2">Dificultad</th>
-                  <th className="p-2">Privacidad</th>
-                  <th className="p-2">Acción</th>
-                </tr>
-              </thead>
-              <tbody>
-                {displayedGames.length === 0 ? (
+          {loading ? (
+            <div className="text-center py-8 text-white">Cargando partidas...</div>
+          ) : (
+            <>
+              <table className="w-full text-left border border-white" style={{ marginTop: '20px' }}>
+                <thead className="bg-cyan-300 text-black drop-shadow-[0_0_10px_#00ffff]">
                   <tr>
-                    <td colSpan={5} className="p-4 text-center text-white">
-                      No hay partidas disponibles
-                    </td>
+                    <th className="p-2">Nombre</th>
+                    <th className="p-2">Jugadores</th>
+                    <th className="p-2">Dificultad</th>
+                    <th className="p-2">Privacidad</th>
+                    <th className="p-2">Acción</th>
                   </tr>
-                ) : (
-                  displayedGames.map((game) => (
-                    <tr key={game.gameId} className="border-t border-cyan-500">
-                      <td className="p-2">{game.gameName}</td>
-                      <td className="p-2">{game.currentPlayers}/{game.maxPlayers}</td>
-                      <td className="p-2">{game.difficulty}</td>
-                      <td className="p-2">{game.isPrivate ? '🔒 Privada' : '🌐 Pública'}</td>
-                      <td className="p-2">
-                        <button
-                          onClick={() => handleJoinClick(game)}
-                          disabled={game.isFull}
-                          className={`bg-[#5df9f9] text-black font-extralight w-15 h-8 py-1 rounded text-xl leading-relaxed ${game.isFull
-                              ? 'opacity-50 cursor-not-allowed'
-                              : 'hover:bg-[#f95ec8] hover:drop-shadow-[0_0_10px_#00ffff]'
-                            }`}
-                        >
-                          {game.isFull ? 'Llena' : 'Unirse'}
-                        </button>
+                </thead>
+                <tbody>
+                  {displayedGames.length === 0 ? (
+                    <tr>
+                      <td colSpan={5} className="p-4 text-center text-white">
+                        No hay partidas disponibles
                       </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+                  ) : (
+                    displayedGames.map((game) => (
+                      <tr key={game.gameId} className="border-t border-cyan-500">
+                        <td className="p-2">{game.gameName}</td>
+                        <td className="p-2">{game.currentPlayers}/{game.maxPlayers}</td>
+                        <td className="p-2">{game.difficulty}</td>
+                        <td className="p-2">{game.isPrivate ? '🔒 Privada' : '🌐 Pública'}</td>
+                        <td className="p-2">
+                          <button
+                            onClick={() => handleJoinClick(game)}
+                            disabled={game.isFull}
+                            className={`bg-[#00f0ff] text-black text-2xl border-2 border-white
+                tracking-wider transition-all duration-300 
+                 hover:bg-cyan-400 shadow-[0_0_10px_rgba(0,217,255,0.3)] 
+                 hover:shadow-[0_0_20px_rgba(0,217,255,0.6)]
+                 font-extralight w-17 px-2 text-xl leading-relaxed ${game.isFull
+                                ? 'opacity-50 cursor-not-allowed'
+                                : 'hover:bg-[#f95ec8] hover:drop-shadow-[0_0_10px_#00ffff]'
+                              }`}
+                          >
+                            {game.isFull ? 'Llena' : 'Unirse'}
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
 
-            <div className="flex justify-around items-center text-2xl mt-10 space-x-4 text-white hover:drop-shadow-[0_0_10px_#00ffff] hover:text-[#f95ec8]">
-              <button
-                onClick={() => setCurrentPage(p => Math.max(p - 1, 1))}
-                disabled={currentPage === 1}
-                className={currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}
-              >
-                &lt;-
-              </button>
-              <span>Página {currentPage} de {totalPages || 1}</span>
-              <button
-                onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))}
-                disabled={currentPage === totalPages || totalPages === 0}
-                className={currentPage === totalPages || totalPages === 0 ? 'opacity-50 cursor-not-allowed' : ''}
-              >
-                &gt;
-              </button>
-            </div>
-          </>
-        )}
+              <div className="flex justify-around items-center text-2xl mt-10 space-x-4 text-white hover:drop-shadow-[0_0_10px_#00ffff] hover:text-[#f95ec8]">
+                <button
+                  onClick={() => setCurrentPage(p => Math.max(p - 1, 1))}
+                  disabled={currentPage === 1}
+                  className={currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}
+                >
+                  &lt;-
+                </button>
+                <span>Página {currentPage} de {totalPages || 1}</span>
+                <button
+                  onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))}
+                  disabled={currentPage === totalPages || totalPages === 0}
+                  className={currentPage === totalPages || totalPages === 0 ? 'opacity-50 cursor-not-allowed' : ''}
+                >
+                  &gt;
+                </button>
+              </div>
+            </>
+          )}
 
-        <div className="flex justify-between mt-3 pt-2 ">
-          <Link
-            to="/menu"
-            onClick={playBackSound}
-            className="bg-[#00f0ff] text-black text-2xl border-2 border-white px-3 py-1
+          <div className="flex justify-between mt-3 pt-2 ">
+            <Link
+              to="/menu"
+              onClick={playBackSound}
+              className="bg-[#00f0ff] text-black text-2xl border-2 border-white px-3 py-1
                 tracking-wider transition-all duration-300 
                  hover:bg-cyan-400 shadow-[0_0_10px_rgba(0,217,255,0.3)] 
                  hover:shadow-[0_0_20px_rgba(0,217,255,0.6)]
                  disabled:opacity-50"
-            style={{ marginTop: '20px', marginBottom: '20px' }}
-          >
-           <i className="ri-arrow-left-line mr-2"></i> Volver
-          </Link>
-          <button
-            onClick={loadGames}
-            className="bg-[#00f0ff] text-black text-2xl border-2 border-white px-3 py-1
+              style={{ marginTop: '20px', marginBottom: '20px' }}
+            >
+              <i className="ri-arrow-left-line mr-2"></i> Volver
+            </Link>
+            <button
+              onClick={loadGames}
+              className="bg-[#00f0ff] text-black text-2xl border-2 border-white px-3 py-1
                 tracking-wider transition-all duration-300 
                  hover:bg-cyan-400 shadow-[0_0_10px_rgba(0,217,255,0.3)] 
                  hover:shadow-[0_0_20px_rgba(0,217,255,0.6)]
                  disabled:opacity-50"
-            style={{ marginTop: '20px', marginBottom: '20px' }}
-          >
-            Actualizar
-          </button>
-        </div>
-      </div>
-
-      {/* Modal para contraseña */}
-      {showPasswordModal && selectedGame && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-          <div className="bg-black/90 border-2 border-cyan-400 rounded-lg p-6 max-w-md w-full mx-4">
-            <h2 className="text-2xl text-[#f95ec8] mb-4">Partida Privada</h2>
-            <p className="text-white mb-4">Esta partida requiere contraseña</p>
-            <input
-              type="password"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              placeholder="Ingresa la contraseña"
-              className="w-full p-2 rounded bg-black border border-gray-600 text-white mb-4"
-            />
-            <div className="flex gap-4">
-              <button
-                onClick={() => {
-                  setShowPasswordModal(false);
-                  setPassword('');
-                }}
-                className="flex-1 bg-red-600 text-white py-2 rounded hover:bg-red-700"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={handlePasswordSubmit}
-                className="flex-1 bg-[#5df9f9] text-black py-2 rounded hover:bg-[#f95ec8]"
-              >
-                Unirse
-              </button>
-            </div>
+              style={{ marginTop: '20px', marginBottom: '20px' }}
+            >
+              Actualizar
+            </button>
           </div>
         </div>
-      )}
 
+        {/* Modal para contraseña */}
+        {showPasswordModal && selectedGame && (
+          <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+            <div className="bg-black/90 border-2 border-cyan-400 rounded-lg p-6 max-w-md w-full mx-4">
+              <h2 className="text-2xl text-[#f95ec8] mb-4">Partida Privada</h2>
+              <p className="text-white mb-4">Esta partida requiere contraseña</p>
+              <input
+                type="password"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                placeholder="Ingresa la contraseña"
+                className="w-full p-2 bg-black border border-gray-600 text-white mb-4"
+              />
+              <div className="flex gap-4">
+                <button
+                  onClick={() => {
+                    setShowPasswordModal(false);
+                    setPassword('');
+                  }}
+                  className="flex-1 bg-red-600 text-white py-2 rounded hover:bg-red-700"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={handlePasswordSubmit}
+                  className="bg-[#00f0ff] text-black text-2xl border-2 border-white px-3 py-1
+                tracking-wider transition-all duration-300 
+                 hover:bg-cyan-400 shadow-[0_0_10px_rgba(0,217,255,0.3)] 
+                 hover:shadow-[0_0_20px_rgba(0,217,255,0.6)]
+                 disabled:opacity-50"
+                >
+                  Unirse
+                </button>
+              </div>
+            </div>
+          </div>
+
+        )}
+
+      </div>
       {/* Modal de error */}
       {showModal && (
         <ErrorConnection

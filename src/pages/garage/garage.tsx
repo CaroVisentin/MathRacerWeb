@@ -16,6 +16,7 @@ import {
 } from "../../services/player/garageService";
 import { resolveImageUrl } from "../../shared/utils/imageResolver";
 import ErrorConnection from "../../shared/modals/errorConnection";
+import { AppHeader } from "../../components/shared/appHeader";
 
 export const GaragePage = () => {
   const { player, setPlayer } = usePlayer();
@@ -188,6 +189,10 @@ export const GaragePage = () => {
             {/* Contenido principal */}
             <div className="relative z-20 flex flex-col h-full">
                 {/* Topbar */}
+                <div className="bg-black/70">
+                <AppHeader />
+                </div>
+                
                 <Topbar
                     activeCategory={activeCategory}
                     setActiveCategory={setActiveCategory}
