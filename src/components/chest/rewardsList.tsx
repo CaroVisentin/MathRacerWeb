@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import type { ChestResponseDto } from "../../models/domain/chest/chestResponseDto";
 import type { ChestItemDto } from "../../models/domain/chest/chestItemDto";
-import { productFolderMap, resolveImageUrl, type ProductVisualType } from "../../shared/utils/imageResolver";
+import { productFolderMap, resolveImageUrl } from "../../shared/utils/imageResolver";
 import { isLightColor } from "../../shared/utils/colorUtil";
 
 interface RewardsListProps {
@@ -40,20 +40,21 @@ export const RewardsList: React.FC<RewardsListProps> = ({
           console.log("Chest item:", item);
 
           switch (item.type) {
-            case "Product":
+            case "Product": {
               title = item.product?.name ?? "Producto misterioso";
               description = item.product?.description ?? "";
               color = item.product?.rarityColor ?? "#c0be9a";
-              const folder = productFolderMap[item.product?.productType ?? 0];
-              const visualType: ProductVisualType =
-                folder === "cars"
+              imageSrc = resolveImageUrl(
+                productFolderMap[item.product?.productType ?? 0] === "cars"
                   ? "car"
-                  : folder === "characters"
-                  ? "character"
-                  : "background";
-              imageSrc = resolveImageUrl(visualType, item.product?.id);
+                  : productFolderMap[item.product?.productType ?? 0] === "characters"
+                    ? "character"
+                    : "background",
+                item.product?.id
+              );
               quantity = item.quantity;
               break;
+            }
 
             case "Wildcard":
               title = item.wildcard?.name ?? "Comodín";
