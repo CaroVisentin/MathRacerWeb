@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import isologo from "/images/mathi_racer_logo.png";
 import auto from "../../assets/images/auto.png";
 import { ActionButton } from "../../shared/buttons/actionButton";
@@ -5,10 +6,16 @@ import { CarDisplay } from "../../components/home/carDisplay";
 import fondoHome from "../../assets/images/fondocity.png";
 import { useHomeData } from "../../hooks/useHomeData";
 import { PlayerStatusPanel } from "../../components/home/playerStatusPanel";
+import { useEnergy } from "../../hooks/useEnergy";
 
 
 export const Home = () => {
   const { homeData } = useHomeData();
+  const { refreshEnergy } = useEnergy();
+
+  useEffect(() => {
+    refreshEnergy();
+  }, [refreshEnergy]);
 
   if (!homeData) {
     return (

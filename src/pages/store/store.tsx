@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import { Topbar } from "../../components/store/topbar";
-import { SpecialOffer } from "../../components/store/specialOffer";
+import { AppHeader } from "../../components/shared/appHeader";
 import { ProductsSection } from "../../components/store/productsSection";
 import { CoinsSection } from "../../components/store/coinsSection";
 import { CategorySelector } from "../../components/store/categorySelector";
@@ -8,6 +7,7 @@ import { usePlayer } from "../../hooks/usePlayer";
 import { getCars, getCharacters, getBackgrounds, getCoinsPackage } from "../../services/player/storeService";
 import type { ProductDto } from "../../models/domain/store/productDto";
 import type { CoinPackageDto } from "../../models/domain/store/coinPackageDto";
+import { Topbar } from "../../components/store/topbar";
 
 export const StorePage = () => {
   const [activeCategory, setActiveCategory] = useState<
@@ -90,7 +90,7 @@ export const StorePage = () => {
 
   return (
     <div className="min-h-screen w-full flex flex-col bg-neutral-900 overflow-x-hidden">
-      {/* Topbar */}
+      <AppHeader />
       <Topbar />
       <CategorySelector
         activeCategory={activeCategory}
@@ -100,7 +100,7 @@ export const StorePage = () => {
       {/* Contenido principal */}
       <div className="flex-1 flex flex-col overflow-y-auto px-4 gap-6">
         {/* Oferta especial */}
-        {activeCategory !== "coins" && <SpecialOffer />}
+     
 
         {/* Sección de productos */}
         {loading && (

@@ -56,7 +56,7 @@ export const WorldMap = ({ mappedWorlds }: WorldMapProps) => {
             </div>
 
             {/* Pista */}
-            <div className="relative h-full px-6 py-24 overflow-x-auto" style={{ scrollBehavior: "smooth" }}>
+            <div className="relative h-full px-6 py-24 overflow-x-auto custom-scrollbar" style={{ scrollBehavior: "smooth" }}>
                 <div className="relative h-full" style={{ width: `${containerWidth}px` }}>
                     <svg ref={svgRef} className="absolute inset-0 w-full h-full" />
 

@@ -434,7 +434,7 @@ export const MultiplayerGame = () => {
         p.name.trim().toLowerCase() !== nombreJugador.trim().toLowerCase()
     )?.name ?? "Rival";
   return (
-    <div className="juego w-full h-full bg-neutral-900 text-white relative">
+    <div className="juego w-full h-screen bg-neutral-900 text-white relative">
       {/* HEADER */}
       <div className="flex justify-between items-center p-1 bg-neutral-900 absolute top-0 left-0 w-full z-10">
         <BackButton onClick={handleVolver} />

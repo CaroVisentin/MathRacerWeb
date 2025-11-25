@@ -137,7 +137,8 @@ export const QuickGame: React.FC = () => {
           {/* <p className="text-5xl text-white mb-4 ">
             Jugador: <span className="text-[#5df9f9] ">{player?.name || "Invitado"}</span>
           </p> */}
-          <p className="text-lg text-gray-300 font-sans">
+         
+          <p className="text-lg text-gray-300">
             Se te emparejará automáticamente con otro jugador disponible
           </p>
         </div>
@@ -162,7 +163,7 @@ export const QuickGame: React.FC = () => {
           <div className="space-y-6 pt-4 ">
             {/* <div className="bg-black/70 border-2 border-[#5df9f9] rounded-lg p-6">
               <h3 className="text-4xl text-[#f95ec8] mb-4">Reglas de la Partida Competitiva:</h3>
-              <ul className="text-white text-2xl font-sans space-y-2">
+              <ul className="text-white text-2xl space-y-2">
                 <li>• Matchmaking automático con jugadores en línea</li>
                 <li>• Dificultad y configuración aleatoria</li>
                 <li>• Gana el primero en completar todas las preguntas correctamente</li>
