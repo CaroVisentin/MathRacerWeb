@@ -14,7 +14,7 @@ export const SelectionSidebar = <T extends ItemSelectable>({
   setSelectedItemId,
 }: SelectionSidebarProps<T>) => {
   return (
-    <div className="w-70 bg-black p-2 flex flex-col gap-2 overflow-y-auto max-h-[90vh] rounded-lg">
+    <div className="w-70 bg-black/70 p-2 flex flex-col gap-2 overflow-y-auto max-h-[90vh] rounded-lg custom-scrollbar">
       <h2 className="text-white text-center text-xl font-semibold mb-2">
         {title}
       </h2>

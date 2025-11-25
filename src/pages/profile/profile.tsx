@@ -6,6 +6,7 @@ import { AjustesSection } from "../../components/profile/sections/settingsSectio
 import { useNavigate } from "react-router-dom";
 import { RulesButton } from "../../shared/buttons/buttonReglas";
 import { StarsBackground } from "../../shared/backgrounds/starBackground";
+import { AppHeader } from "../../components/shared/appHeader";
 
 
 export const ProfilePage = () => {
@@ -17,6 +18,7 @@ export const ProfilePage = () => {
   return (         
 
     <div className="min-h-screen w-full bg-[#1a0a2e] flex flex-col relative">
+      <AppHeader />
       
       <div className="absolute inset-0 z-0 pointer-events-none">
           <StarsBackground />
