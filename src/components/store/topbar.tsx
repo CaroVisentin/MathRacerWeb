@@ -1,10 +1,6 @@
 import { BackButton } from "../../shared/buttons/backButton";
-import { CoinsDisplay } from "../home/coinsDisplay";
-import { usePlayer } from "../../hooks/usePlayer";
 
 export const Topbar = () => {
-    const { player } = usePlayer();
-    const coins = player?.coins ?? 0;
 
     return (
         <div className="w-full max-w-full overflow-x-hidden relative z-30 flex flex-col p-2">
@@ -16,9 +12,7 @@ export const Topbar = () => {
                     TIENDA
                 </div>
 
-                <div className="flex items-center gap-4">
-                    <CoinsDisplay coins={coins} />
-                </div>
+          
 
             </div>
         </div>

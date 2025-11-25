@@ -49,22 +49,16 @@ export const RegisterPage = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log("=== INICIANDO REGISTRO ===");
-        
+
         if (!validateInputs()) {
-            console.log("Validación de inputs falló");
             setShowErrorModal(true);
             return;
         }
 
         try {
-            console.log("Llamando a register...");
             await register(email, password, username)
-            console.log("Register exitoso, navegando al tutorial...");
-            
             navigate("/tutorial");
         } catch (error) {
-            console.error("Error en handleSubmit:", error);
             setErrorMessage((error as Error).message || "Error desconocido");
             setShowErrorModal(true);
         }
@@ -90,10 +84,11 @@ export const RegisterPage = () => {
             </div>
 
             {/* Formulario */}
+    <div className="bg-black/50 px-6 py-3 rounded-lg drop-shadow-lg">
+
             <div className="relative z-10 w-full max-w-2xl px-6">
                 {/* Logo con bloque detrás */}
                 <div className="!mb-6 flex justify-center">
-                    <div className="bg-black/50 px-6 py-3 rounded-lg drop-shadow-lg">
                         <img
                             src={isologo}
                             alt="Math Racer Logo"
@@ -113,8 +108,8 @@ export const RegisterPage = () => {
                                 type="text"
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
-                                className="w-full px-4 py-3 bg-[#04121E] border-2 border-cyan-400 
-                                text-white placeholder-[#00FCFC] focus:outline-none focus:ring-2 focus:ring-cyan-400 
+                                className="w-full px-4 py-3 bg-black/60 border-2 border-[#5df9f9] 
+                                text-white placeholder-[#5df9f9] focus:outline-none focus:ring-2 focus:ring-[#5df9f9] 
                                 focus:border-transparent transition-all"
                                 placeholder="Usuario"
                             />
@@ -123,8 +118,8 @@ export const RegisterPage = () => {
                                 type="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                className="w-full px-4 py-3 bg-[#04121E] border-2 border-cyan-400 
-                                text-white placeholder-[#00FCFC] focus:outline-none focus:ring-2 focus:ring-cyan-400 
+                                className="w-full px-4 py-3 bg-black/60 border-2 border-[#5df9f9] 
+                                text-white placeholder-[#5df9f9] focus:outline-none focus:ring-2 focus:ring-[#5df9f9] 
                                 focus:border-transparent transition-all"
                                 placeholder="Email"
                             />
@@ -138,14 +133,14 @@ export const RegisterPage = () => {
                                     type={showPassword ? "text" : "password"}
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className="w-full px-4 py-3 bg-[#04121E] border-2 border-cyan-400 text-white placeholder-[#00FCFC] 
-                                    focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent transition-all pr-12"
+                                    className="w-full px-4 py-3 bg-black/60 border-2 border-[#5df9f9] text-white placeholder-[#5df9f9] 
+                                    focus:outline-none focus:ring-2 focus:ring-[#5df9f9] focus:border-transparent transition-all pr-12"
                                     placeholder="Contraseña"
                                 />
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-cyan-400 hover:text-cyan-300 transition-colors"
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#5df9f9] hover:text-cyan-300 transition-colors"
                                 >
                                     {showPassword ? (
                                         <FontAwesomeIcon icon={faEyeSlash} className="w-5 h-5" />
@@ -161,14 +156,14 @@ export const RegisterPage = () => {
                                     type={showConfirmPassword ? "text" : "password"}
                                     value={confirmPassword}
                                     onChange={(e) => setConfirmPassword(e.target.value)}
-                                    className="w-full px-4 py-3 bg-[#04121E] border-2 border-cyan-400 text-white placeholder-[#00FCFC] 
-                                    focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent transition-all pr-12"
+                                    className="w-full px-4 py-3 bg-black/60 border-2 border-[#5df9f9] text-white placeholder-[#5df9f9] 
+                                    focus:outline-none focus:ring-2 focus:ring-[#5df9f9] focus:border-transparent transition-all pr-12"
                                     placeholder="Confirmar contraseña"
                                 />
                                 <button
                                     type="button"
                                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-cyan-400 hover:text-cyan-300 transition-colors"
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#5df9f9] hover:text-cyan-300 transition-colors"
                                 >
                                     {showConfirmPassword ? (
                                         <FontAwesomeIcon icon={faEyeSlash} className="w-5 h-5" />
@@ -184,7 +179,7 @@ export const RegisterPage = () => {
                     <div className="flex flex-col !space-y-4">
                         <button
                             type="submit"
-                            className="w-full py-2 bg-cyan-400 hover:bg-cyan-300 text-black 
+                            className="w-full py-2 bg-[#5df9f9] hover:bg-cyan-300 text-black 
                             transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-cyan-400/50
                             text-2xl"
                         >

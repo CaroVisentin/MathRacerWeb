@@ -1,4 +1,4 @@
-import { Navigate} from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 
 interface ProtectedRouteProps {
@@ -31,11 +31,10 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     }
 
     // Nuevo criterio: si NO tiene los 3 productos básicos (car, background, character) debe hacer el tutorial
-     const lacksBasics = !player.car || !player.background || !player.character;
-     if (lacksBasics && location.pathname !== '/tutorial') {
-         console.log('Jugador sin productos básicos, redirigiendo al tutorial...');
-         return <Navigate to="/tutorial" replace />;
-     }
+    const lacksBasics = !player.car || !player.background || !player.character;
+    if (lacksBasics && location.pathname !== '/tutorial') {
+        return <Navigate to="/tutorial" replace />;
+    }
 
     return <>{children}</>;
 };

@@ -26,14 +26,12 @@ export const useGameActions = () => {
         try {
             // FindMatch maneja todo: creación de jugador, búsqueda o creación de partida
             await invoke("FindMatch", playerUid);
-            
+
             setLoading(false);
-            console.log("Búsqueda de partida rápida iniciada para:", playerUid);
         } catch (err) {
             const errorMsg = err instanceof Error ? err.message : "Error al buscar partida rápida.";
             setError(errorMsg);
             setLoading(false);
-            console.error("Error en buscarPartidaRapida:", err);
             throw err;
         }
     };
@@ -50,9 +48,8 @@ export const useGameActions = () => {
         try {
             // FindMatchWithMatchmaking usa puntos de ranking para emparejar
             await invoke("FindMatchWithMatchmaking", playerUid);
-            
+
             setLoading(false);
-            console.log("Búsqueda de partida rankeada iniciada para:", playerUid);
         } catch (err) {
             const errorMsg = err instanceof Error ? err.message : "Error al buscar partida rankeada.";
             setError(errorMsg);
@@ -74,9 +71,8 @@ export const useGameActions = () => {
         try {
             // JoinGame obtiene el UID de Firebase automáticamente del token JWT
             await invoke("JoinGame", gameId, password || null);
-            
+
             setLoading(false);
-            console.log(`Unido a partida ${gameId}`);
         } catch (err) {
             const errorMsg = err instanceof Error ? err.message : "Error al unirse a la partida.";
             setError(errorMsg);

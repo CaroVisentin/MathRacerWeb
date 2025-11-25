@@ -3,7 +3,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { EndOfStoryModeModal } from "../../../../shared/modals/endOfStoryModeModal";
 import fondoRival from "../../../../assets/images/pista-montana.png";
 import auto1 from "../../../../assets/images/auto.png";
-import { getGameStatus, startGame, submitAnswer, applyWildcard } from "../../../../services/game/story-mode/storyModeGameService";
+import { getGameStatus, startGame, submitAnswer, applyWildcard, abandonSoloGame } from "../../../../services/game/story-mode/storyModeGameService";
 import type { StartSoloGameResponseDto } from "../../../../models/domain/story-mode/startSoloGameResponseDto";
 import type { SoloGameStatusResponseDto } from "../../../../models/domain/story-mode/soloGameStatusResponseDto";
 import type { SubmitSoloAnswerResponseDto } from "../../../../models/domain/story-mode/submitSoloAnswerResponseDto";
@@ -27,6 +27,7 @@ import { RewardScreen } from "../../../../components/chest/rewardScreen";
 import { useEnergy } from "../../../../hooks/useEnergy";
 import { usePlayer } from "../../../../hooks/usePlayer";
 import { resolveImageUrl } from "../../../../shared/utils/imageResolver";
+import ConfirmActionModal from "../../../../shared/modals/confirmModalAction";
 
 export const StoryModeGame = () => {
     const { id } = useParams();
@@ -54,6 +55,7 @@ export const StoryModeGame = () => {
 
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [errorMessageDuringGame, setErrorMessageDuringGame] = useState<string | null>(null);
+    const [showConfirmModal, setShowConfirmModal] = useState(false);
 
     const [isLoading, setIsLoading] = useState(false);
     const [isUsingWildcard, setIsUsingWildcard] = useState(false);
@@ -400,6 +402,25 @@ export const StoryModeGame = () => {
         }
     }
 
+    async function abandonGame() {
+        try {
+            await abandonSoloGame(gameData?.gameId ?? 0);
+
+            // Mostrar carga por 1s
+            setIsLoading(true);
+            await new Promise(res => setTimeout(res, 1000));
+            setIsLoading(false);
+
+            // Redirigir a la vista de mundos
+            navigate("/modo-historia")
+
+        } catch (error: unknown) {
+            const message = getErrorMessage(error);
+            console.error("Error al obtener energía:", message);
+        }
+    }
+
+
     return (
         <>
             {isLoading && <Spinner />}
@@ -428,7 +449,7 @@ export const StoryModeGame = () => {
                         gameData={gameData}
                         timeLeft={timeLeft}
                         remainingLives={gameStatus?.livesRemaining ?? 3}
-                        onBack={() => navigate("/home")}
+                        onBack={() => setShowConfirmModal(true)}
                     />
 
                     {/* Contador */}
@@ -463,6 +484,18 @@ export const StoryModeGame = () => {
                             won={gameStatus?.status === SoloGameStatus.PlayerWon}
                             onClose={handleCloseWinnerModal}
                             remainingLives={gameStatus?.livesRemaining ?? 0}
+                        />
+                    )}
+
+                    {showConfirmModal && (
+                        <ConfirmActionModal
+                            title={'¿Está seguro de abandonar la partida?'}
+                            message={''}
+                            onCancel={() => setShowConfirmModal(false)}
+                            onConfirm={() => {
+                                abandonGame();
+                                setShowConfirmModal(false);
+                            }}
                         />
                     )}
 

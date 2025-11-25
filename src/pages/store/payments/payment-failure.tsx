@@ -24,7 +24,7 @@ export default function PaymentFailure() {
             </p>
             <div className="space-y-4">
               <Link
-                to="/store"
+                to="/tienda"
                 className="inline-flex items-center justify-center w-full md:w-auto bg-[#f95ec8] text-white border-2 border-white px-3 py-3 text-lg font-black tracking-[0.3em] transition-all duration-300 hover:bg-pink-400 hover:-translate-y-1 shadow-[0_0_20px_rgba(249,94,200,0.45)]"
               >
                 INTENTAR DE NUEVO

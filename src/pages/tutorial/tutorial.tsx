@@ -16,7 +16,7 @@ import { getPlayerData } from "../../services/player/playerService";
 import type { ChestResponseDto } from "../../models/domain/chest/chestResponseDto";
 import mathi from "../../assets/images/mathi.png";
 import { RewardScreen } from "../../components/chest/rewardScreen";
-import { getErrorMessage } from "../../shared/utils/manageErrors";
+import { getErrorMessage, manageError } from "../../shared/utils/manageErrors";
 import ErrorModal from "../../shared/modals/errorModal";
 import { useAuth } from "../../hooks/useAuth";
 
@@ -57,7 +57,6 @@ export const TutorialPage = () => {
   // Cuando el cofre se cierre y ya tenga productos, redirigir al home
   useEffect(() => {
     if (!mostrarCofre && tutorialCompletado) {
-      console.log('Tutorial finalizado, redirigiendo al home...');
       navigate('/home');
     }
   }, [mostrarCofre, tutorialCompletado, navigate]);
@@ -68,60 +67,59 @@ export const TutorialPage = () => {
       const response = await tutorialService.completeTutorial();
       setChest(response);
       setTutorialCompletado(true);
-      
-       // Refrescar el player completo desde el backend (incluye coins actualizados y lastlevelId)
+
+      // Refrescar el player completo desde el backend (incluye coins actualizados y lastlevelId)
       if (player) {
-        const updatedPlayerFromBackend = await getPlayerData(player.id);
+        const updatedPlayerFromBackend = await getPlayerData();
         setPlayer(updatedPlayerFromBackend);
         localStorage.setItem("player", JSON.stringify(updatedPlayerFromBackend));
-        console.log("Tutorial completado, player refrescado desde backend:", updatedPlayerFromBackend);
-    } 
-  
-   } catch (error: unknown) {
+      }
+
+    } catch (error: unknown) {
       const message = getErrorMessage(error);
-      // // Si ya estaba completado, refrescar y redirigir
-      // if (message.includes("ya has completado") || message.includes("ya")) {
-      //   setErrorMessage(null);
-      //   if (player) {
-      //     try {
-      //       const updatedPlayer = await getPlayerData(player.id);
-      //       setPlayer(updatedPlayer);
-      //       localStorage.setItem("player", JSON.stringify(updatedPlayer));
-      //       navigate('/home');
-      //     } catch {}
-      //   }
-      // } else {
+      // Si ya estaba completado, refrescar y redirigir
+      if (message.includes("ya has completado") || message.includes("ya")) {
+        setErrorMessage(null);
+        if (player) {
+          try {
+            const updatedPlayer = await getPlayerData();
+            setPlayer(updatedPlayer);
+            localStorage.setItem("player", JSON.stringify(updatedPlayer));
+            navigate('/home');
+          } catch (error) {
+            manageError(error);
+          }
+        }
+      } else {
         setErrorMessage(message);
       }
-    
-  };
+
+    };
+  }
 
   // Manejar el cierre del cofre - AQUÍ refrescamos el player
-//  const handleCloseTutorialChest = async () => {
-  //  console.log("Cerrando cofre, refrescando player...");
-    //if (player) {
-    //  try {
-       // const updatedPlayer = await getPlayerData(player.id);
-       // setPlayer(updatedPlayer);
-       // localStorage.setItem("player", JSON.stringify(updatedPlayer));
-       // console.log("Player actualizado tras cofre:", updatedPlayer);
-        
+  const handleCloseTutorialChest = async () => {
+    if (player) {
+      try {
+        const updatedPlayer = await getPlayerData();
+        setPlayer(updatedPlayer);
+        localStorage.setItem("player", JSON.stringify(updatedPlayer));
+
         // Verificar que tiene los productos antes de navegar
-       // if (updatedPlayer.car && updatedPlayer.background && updatedPlayer.character) {
-         // console.log("Productos verificados, navegando al home...");
-        //  navigate('/home');
-       // } else {
-          //console.warn("Player refrescado pero sin productos básicos:", updatedPlayer);
-         // setMostrarCofre(false);
-       // }
-      //} catch (e) {
-       // console.warn("Error al refrescar jugador:", e);
-       // setMostrarCofre(false);
-    //  }
-  //  } else {
-  //    setMostrarCofre(false);
-   // }
-  //};
+        if (updatedPlayer.car && updatedPlayer.background && updatedPlayer.character) {
+          navigate('/home');
+        } else {
+          console.warn("Player refrescado pero sin productos básicos:", updatedPlayer);
+          setMostrarCofre(false);
+        }
+      } catch (e) {
+        console.warn("Error al refrescar jugador:", e);
+        setMostrarCofre(false);
+      }
+    } else {
+      setMostrarCofre(false);
+    }
+  };
 
   return (
     <>
@@ -148,7 +146,7 @@ export const TutorialPage = () => {
           chestTitle="¡Felicidades!"
           firstMessage="Acá está tu recompensa por terminar el tutorial"
           secondMessage="Tocá el cofre para abrirlo"
-         //onContinue={handleCloseTutorialChest}
+          onContinue={handleCloseTutorialChest}
         />
       ) : (
         // Tutorial
@@ -533,7 +531,7 @@ export const TutorialPage = () => {
           {modalGanador && (
             <EndOfStoryModeModal
               level={1}
-              reward={100}
+              reward={0}
               won={true}
               onClose={() => navigate("/")}
               onNext={() => {

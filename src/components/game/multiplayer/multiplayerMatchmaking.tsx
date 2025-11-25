@@ -15,8 +15,8 @@ import { usePlayer } from "../../../hooks/usePlayer";
 import { BackButton } from "../../../shared/buttons/backButton";
 
 // Arrays de IDs (solo para random fallback si no hay equipado)
-const fondoFallbackIds = [8,5,13,18,19]; // background product IDs según imageResolver
-const autoFallbackIds = [6,9,12,15,18,19,20,3]; // car product IDs según imageResolver
+const fondoFallbackIds = [8, 5, 13, 18, 19]; // background product IDs según imageResolver
+const autoFallbackIds = [6, 9, 12, 15, 18, 19, 20, 3]; // car product IDs según imageResolver
 
 interface MultiplayerMatchmakingProps {
   gameIdProp?: number;
@@ -28,7 +28,7 @@ export const MultiplayerMatchmaking = ({ gameIdProp, initialData }: MultiplayerM
   const gameId = gameIdProp?.toString() || gameIdFromUrl;
   const { player } = usePlayer();
   const navigate = useNavigate();
-  const { conn, errorConexion, invoke, on, off } = useConnection(); 
+  const { conn, errorConexion, invoke, on, off } = useConnection();
   const [ecuacion, setEcuacion] = useState<QuestionDto>();
   const [opciones, setOpciones] = useState<number[]>();
   const [respuestaSeleccionada, setRespuestaSeleccionada] = useState<number | null>(null);
@@ -51,13 +51,13 @@ export const MultiplayerMatchmaking = ({ gameIdProp, initialData }: MultiplayerM
   const [powerUseOrden, setPowerUseOrden] = useState(false);
   const [mensajeComodin, setMensajeComodin] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  
+
   const nombreJugador = player?.name || "";
   const cerrarModal = () => setGanador(false);
 
   // Usar ref para el nombre del jugador para evitar re-renders
   const nombreJugadorRef = useRef(nombreJugador);
-  
+
   useEffect(() => {
     nombreJugadorRef.current = nombreJugador;
   }, [nombreJugador]);
@@ -72,53 +72,53 @@ export const MultiplayerMatchmaking = ({ gameIdProp, initialData }: MultiplayerM
   }, [mensajeComodin]);
 
   // PASO 1: REGISTRAR LISTENERS PRIMERO - CRÍTICO
-  useEffect(() => {    
+  useEffect(() => {
 
     const gameUpdateHandler = (data: GameUpdateDto) => {
-            
+
       setJugadoresPartida(data.players);
       setPartidaId(data.gameId);
-      
+
       // Identificar al jugador actual
       const auth = getAuth();
       const myUid = auth.currentUser?.uid;
-      
-      
+
+
       let jugadorActual: PlayerDto | undefined;
       if (myUid) {
         jugadorActual = data.players.find(p => p.uid === myUid);
-       
+
       }
-      
+
       if (!jugadorActual) {
-       
+
         jugadorActual = data.players.find(p => p.name?.trim() === nombreJugadorRef.current.trim());
-       
+
       }
-      
+
       const otroJugador = data.players.find(p => p.id !== jugadorActual?.id);
 
       if (jugadorActual) {
         setJugadorId(jugadorActual.id);
         const avance = (jugadorActual.correctAnswers / 10) * 100;
         setPosicionAuto1(avance);
-          if (jugadorActual.equippedBackground?.id) {
-                   setFondoJugador(resolveImageUrl("background", jugadorActual.equippedBackground.id));
-                 }
-                 if (jugadorActual.equippedCar?.id) {
-                   setCarJugador(resolveImageUrl("car", jugadorActual.equippedCar.id));
-                 }
-               }
-               if (otroJugador) {
-                 const avanceOtro = (otroJugador.correctAnswers / 10) * 100;
-                 setPosicionAuto2(avanceOtro);
-                 // Apariencia rival (solo cambiar si viene equipado)
-                 if (otroJugador.equippedBackground?.id) {
-                   setFondoRival(resolveImageUrl("background", otroJugador.equippedBackground.id));
-                 }
-                 if (otroJugador.equippedCar?.id) {
-                   setCarRival(resolveImageUrl("car", otroJugador.equippedCar.id));
-                 }
+        if (jugadorActual.equippedBackground?.id) {
+          setFondoJugador(resolveImageUrl("background", jugadorActual.equippedBackground.id));
+        }
+        if (jugadorActual.equippedCar?.id) {
+          setCarJugador(resolveImageUrl("car", jugadorActual.equippedCar.id));
+        }
+      }
+      if (otroJugador) {
+        const avanceOtro = (otroJugador.correctAnswers / 10) * 100;
+        setPosicionAuto2(avanceOtro);
+        // Apariencia rival (solo cambiar si viene equipado)
+        if (otroJugador.equippedBackground?.id) {
+          setFondoRival(resolveImageUrl("background", otroJugador.equippedBackground.id));
+        }
+        if (otroJugador.equippedCar?.id) {
+          setCarRival(resolveImageUrl("car", otroJugador.equippedCar.id));
+        }
       }
 
       // Penalización
@@ -148,7 +148,7 @@ export const MultiplayerMatchmaking = ({ gameIdProp, initialData }: MultiplayerM
 
       // Actualizar pregunta actual
       if (data.currentQuestion) {
-    
+
         setRespuestaSeleccionada(null);
         setResultado(null);
         setEcuacion({
@@ -159,8 +159,8 @@ export const MultiplayerMatchmaking = ({ gameIdProp, initialData }: MultiplayerM
         });
         setOpciones(data.currentQuestion.options);
         setInstruccion(data.expectedResult);
-        
-      } 
+
+      }
     };
 
     const errorHandler = (message: string) => {
@@ -168,18 +168,18 @@ export const MultiplayerMatchmaking = ({ gameIdProp, initialData }: MultiplayerM
       setError(message);
     };
 
-   
+
     on("GameUpdate", gameUpdateHandler);
     on("gameUpdate", gameUpdateHandler);
     on("game-update", gameUpdateHandler);
     on("gameupdate", gameUpdateHandler);
-    
+
     on("Error", errorHandler);
     on("error", errorHandler);
-    
+
 
     return () => {
-      
+
       off("GameUpdate", gameUpdateHandler);
       off("gameUpdate", gameUpdateHandler);
       off("game-update", gameUpdateHandler);
@@ -189,82 +189,70 @@ export const MultiplayerMatchmaking = ({ gameIdProp, initialData }: MultiplayerM
     };
   }, [conn, on, off]); // Dependencias mínimas
 
-  
+
   useEffect(() => {
     if (!initialData) return;
-    
+
     const players = initialData.players || [];
     const gid = initialData.gameId;
-      
-      if (players.length > 0) {
-         setJugadoresPartida(players);
-        setPartidaId(gid);
-        
-        // Identificar al jugador actual
-        const auth = getAuth();
-        const myUid = auth.currentUser?.uid;
-        
-        
-        let jugadorActual: PlayerDto | undefined;
-        if (myUid) {
-          jugadorActual = players.find((p: PlayerDto) => p.uid === myUid);
-          
-        }
-        
-        if (!jugadorActual) {
-          jugadorActual = players.find((p: PlayerDto) => p.name?.trim() === nombreJugadorRef.current.trim());
-        }
-        
-        if (jugadorActual) {
-          setJugadorId(jugadorActual.id);
-          const avance = (jugadorActual.correctAnswers / 10) * 100;
-          setPosicionAuto1(avance);
-        } else {
-          console.error("❌ No se pudo identificar al jugador actual en initialData!");
-          
-        }
-        
-        // También procesar la pregunta si viene (inicial)
-        if (initialData?.currentQuestion) {
-          console.log("[Matchmaking] Initial currentQuestion recibida", initialData.currentQuestion);
-          setEcuacion({
-            id: initialData.currentQuestion.id,
-            equation: initialData.currentQuestion.equation,
-            options: initialData.currentQuestion.options,
-            correctAnswer: initialData.currentQuestion.correctAnswer,
-          });
-          setOpciones(initialData.currentQuestion.options);
-          setInstruccion(initialData.expectedResult);
-        } else {
-          console.log("[Matchmaking] initialData sin currentQuestion todavía");
-        }
-        
-        
-      }
-  }, [initialData]); // Solo depende de initialData
 
-  // Detectar cuando hay 2 jugadores para ocultar la pantalla de espera
-  useEffect(() => {
-    if (jugadoresPartida.length >= 2) {
-      console.log("✅ 2 jugadores detectados, ocultando pantalla de espera");
+    if (players.length > 0) {
+      setJugadoresPartida(players);
+      setPartidaId(gid);
+
+      // Identificar al jugador actual
+      const auth = getAuth();
+      const myUid = auth.currentUser?.uid;
+
+
+      let jugadorActual: PlayerDto | undefined;
+      if (myUid) {
+        jugadorActual = players.find((p: PlayerDto) => p.uid === myUid);
+
+      }
+
+      if (!jugadorActual) {
+        jugadorActual = players.find((p: PlayerDto) => p.name?.trim() === nombreJugadorRef.current.trim());
+      }
+
+      if (jugadorActual) {
+        setJugadorId(jugadorActual.id);
+        const avance = (jugadorActual.correctAnswers / 10) * 100;
+        setPosicionAuto1(avance);
+      } else {
+        console.error("❌ No se pudo identificar al jugador actual en initialData!");
+
+      }
+
+      // También procesar la pregunta si viene (inicial)
+      if (initialData?.currentQuestion) {
+        setEcuacion({
+          id: initialData.currentQuestion.id,
+          equation: initialData.currentQuestion.equation,
+          options: initialData.currentQuestion.options,
+          correctAnswer: initialData.currentQuestion.correctAnswer,
+        });
+        setOpciones(initialData.currentQuestion.options);
+        setInstruccion(initialData.expectedResult);
+      }
     }
-  }, [jugadoresPartida.length]);
+  }, [initialData]); // Solo depende de initialData
 
   const randomFrom = (arr: number[]) => arr[Math.floor(Math.random() * arr.length)];
 
   //const resolveBackground = (id?: number) => resolveImageUrl("background", id);
   //const resolveCar = (id?: number) => resolveImageUrl("car", id);
 
-    useEffect(() => {
-      const resolvedBg = resolveImageUrl("background", player?.equippedBackground?.id || player?.background?.id || randomFrom(fondoFallbackIds));
-      setFondoJugador(resolvedBg);
-      // Fallback del rival: usar el mismo fondo del jugador si el rival no trae uno
-      setFondoRival(resolvedBg);
-      const resolvedCar = resolveImageUrl("car", player?.equippedCar?.id || player?.car?.id || randomFrom(autoFallbackIds));
-      setCarJugador(resolvedCar);
-      // Fallback del rival: usar el mismo auto del jugador si el rival no trae uno
-      setCarRival(resolvedCar);
-    }, [player]);
+  useEffect(() => {
+    const resolvedBg = resolveImageUrl("background", player?.equippedBackground?.id || player?.background?.id || randomFrom(fondoFallbackIds));
+    setFondoJugador(resolvedBg);
+    // Fallback del rival: usar el mismo fondo del jugador si el rival no trae uno
+    setFondoRival(resolvedBg);
+    const resolvedCar = resolveImageUrl("car", player?.equippedCar?.id || player?.car?.id || randomFrom(autoFallbackIds));
+    setCarJugador(resolvedCar);
+    // Fallback del rival: usar el mismo auto del jugador si el rival no trae uno
+    setCarRival(resolvedCar);
+  }, [player]);
 
   const handleVolver = async () => {
     // Si aún no tenemos IDs simplemente salir
@@ -274,8 +262,6 @@ export const MultiplayerMatchmaking = ({ gameIdProp, initialData }: MultiplayerM
     }
 
     try {
-      console.log("[Matchmaking] Abandono manual. Marcando perdedor local y preparando desconexión...");
-
       // Marcar localmente como perdedor para mostrar feedback inmediato
       setPerdedor(true);
       setGanador(false);
@@ -304,12 +290,12 @@ export const MultiplayerMatchmaking = ({ gameIdProp, initialData }: MultiplayerM
   };
 
   const sendAnswer = useCallback(
-    async (respuestaSeleccionada: number | null) => {    
-      
+    async (respuestaSeleccionada: number | null) => {
+
       try {
-        
+
         await invoke("SendAnswer", partidaId, jugadorId, respuestaSeleccionada);
-        
+
       } catch (error) {
         console.error("❌ Error al invocar SendAnswer:", error);
       }
@@ -318,18 +304,18 @@ export const MultiplayerMatchmaking = ({ gameIdProp, initialData }: MultiplayerM
   );
 
   const manejarRespuesta = async (opcion: number) => {
-    
+
     setRespuestaSeleccionada(opcion);
 
     if (ecuacion && opcion === ecuacion.correctAnswer) {
-      
+
       setResultado("acierto");
       setPenalizado(false);
     } else {
       setResultado("error");
       setPenalizado(true);
     }
-    
+
     setTimeout(() => sendAnswer(opcion), 200);
   };
 
@@ -400,157 +386,157 @@ export const MultiplayerMatchmaking = ({ gameIdProp, initialData }: MultiplayerM
             <BackButton onClick={handleVolver} />
           </div>
 
-      {/* Modal de error */}
-      {error && (
-        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80">
-          <div className="bg-black/90 border-2 border-red-500 rounded-lg p-8 text-center max-w-md">
-            <h2 className="text-3xl text-red-500 mb-4">❌ Error</h2>
-            <p className="text-white text-xl mb-6">{error}</p>
-            <button onClick={() => navigate('/menu')} className="bg-[#5df9f9] text-black px-6 py-3 rounded text-xl">
-           <i className="ri-arrow-left-line mr-2"></i> Volver
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Modal de fin de partida (Ganador) */}
-      {ganador && (
-        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <EndOfMultiplayerModeModal
-            players={jugadoresPartida}
-            currentPlayer={nombreJugador}
-            won={true}
-            onClose={cerrarModal}
-            onRetry={reiniciarJuego}
-          />
-        </div>
-      )}
-
-      {/* Modal de fin de partida (Perdedor) */}
-      {perdedor && (
-        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <EndOfMultiplayerModeModal
-            players={jugadoresPartida}
-            currentPlayer={nombreJugador}
-            won={false}
-            onClose={cerrarModal}
-            onRetry={reiniciarJuego}
-          />
-        </div>
-      )}
-
-      {/* Pistas */}
-      <div className="mt-20 flex flex-col gap-3 justify-end">
-        <div
-          className="flex justify-center items-center fondoRuta w-full relative mt-20 border-3 border-[#5df9f9] rounded-lg"
-          style={{
-            backgroundImage: `url('${fondoRival}')`
-          }}
-        >
-          <div className="absolute text-[#000000] text-l ml-2 px-2 py-1 rounded bg-[#5df9f9]" style={{ left: "0px", top: "-2%" }}>
-            {opponentName}
-          </div>
-          <img src={carRival} alt="Auto 2" className="absolute bottom-[180px] auto auto2" style={{ left: `${posicionAuto2}%` }} />
-        </div>
-
-        <div
-          className="flex justify-center items-center fondoRuta w-full relative mt-20 border-3 border-[#f95ec8] rounded-lg"
-          style={{
-            backgroundImage: `url('${fondoJugador}')`
-          }}
-        >
-          <div className="absolute text-white text-l ml-2 px-2 py-1 rounded bg-[#f95ec8]" style={{ left: "0px", top: "-2%" }}>
-            {nombreJugador}
-          </div>
-          <img src={carJugador} alt="Auto 1" className="absolute auto transition-all duration-500" style={{ left: `${posicionAuto1}%` }} />
-        </div>
-      </div>
-
-      {/* Instrucciones y Comodines */}
-      <div className="flex justify-center items-center gridComodin mt-4">
-        <div className="instruccion text-3xl text-center">
-          {instruccion ? (
-            <>
-              Elegí la opción para que <span className="text-cyan-400 drop-shadow-[0_0_5px_#00ffff]">Y</span> sea{" "}
-              <span className="text-cyan-400">{instruccion.toUpperCase()}</span>
-            </>
-          ) : (
-            "Esperando instrucción"
-          )}
-        </div>
-        <div className="comodin">
-          <Wildcards
-            fireExtinguisher={eliminaOpciones ? 0 : 1}
-            changeEquation={powerUseOrden ? 0 : 1}
-            dobleCount={powerUsePosition ? 0 : 1}
-            onFireExtinguisher={handleFireExtinguisher}
-            onChangeEquation={handleChangeEquation}
-            onDobleCount={handleDobleCount}
-          />
-        </div>
-      </div>
-
-      {/* Ecuación y Opciones */}
-      <div className="flex flex-col justify-center items-center h-full gap-5 mb-10 mt-4">
-        {mensajeComodin && (
-          <div className="w-full flex justify-end px-4">
-            <div className="text-cyan-200 text-3xl text-center drop-shadow-[0_0_5px_#00ffff] animate-fade-in">
-              {mensajeComodin}
-            </div>
-          </div>
-        )}
-        
-        <div className="flex justify-center mb-6">
-          <div className="border-2 border-white rounded-lg text-6xl px-6 py-3 min-h-[90px] flex items-center justify-center">
-            {ecuacion?.equation ? (
-              <span>{ecuacion.equation}</span>
-            ) : (
-              <span className="text-xl animate-pulse">Cargando ecuación...</span>
-            )}
-          </div>
-        </div>
-
-        {errorConexion && <div className="text-red-600 text-lg mt-4">{errorConexion}</div>}
-
-        {/* Opciones */}
-        <div className="flex justify-center items-center mt-6 gap-6 opciones">
-          {opciones?.map((opcion, i) => {
-            let clases = `border-2 border-white rounded-lg text-4xl transition w-20 h-20 `;
-
-            if (respuestaSeleccionada !== null) {
-              if (resultado === "acierto" && opcion === respuestaSeleccionada) {
-                clases += "bg-green-400";
-              } else if (resultado === "error" && opcion === respuestaSeleccionada) {
-                clases += "bg-red-500 opacity-50 cursor-not-allowed";
-              } else if (resultado === "error" && opcion === ecuacion?.correctAnswer) {
-                clases += "bg-green-400 opacity-50 cursor-not-allowed";
-              } else {
-                clases += "bg-[#0F7079]";
-              }
-            } else if (penalizado) {
-              clases += "opacity-50 cursor-not-allowed";
-            } else {
-              clases += "bg-[#0F7079] hover:bg-blue-500";
-            }
-
-            const mostrarMascota =
-              respuestaSeleccionada !== null &&
-              ((resultado === "acierto" && opcion === respuestaSeleccionada) ||
-                (resultado === "error" && opcion === ecuacion?.correctAnswer));
-
-            return (
-              <div key={i} className="flex flex-col items-center">
-                {mostrarMascota && (
-                  <img src={mathi} alt="Mascota" className="w-16 h-16 mb-2 animate-bounce drop-shadow-[0_0_10px_#00ffff]" />
-                )}
-                <button onClick={() => manejarRespuesta(opcion)} className={clases} disabled={!!respuestaSeleccionada || penalizado}>
-                  {opcion}
+          {/* Modal de error */}
+          {error && (
+            <div className="absolute inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80">
+              <div className="bg-black/90 border-2 border-red-500 rounded-lg p-8 text-center max-w-md">
+                <h2 className="text-3xl text-red-500 mb-4">❌ Error</h2>
+                <p className="text-white text-xl mb-6">{error}</p>
+                <button onClick={() => navigate('/menu')} className="bg-[#5df9f9] text-black px-6 py-3 rounded text-xl">
+                  <i className="ri-arrow-left-line mr-2"></i> Volver
                 </button>
               </div>
-            );
-          })}
-        </div>
-      </div>
+            </div>
+          )}
+
+          {/* Modal de fin de partida (Ganador) */}
+          {ganador && (
+            <div className="absolute inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+              <EndOfMultiplayerModeModal
+                players={jugadoresPartida}
+                currentPlayer={nombreJugador}
+                won={true}
+                onClose={cerrarModal}
+                onRetry={reiniciarJuego}
+              />
+            </div>
+          )}
+
+          {/* Modal de fin de partida (Perdedor) */}
+          {perdedor && (
+            <div className="absolute inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+              <EndOfMultiplayerModeModal
+                players={jugadoresPartida}
+                currentPlayer={nombreJugador}
+                won={false}
+                onClose={cerrarModal}
+                onRetry={reiniciarJuego}
+              />
+            </div>
+          )}
+
+          {/* Pistas */}
+          <div className="mt-20 flex flex-col gap-3 justify-end">
+            <div
+              className="flex justify-center items-center fondoRuta w-full relative mt-20 border-3 border-[#5df9f9] rounded-lg"
+              style={{
+                backgroundImage: `url('${fondoRival}')`
+              }}
+            >
+              <div className="absolute text-[#000000] text-l ml-2 px-2 py-1 rounded bg-[#5df9f9]" style={{ left: "0px", top: "-2%" }}>
+                {opponentName}
+              </div>
+              <img src={carRival} alt="Auto 2" className="absolute bottom-[180px] auto auto2" style={{ left: `${posicionAuto2}%` }} />
+            </div>
+
+            <div
+              className="flex justify-center items-center fondoRuta w-full relative mt-20 border-3 border-[#f95ec8] rounded-lg"
+              style={{
+                backgroundImage: `url('${fondoJugador}')`
+              }}
+            >
+              <div className="absolute text-white text-l ml-2 px-2 py-1 rounded bg-[#f95ec8]" style={{ left: "0px", top: "-2%" }}>
+                {nombreJugador}
+              </div>
+              <img src={carJugador} alt="Auto 1" className="absolute auto transition-all duration-500" style={{ left: `${posicionAuto1}%` }} />
+            </div>
+          </div>
+
+          {/* Instrucciones y Comodines */}
+          <div className="flex justify-center items-center gridComodin mt-4">
+            <div className="instruccion text-3xl text-center">
+              {instruccion ? (
+                <>
+                  Elegí la opción para que <span className="text-cyan-400 drop-shadow-[0_0_5px_#00ffff]">Y</span> sea{" "}
+                  <span className="text-cyan-400">{instruccion.toUpperCase()}</span>
+                </>
+              ) : (
+                "Esperando instrucción"
+              )}
+            </div>
+            <div className="comodin">
+              <Wildcards
+                fireExtinguisher={eliminaOpciones ? 0 : 1}
+                changeEquation={powerUseOrden ? 0 : 1}
+                dobleCount={powerUsePosition ? 0 : 1}
+                onFireExtinguisher={handleFireExtinguisher}
+                onChangeEquation={handleChangeEquation}
+                onDobleCount={handleDobleCount}
+              />
+            </div>
+          </div>
+
+          {/* Ecuación y Opciones */}
+          <div className="flex flex-col justify-center items-center h-full gap-5 mb-10 mt-4">
+            {mensajeComodin && (
+              <div className="w-full flex justify-end px-4">
+                <div className="text-cyan-200 text-3xl text-center drop-shadow-[0_0_5px_#00ffff] animate-fade-in">
+                  {mensajeComodin}
+                </div>
+              </div>
+            )}
+
+            <div className="flex justify-center mb-6">
+              <div className="border-2 border-white rounded-lg text-6xl px-6 py-3 min-h-[90px] flex items-center justify-center">
+                {ecuacion?.equation ? (
+                  <span>{ecuacion.equation}</span>
+                ) : (
+                  <span className="text-xl animate-pulse">Cargando ecuación...</span>
+                )}
+              </div>
+            </div>
+
+            {errorConexion && <div className="text-red-600 text-lg mt-4">{errorConexion}</div>}
+
+            {/* Opciones */}
+            <div className="flex justify-center items-center mt-6 gap-6 opciones">
+              {opciones?.map((opcion, i) => {
+                let clases = `border-2 border-white rounded-lg text-4xl transition w-20 h-20 `;
+
+                if (respuestaSeleccionada !== null) {
+                  if (resultado === "acierto" && opcion === respuestaSeleccionada) {
+                    clases += "bg-green-400";
+                  } else if (resultado === "error" && opcion === respuestaSeleccionada) {
+                    clases += "bg-red-500 opacity-50 cursor-not-allowed";
+                  } else if (resultado === "error" && opcion === ecuacion?.correctAnswer) {
+                    clases += "bg-green-400 opacity-50 cursor-not-allowed";
+                  } else {
+                    clases += "bg-[#0F7079]";
+                  }
+                } else if (penalizado) {
+                  clases += "opacity-50 cursor-not-allowed";
+                } else {
+                  clases += "bg-[#0F7079] hover:bg-blue-500";
+                }
+
+                const mostrarMascota =
+                  respuestaSeleccionada !== null &&
+                  ((resultado === "acierto" && opcion === respuestaSeleccionada) ||
+                    (resultado === "error" && opcion === ecuacion?.correctAnswer));
+
+                return (
+                  <div key={i} className="flex flex-col items-center">
+                    {mostrarMascota && (
+                      <img src={mathi} alt="Mascota" className="w-16 h-16 mb-2 animate-bounce drop-shadow-[0_0_10px_#00ffff]" />
+                    )}
+                    <button onClick={() => manejarRespuesta(opcion)} className={clases} disabled={!!respuestaSeleccionada || penalizado}>
+                      {opcion}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </>
       )}
     </div>

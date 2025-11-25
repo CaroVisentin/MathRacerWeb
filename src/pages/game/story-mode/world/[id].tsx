@@ -13,6 +13,7 @@ import Spinner from "../../../../shared/spinners/spinner";
 import type { PlayerWildcardDto } from "../../../../models/domain/player/playerWildcardDto";
 import { getMyWildcards } from "../../../../services/wildcard/wildcardService";
 import type { WildcardQuantities } from "../../../../models/ui/story-mode/wildcardQuantities";
+import { AppHeader } from "../../../../components/shared/appHeader";
 
 export const LevelMap = () => {
   const { id } = useParams();
@@ -75,6 +76,7 @@ export const LevelMap = () => {
 
   return (
     <div className="relative flex h-screen w-full flex-col overflow-hidden bg-gradient-to-br from-[#0a0520] via-[#1a0f3a] to-[#0f0828]">
+     <AppHeader />
       {isLoading && <Spinner />}
 
       {/* Fondo de estrellas */}
@@ -87,7 +89,7 @@ export const LevelMap = () => {
       />
 
       {/* Grilla de niveles */}
-      <div className="flex-1 overflow-auto">
+      <div className="flex-1 overflow-auto custom-scrollbar">
         <LevelsGrid levels={levels} />
       </div>
 

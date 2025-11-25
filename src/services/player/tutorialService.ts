@@ -11,7 +11,6 @@ export const tutorialService = {
       return response.data;
     } catch (error) {
       manageError(error);
-      throw error;
     }
   },
 };

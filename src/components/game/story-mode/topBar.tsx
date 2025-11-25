@@ -1,6 +1,5 @@
 import { matchPath, useLocation, useNavigate } from "react-router-dom";
 import { BackButton } from "../../../shared/buttons/backButton";
-import { LivesAndTimer } from "./livesAndTimer";
 
 interface TopBarProps {
   headerText: string;
@@ -41,8 +40,6 @@ export const TopBar = ({ headerText }: TopBarProps) => {
         </div>
       </div>
 
-      {/* Vidas + temporizador */}
-      <LivesAndTimer />
     </div>
   );
 };
