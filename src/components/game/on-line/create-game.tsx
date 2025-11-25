@@ -6,6 +6,7 @@ import { createCustomGame } from "../../../services/game/multiplayer-mode/online
 import ErrorConnection from "../../../shared/modals/errorConnection";
 import type { CreateCustomGameRequestDto } from "../../../models/domain/signalR/createCustomGameDto";
 import { useAudio } from "../../../contexts/AudioContext";
+import { AppHeader } from "../../shared/appHeader";
 
 export default function CreateGame() {
   const { player } = usePlayer();
@@ -94,11 +95,12 @@ export default function CreateGame() {
   return (
 
  
-    <div className="h-screen w-screen fondo-city flex  items-center justify-center p-4 overflow-hidden">
+    <div className="h-screen w-screen fondo-city flex flex-col items-center justify-start  overflow-hidden">
+        <AppHeader />
   
 
       <form onSubmit={handleSubmit}
-        className="w-full max-w-2xl mx-auto bg-black/60 text-[#5df9f9] p-6 rounded-lg shadow-lg ">
+        className="w-full max-w-2xl mx-auto bg-black/50 text-[#5df9f9] p-6 rounded-lg shadow-lg ">
         <h2 className="text-6xl text-[#5df9f9] text-center mb-10 pb-5 drop-shadow-[0_0_10px_#00ffff]">Crear Partida</h2>
 
         <label className="block text-3xl font-normal ">
@@ -108,7 +110,7 @@ export default function CreateGame() {
             name="nombrePartida"
             value={formData.nombrePartida}
             onChange={handleChange}
-            className="w-full mt-1 p-2 rounded bg-black/60 border border-gray-600"
+            className="w-full mt-1 p-2 rounded bg-black/50 border border-gray-600"
           />
         </label>
         <label className="block text-3xl font-normal">
@@ -117,7 +119,7 @@ export default function CreateGame() {
             name="privacidad"
             value={formData.privacidad}
             onChange={handleChange}
-            className="w-full mt-1 p-2 rounded bg-black/60 border border-gray-600"
+            className="w-full mt-1 p-2 rounded bg-black/50 border border-gray-600"
           >
             <option value="publica">Pública</option>
             <option value="privada">Privada</option>
@@ -131,7 +133,7 @@ export default function CreateGame() {
               name="contraseña"
               value={formData.contraseña}
               onChange={handleChange}
-              className="w-full mt-1 p-2 rounded bg-black/60 border border-gray-600"
+              className="w-full mt-1 p-2 rounded bg-black/50 border border-gray-600"
             />
           </label>
         )}
@@ -141,7 +143,7 @@ export default function CreateGame() {
             name="dificultad"
             value={formData.dificultad}
             onChange={handleChange}
-            className="w-full mt-1 p-2 rounded bg-black/60 border border-gray-600"
+            className="w-full mt-1 p-2 rounded bg-black/50 border border-gray-600"
           >
             <option value="Facil">Fácil</option>
             <option value="Medio">Medio</option>
@@ -154,7 +156,7 @@ export default function CreateGame() {
             name="tipodeResultado"
             value={formData.tipodeResultado}
             onChange={handleChange}
-            className="w-full mt-1 p-2 rounded bg-black/60 border border-gray-600"
+            className="w-full mt-1 p-2 rounded bg-black/50 border border-gray-600"
           >
             <option value="Mayor">Mayor</option>
             <option value="Menor">Menor</option>

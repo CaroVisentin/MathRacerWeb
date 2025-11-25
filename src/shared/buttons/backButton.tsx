@@ -17,7 +17,7 @@ export const BackButton = ({onClick}: BackButtonProps) => {
     return (
         <button
             onClick={handleClick} // -1 significa "una página atrás"
-            className="inline-flex h-12 w-12 items-center justify-center text-white text-xl border border-white hover:text-[#f95ec8] hover:animate-coin-flip"
+            className="inline-flex h-9 w-9 items-center justify-center text-white text-xl border border-white hover:text-[#f95ec8] hover:animate-coin-flip"
         >
               <i className="ri-arrow-left-line text-2xl"></i>
         </button>

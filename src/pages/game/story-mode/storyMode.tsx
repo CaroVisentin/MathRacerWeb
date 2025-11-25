@@ -11,6 +11,7 @@ import type { WorldDtoUi } from "../../../models/ui/story-mode/worldDtoUi";
 import type { PlayerWildcardDto } from "../../../models/domain/player/playerWildcardDto";
 import { getMyWildcards } from "../../../services/wildcard/wildcardService";
 import type { WildcardQuantities } from "../../../models/ui/story-mode/wildcardQuantities";
+import { AppHeader } from "../../../components/shared/appHeader";
 
 export const StoryMode = () => {
   const [mappedWorlds, setMappedWorlds] = useState<WorldDtoUi[]>([]);
@@ -89,6 +90,7 @@ export const StoryMode = () => {
 
   return (
     <div className="relative flex h-screen w-full flex-col overflow-hidden bg-gradient-to-br from-[#0a0520] via-[#1a0f3a] to-[#0f0828]">
+        <AppHeader />
       <TopBar headerText="Mundos" remainingLives={7} />
 
       {mappedWorlds.length > 0 && <WorldMap mappedWorlds={mappedWorlds} />}

@@ -3,6 +3,7 @@ import { useAudio } from "../../../contexts/AudioContext";
 import { useInvitation } from "../../../contexts/invitationContex";
 import { useEffect } from "react";
 import { useAuth } from "../../../hooks/useAuth";
+import { AppHeader } from "../../../components/shared/appHeader";
 
 export const Menu = () => {
   const { playButtonSound, playBackSound } = useAudio();
@@ -20,9 +21,10 @@ export const Menu = () => {
 
   return (
   
-    <div className="h-screen w-screen fondo-city flex flex-col items-center justify-between p-4 overflow-hidden">
-
-      <h1 className="text-[#5df9f9] text-8xl text-center tracking-wide mb-12 drop-shadow-[0_0_10px_#00ffff]">
+    <div className="h-screen w-screen fondo-city flex flex-col justify-start overflow-hidden">
+      <AppHeader />
+      <div className="flex flex-col h-screen items-center justify-between">
+      <h1 className="text-[#5df9f9] text-7xl text-center tracking-wide drop-shadow-[0_0_10px_#00ffff]">
         Multijugador
       </h1>
       <div className=" rounded-lg p-8 grid grid-cols-2 gap-6 w-4/5 max-w-screen-lg">
@@ -69,7 +71,7 @@ export const Menu = () => {
           Partida Competitiva
         </Link>
       </div>
-      <div className="m-16">
+      <div className="m-16 pb-3">
         <Link
           to="/home"
           onClick={playBackSound}
@@ -81,6 +83,7 @@ export const Menu = () => {
         >
            <i className="ri-arrow-left-line mr-2"></i> Volver
         </Link>
+      </div>
       </div>
     </div>
   );

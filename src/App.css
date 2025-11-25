@@ -174,13 +174,7 @@ body {
   );
 }
 
-.retro-text {
-  text-shadow:
-    2px 2px 0px rgba(0, 0, 0, 0.8),
-    -1px -1px 0px rgba(255, 255, 255, 0.1);
-  font-family: "Courier New", monospace;
-  letter-spacing: 0.1em;
-}
+
 
 @keyframes bounce-slow {
   0%,

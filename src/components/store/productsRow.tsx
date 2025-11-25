@@ -114,7 +114,7 @@ export const ProductsRow = ({ title, products }: ProductsRowProps) => {
   return (
     <div className="flex flex-col gap-4">
       <h2 className="text-white text-xl">{title}</h2>
-      <div className="flex gap-4 overflow-x-auto pb-2">
+      <div className="flex gap-4 overflow-x-auto custom-scrollbar pb-2">
         {products.map((product) => {
           const isOwned = product.isOwned || newlyOwnedIds.includes(product.id);
           return (

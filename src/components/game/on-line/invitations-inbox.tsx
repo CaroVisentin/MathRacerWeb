@@ -5,6 +5,7 @@ import type { GameInvitationDto } from "../../../models/domain/game/gameInvitati
 import Spinner from "../../../shared/spinners/spinner";
 import { useAudio } from "../../../contexts/AudioContext";
 import { useInvitation } from "../../../contexts/invitationContex";
+import { AppHeader } from "../../shared/appHeader";
 
 export default function InvitationsInbox() {
   const navigate = useNavigate();
@@ -97,11 +98,11 @@ export default function InvitationsInbox() {
   };
 
   return (
-    <div className="h-screen w-screen fondo-city flex flex-col items-center justify-center p-4 overflow-hidden">
-  
+    <div className="h-screen w-screen fondo-city flex flex-col items-center justify-start">
+    <AppHeader />
 
-      <div className="w-full max-w-5xl mx-auto bg-black/60 text-[#5df9f9] p-6 pb-2 rounded-lg shadow-lg">
-        <h1 className="text-6xl text-[#f95ec8]  text-center mb-10 pb-5 drop-shadow-[0_0_10px_#00ffff]">
+      <div className="w-full max-w-5xl mx-auto bg-black/60 text-[#5df9f9] p-6 pb-2 rounded-lg shadow-lg overflow-auto custom-scrollbar">
+        <h1 className="text-6xl text-[#00f0ff]  text-center mb-10 pb-5 drop-shadow-[0_0_10px_#00ffff]">
           Invitaciones de Juego
         </h1>
 

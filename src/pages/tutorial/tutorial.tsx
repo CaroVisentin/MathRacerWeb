@@ -536,7 +536,7 @@ export const TutorialPage = () => {
           {modalGanador && (
             <EndOfStoryModeModal
               level={1}
-              reward={100}
+              reward={0}
               won={true}
               onClose={() => navigate("/")}
               onNext={() => {

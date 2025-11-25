@@ -9,6 +9,7 @@ import type { Friend } from "../../../models/ui/profile/friends/friend";
 import type { FriendDto } from "../../../models/domain/profile/friends/friendDto";
 import Spinner from "../../../shared/spinners/spinner";
 import { useAudio } from "../../../contexts/AudioContext";
+import { AppHeader } from "../../shared/appHeader";
 
 export default function InviteFriends() {
   const { player } = useAuth();
@@ -83,9 +84,9 @@ export default function InviteFriends() {
   );
 
   return (
-    <div className="h-screen w-screen fondo-city flex flex-col items-center justify-center p-4 overflow-hidden">
-    
-      <div className="w-full max-w-5xl mx-auto bg-black/60 text-[#5df9f9] p-6 pb-2 rounded-lg shadow-lg">
+    <div className="h-screen w-screen fondo-city flex flex-col items-center justify-start">
+    <AppHeader />
+      <div className="w-full max-w-5xl mx-auto bg-black/60 text-[#5df9f9] px-6 py-3 rounded-lg shadow-lg overflow-auto custom-scrollbar">
         <h1 className="text-6xl text-[#5df9f9]  text-center mb-10 pb-5 drop-shadow-[0_0_10px_#00ffff]">
           Invitar amigo
         </h1>
@@ -157,7 +158,7 @@ export default function InviteFriends() {
         )}
 
         {!loading && !error && friends.length > 0 && (
-          <table className="w-full text-left border border-white">
+          <table className="w-full text-left border border-white ">
             <thead className="bg-cyan-300 text-black text-2xl drop-shadow-[0_0_10px_#00ffff]">
               <tr>
                 <th className="p-2">Avatar</th>
