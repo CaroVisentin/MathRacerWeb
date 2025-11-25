@@ -1,18 +1,15 @@
-import React, { createContext, useEffect, useState, useRef, useCallback } from "react";
+import React, { createContext, useEffect, useState, useCallback, useContext, useRef } from "react";
 import { getEnergyStatus } from "../services/energy/energyService";
-import { type EnergyStatusDto } from "../models/domain/energy/energyStatusDto";
-import type { EnergyContextValue } from "../models/ui/energy/energy";
-import { getErrorMessage } from "../shared/utils/manageErrors";
-import { useContext } from "react";
 import { AuthContext } from "./AuthContext";
+import type { EnergyContextValue } from "../models/ui/energy/energy";
+import type { EnergyStatusDto } from "../models/domain/energy/energyStatusDto";
+import { getErrorMessage } from "../shared/utils/manageErrors";
 
 const EnergyContext = createContext<EnergyContextValue | null>(null);
 
-
-export const EnergyProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+export const EnergyProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const auth = useContext(AuthContext);
+
   const [energy, setEnergy] = useState<EnergyStatusDto>({
     currentAmount: 0,
     maxAmount: 3,
@@ -20,20 +17,10 @@ export const EnergyProvider: React.FC<{ children: React.ReactNode }> = ({
   });
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  const isAuthenticatedRef = useRef<boolean>(false);
   const isFetchingRef = useRef<boolean>(false);
 
-  // useCallback para evitar recrear la función en cada render
   const fetchEnergy = useCallback(async () => {
-    // No intentar obtener energía si no hay contexto de auth o no hay usuario
-    if (!auth || !auth.user) {
-      return;
-    }
-
-    // Evitar llamadas concurrentes
-    if (isFetchingRef.current) {
-      return;
-    }
+    if (!auth?.user || isFetchingRef.current) return;
 
     isFetchingRef.current = true;
 
@@ -48,76 +35,41 @@ export const EnergyProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, [auth]);
 
-  // Llamar al backend al montar el provider solo si hay usuario autenticado
+  // Llamada inicial cuando el usuario está autenticado
   useEffect(() => {
-    // Esperar a que el contexto de auth esté listo
-    if (!auth) {
-      return;
+    if (!auth?.loading && auth?.user) {
+      fetchEnergy();
     }
 
-    if (!auth.loading && auth.user) {
-      // Solo hacer la llamada inicial si cambió el estado de autenticación
-      if (!isAuthenticatedRef.current) {
-        isAuthenticatedRef.current = true;
-
-        // Esperar 200ms adicionales para asegurar que el token esté listo
-        const timeoutId = setTimeout(() => {
-          fetchEnergy();
-        }, 200);
-
-        return () => clearTimeout(timeoutId);
-      }
-    } else if (!auth.loading && !auth.user) {
-      // Resetear energía cuando no hay usuario autenticado
-      isAuthenticatedRef.current = false;
-      isFetchingRef.current = false;
-      setEnergy({
-        currentAmount: 0,
-        maxAmount: 3,
-        secondsUntilNextRecharge: 0,
-      });
+    if (!auth?.user) {
+      // Resetear energía si el usuario salió
+      setEnergy({ currentAmount: 0, maxAmount: 3, secondsUntilNextRecharge: 0 });
     }
-
-    return undefined;
   }, [auth, fetchEnergy]);
 
-  // Controlar el countdown visual - SOLO depende del cambio inicial de secondsUntilNextRecharge
+  // Countdown visual
   useEffect(() => {
-    // Limpiar intervalo anterior
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
+    if (!auth?.user) return;
 
-    // Verificar que auth esté disponible y el usuario autenticado
-    if (!auth || !auth.user) {
-      return;
-    }
+    if (intervalRef.current) clearInterval(intervalRef.current);
 
-    // Solo iniciar el countdown si hay segundos por contar
     if (energy.secondsUntilNextRecharge != null && energy.secondsUntilNextRecharge > 0) {
       intervalRef.current = setInterval(() => {
         setEnergy((prev) => {
-          const next = prev.secondsUntilNextRecharge! - 1;
-          if (next <= 0) {
-            // Cuando llegue a 0, hacer fetch y devolver el estado anterior
-            // para que el próximo dato del backend actualice correctamente
-            fetchEnergy();
-            return prev;
+          const nextSeconds = prev.secondsUntilNextRecharge! - 1;
+
+          if (nextSeconds <= 0) {
+            fetchEnergy(); // Cuando llega a 0, consulta backend para actualizar vidas
+            return prev;   // No modificamos localmente hasta recibir datos reales
           }
-          return { ...prev, secondsUntilNextRecharge: next };
+
+          return { ...prev, secondsUntilNextRecharge: nextSeconds };
         });
       }, 1000);
     }
 
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [auth, fetchEnergy]); // SOLO depende de auth y fetchEnergy, NO de secondsUntilNextRecharge
+    return () => clearInterval(intervalRef.current!);
+  }, [energy.secondsUntilNextRecharge, auth, fetchEnergy]);
 
   return (
     <EnergyContext.Provider value={{ ...energy, refreshEnergy: fetchEnergy }}>

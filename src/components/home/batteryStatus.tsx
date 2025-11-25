@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { useEnergy } from "../../hooks/useEnergy";
 import { batteryIcons } from "../../models/ui/home/batteryIcons";
 
@@ -12,21 +11,22 @@ interface BatteryStatusProps {
 export const BatteryStatus = ({ variant = "default", className = "" }: BatteryStatusProps) => {
   const { currentAmount, maxAmount, secondsUntilNextRecharge } = useEnergy();
 
-  // Calcular los niveles (baterías llenas vs vacías)
-  const levels = useMemo(() => {
-    const full = Array(currentAmount).fill("full");
-    const empty = Array(maxAmount - currentAmount).fill("empty");
-    return [...full, ...empty];
-  }, [currentAmount, maxAmount]);
+  // Calcular niveles de batería (llenas y vacías)
+  const levels = Array(maxAmount)
+    .fill("empty")
+    .fill("full", 0, currentAmount);
 
   // Formatear el tiempo restante
-  const time = useMemo(() => {
-    if (secondsUntilNextRecharge == null) return "--:--";
-    const m = Math.floor(secondsUntilNextRecharge / 60);
-    const s = secondsUntilNextRecharge % 60;
-    return `${m}:${s.toString().padStart(2, "0")}`;
-  }, [secondsUntilNextRecharge]);
+  const time =
+    secondsUntilNextRecharge == null
+      ? "--:--"
+      : `${Math.floor(secondsUntilNextRecharge / 60)}:${(
+        secondsUntilNextRecharge % 60
+      )
+        .toString()
+        .padStart(2, "0")}`;
 
+  // Variantes visuales
   const isCompact = variant === "compact";
   const gapClass = isCompact ? "gap-2" : "gap-3";
   const boltSize = isCompact ? "h-4" : "h-7";
