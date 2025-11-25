@@ -60,9 +60,9 @@ export const RegisterPage = () => {
         try {
             console.log("Llamando a register...");
             await register(email, password, username)
-            console.log("Register exitoso, navegando al home...");
-            // El ProtectedRoute se encargará de redirigir al tutorial si lastlevelId === 0
-            navigate("/home");
+            console.log("Register exitoso, navegando al tutorial...");
+            
+            navigate("/tutorial");
         } catch (error) {
             console.error("Error en handleSubmit:", error);
             setErrorMessage((error as Error).message || "Error desconocido");

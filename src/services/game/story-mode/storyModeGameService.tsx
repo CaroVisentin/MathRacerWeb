@@ -4,6 +4,7 @@ import type { SubmitSoloAnswerResponseDto } from "../../../models/domain/story-m
 import { api, API_URLS } from "../../network/api";
 import { manageError } from "../../../shared/utils/manageErrors";
 import type { UseWildcardResponseDto } from "../../../models/domain/story-mode/usedWildcardResponseDto";
+import type { AbandonGameResponse } from "../../../models/ui/story-mode/storyModeGame";
 
 /**
  * Inicia una nueva partida individual
@@ -82,3 +83,22 @@ export async function applyWildcard(
     manageError(error);
   }
 }
+
+/**
+ * Permite al jugador abandonar una partida en progreso. 
+ * La partida se marca como perdida, se consumen todas las vidas y se reduce 1 punto de energía del jugador.
+ * @param gameId Id de la partida 
+ */
+export async function abandonSoloGame(
+  gameId: number,
+): Promise<AbandonGameResponse> {
+  try {
+    const { data } = await api.post<AbandonGameResponse>(
+      `${API_URLS.storyModeGame}/${gameId}/abandon`
+    );
+    return data;
+  } catch (error: unknown) {
+    manageError(error);
+  }
+}
+

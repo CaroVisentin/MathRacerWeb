@@ -13,6 +13,7 @@ interface RewardsListProps {
     React.SetStateAction<ChestResponseDto | null>
   >;
   setIsPendingChest?: React.Dispatch<React.SetStateAction<boolean>>;
+  onContinue?: () => void | Promise<void>;
 }
 
 export const RewardsList: React.FC<RewardsListProps> = ({
@@ -21,6 +22,7 @@ export const RewardsList: React.FC<RewardsListProps> = ({
   setRewards,
   setObtainedChest,
   setIsPendingChest,
+  onContinue,
 }) => {
   const navigate = useNavigate();
 
@@ -92,12 +94,18 @@ export const RewardsList: React.FC<RewardsListProps> = ({
 
       {/* Botón debajo y centrado */}
       <button
-        onClick={() => {
-          setShowChest(false);
-          setRewards(false);
-          setObtainedChest(null);
-          setIsPendingChest?.(false);
-          navigate("/garage");
+        onClick={async () => {
+          if (onContinue) {
+            // Custom handler (e.g., tutorial)
+            await onContinue();
+          } else {
+            // Default behavior
+            setShowChest(false);
+            setRewards(false);
+            setObtainedChest(null);
+            setIsPendingChest?.(false);
+            navigate("/garage");
+          }
         }}
         className="bg-[#0F7079] border-2 border-white rounded-lg text-2xl transition w-40 h-12 text-white hover:bg-[#13909B]"
       >

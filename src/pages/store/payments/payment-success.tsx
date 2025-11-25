@@ -16,7 +16,7 @@ export default function PaymentSuccess() {
           </div>
 
           <div className="flex-1 text-center md:text-left space-y-6">
-          
+
             <h1 className="text-white text-4xl md:text-5xl font-black leading-tight">
               ¡Pago exitoso!
             </h1>
@@ -25,12 +25,12 @@ export default function PaymentSuccess() {
             </p>
             <div className="space-y-4 pt-2">
               <Link
-                to="/store"
+                to="/tienda"
                 className="inline-flex items-center justify-center w-full md:w-auto bg-[#00f0ff] text-slate-950 border-2 border-white px-3 py-3 text-lg font-black tracking-[0.3em] transition-all duration-300 hover:bg-cyan-300 hover:-translate-y-1 shadow-[0_0_20px_rgba(0,240,255,0.45)]"
               >
                 VOLVER A LA TIENDA
               </Link>
-            
+
             </div>
           </div>
         </div>

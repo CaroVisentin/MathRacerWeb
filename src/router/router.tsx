@@ -109,7 +109,7 @@ const router = createBrowserRouter([
     element: <ProtectedRoute> <GaragePage /> </ProtectedRoute>
   },
   {
-    path: "/store",
+    path: "/tienda",
     element: <ProtectedRoute> <StorePage /> </ProtectedRoute>
   },
   {
@@ -117,15 +117,15 @@ const router = createBrowserRouter([
     element: <ProtectedRoute> <TutorialPage /> </ProtectedRoute>
   },
   {
-    path: "/payment-success",
+    path: "/pago-exitoso",
     element: <PaymentSuccess />
   },
   {
-    path: "/payment-failure",
+    path: "/pago-fallido",
     element: <PaymentFailure />
   },
   {
-    path: "/payment-pending",
+    path: "/pago-pendiente",
     element: <PaymentPending />
   },
   {

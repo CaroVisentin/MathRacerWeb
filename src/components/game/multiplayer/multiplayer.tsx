@@ -128,19 +128,24 @@ export const MultiplayerGame = () => {
     }
 
     try {
-      // Desconectar del grupo de SignalR
-      if (conn) {
-        await conn.stop();
-      }
-      
-      // Marcar como perdedor y mostrar el modal
+      console.log("Usuario abandona la partida: mostrando modal perdedor y desconectando...");
+
+      // Mostrar modal de perdedor localmente para feedback inmediato
       setPerdedor(true);
       setGanador(false);
-      
-      // Después de un breve delay para que se muestre el modal, volver al menú
-      setTimeout(() => {
-        navigate('/menu');
-      }, 3000);
+
+      // Dar un pequeño margen para que el servidor registre la desconexión
+      // y notifique al rival como ganador. Luego detener conexión.
+      setTimeout(async () => {
+        try {
+          if (conn) {
+            await conn.stop();
+          }
+        } catch (e) {
+          console.warn("Error al detener conexión:", e);
+        }
+        // La navegación ocurre cuando el usuario cierra el modal (onClose/onRetry)
+      }, 1200);
     } catch (error) {
       console.error("Error al abandonar la partida:", error);
       navigate('/menu');

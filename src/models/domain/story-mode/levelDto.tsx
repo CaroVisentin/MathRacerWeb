@@ -5,4 +5,5 @@ export interface LevelDto {
     termsCount: number;
     variablesCount: number;
     resultType: string;
+    isCompleted: boolean;
 }
