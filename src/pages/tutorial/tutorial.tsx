@@ -57,7 +57,6 @@ export const TutorialPage = () => {
   // Cuando el cofre se cierre y ya tenga productos, redirigir al home
   useEffect(() => {
     if (!mostrarCofre && tutorialCompletado) {
-      console.log('Tutorial finalizado, redirigiendo al home...');
       navigate('/home');
     }
   }, [mostrarCofre, tutorialCompletado, navigate]);
@@ -74,7 +73,6 @@ export const TutorialPage = () => {
         const updatedPlayerFromBackend = await getPlayerData();
         setPlayer(updatedPlayerFromBackend);
         localStorage.setItem("player", JSON.stringify(updatedPlayerFromBackend));
-        console.log("Tutorial completado, player refrescado desde backend:", updatedPlayerFromBackend);
       }
 
     } catch (error: unknown) {
@@ -101,17 +99,14 @@ export const TutorialPage = () => {
 
   // Manejar el cierre del cofre - AQUÍ refrescamos el player
   const handleCloseTutorialChest = async () => {
-    console.log("Cerrando cofre, refrescando player...");
     if (player) {
       try {
         const updatedPlayer = await getPlayerData();
         setPlayer(updatedPlayer);
         localStorage.setItem("player", JSON.stringify(updatedPlayer));
-        console.log("Player actualizado tras cofre:", updatedPlayer);
 
         // Verificar que tiene los productos antes de navegar
         if (updatedPlayer.car && updatedPlayer.background && updatedPlayer.character) {
-          console.log("Productos verificados, navegando al home...");
           navigate('/home');
         } else {
           console.warn("Player refrescado pero sin productos básicos:", updatedPlayer);

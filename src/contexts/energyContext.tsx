@@ -3,7 +3,7 @@ import { getEnergyStatus } from "../services/energy/energyService";
 import { type EnergyStatusDto } from "../models/domain/energy/energyStatusDto";
 import type { EnergyContextValue } from "../models/ui/energy/energy";
 import { getErrorMessage } from "../shared/utils/manageErrors";
-import { useContext} from "react";
+import { useContext } from "react";
 import { AuthContext } from "./AuthContext";
 
 const EnergyContext = createContext<EnergyContextValue | null>(null);
@@ -27,22 +27,19 @@ export const EnergyProvider: React.FC<{ children: React.ReactNode }> = ({
   const fetchEnergy = useCallback(async () => {
     // No intentar obtener energía si no hay contexto de auth o no hay usuario
     if (!auth || !auth.user) {
-      console.log("No se puede obtener energía: usuario no autenticado");
       return;
     }
 
     // Evitar llamadas concurrentes
     if (isFetchingRef.current) {
-      console.log("Ya hay una llamada de energía en proceso, esperando...");
       return;
     }
-    
+
     isFetchingRef.current = true;
-    
+
     try {
       const data: EnergyStatusDto = await getEnergyStatus();
       setEnergy(data);
-      console.log("Energía obtenida exitosamente:", data);
     } catch (error: unknown) {
       const message = getErrorMessage(error);
       console.error("Error al obtener energía:", message);
@@ -55,19 +52,16 @@ export const EnergyProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     // Esperar a que el contexto de auth esté listo
     if (!auth) {
-      console.log("Esperando contexto de autenticación...");
       return;
     }
 
     if (!auth.loading && auth.user) {
       // Solo hacer la llamada inicial si cambió el estado de autenticación
       if (!isAuthenticatedRef.current) {
-        console.log("Usuario autenticado, esperando antes de obtener energía...");
         isAuthenticatedRef.current = true;
-        
+
         // Esperar 200ms adicionales para asegurar que el token esté listo
         const timeoutId = setTimeout(() => {
-          console.log("Obteniendo energía inicial...");
           fetchEnergy();
         }, 200);
 
@@ -75,7 +69,6 @@ export const EnergyProvider: React.FC<{ children: React.ReactNode }> = ({
       }
     } else if (!auth.loading && !auth.user) {
       // Resetear energía cuando no hay usuario autenticado
-      console.log("Usuario no autenticado, reseteando energía");
       isAuthenticatedRef.current = false;
       isFetchingRef.current = false;
       setEnergy({
@@ -84,7 +77,7 @@ export const EnergyProvider: React.FC<{ children: React.ReactNode }> = ({
         secondsUntilNextRecharge: 0,
       });
     }
-    
+
     return undefined;
   }, [auth, fetchEnergy]);
 

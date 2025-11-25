@@ -26,8 +26,6 @@ export default function JoinGame() {
 
   // Cargar partidas disponibles al montar el componente
   useEffect(() => {
-    console.log("=== JOIN GAME COMPONENT MOUNTED ===");
-    console.log("VITE_API_URL:", import.meta.env.VITE_API_URL);
     loadGames();
   }, []);
 
@@ -80,13 +78,6 @@ export default function JoinGame() {
   const handleJoinGame = async (gameId: number, pwd?: string) => {
     try {
       setLoading(true);
-      console.log("=== HANDLE JOIN GAME ===");
-      console.log("GameId:", gameId);
-      console.log("Password:", pwd);
-
-      // NO hacer petición HTTP, solo navegar al juego
-      // El componente multiplayer.tsx se encargará de hacer JoinGame por SignalR
-      console.log("Navegando a multiplayer para unirse por SignalR...");
 
       // Navegar a la pantalla del juego multijugador con el gameId
       // Pasar la contraseña en el state si existe
@@ -182,8 +173,8 @@ export default function JoinGame() {
                           onClick={() => handleJoinClick(game)}
                           disabled={game.isFull}
                           className={`bg-[#5df9f9] text-black font-extralight w-15 h-8 py-1 rounded text-xl leading-relaxed ${game.isFull
-                              ? 'opacity-50 cursor-not-allowed'
-                              : 'hover:bg-[#f95ec8] hover:drop-shadow-[0_0_10px_#00ffff]'
+                            ? 'opacity-50 cursor-not-allowed'
+                            : 'hover:bg-[#f95ec8] hover:drop-shadow-[0_0_10px_#00ffff]'
                             }`}
                         >
                           {game.isFull ? 'Llena' : 'Unirse'}
@@ -226,7 +217,7 @@ export default function JoinGame() {
                  disabled:opacity-50"
             style={{ marginTop: '20px', marginBottom: '20px' }}
           >
-           <i className="ri-arrow-left-line mr-2"></i> Volver
+            <i className="ri-arrow-left-line mr-2"></i> Volver
           </Link>
           <button
             onClick={loadGames}

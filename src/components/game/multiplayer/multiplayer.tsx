@@ -16,8 +16,8 @@ import { usePlayer } from "../../../hooks/usePlayer";
 import { BackButton } from "../../../shared/buttons/backButton";
 
 // IDs para fallback aleatorio (según imageResolver)
-const fondoFallbackIds = [8,5,13,18,19];
-const autoFallbackIds = [6,9,12,15,18,19,20,3];
+const fondoFallbackIds = [8, 5, 13, 18, 19];
+const autoFallbackIds = [6, 9, 12, 15, 18, 19, 20, 3];
 
 export const MultiplayerGame = () => {
   const { gameId } = useParams<{ gameId: string }>();
@@ -26,7 +26,7 @@ export const MultiplayerGame = () => {
   const navigate = useNavigate();
   const { conn, errorConexion, isConnected, invoke, on, off } = useConnection();
 
- 
+
   const password = location.state?.password as string | undefined;
   const [ecuacion, setEcuacion] = useState<QuestionDto>();
   const [opciones, setOpciones] = useState<number[]>();
@@ -57,7 +57,7 @@ export const MultiplayerGame = () => {
   const joinRetries = useRef(0);
   const haConectado = useRef(false);
 
- 
+
   const nombreJugador = player?.name || "";
 
   const conectarJugador = useCallback(async () => {
@@ -77,7 +77,7 @@ export const MultiplayerGame = () => {
 
           const err = error as { constructor?: { name: string }; message?: string; stack?: string };
 
-          
+
           setError(err.message || "No se pudo unir a la partida");
           setTimeout(() => {
             navigate('/menu');
@@ -88,7 +88,7 @@ export const MultiplayerGame = () => {
         navigate('/menu');
       }
     } else {
-      
+
       if (nombreJugador.trim()) {
         haConectado.current = true;
 
@@ -110,10 +110,10 @@ export const MultiplayerGame = () => {
     setResultado(null);
     setRespuestaSeleccionada(null);
     setBuscandoRival(true);
-    haConectado.current = false; 
-    joinRetries.current = 0; 
+    haConectado.current = false;
+    joinRetries.current = 0;
 
-    
+
     if (gameId) {
       navigate('/menu');
     } else {
@@ -128,8 +128,6 @@ export const MultiplayerGame = () => {
     }
 
     try {
-      console.log("Usuario abandona la partida: mostrando modal perdedor y desconectando...");
-
       // Mostrar modal de perdedor localmente para feedback inmediato
       setPerdedor(true);
       setGanador(false);
@@ -158,7 +156,7 @@ export const MultiplayerGame = () => {
     const opcionesIncorrectas = ecuacion.options.filter(
       (opt) => opt !== ecuacion.correctAnswer
     );
-    
+
     const unaIncorrecta =
       opcionesIncorrectas[
       Math.floor(Math.random() * opcionesIncorrectas.length)
@@ -249,13 +247,13 @@ export const MultiplayerGame = () => {
     }
   }, [conn, isConnected, nombreJugador, gameId, partidaId, conectarJugador]);
 
-  
+
   useEffect(() => {
     if (!conn || !isConnected) return;
     if (!gameId) return;
     if (partidaId) return;
 
-    
+
     if (joinRetries.current >= 3) return;
 
     const t = setTimeout(async () => {
@@ -272,17 +270,17 @@ export const MultiplayerGame = () => {
   }, [conn, isConnected, gameId, partidaId, conectarJugador]);
 
   useEffect(() => {
-    if (!conn) return; 
+    if (!conn) return;
 
     const gameUpdateHandler = (data: GameUpdateDto) => {
-      
+
       if (data.players && data.players.length >= 2) {
         setBuscandoRival(false);
       }
 
       setJugadoresPartida(data.players);
 
-      
+
       const auth = getAuth();
       const myUid = auth.currentUser?.uid;
 
@@ -291,11 +289,11 @@ export const MultiplayerGame = () => {
         jugadorActual = data.players.find(p => p.uid === myUid);
       }
 
-      
+
       if (!jugadorActual) {
         jugadorActual = data.players.find(p => p.name?.trim() === nombreJugador.trim());
       }
-    
+
       if (!jugadorActual) {
         const candidatos = data.players.filter(p => p.name?.trim().toLowerCase() === nombreJugador.trim().toLowerCase());
         if (candidatos.length === 1) {
@@ -372,27 +370,27 @@ export const MultiplayerGame = () => {
       }
     };
 
-    
+
     const errorHandler = (message: string) => {
       console.error("Error del servidor SignalR:", message);
       alert(`Error: ${message}`);
-      
+
       navigate("/menu");
     };
 
-    
-    on("GameUpdate", gameUpdateHandler);     
-    on("gameUpdate", gameUpdateHandler);      
-    on("game-update", gameUpdateHandler);     
-    on("gameupdate", gameUpdateHandler);      
 
-    
+    on("GameUpdate", gameUpdateHandler);
+    on("gameUpdate", gameUpdateHandler);
+    on("game-update", gameUpdateHandler);
+    on("gameupdate", gameUpdateHandler);
+
+
     on("Error", errorHandler);
     on("error", errorHandler);
 
-    
 
-    
+
+
     if (conn) {
       conn.onclose((error) => {
         console.error("Conexión SignalR cerrada:", error);
@@ -400,7 +398,7 @@ export const MultiplayerGame = () => {
       });
     }
 
-    
+
     return () => {
       off("GameUpdate", gameUpdateHandler);
       off("gameUpdate", gameUpdateHandler);
@@ -408,7 +406,7 @@ export const MultiplayerGame = () => {
       off("gameupdate", gameUpdateHandler);
       off("Error", errorHandler);
       off("error", errorHandler);
-      
+
     };
   }, [conn, on, off, nombreJugador, navigate, jugadorId, setPartidaId, setJugadoresPartida]);
 
@@ -439,7 +437,7 @@ export const MultiplayerGame = () => {
     <div className="juego w-full h-full bg-neutral-900 text-white relative">
       {/* HEADER */}
       <div className="flex justify-between items-center p-1 bg-neutral-900 absolute top-0 left-0 w-full z-10">
-      <BackButton onClick={handleVolver} />
+        <BackButton onClick={handleVolver} />
       </div>
 
       {/*modal de busqueda de rival*/}
@@ -473,7 +471,7 @@ export const MultiplayerGame = () => {
               onClick={() => navigate('/menu')}
               className="bg-[#5df9f9] text-black px-6 py-3 rounded text-xl hover:bg-[#f95ec8] transition-colors"
             >
-           <i className="ri-arrow-left-line mr-2"></i> Volver
+              <i className="ri-arrow-left-line mr-2"></i> Volver
             </button>
           </div>
         </div>

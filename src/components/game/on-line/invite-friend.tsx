@@ -54,14 +54,12 @@ export default function InviteFriends() {
     setError(null);
 
     try {
-      
+
       const response = await gameInvitationService.sendInvitation({
         invitedFriendId: friendId,
         difficulty: selectedDifficulty,
         expectedResult: selectedExpectedResult,
       });
-
-      console.log("Invitación enviada:", response);
 
       // Navegar directamente al juego con el gameId devuelto
       navigate(`/multijugador/${response.gameId}`, {
@@ -84,7 +82,7 @@ export default function InviteFriends() {
 
   return (
     <div className="h-screen w-screen fondo-city flex flex-col items-center justify-center p-4 overflow-hidden">
-    
+
       <div className="w-full max-w-5xl mx-auto bg-black/60 text-[#5df9f9] p-6 pb-2 rounded-lg shadow-lg">
         <h1 className="text-6xl text-[#5df9f9]  text-center mb-10 pb-5 drop-shadow-[0_0_10px_#00ffff]">
           Invitar amigo
@@ -213,7 +211,7 @@ export default function InviteFriends() {
                  disabled:opacity-50"
             style={{ marginTop: "20px", marginBottom: "20px" }}
           >
-           <i className="ri-arrow-left-line mr-2"></i> Volver
+            <i className="ri-arrow-left-line mr-2"></i> Volver
 
           </Link>
         </div>
