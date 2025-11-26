@@ -59,7 +59,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       id: data?.id ?? 0,
       name: data?.name ?? "",
       email: data?.email ?? "",
-      lastLevelId: data?.lastLevelId ?? data?.lastLevelId ?? 0,
+      lastLevelId: data?.lastLevelId ?? 0,
       points: data?.points ?? 0,
       coins: data?.coins ?? 0,
       background: data?.background ?? data?.equippedBackground ?? null,
