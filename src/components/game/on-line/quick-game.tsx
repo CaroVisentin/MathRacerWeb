@@ -25,15 +25,15 @@ export const QuickGame: React.FC = () => {
 
     const handleMatchFound = (gameData: { gameId?: number; GameId?: number; password?: string; Password?: string }) => {
       const gid = gameData.gameId || gameData.GameId;
-      
-      
+
+
       if (gid) {
         setMatchFound(true);
         setSearching(false);
         if (fallbackTimerRef.current) {
           clearTimeout(fallbackTimerRef.current);
-        }       
-              }
+        }
+      }
     };
 
     const handleError = (errorMessage: string) => {
@@ -45,12 +45,12 @@ export const QuickGame: React.FC = () => {
 
     // Listener para GameUpdate
     const handleGameUpdate = (data: GameUpdateDto) => {
-      
+
       const gid = data.gameId;
       const status = data.status;
       const players = data.players || [];
       const playerCount = players.length;
-      
+
       // Iniciar juego si el status es InProgress O si hay 2 jugadores
       if (status === "InProgress" || playerCount >= 2) {
         setInitialGameData(data);
@@ -60,13 +60,13 @@ export const QuickGame: React.FC = () => {
         if (fallbackTimerRef.current) {
           clearTimeout(fallbackTimerRef.current);
         }
-      } 
+      }
     };
 
-   
+
     on("MatchFound", handleMatchFound);
     on("Error", handleError);
-    
+
     // Registrar todas las variantes de GameUpdate
     on("GameUpdate", handleGameUpdate);
     on("gameUpdate", handleGameUpdate);
@@ -74,7 +74,7 @@ export const QuickGame: React.FC = () => {
     on("gameupdate", handleGameUpdate);
 
     return () => {
-      
+
       if (!gameIdFound) {
         off("GameUpdate", handleGameUpdate);
         off("gameUpdate", handleGameUpdate);
@@ -101,11 +101,11 @@ export const QuickGame: React.FC = () => {
       setMatchFound(false);
       const uid = user.uid;
       await invoke("FindMatchWithMatchmaking", uid);
-      
-     
-      
+
+
+
     } catch {
-      
+
       setError(errorConexion || "No se pudo conectar al servidor de matchmaking");
       setShowModal(true);
       setSearching(false);
@@ -117,7 +117,7 @@ export const QuickGame: React.FC = () => {
     if (fallbackTimerRef.current) {
       clearTimeout(fallbackTimerRef.current);
     }
-    
+
   };
 
   // Si ya encontramos partida, mostrar el componente de juego
@@ -137,15 +137,15 @@ export const QuickGame: React.FC = () => {
           {/* <p className="text-5xl text-white mb-4 ">
             Jugador: <span className="text-[#5df9f9] ">{player?.name || "Invitado"}</span>
           </p> */}
-         
+
           <p className="text-lg text-gray-300">
             Se te emparejará automáticamente con otro jugador disponible
           </p>
         </div>
 
         {searching && (
-          <div className="text-center py-8">
-            <div className="animate-spin items-center rounded-full h-20 w-20 border-t-4 border-b-4 border-[#5df9f9] mx-auto mb-4"></div>
+          <div className="flex flex-col justify-center items-center py-8 text-center">
+            <div className="animate-spin rounded-full h-20 w-20 border-t-4 border-b-4 border-[#5df9f9] mb-4"></div>
             <p className="text-2xl text-white animate-pulse">Buscando oponente...</p>
             <p className="text-lg text-gray-400 mt-2">Buscando partidas disponibles</p>
           </div>
@@ -177,16 +177,15 @@ export const QuickGame: React.FC = () => {
                 onClick={playBackSound}
                 className="bg-red-600 text-white border-2 border-white px-8 py-3 rounded text-2xl hover:bg-red-700 hover:drop-shadow-[0_0_10px_#ff0000] transition-all"
               >
-           <i className="ri-arrow-left-line mr-2"></i> Volver
+                <i className="ri-arrow-left-line mr-2"></i> Volver
               </Link>
               <button
                 onClick={handleFindMatch}
                 disabled={!player?.name}
-                className={`bg-[#5df9f9] text-black border-2 border-white px-8 py-3 rounded text-2xl transition-all ${
-                  !player?.name
-                    ? 'opacity-50 cursor-not-allowed'
-                    : 'hover:bg-[#f95ec8] hover:drop-shadow-[0_0_10px_#00ffff]'
-                }`}
+                className={`bg-[#5df9f9] text-black border-2 border-white px-8 py-3 rounded text-2xl transition-all ${!player?.name
+                  ? 'opacity-50 cursor-not-allowed'
+                  : 'hover:bg-[#f95ec8] hover:drop-shadow-[0_0_10px_#00ffff]'
+                  }`}
               >
                 Buscar Partida
               </button>
