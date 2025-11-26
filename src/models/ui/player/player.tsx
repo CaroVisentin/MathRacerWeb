@@ -27,7 +27,6 @@ export type BackendPlayer = {
   name?: string;
   email?: string;
   lastLevelId?: number;
-  lastlevelId?: number;
   points?: number;
   coins?: number;
   background?: PlayerItem | null;
