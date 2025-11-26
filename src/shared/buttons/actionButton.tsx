@@ -3,11 +3,12 @@ import { Link } from "react-router-dom";
 import { useAudio } from "../../contexts/AudioContext";
 
 interface ActionButtonProps {
-    size?: "small" | "large";
-    to?: string;
-    children: React.ReactNode;
-    className?: string;
-    onClick?: () => void;
+  size?: "small" | "large";
+  to?: string;
+  children: React.ReactNode;
+  className?: string;
+  onClick?: () => void;
+  title?: string;
 }
 
 
@@ -18,6 +19,7 @@ export const ActionButton = ({
   children,
   className = "",
   onClick,
+  title = "",
 }: ActionButtonProps) => {
   const { playButtonSound } = useAudio();
 
@@ -52,14 +54,14 @@ export const ActionButton = ({
 
   if (to) {
     return (
-      <Link to={to} className={baseClasses} onClick={handleClick} role="button">
+      <Link to={to} title={title} className={baseClasses} onClick={handleClick} role="button">
         {children}
       </Link>
     );
   }
 
   return (
-    <button type="button" className={baseClasses} onClick={handleClick}>
+    <button type="button" title={title} className={baseClasses} onClick={handleClick}>
       {children}
     </button>
   );

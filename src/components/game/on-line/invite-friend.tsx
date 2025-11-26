@@ -62,8 +62,6 @@ export default function InviteFriends() {
         expectedResult: selectedExpectedResult,
       });
 
-      console.log("Invitación enviada:", response);
-
       // Navegar directamente al juego con el gameId devuelto
       navigate(`/multijugador/${response.gameId}`, {
         state: { password: null } // La partida por invitación no usa password

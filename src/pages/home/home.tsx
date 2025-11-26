@@ -64,23 +64,21 @@ export const Home = () => {
         {/* Esquina inferior izquierda - Modos de juego */}
         <div className="flex flex-1 items-end justify-between px-4 pb-8">
           <div className="flex flex-col gap-3">
-            <ActionButton to="/menu">Multijugador</ActionButton>
-            <ActionButton to="/modo-historia">Historia</ActionButton>
-            <ActionButton to="/modo-infinito">
-              Práctica Libre
-            </ActionButton>
+            <ActionButton to="/menu" title="Multijugador">Multijugador</ActionButton>
+            <ActionButton to="/modo-historia" title="Modo Historia">Historia</ActionButton>
+            <ActionButton to="/modo-infinito" title="Práctica Libre">Práctica Libre</ActionButton>
           </div>
 
           {/* Esquina inferior derecha - Navegación a otras páginas */}
           <div className="flex flex-col gap-3 items-end">
 
-            <ActionButton to="/ranking" size="small">
+            <ActionButton to="/ranking" size="small" title="Ranking">
               <i className="ri-trophy-fill"></i>
             </ActionButton>
-            <ActionButton to="/garage" size="small">
+            <ActionButton to="/garage" size="small" title="Garage">
               <i className="ri-store-2-fill"></i>
             </ActionButton>
-            <ActionButton to="/tienda" size="small">
+            <ActionButton to="/tienda" size="small" title="Tienda">
               <i className="ri-shopping-cart-fill"></i>
             </ActionButton>
           </div>

@@ -68,10 +68,7 @@ export default function CreateGame() {
         expectedResult: formData.tipodeResultado,
 
       };
-      console.log("Creando partida con datos:", request);
       const response = await createCustomGame(request);
-
-      console.log("Partida creada:", response);
 
       // va a multijugador 
       // si es privada pasa contraseña
@@ -94,10 +91,10 @@ export default function CreateGame() {
 
   return (
 
- 
+
     <div className="h-screen w-screen fondo-city flex flex-col items-center justify-start  overflow-hidden">
-        <AppHeader />
-  
+      <AppHeader />
+
 
       <form onSubmit={handleSubmit}
         className="w-full max-w-2xl mx-auto bg-black/50 text-[#5df9f9] p-6 rounded-lg shadow-lg ">
@@ -171,7 +168,7 @@ export default function CreateGame() {
                  hover:bg-cyan-400 shadow-[0_0_10px_rgba(0,217,255,0.3)] 
                  hover:shadow-[0_0_20px_rgba(0,217,255,0.6)]
                  disabled:opacity-50">
-           <i className="ri-arrow-left-line mr-2"></i> Volver
+            <i className="ri-arrow-left-line mr-2"></i> Volver
           </Link>
           <button
             type="submit"

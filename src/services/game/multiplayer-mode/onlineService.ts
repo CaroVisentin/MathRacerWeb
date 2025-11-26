@@ -51,18 +51,14 @@ export async function createCustomGame(request: CreateCustomGameRequestDto): Pro
     try {
         // Importar getAuthToken desde api.ts
         const { getAuthToken } = await import('../../network/api');
-        
+
         // Asegurarse de que el token esté actualizado antes de hacer la petición
         await getAuthToken();
-        
-        console.log('Enviando request al backend:', request);
+
         const { data } = await api.post(`${API_URLS.online}/create`, request);
-        console.log('Respuesta del backend:', data);
         return data;
     } catch (error) {
         console.error("Error al crear partida:", error);
-        const err = error as { response?: { data?: unknown } };
-        console.error("Detalles del error:", err.response?.data);
         throw error;
     }
 }
@@ -92,7 +88,4 @@ export async function findQuickMatch(playerName: string): Promise<void> {
     if (!playerName || playerName.trim() === "") {
         throw new Error("El nombre del jugador es requerido");
     }
-    
-    // La lógica real de matchmaking se manejará a través de SignalR
-    console.log(`Buscando partida rápida para: ${playerName}`);
 }

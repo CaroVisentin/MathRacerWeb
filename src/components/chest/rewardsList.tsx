@@ -37,8 +37,6 @@ export const RewardsList: React.FC<RewardsListProps> = ({
           let imageSrc = "";
           let quantity = 0;
 
-          console.log("Chest item:", item);
-
           switch (item.type) {
             case "Product": {
               title = item.product?.name ?? "Producto misterioso";

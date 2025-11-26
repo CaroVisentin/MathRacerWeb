@@ -18,7 +18,7 @@ interface AudioContextType {
   musicVolume: number;
   setSoundVolume: (volume: number) => void;
   setMusicVolume: (volume: number) => void;
-  
+
   // Funciones para reproducir sonidos
   playButtonSound: () => void;
   playGameOverSound: () => void;
@@ -28,7 +28,7 @@ interface AudioContextType {
   playAddToCartSound: () => void;
   playRemoveFromCartSound: () => void;
   playJoinCreateSound: () => void;
-  
+
   // Control de música de fondo
   playBackgroundMusic: () => void;
   pauseBackgroundMusic: () => void;
@@ -40,7 +40,7 @@ const AudioContext = createContext<AudioContextType | undefined>(undefined);
 
 export const AudioProvider = ({ children }: { children: ReactNode }) => {
   const { user } = useAuth();
-  
+
   // Cargar volúmenes desde localStorage o usar valores por defecto
   const [soundVolume, setSoundVolumeState] = useState<number>(() => {
     const saved = localStorage.getItem('soundVolume');
@@ -78,7 +78,7 @@ export const AudioProvider = ({ children }: { children: ReactNode }) => {
           await backgroundMusicRef.current?.play();
         }
       } catch {
-        console.log('No se pudo reproducir música automáticamente. El usuario debe interactuar primero.');
+        console.error('No se pudo reproducir música automáticamente. El usuario debe interactuar primero.');
       }
     };
 
@@ -89,14 +89,14 @@ export const AudioProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (backgroundMusicRef.current) {
       backgroundMusicRef.current.volume = musicVolume / 100;
-      
+
       // Si el volumen cambia de 0 a algo mayor, reproducir
       if (musicVolume > 0 && backgroundMusicRef.current.paused) {
         backgroundMusicRef.current.play().catch(err => {
-          console.log('Error al reproducir música:', err);
+          console.error('Error al reproducir música:', err);
         });
       }
-      
+
       // Si el volumen es 0, pausar
       if (musicVolume === 0) {
         backgroundMusicRef.current.pause();

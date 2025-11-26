@@ -49,22 +49,16 @@ export const RegisterPage = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log("=== INICIANDO REGISTRO ===");
-        
+
         if (!validateInputs()) {
-            console.log("Validación de inputs falló");
             setShowErrorModal(true);
             return;
         }
 
         try {
-            console.log("Llamando a register...");
             await register(email, password, username)
-            console.log("Register exitoso, navegando al tutorial...");
-            
             navigate("/tutorial");
         } catch (error) {
-            console.error("Error en handleSubmit:", error);
             setErrorMessage((error as Error).message || "Error desconocido");
             setShowErrorModal(true);
         }

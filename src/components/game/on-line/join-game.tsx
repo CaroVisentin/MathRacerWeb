@@ -27,8 +27,6 @@ export default function JoinGame() {
 
   // Cargar partidas disponibles al montar el componente
   useEffect(() => {
-    console.log("=== JOIN GAME COMPONENT MOUNTED ===");
-    console.log("VITE_API_URL:", import.meta.env.VITE_API_URL);
     loadGames();
   }, []);
 
@@ -81,13 +79,6 @@ export default function JoinGame() {
   const handleJoinGame = async (gameId: number, pwd?: string) => {
     try {
       setLoading(true);
-      console.log("=== HANDLE JOIN GAME ===");
-      console.log("GameId:", gameId);
-      console.log("Password:", pwd);
-
-      // NO hacer petición HTTP, solo navegar al juego
-      // El componente multiplayer.tsx se encargará de hacer JoinGame por SignalR
-      console.log("Navegando a multiplayer para unirse por SignalR...");
 
       // Navegar a la pantalla del juego multijugador con el gameId
       // Pasar la contraseña en el state si existe
