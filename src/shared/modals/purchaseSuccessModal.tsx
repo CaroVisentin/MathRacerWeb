@@ -6,7 +6,8 @@ interface PurchaseSuccessModalProps {
   message?: string;
   imageSrc?: string;
   onClose: () => void;
-  onGoToGarage?: () => void;
+  onGoToPage?: () => void;
+  goToLabel?: string;
 }
 
 const PurchaseSuccessModal: React.FC<PurchaseSuccessModalProps> = ({
@@ -14,7 +15,8 @@ const PurchaseSuccessModal: React.FC<PurchaseSuccessModalProps> = ({
   message = "Tu compra fue procesada correctamente.",
   imageSrc = mathiImg,
   onClose,
-  onGoToGarage,
+  onGoToPage,
+  goToLabel = "Ir al Garage",
 }) => {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/80 z-[999]">
@@ -34,15 +36,15 @@ const PurchaseSuccessModal: React.FC<PurchaseSuccessModalProps> = ({
         <p className="text-xl text-white mb-6">{message}</p>
 
         <div className="flex items-center justify-center gap-3">
-          {onGoToGarage && (
+          {onGoToPage && (
             <button
-              onClick={onGoToGarage}
+              onClick={onGoToPage}
               className="bg-[#00f0ff] text-black text-xl border-2 border-white px-3 py-1
                 tracking-wider transition-all duration-300 
                  hover:bg-cyan-400 shadow-[0_0_10px_rgba(0,217,255,0.3)] 
                  hover:shadow-[0_0_20px_rgba(0,217,255,0.6)]
                  disabled:opacity-50"            >
-              Ir al Garage
+              {goToLabel}
             </button>
           )}
           <button

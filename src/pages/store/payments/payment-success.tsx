@@ -1,7 +1,39 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import mathiHappy from "../../../assets/images/mathi.png";
+import { usePlayer } from "../../../hooks/usePlayer";
+import { getPlayerData } from "../../../services/player/playerService";
 
 export default function PaymentSuccess() {
+  const navigate = useNavigate();
+  const { player, setPlayer } = usePlayer();
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleReturnToStore = async () => {
+    if (isUpdating) return;
+
+    if (!player?.id) {
+      navigate("/tienda");
+      return;
+    }
+
+    setIsUpdating(true);
+    setError(null);
+
+    try {
+      const updatedPlayer = await getPlayerData();
+      setPlayer(updatedPlayer);
+      localStorage.setItem("player", JSON.stringify(updatedPlayer));
+      navigate("/tienda");
+    } catch (err) {
+      console.error("No se pudo refrescar las monedas luego del pago", err);
+      setError("No pudimos refrescar tus monedas. Intentá nuevamente.");
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
   return (
     <div className="min-h-screen w-screen bg-[#020205] flex items-center justify-center relative overflow-hidden px-4 py-12 shadow-[0_0_40px_rgba(0,240,255,0.25)]">
       <div className="relative max-w-4xl w-full  via-[#050512]/90 to-black/80 border border-white/20  p-8 md:p-12 shadow-[0_0_40px_rgba(0,240,255,0.25)]">
@@ -23,13 +55,18 @@ export default function PaymentSuccess() {
             <p className="text-gray-200 text-lg md:text-3xl">
               Tus monedas ya están en camino y se acreditarán en breve.
             </p>
+            {error && (
+              <p className="text-red-400 text-base md:text-lg">{error}</p>
+            )}
             <div className="space-y-4 pt-2">
-              <Link
-                to="/tienda"
-                className="inline-flex items-center justify-center w-full md:w-auto bg-[#00f0ff] text-slate-950 border-2 border-white px-3 py-3 text-lg font-black tracking-[0.3em] transition-all duration-300 hover:bg-cyan-300 hover:-translate-y-1 shadow-[0_0_20px_rgba(0,240,255,0.45)]"
+              <button
+                type="button"
+                onClick={handleReturnToStore}
+                disabled={isUpdating}
+                className="inline-flex items-center justify-center w-full md:w-auto bg-[#00f0ff] text-slate-950 border-2 border-white px-3 py-3 text-lg font-black tracking-[0.3em] transition-all duration-300 hover:bg-cyan-300 hover:-translate-y-1 shadow-[0_0_20px_rgba(0,240,255,0.45)] disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                VOLVER A LA TIENDA
-              </Link>
+                {isUpdating ? "ACTUALIZANDO..." : "VOLVER A LA TIENDA"}
+              </button>
 
             </div>
           </div>

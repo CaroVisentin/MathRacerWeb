@@ -22,10 +22,10 @@ export const OptionsSection = ({ options, selectedAnswer, answerResult, gameSubm
                     } else if (answerResult === "wrong" && opcion === (gameSubmitAnswer?.isCorrect ?? null)) {
                         clases += " bg-green-400 opacity-50"
                     } else {
-                        clases += " bg-transparent"
+                        clases += " bg-[#0f7079]"
                     }
                 } else {
-                    clases += " hover:bg-blue-500"
+                    clases += " bg-[#0f7079] hover:bg-blue-500"
                 }
                 const mostrarMascota =
                     selectedAnswer !== null &&

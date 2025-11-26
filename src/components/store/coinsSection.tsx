@@ -10,8 +10,11 @@ interface CoinsSectionProps {
 export const CoinsSection = ({ packages, playerId }: CoinsSectionProps) => {
   return (
     <div className="w-full pt-10">
+     
+      <div className="flex flex-col gap-1">
+        <h2 className="text-white text-xl">Paquetes de monedas</h2>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center max-w-6xl mx-auto">
+     <div className="flex gap-4 overflow-x-auto custom-scrollbar pb-3">
         {packages.map((pkg) => (
           <CoinPackageCard
             key={pkg.id}
@@ -20,6 +23,8 @@ export const CoinsSection = ({ packages, playerId }: CoinsSectionProps) => {
           />
         ))}
       </div>
+      </div>
+
     </div>
   );
 };
