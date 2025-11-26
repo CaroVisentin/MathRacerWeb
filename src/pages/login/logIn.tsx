@@ -56,19 +56,17 @@ export const LoginPage = () => {
         <div className="absolute inset-0 bg-black/40" />
       </div>
 
-      {/* Formulario */} 
+      {/* Formulario */}
       <div className="bg-black/50 px-6 py-3 rounded-lg w-full max-w-md drop-shadow-lg">
         <div className="relative text-2xl z-10 px-6">
           {/* Logo con bloque detrás */}
           <div className="!mb-6 flex justify-center">
-
             <img
               src={isologo}
-              alt="Math Racer Logo"
+              alt="Mathi Racer Logo"
               className="w-60 h-auto drop-shadow-[0_0_10px_#00ffff]"
             />
           </div>
-
 
           {/* Formulario con spacing entre grupos */}
           <form onSubmit={handleSubmit} className="flex flex-col !space-y-8">
@@ -152,23 +150,22 @@ export const LoginPage = () => {
               </button>
             </div>
           </form>
-
-            </div>
-
-          {/* Registro */}
-          <p className="!mt-5 text-center text-white text-xl">
-            ¿No tenés cuenta?{" "}
-            <Link
-              to="/registro"
-              className="text-[#FFE50C] hover:text-orange-300 transition-colors hover:drop-shadow-[0_0_10px_#00ffff]"
-            >
-              Registrate acá
-            </Link>
-          </p>
-          {showErrorModal && (
-            <ErrorConnection message={errorMessage} onClose={handleCloseModal} />
-          )}
         </div>
+
+        {/* Registro */}
+        <p className="!mt-5 text-center text-white text-xl">
+          ¿No tenés cuenta?{" "}
+          <Link
+            to="/registro"
+            className="text-[#FFE50C] hover:text-orange-300 transition-colors hover:drop-shadow-[0_0_10px_#00ffff]"
+          >
+            Registrate acá
+          </Link>
+        </p>
+        {showErrorModal && (
+          <ErrorConnection message={errorMessage} onClose={handleCloseModal} />
+        )}
       </div>
-      );
+    </div>
+  );
 };

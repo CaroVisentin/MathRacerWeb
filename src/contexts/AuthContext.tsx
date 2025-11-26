@@ -1,4 +1,10 @@
-import { createContext, useState, useEffect, useCallback, type ReactNode } from "react";
+import {
+  createContext,
+  useState,
+  useEffect,
+  useCallback,
+  type ReactNode,
+} from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../services/network/firebase";
 import type { AuthUser } from "../models/domain/auth/authTypes";
@@ -37,7 +43,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     id?: number;
     name?: string;
     email?: string;
-    lastlevelId?: number;
+    lastLevelId?: number;
     points?: number;
     coins?: number;
     background?: PlayerItem | null;
@@ -53,7 +59,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       id: data?.id ?? 0,
       name: data?.name ?? "",
       email: data?.email ?? "",
-      lastlevelId: data?.lastlevelId ?? 0,
+      lastLevelId: data?.lastLevelId ?? 0,
       points: data?.points ?? 0,
       coins: data?.coins ?? 0,
       background: data?.background ?? data?.equippedBackground ?? null,
@@ -75,13 +81,15 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
           setAuthToken(token);
 
           // Esperar explícitamente a que el token se configure
-          await new Promise(resolve => setTimeout(resolve, 100));
+          await new Promise((resolve) => setTimeout(resolve, 100));
 
           setUser({
             id: 0,
             email: firebaseUser.email || "",
             username:
-              firebaseUser.displayName || firebaseUser.email?.split("@")[0] || "",
+              firebaseUser.displayName ||
+              firebaseUser.email?.split("@")[0] ||
+              "",
           });
 
           try {
@@ -119,8 +127,15 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       setError(null);
       setLoading(true);
-      const backendData: BackendPlayer = await authService.loginWithEmail(email, password);
-      setUser({ id: backendData.id ?? 0, username: backendData.name ?? "", email: backendData.email ?? email });
+      const backendData: BackendPlayer = await authService.loginWithEmail(
+        email,
+        password
+      );
+      setUser({
+        id: backendData.id ?? 0,
+        username: backendData.name ?? "",
+        email: backendData.email ?? email,
+      });
       const uiPlayer = toUiPlayer(backendData);
       setPlayer(uiPlayer);
       try {
@@ -136,12 +151,24 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const register = async (email: string, password: string, username: string) => {
+  const register = async (
+    email: string,
+    password: string,
+    username: string
+  ) => {
     try {
       setError(null);
       setLoading(true);
-      const backendData: BackendPlayer = await authService.registerWithEmail(email, password, username);
-      setUser({ id: backendData.id ?? 0, username: backendData.name ?? username, email: backendData.email ?? email });
+      const backendData: BackendPlayer = await authService.registerWithEmail(
+        email,
+        password,
+        username
+      );
+      setUser({
+        id: backendData.id ?? 0,
+        username: backendData.name ?? username,
+        email: backendData.email ?? email,
+      });
       const uiPlayer = toUiPlayer(backendData);
       setPlayer(uiPlayer);
       try {
@@ -162,7 +189,11 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       setError(null);
       setLoading(true);
       const backendData: BackendPlayer = await authService.loginWithGoogle();
-      setUser({ id: backendData.id ?? 0, username: backendData.name ?? "", email: backendData.email ?? "" });
+      setUser({
+        id: backendData.id ?? 0,
+        username: backendData.name ?? "",
+        email: backendData.email ?? "",
+      });
       const uiPlayer = toUiPlayer(backendData);
       setPlayer(uiPlayer);
       try {

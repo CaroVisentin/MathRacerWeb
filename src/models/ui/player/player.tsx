@@ -10,7 +10,7 @@ export interface Player {
   id: number;
   name: string;
   email: string;
-  lastlevelId: number;
+  lastLevelId: number;
   points: number;
   coins: number;
   background: PlayerItem | null;
@@ -26,7 +26,7 @@ export type BackendPlayer = {
   id?: number;
   name?: string;
   email?: string;
-  lastlevelId?: number;
+  lastLevelId?: number;
   points?: number;
   coins?: number;
   background?: PlayerItem | null;

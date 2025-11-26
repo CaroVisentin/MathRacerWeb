@@ -8,7 +8,6 @@ import { useHomeData } from "../../hooks/useHomeData";
 import { PlayerStatusPanel } from "../../components/home/playerStatusPanel";
 import { useEnergy } from "../../hooks/useEnergy";
 
-
 export const Home = () => {
   const { homeData } = useHomeData();
   const { refreshEnergy } = useEnergy();
@@ -40,7 +39,7 @@ export const Home = () => {
         <div className="absolute top-4 left-10">
           <img
             src={isologo}
-            alt="Math Racer"
+            alt="Mathi Racer"
             className=" drop-shadow-[0_0_10px_#00ffff]"
           />
         </div>
@@ -48,7 +47,6 @@ export const Home = () => {
         {/* Esquina superior derecha - Monedas, Perfil, Nivel y Ranking */}
         <div className={`relative flex flex-col items-end gap-3`}>
           <div className={`pt-8 pr-6`}>
-
             <PlayerStatusPanel
               coins={homeData.user.coins}
               level={homeData.user.level}
@@ -56,22 +54,25 @@ export const Home = () => {
               backgroundImageUrl={homeData.activeItems.background.imageUrl}
               profileImageUrl={homeData.activeItems.profile.imageUrl}
             />
-
           </div>
         </div>
-
 
         {/* Esquina inferior izquierda - Modos de juego */}
         <div className="flex flex-1 items-end justify-between px-4 pb-8">
           <div className="flex flex-col gap-3">
-            <ActionButton to="/menu" title="Multijugador">Multijugador</ActionButton>
-            <ActionButton to="/modo-historia" title="Modo Historia">Historia</ActionButton>
-            <ActionButton to="/modo-infinito" title="Práctica Libre">Práctica Libre</ActionButton>
+            <ActionButton to="/menu" title="Multijugador">
+              Multijugador
+            </ActionButton>
+            <ActionButton to="/modo-historia" title="Modo Historia">
+              Modo Historia
+            </ActionButton>
+            <ActionButton to="/modo-infinito" title="Modo Infinito">
+              Modo Infinito
+            </ActionButton>
           </div>
 
           {/* Esquina inferior derecha - Navegación a otras páginas */}
           <div className="flex flex-col gap-3 items-end">
-
             <ActionButton to="/ranking" size="small" title="Ranking">
               <i className="ri-trophy-fill"></i>
             </ActionButton>
