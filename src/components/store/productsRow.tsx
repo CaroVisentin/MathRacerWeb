@@ -166,7 +166,7 @@ export const ProductsRow = ({ title, products }: ProductsRowProps) => {
         <PurchaseSuccessModal
           message={`Tu compra de ${successProductName} fue exitosa.`}
           onClose={() => setSuccessProductName(null)}
-          onGoToGarage={() => {
+          onGoToPage={() => {
             setSuccessProductName(null);
             navigate("/garage");
           }}

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import type { EnergyStoreInfoDto } from "../../models/domain/energy/energyStoreInfoDto";
 import type { StoreWildcardDto } from "../../models/domain/store/storeWildcardDto";
 import ConfirmModal from "../../shared/modals/confirmModal";
@@ -29,6 +30,7 @@ const MAX_WILDCARD_PER_PURCHASE = 5;
 export const EnergyWildcardsStoreSection = ({ playerId, energyInfo, wildcards, onReload }: EnergyWildcardsStoreSectionProps) => {
   const { refreshEnergy } = useEnergy();
   const { setPlayer } = usePlayer();
+  const navigate = useNavigate();
 
   const [energyQuantity, setEnergyQuantity] = useState(energyInfo?.maxCanBuy === 0 ? 0 : 1);
   const [wildcardQuantities, setWildcardQuantities] = useState<Record<number, number>>({});
@@ -80,6 +82,13 @@ export const EnergyWildcardsStoreSection = ({ playerId, energyInfo, wildcards, o
     const response = await purchaseWildcard(playerId, item.id, quantity);
     const message = response?.message || `Compraste ${quantity} ${item.name}.`;
     setSuccessMessage(message);
+  };
+
+  const handleCloseSuccess = () => setSuccessMessage(null);
+
+  const handleGoToStoryMode = () => {
+    setSuccessMessage(null);
+    navigate("/modo-historia");
   };
 
   const handleConfirm = async () => {
@@ -183,8 +192,9 @@ export const EnergyWildcardsStoreSection = ({ playerId, energyInfo, wildcards, o
       {successMessage && (
         <PurchaseSuccessModal
           message={successMessage}
-          onClose={() => setSuccessMessage(null)}
-          onGoToGarage={() => setSuccessMessage(null)}
+          onClose={handleCloseSuccess}
+          onGoToPage={handleGoToStoryMode}
+          goToLabel="Ir al modo historia"
         />
       )}
 
