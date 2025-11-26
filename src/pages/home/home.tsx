@@ -25,7 +25,7 @@ export const Home = () => {
   }
 
   return (
-    <div className="relative h-screen w-screen flex flex-col">
+    <div className="relative min-h-screen w-full flex flex-col">
       {/* Fondo del Home */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -34,44 +34,39 @@ export const Home = () => {
         <div className="absolute pointer-events-none inset-0 bg-black/60"></div>
       </div>
 
-      <div className="relative z-10 h-full flex flex-col">
-        {/* Isologo */}
-        <div className="absolute top-4 left-10">
+      {/* Contenido */}
+      <div className="relative z-10 flex flex-col min-h-screen">
+
+        {/* Logo */}
+        <div className="absolute top-4 left-4">
           <img
             src={isologo}
             alt="Mathi Racer"
-            className=" drop-shadow-[0_0_10px_#00ffff]"
+            className="h-16 md:h-20 lg:h-24 drop-shadow-[0_0_10px_#00ffff]"
           />
         </div>
 
-        {/* Esquina superior derecha - Monedas, Perfil, Nivel y Ranking */}
-        <div className={`relative flex flex-col items-end gap-3`}>
-          <div className={`pt-8 pr-6`}>
-            <PlayerStatusPanel
-              coins={homeData.user.coins}
-              level={homeData.user.level}
-              ranking={homeData.user.ranking}
-              backgroundImageUrl={homeData.activeItems.background.imageUrl}
-              profileImageUrl={homeData.activeItems.profile.imageUrl}
-            />
-          </div>
+        {/* Panel Superior Derecha */}
+        <div className="relative flex justify-end px-4 sm:px-6 lg:px-10 pt-16 sm:pt-8">
+          <PlayerStatusPanel
+            coins={homeData.user.coins}
+            level={homeData.user.level}
+            ranking={homeData.user.ranking}
+            backgroundImageUrl={homeData.activeItems.background.imageUrl}
+            profileImageUrl={homeData.activeItems.profile.imageUrl}
+          />
         </div>
 
-        {/* Esquina inferior izquierda - Modos de juego */}
-        <div className="flex flex-1 items-end justify-between px-4 pb-8">
-          <div className="flex flex-col gap-3">
-            <ActionButton to="/menu" title="Multijugador">
-              Multijugador
-            </ActionButton>
-            <ActionButton to="/modo-historia" title="Modo Historia">
-              Modo Historia
-            </ActionButton>
-            <ActionButton to="/modo-infinito" title="Modo Infinito">
-              Modo Infinito
-            </ActionButton>
+        {/* Botones inferiores */}
+        <div className="flex flex-1 items-end justify-between px-4 sm:px-6 lg:px-10 pb-6 sm:pb-10">
+          {/* Modos de Juego Izquierda */}
+          <div className="flex flex-col gap-3 max-w-[200px] sm:max-w-none">
+            <ActionButton to="/menu" title="Multijugador">Multijugador</ActionButton>
+            <ActionButton to="/modo-historia" title="Modo Historia">Modo Historia</ActionButton>
+            <ActionButton to="/modo-infinito" title="Modo Infinito">Modo Infinito</ActionButton>
           </div>
 
-          {/* Esquina inferior derecha - Navegación a otras páginas */}
+          {/* Icon buttons derecha */}
           <div className="flex flex-col gap-3 items-end">
             <ActionButton to="/ranking" size="small" title="Ranking">
               <i className="ri-trophy-fill"></i>
@@ -85,8 +80,11 @@ export const Home = () => {
           </div>
         </div>
 
+        {/* Auto al centro */}
         <CarDisplay imageUrl={auto} />
       </div>
     </div>
   );
 };
+
+
