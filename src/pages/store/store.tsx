@@ -19,6 +19,7 @@ export const StorePage = () => {
     "cars" | "characters" | "backgrounds" | "coins" | "energy"
   >("cars");
   const { player } = usePlayer();
+
   const [products, setProducts] = useState<ProductDto[]>([]);
   const [coinPackages, setCoinPackages] = useState<CoinPackageDto[]>([]);
   const [energyStoreInfo, setEnergyStoreInfo] = useState<EnergyStoreInfoDto | null>(null);

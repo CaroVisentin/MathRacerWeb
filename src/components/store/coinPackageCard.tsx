@@ -39,14 +39,14 @@ export const CoinPackageCard = ({ coinPackage, playerId }: CoinPackageCardProps)
   };
 
   return (
-    <div className="bg-gradient-to-br from-yellow-600/10 to-yellow-800/10 rounded-xl p-4 border-2 border-yellow-500/30 hover:border-yellow-500 transition-all  mx-auto flex flex-col gap-5 flex-shrink-0 w-[260px] h-full">
+    <div className="bg-gradient-to-br from-yellow-600/10 to-yellow-800/10 rounded-xl p-4 border-2 border-yellow-500/30 hover:border-yellow-500 transition-all  mx-auto flex flex-col gap-5 flex-shrink-0 w-[300px] h-full">
       <div className="flex flex-col items-center gap-4">
         <div className="text-6xl">
           <img src={coin} alt="Coin" className="h-17 rounded-full"/>
         </div>
 
         <div className="text-center">
-          <h3 className="text-3xl font-bold text-yellow-400">{coinPackage.coinAmount}</h3>
+          <h3 className="text-3xl font-bold text-white">{coinPackage.coinAmount}</h3>
           <p className="text-md text-gray-400">Monedas</p>
         </div>
 
