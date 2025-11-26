@@ -55,7 +55,7 @@ export const mapPlayerToHomeData = (
       id: player.id,
       name: player.name,
       coins: player.coins,
-      level: player.lastlevelId,
+      level: player.lastLevelId,
       ranking: player.points,
     },
     activeItems: {
