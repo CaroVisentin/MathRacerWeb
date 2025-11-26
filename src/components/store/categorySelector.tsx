@@ -40,6 +40,15 @@ export const CategorySelector = ({ activeCategory, setActiveCategory }: Category
         />
       </button>
 
+           <button type="button" onClick={() => setActiveCategory("energy")}>
+        <FontAwesomeIcon
+          icon={faBolt}
+          className={`text-xl transition ${
+            activeCategory === "energy" ? "text-white scale-110" : "text-gray-400 hover:text-white"
+          }`}
+        />
+      </button>
+
       <button type="button" onClick={() => setActiveCategory("coins")}>
         <FontAwesomeIcon
           icon={faCoins}
@@ -49,14 +58,7 @@ export const CategorySelector = ({ activeCategory, setActiveCategory }: Category
         />
       </button>
 
-      <button type="button" onClick={() => setActiveCategory("energy")}>
-        <FontAwesomeIcon
-          icon={faBolt}
-          className={`text-xl transition ${
-            activeCategory === "energy" ? "text-white scale-110" : "text-gray-400 hover:text-white"
-          }`}
-        />
-      </button>
+ 
     </div>
   );
 };

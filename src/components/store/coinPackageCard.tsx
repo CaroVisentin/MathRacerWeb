@@ -39,10 +39,10 @@ export const CoinPackageCard = ({ coinPackage, playerId }: CoinPackageCardProps)
   };
 
   return (
-    <div className="w-full max-w-xs sm:max-w-sm bg-gradient-to-br from-yellow-600/10 to-yellow-800/10 rounded-xl p-6 border-2 border-yellow-500/30 hover:border-yellow-500 transition-all hover:scale-105 mx-auto">
-      <div className="flex flex-col items-center gap-5">
+    <div className="bg-gradient-to-br from-yellow-600/10 to-yellow-800/10 rounded-xl p-4 border-2 border-yellow-500/30 hover:border-yellow-500 transition-all  mx-auto flex flex-col gap-5 flex-shrink-0 w-[260px] h-full">
+      <div className="flex flex-col items-center gap-4">
         <div className="text-6xl">
-          <img src={coin} alt="Coin" />
+          <img src={coin} alt="Coin" className="h-17 rounded-full"/>
         </div>
 
         <div className="text-center">
@@ -81,10 +81,10 @@ export const CoinPackageCard = ({ coinPackage, playerId }: CoinPackageCardProps)
           <button
             onClick={handlePurchase}
             disabled={isLoading || !playerId}
-            className="w-full items-center justify-center w-full bg-[#00f0ff] text-slate-950 border-2 border-white px-3 py-3 text-lg font-black tracking-[0.3em] transition-all duration-300 hover:bg-cyan-300 hover:-translate-y-1 shadow-[0_0_20px_rgba(0,240,255,0.45)] disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full items-center justify-center w-full bg-[#00f0ff] px-3 py-2 tracking-wider border-2 border-white text-lg font-black tracking-[0.3em] transition-all duration-300 hover:bg-cyan-400 shadow-[0_0_10px_rgba(0,217,255,0.3)] hover:shadow-[0_0_20px_rgba(0,217,255,0.6)] disabled:opacity-50 disabled:cursor-not-allowed"
 
           >
-            {isLoading ? "Creando pago..." : "COMPRAR"}
+            {isLoading ? "Creando pago..." : "Comprar"}
           </button>
         )}
       </div>
