@@ -4,7 +4,12 @@ import { ProductsSection } from "../../components/store/productsSection";
 import { CoinsSection } from "../../components/store/coinsSection";
 import { CategorySelector } from "../../components/store/categorySelector";
 import { usePlayer } from "../../hooks/usePlayer";
-import { getCars, getCharacters, getBackgrounds, getCoinsPackage } from "../../services/player/storeService";
+import {
+  getCars,
+  getCharacters,
+  getBackgrounds,
+  getCoinsPackage,
+} from "../../services/player/storeService";
 import { getEnergyStoreInfo } from "../../services/energy/energyService";
 import { getStoreWildcards } from "../../services/wildcard/wildcardService";
 import type { ProductDto } from "../../models/domain/store/productDto";
@@ -22,7 +27,8 @@ export const StorePage = () => {
 
   const [products, setProducts] = useState<ProductDto[]>([]);
   const [coinPackages, setCoinPackages] = useState<CoinPackageDto[]>([]);
-  const [energyStoreInfo, setEnergyStoreInfo] = useState<EnergyStoreInfoDto | null>(null);
+  const [energyStoreInfo, setEnergyStoreInfo] =
+    useState<EnergyStoreInfoDto | null>(null);
   const [storeWildcards, setStoreWildcards] = useState<StoreWildcardDto[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -129,9 +135,8 @@ export const StorePage = () => {
       />
 
       {/* Contenido principal */}
-      <div className="flex-1 flex flex-col overflow-y-auto px-4 gap-6">
+      <div className="flex-1 flex flex-col overflow-y-auto px-4 pb-4 gap-6">
         {/* Oferta especial */}
-     
 
         {/* Sección de productos */}
         {loading && (
@@ -142,21 +147,27 @@ export const StorePage = () => {
 
         {error && <div className="text-red-500 text-center py-8">{error}</div>}
 
-        {!loading && !error && activeCategory === "coins" && coinPackages.length > 0 && (
-          <CoinsSection packages={coinPackages} playerId={player?.id} />
-        )}
+        {!loading &&
+          !error &&
+          activeCategory === "coins" &&
+          coinPackages.length > 0 && (
+            <CoinsSection packages={coinPackages} playerId={player?.id} />
+          )}
 
-
-        {!loading && !error && activeCategory !== "coins" && activeCategory !== "energy" && products.length > 0 && (
-          <ProductsSection
-            categories={[
-              {
-                title: getCategoryTitle(),
-                products: products,
-              },
-            ]}
-          />
-        )}
+        {!loading &&
+          !error &&
+          activeCategory !== "coins" &&
+          activeCategory !== "energy" &&
+          products.length > 0 && (
+            <ProductsSection
+              categories={[
+                {
+                  title: getCategoryTitle(),
+                  products: products,
+                },
+              ]}
+            />
+          )}
 
         {!loading && !error && activeCategory === "energy" && (
           <EnergyWildcardsStoreSection
@@ -167,28 +178,35 @@ export const StorePage = () => {
           />
         )}
 
-        {!loading && !error && activeCategory === "coins" && coinPackages.length === 0 && (
-          <div className="text-white text-center py-8">
-            No hay paquetes de monedas disponibles
-          </div>
-        )}
+        {!loading &&
+          !error &&
+          activeCategory === "coins" &&
+          coinPackages.length === 0 && (
+            <div className="text-white text-center py-8">
+              No hay paquetes de monedas disponibles
+            </div>
+          )}
 
-        {!loading && !error && activeCategory !== "coins" && activeCategory !== "energy" && products.length === 0 && (
-          <div className="text-white text-center py-8">
-            No hay productos disponibles
-          </div>
-        )}
+        {!loading &&
+          !error &&
+          activeCategory !== "coins" &&
+          activeCategory !== "energy" &&
+          products.length === 0 && (
+            <div className="text-white text-center py-8">
+              No hay productos disponibles
+            </div>
+          )}
 
-        {!loading && !error && activeCategory === "energy" && !energyStoreInfo && storeWildcards.length === 0 && (
-          <div className="text-white text-center py-8">
-            No pudimos cargar la información de energía.
-          </div>
-        )}
-
+        {!loading &&
+          !error &&
+          activeCategory === "energy" &&
+          !energyStoreInfo &&
+          storeWildcards.length === 0 && (
+            <div className="text-white text-center py-8">
+              No pudimos cargar la información de energía.
+            </div>
+          )}
       </div>
     </div>
   );
-  
 };
-
-

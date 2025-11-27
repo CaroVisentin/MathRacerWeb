@@ -23,18 +23,34 @@ interface EnergyWildcardsStoreSectionProps {
 
 type ConfirmAction =
   | { type: "energy"; quantity: number; totalPrice: number }
-  | { type: "wildcard"; item: StoreWildcardDto; quantity: number; totalPrice: number };
+  | {
+      type: "wildcard";
+      item: StoreWildcardDto;
+      quantity: number;
+      totalPrice: number;
+    };
 
 const MAX_WILDCARD_PER_PURCHASE = 5;
 
-export const EnergyWildcardsStoreSection = ({ playerId, energyInfo, wildcards, onReload }: EnergyWildcardsStoreSectionProps) => {
+export const EnergyWildcardsStoreSection = ({
+  playerId,
+  energyInfo,
+  wildcards,
+  onReload,
+}: EnergyWildcardsStoreSectionProps) => {
   const { refreshEnergy } = useEnergy();
   const { setPlayer } = usePlayer();
   const navigate = useNavigate();
 
-  const [energyQuantity, setEnergyQuantity] = useState(energyInfo?.maxCanBuy === 0 ? 0 : 1);
-  const [wildcardQuantities, setWildcardQuantities] = useState<Record<number, number>>({});
-  const [confirmAction, setConfirmAction] = useState<ConfirmAction | null>(null);
+  const [energyQuantity, setEnergyQuantity] = useState(
+    energyInfo?.maxCanBuy === 0 ? 0 : 1
+  );
+  const [wildcardQuantities, setWildcardQuantities] = useState<
+    Record<number, number>
+  >({});
+  const [confirmAction, setConfirmAction] = useState<ConfirmAction | null>(
+    null
+  );
   const [isProcessing, setIsProcessing] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -49,7 +65,10 @@ export const EnergyWildcardsStoreSection = ({ playerId, energyInfo, wildcards, o
     });
   }, [energyInfo]);
 
-  const canBuyEnergy = useMemo(() => Boolean(playerId && energyInfo && energyInfo.maxCanBuy > 0), [playerId, energyInfo]);
+  const canBuyEnergy = useMemo(
+    () => Boolean(playerId && energyInfo && energyInfo.maxCanBuy > 0),
+    [playerId, energyInfo]
+  );
 
   const energyTotalPrice = useMemo(() => {
     if (!energyInfo) return 0;
@@ -74,10 +93,16 @@ export const EnergyWildcardsStoreSection = ({ playerId, energyInfo, wildcards, o
   const runEnergyPurchase = async (quantity: number) => {
     if (!playerId) return;
     const response = await purchaseEnergy(playerId, quantity);
-    setSuccessMessage(response?.message || `Compraste ${quantity} energía${quantity > 1 ? "s" : ""}.`);
+    setSuccessMessage(
+      response?.message ||
+        `Compraste ${quantity} energía${quantity > 1 ? "s" : ""}.`
+    );
   };
 
-  const runWildcardPurchase = async (item: StoreWildcardDto, quantity: number) => {
+  const runWildcardPurchase = async (
+    item: StoreWildcardDto,
+    quantity: number
+  ) => {
     if (!playerId) return;
     const response = await purchaseWildcard(playerId, item.id, quantity);
     const message = response?.message || `Compraste ${quantity} ${item.name}.`;
@@ -122,7 +147,10 @@ export const EnergyWildcardsStoreSection = ({ playerId, energyInfo, wildcards, o
 
   const handleWildcardClick = (item: StoreWildcardDto) => {
     const rawQuantity = wildcardQuantities[item.id] ?? 1;
-    const quantity = Math.max(1, Math.min(rawQuantity, MAX_WILDCARD_PER_PURCHASE));
+    const quantity = Math.max(
+      1,
+      Math.min(rawQuantity, MAX_WILDCARD_PER_PURCHASE)
+    );
     setConfirmAction({
       type: "wildcard",
       item,
@@ -141,15 +169,15 @@ export const EnergyWildcardsStoreSection = ({ playerId, energyInfo, wildcards, o
 
   return (
     <div className="flex flex-col gap-6 w-full">
-      <div>
+      <div className="flex flex-col gap-1">
         <h2 className="text-white text-xl sm:text-2xl">Energía y Comodines</h2>
       </div>
 
       {/* === LISTA DE PRODUCTOS (Responsive) === */}
       <div
         className="
-        flex sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4
-        gap-4 sm:gap-6 
+        flex
+        gap-4 sm:gap-4 
         overflow-x-auto sm:overflow-visible 
         snap-x snap-mandatory
         pb-3 sm:pb-0
@@ -157,7 +185,7 @@ export const EnergyWildcardsStoreSection = ({ playerId, energyInfo, wildcards, o
       "
       >
         {/* ENERGY CARD */}
-        <div className="snap-start min-w-[260px] max-w-full flex-shrink-0">
+        <div className="snap-start min-w-[260px] max-w-full flex-shrink-0 flex">
           <EnergyProductCard
             energyInfo={energyInfo}
             canBuy={canBuyEnergy}
@@ -177,14 +205,17 @@ export const EnergyWildcardsStoreSection = ({ playerId, energyInfo, wildcards, o
           wildcards.map((item) => (
             <div
               key={item.id}
-              className="snap-start min-w-[260px] flex-shrink-0"
+              className="snap-start min-w-[260px] flex-shrink-0 flex"
             >
               <WildcardProductCard
                 item={item}
                 quantity={wildcardQuantities[item.id] ?? 1}
-                onQuantityChange={(value) => handleWildcardQuantityChange(item.id, value)}
+                onQuantityChange={(value) =>
+                  handleWildcardQuantityChange(item.id, value)
+                }
                 onBuy={() => handleWildcardClick(item)}
                 maxQuantity={MAX_WILDCARD_PER_PURCHASE}
+                className="h-full"
               />
             </div>
           ))
@@ -226,5 +257,4 @@ export const EnergyWildcardsStoreSection = ({ playerId, energyInfo, wildcards, o
       )}
     </div>
   );
-
 };

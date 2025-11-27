@@ -5,7 +5,11 @@ import { ProductImage } from "./productImage";
 import ConfirmModal from "../../shared/modals/confirmModal";
 import PurchaseSuccessModal from "../../shared/modals/purchaseSuccessModal";
 import ErrorModal from "../../shared/modals/errorModal";
-import { buyCar, buyCharacter, buyBackground } from "../../services/player/storeService";
+import {
+  buyCar,
+  buyCharacter,
+  buyBackground,
+} from "../../services/player/storeService";
 import { usePlayer } from "../../hooks/usePlayer";
 import { getPlayerData } from "../../services/player/playerService";
 import { useNavigate } from "react-router-dom";
@@ -19,9 +23,13 @@ interface ProductsRowProps {
 export const ProductsRow = ({ title, products }: ProductsRowProps) => {
   const { player, setPlayer } = usePlayer();
   const navigate = useNavigate();
-  const [selectedProduct, setSelectedProduct] = useState<ProductDto | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<ProductDto | null>(
+    null
+  );
   const [isProcessing, setIsProcessing] = useState(false);
-  const [successProductName, setSuccessProductName] = useState<string | null>(null);
+  const [successProductName, setSuccessProductName] = useState<string | null>(
+    null
+  );
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [newlyOwnedIds, setNewlyOwnedIds] = useState<number[]>([]);
 
@@ -44,7 +52,7 @@ export const ProductsRow = ({ title, products }: ProductsRowProps) => {
       setPlayer(updatedPlayer);
       localStorage.setItem("player", JSON.stringify(updatedPlayer));
     } catch (error: unknown) {
-      setErrorMessage(getErrorMessage(error))
+      setErrorMessage(getErrorMessage(error));
     }
   };
 
@@ -120,8 +128,8 @@ export const ProductsRow = ({ title, products }: ProductsRowProps) => {
           return (
             <div
               key={product.id}
-              className={`bg-gray-900 rounded-lg p-2 flex-shrink-0 w-45 flex flex-col items-center border-2 ${getRarityColor(product.rarity)} relative ${isOwned ? "cursor-not-allowed opacity-80" : "cursor-pointer hover:scale-105"
-                } transition-transform`}
+              className={`bg-gray-900 rounded-xl p-4 flex-shrink-0 min-w-[300px] w-[300px] h-full flex flex-col items-center border-2 ${getRarityColor(product.rarity)} relative ${isOwned ? "cursor-not-allowed opacity-80" : "cursor-pointer hover:scale-105"}
+                transition-transform`}
               onClick={() => handleProductClick(product)}
             >
               {/* Badge de propiedad */}
@@ -136,14 +144,18 @@ export const ProductsRow = ({ title, products }: ProductsRowProps) => {
                 {product.rarity}
               </div>
 
-              <ProductImage product={product} />
-              <h3 className="text-white text-lg text-center">{product.name}</h3>
-              <p className="text-gray-400 text-sm text-center line-clamp-2 mb-2">
-                {product.description}
-              </p>
-              <div className="flex items-center text-white gap-1">
-                <img src={coinImg} className="w-4 h-4" alt="coin" />
-                <span>
+              <div className="w-full flex-1 flex flex-col items-center gap-3">
+                <ProductImage product={product} />
+                <h3 className="text-white text-xl text-center leading-tight">
+                  {product.name}
+                </h3>
+                <p className="text-gray-400 text-sm text-center line-clamp-3">
+                  {product.description}
+                </p>
+              </div>
+              <div className="mt-4 flex items-center text-white gap-2  px-4 py-2 rounded-lg">
+                <img src={coinImg} className="w-5 h-5" alt="coin" />
+                <span className="text-lg font-semibold">
                   {product.price} {product.currency}
                 </span>
               </div>
