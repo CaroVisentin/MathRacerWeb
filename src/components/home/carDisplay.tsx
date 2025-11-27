@@ -16,7 +16,7 @@ export const CarDisplay = ({ imageUrl }: CarDisplayProps) => (
         w-[70%] translate-y-10
 
         /* Tablet */
-        sm:w-[55%] sm:translate-y-16
+        sm:w-[30%] sm:translate-y-16
 
         /* Desktop */
         md:w-[45%] md:translate-y-20 md:translate-x-10

@@ -26,7 +26,6 @@ export const MultiplayerGame = () => {
   const navigate = useNavigate();
   const { conn, errorConexion, isConnected, invoke, on, off } = useConnection();
 
-
   const password = location.state?.password as string | undefined;
   const [ecuacion, setEcuacion] = useState<QuestionDto>();
   const [opciones, setOpciones] = useState<number[]>();
@@ -57,44 +56,40 @@ export const MultiplayerGame = () => {
   const joinRetries = useRef(0);
   const haConectado = useRef(false);
 
-
   const nombreJugador = player?.name || "";
 
   const conectarJugador = useCallback(async () => {
-
     if (gameId) {
       const partidaIdNum = parseInt(gameId, 10);
       if (!isNaN(partidaIdNum)) {
         try {
-
           haConectado.current = true;
 
           await invoke("JoinGame", partidaIdNum, password || null);
 
           setPartidaId(partidaIdNum);
-
         } catch (error) {
-
-          const err = error as { constructor?: { name: string }; message?: string; stack?: string };
-
+          const err = error as {
+            constructor?: { name: string };
+            message?: string;
+            stack?: string;
+          };
 
           setError(err.message || "No se pudo unir a la partida");
           setTimeout(() => {
-            navigate('/menu');
+            navigate("/menu");
           }, 2000);
         }
       } else {
         setError("ID de partida inválido");
-        navigate('/menu');
+        navigate("/menu");
       }
     } else {
-
       if (nombreJugador.trim()) {
         haConectado.current = true;
 
         try {
           await invoke("FindMatch", nombreJugador);
-
         } catch {
           setError("No se pudo buscar partida");
         }
@@ -113,9 +108,8 @@ export const MultiplayerGame = () => {
     haConectado.current = false;
     joinRetries.current = 0;
 
-
     if (gameId) {
-      navigate('/menu');
+      navigate("/menu");
     } else {
       conectarJugador();
     }
@@ -123,7 +117,7 @@ export const MultiplayerGame = () => {
 
   const handleVolver = async () => {
     if (!partidaId || !jugadorId) {
-      navigate('/menu');
+      navigate("/menu");
       return;
     }
 
@@ -146,7 +140,7 @@ export const MultiplayerGame = () => {
       }, 1200);
     } catch (error) {
       console.error("Error al abandonar la partida:", error);
-      navigate('/menu');
+      navigate("/menu");
     }
   };
 
@@ -159,7 +153,7 @@ export const MultiplayerGame = () => {
 
     const unaIncorrecta =
       opcionesIncorrectas[
-      Math.floor(Math.random() * opcionesIncorrectas.length)
+        Math.floor(Math.random() * opcionesIncorrectas.length)
       ];
 
     setOpciones(
@@ -229,30 +223,22 @@ export const MultiplayerGame = () => {
     setTimeout(() => sendAnswer(opcion), 200);
   };
 
-
   useEffect(() => {
-
     const requireName = !gameId;
-    const hasName = requireName ? (nombreJugador.trim() !== "") : true;
+    const hasName = requireName ? nombreJugador.trim() !== "" : true;
 
     const shouldConnect =
-      conn &&
-      isConnected &&
-      hasName &&
-      !haConectado.current;
+      conn && isConnected && hasName && !haConectado.current;
 
     if (shouldConnect) {
-
       conectarJugador();
     }
   }, [conn, isConnected, nombreJugador, gameId, partidaId, conectarJugador]);
-
 
   useEffect(() => {
     if (!conn || !isConnected) return;
     if (!gameId) return;
     if (partidaId) return;
-
 
     if (joinRetries.current >= 3) return;
 
@@ -273,36 +259,39 @@ export const MultiplayerGame = () => {
     if (!conn) return;
 
     const gameUpdateHandler = (data: GameUpdateDto) => {
-
       if (data.players && data.players.length >= 2) {
         setBuscandoRival(false);
       }
 
       setJugadoresPartida(data.players);
 
-
       const auth = getAuth();
       const myUid = auth.currentUser?.uid;
 
       let jugadorActual: PlayerDto | undefined;
       if (myUid) {
-        jugadorActual = data.players.find(p => p.uid === myUid);
-      }
-
-
-      if (!jugadorActual) {
-        jugadorActual = data.players.find(p => p.name?.trim() === nombreJugador.trim());
+        jugadorActual = data.players.find((p) => p.uid === myUid);
       }
 
       if (!jugadorActual) {
-        const candidatos = data.players.filter(p => p.name?.trim().toLowerCase() === nombreJugador.trim().toLowerCase());
+        jugadorActual = data.players.find(
+          (p) => p.name?.trim() === nombreJugador.trim()
+        );
+      }
+
+      if (!jugadorActual) {
+        const candidatos = data.players.filter(
+          (p) =>
+            p.name?.trim().toLowerCase() === nombreJugador.trim().toLowerCase()
+        );
         if (candidatos.length === 1) {
           jugadorActual = candidatos[0];
         } else if (candidatos.length > 1 && jugadorId) {
-          jugadorActual = candidatos.find(p => p.id === jugadorId) ?? candidatos[0];
+          jugadorActual =
+            candidatos.find((p) => p.id === jugadorId) ?? candidatos[0];
         }
       }
-      const otroJugador = data.players.find(p => p.id !== jugadorActual?.id);
+      const otroJugador = data.players.find((p) => p.id !== jugadorActual?.id);
 
       if (jugadorActual) {
         setJugadorId(jugadorActual.id);
@@ -310,7 +299,9 @@ export const MultiplayerGame = () => {
         setPosicionAuto1(avance);
         // Apariencia jugador (solo cambiar si viene equipado, mantener si null)
         if (jugadorActual.equippedBackground?.id) {
-          setFondoJugador(resolveImageUrl("background", jugadorActual.equippedBackground.id));
+          setFondoJugador(
+            resolveImageUrl("background", jugadorActual.equippedBackground.id)
+          );
         }
         if (jugadorActual.equippedCar?.id) {
           setCarJugador(resolveImageUrl("car", jugadorActual.equippedCar.id));
@@ -321,7 +312,9 @@ export const MultiplayerGame = () => {
         setPosicionAuto2(avanceOtro);
         // Apariencia rival (solo cambiar si viene equipado)
         if (otroJugador.equippedBackground?.id) {
-          setFondoRival(resolveImageUrl("background", otroJugador.equippedBackground.id));
+          setFondoRival(
+            resolveImageUrl("background", otroJugador.equippedBackground.id)
+          );
         }
         if (otroJugador.equippedCar?.id) {
           setCarRival(resolveImageUrl("car", otroJugador.equippedCar.id));
@@ -370,7 +363,6 @@ export const MultiplayerGame = () => {
       }
     };
 
-
     const errorHandler = (message: string) => {
       console.error("Error del servidor SignalR:", message);
       alert(`Error: ${message}`);
@@ -378,18 +370,13 @@ export const MultiplayerGame = () => {
       navigate("/menu");
     };
 
-
     on("GameUpdate", gameUpdateHandler);
     on("gameUpdate", gameUpdateHandler);
     on("game-update", gameUpdateHandler);
     on("gameupdate", gameUpdateHandler);
 
-
     on("Error", errorHandler);
     on("error", errorHandler);
-
-
-
 
     if (conn) {
       conn.onclose((error) => {
@@ -398,7 +385,6 @@ export const MultiplayerGame = () => {
       });
     }
 
-
     return () => {
       off("GameUpdate", gameUpdateHandler);
       off("gameUpdate", gameUpdateHandler);
@@ -406,20 +392,37 @@ export const MultiplayerGame = () => {
       off("gameupdate", gameUpdateHandler);
       off("Error", errorHandler);
       off("error", errorHandler);
-
     };
-  }, [conn, on, off, nombreJugador, navigate, jugadorId, setPartidaId, setJugadoresPartida]);
+  }, [
+    conn,
+    on,
+    off,
+    nombreJugador,
+    navigate,
+    jugadorId,
+    setPartidaId,
+    setJugadoresPartida,
+  ]);
 
   // Helpers de random y resolución
-  const randomFrom = (arr: number[]) => arr[Math.floor(Math.random() * arr.length)];
+  const randomFrom = (arr: number[]) =>
+    arr[Math.floor(Math.random() * arr.length)];
 
   // Inicializar apariencia local (jugador) y fallback para rival
   useEffect(() => {
-    const resolvedBg = resolveImageUrl("background", player?.equippedBackground?.id || player?.background?.id || randomFrom(fondoFallbackIds));
+    const resolvedBg = resolveImageUrl(
+      "background",
+      player?.equippedBackground?.id ||
+        player?.background?.id ||
+        randomFrom(fondoFallbackIds)
+    );
     setFondoJugador(resolvedBg);
     // Fallback del rival: usar el mismo fondo del jugador si el rival no trae uno
     setFondoRival(resolvedBg);
-    const resolvedCar = resolveImageUrl("car", player?.equippedCar?.id || player?.car?.id || randomFrom(autoFallbackIds));
+    const resolvedCar = resolveImageUrl(
+      "car",
+      player?.equippedCar?.id || player?.car?.id || randomFrom(autoFallbackIds)
+    );
     setCarJugador(resolvedCar);
     // Fallback del rival: usar el mismo auto del jugador si el rival no trae uno
     setCarRival(resolvedCar);
@@ -444,7 +447,7 @@ export const MultiplayerGame = () => {
       {buscandoRival && !gameId && (
         <LookingForRivalModal
           playerId={nombreJugador}
-          setPlayerId={() => { }} // El nombre viene del contexto, no se puede cambiar aquí
+          setPlayerId={() => {}} // El nombre viene del contexto, no se puede cambiar aquí
           onConnection={conectarJugador}
         />
       )}
@@ -452,7 +455,7 @@ export const MultiplayerGame = () => {
       {/* Mensaje de espera cuando hay gameId pero aún busca rival */}
       {buscandoRival && gameId && !error && (
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80">
-          <div className="bg-black/90 border-2 border-cyan-400 rounded-lg p-8 text-center">
+          <div className="bg-black/90 border-2 border-cyan-400 rounded-lg p-8 text-center flex flex-col items-center">
             <div className="animate-spin rounded-full h-20 w-20 border-t-4 border-b-4 border-[#5df9f9] mx-auto mb-4"></div>
             <h2 className="text-3xl text-[#f95ec8] mb-4">Esperando rival...</h2>
             <p className="text-white text-xl">{nombreJugador}</p>
@@ -468,7 +471,7 @@ export const MultiplayerGame = () => {
             <h2 className="text-3xl text-red-500 mb-4">❌ Error</h2>
             <p className="text-white text-xl mb-6">{error}</p>
             <button
-              onClick={() => navigate('/menu')}
+              onClick={() => navigate("/menu")}
               className="bg-[#5df9f9] text-black px-6 py-3 rounded text-xl hover:bg-[#f95ec8] transition-colors"
             >
               <i className="ri-arrow-left-line mr-2"></i> Volver
@@ -499,11 +502,11 @@ export const MultiplayerGame = () => {
             won={false}
             onClose={() => {
               setPerdedor(false);
-              navigate('/menu');
+              navigate("/menu");
             }}
             onRetry={() => {
               setPerdedor(false);
-              navigate('/menu');
+              navigate("/menu");
             }}
           />
         </div>
@@ -527,7 +530,12 @@ export const MultiplayerGame = () => {
           </div>
 
           {/* Auto 2 */}
-          <img src={carRival} alt="Auto 2" className="absolute bottom-[180px] auto auto2" style={{ left: `${posicionAuto2}%` }} />
+          <img
+            src={carRival}
+            alt="Auto 2"
+            className="absolute bottom-[180px] auto auto2"
+            style={{ left: `${posicionAuto2}%` }}
+          />
         </div>
 
         <div
@@ -546,29 +554,32 @@ export const MultiplayerGame = () => {
           </div>
 
           {/* Auto 1 */}
-          <img src={carJugador} alt="Auto 1" className="absolute auto transition-all duration-500" style={{ left: `${posicionAuto1}%` }} />
+          <img
+            src={carJugador}
+            alt="Auto 1"
+            className="absolute auto transition-all duration-500"
+            style={{ left: `${posicionAuto1}%` }}
+          />
         </div>
       </div>
 
       {/* Instrucciones y Comodines */}
       <div className="flex justify-center items-center gridComodin mt-4">
-
         <div className="instruccion text-3xl text-center">
-          {instruccion
-            ? (
-              <>
-                Elegí la opción para que {" "}
-                <span className="text-cyan-400 drop-shadow-[0_0_5px_#00ffff] ">
-                  Y
-                </span>{" "}
-                sea {" "}
-                <span className="text-cyan-400  ">
-                  {instruccion.toUpperCase()}
-                </span>
-              </>
-            )
-            : ("Esperando instrucción")}
-
+          {instruccion ? (
+            <>
+              Elegí la opción para que{" "}
+              <span className="text-cyan-400 drop-shadow-[0_0_5px_#00ffff] ">
+                Y
+              </span>{" "}
+              sea{" "}
+              <span className="text-cyan-400  ">
+                {instruccion.toUpperCase()}
+              </span>
+            </>
+          ) : (
+            "Esperando instrucción"
+          )}
         </div>
         <div className="comodin">
           <Wildcards
@@ -579,8 +590,6 @@ export const MultiplayerGame = () => {
             onChangeEquation={handleChangeEquation}
             onDobleCount={handleDobleCount}
           />
-
-
         </div>
       </div>
 

@@ -56,7 +56,9 @@ export const Home = () => {
         relative flex justify-end
         sm:px-3 sm:pt-8
         px-3 pt-3
-        lg:px-10
+        lg:px-5 lg:pt-6
+
+     
       "
         >
           <PlayerStatusPanel
@@ -73,8 +75,8 @@ export const Home = () => {
           className="
         flex flex-1 items-end justify-between
         px-3 pb-5
-        sm:px-6 sm:pb-8
-        lg:px-10 lg:pb-10
+        sm:px-3 sm:pb-5
+        lg:px-5 lg:pb-7
       "
         >
           {/* Modos de Juego Izquierda */}
