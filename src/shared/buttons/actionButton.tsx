@@ -11,7 +11,6 @@ interface ActionButtonProps {
   title?: string;
 }
 
-
 //#0f0f0f 5df9f9
 export const ActionButton = ({
   size = "large",
@@ -32,8 +31,16 @@ export const ActionButton = ({
 
   const sizeClasses =
     size === "large"
-      ? "w-90 h-20 text-5xl"
-      : "w-20 h-20 text-4xl";
+      ? `
+        w-60 h-14 text-3xl     /* mobile */
+        sm:w-72 sm:h-16 sm:text-4xl
+        md:w-90 md:h-20 md:text-5xl /* desktop */
+      `
+      : `
+        w-14 h-14 text-xl       /* mobile */
+        sm:w-16 sm:h-16 sm:text-2xl
+        md:w-20 md:h-20 md:text-4xl /* desktop */
+      `;
 
   const baseClasses = `
     ${sizeClasses}
@@ -54,17 +61,26 @@ export const ActionButton = ({
 
   if (to) {
     return (
-      <Link to={to} title={title} className={baseClasses} onClick={handleClick} role="button">
+      <Link
+        to={to}
+        title={title}
+        className={baseClasses}
+        onClick={handleClick}
+        role="button"
+      >
         {children}
       </Link>
     );
   }
 
   return (
-    <button type="button" title={title} className={baseClasses} onClick={handleClick}>
+    <button
+      type="button"
+      title={title}
+      className={baseClasses}
+      onClick={handleClick}
+    >
       {children}
     </button>
   );
 };
-
-
