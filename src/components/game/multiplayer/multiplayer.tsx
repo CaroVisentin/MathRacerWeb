@@ -55,8 +55,14 @@ export const MultiplayerGame = () => {
   const [error, setError] = useState<string | null>(null);
   const joinRetries = useRef(0);
   const haConectado = useRef(false);
+  const abandonandoPartida = useRef(false);
 
   const nombreJugador = player?.name || "";
+  const nombreJugadorRef = useRef(nombreJugador);
+
+  useEffect(() => {
+    nombreJugadorRef.current = nombreJugador;
+  }, [nombreJugador]);
 
   const conectarJugador = useCallback(async () => {
     if (gameId) {
@@ -122,6 +128,9 @@ export const MultiplayerGame = () => {
     }
 
     try {
+      // Marcar que estamos abandonando para ignorar GameUpdate posterior
+      abandonandoPartida.current = true;
+      
       // Mostrar modal de perdedor localmente para feedback inmediato
       setPerdedor(true);
       setGanador(false);
@@ -275,14 +284,14 @@ export const MultiplayerGame = () => {
 
       if (!jugadorActual) {
         jugadorActual = data.players.find(
-          (p) => p.name?.trim() === nombreJugador.trim()
+          (p) => p.name?.trim() === nombreJugadorRef.current.trim()
         );
       }
 
       if (!jugadorActual) {
         const candidatos = data.players.filter(
           (p) =>
-            p.name?.trim().toLowerCase() === nombreJugador.trim().toLowerCase()
+            p.name?.trim().toLowerCase() === nombreJugadorRef.current.trim().toLowerCase()
         );
         if (candidatos.length === 1) {
           jugadorActual = candidatos[0];
@@ -338,7 +347,8 @@ export const MultiplayerGame = () => {
         }
       }
 
-      if (data.winnerId && jugadorActual) {
+      // Solo procesar ganador/perdedor si NO estamos abandonando la partida
+      if (data.winnerId && jugadorActual && !abandonandoPartida.current) {
         if (data.winnerId === jugadorActual.id) {
           setGanador(true);
           setPerdedor(false);
@@ -393,16 +403,7 @@ export const MultiplayerGame = () => {
       off("Error", errorHandler);
       off("error", errorHandler);
     };
-  }, [
-    conn,
-    on,
-    off,
-    nombreJugador,
-    navigate,
-    jugadorId,
-    setPartidaId,
-    setJugadoresPartida,
-  ]);
+  }, [conn, on, off, navigate]);
 
   // Helpers de random y resolución
   const randomFrom = (arr: number[]) =>

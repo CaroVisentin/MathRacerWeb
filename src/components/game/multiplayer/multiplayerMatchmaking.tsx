@@ -62,6 +62,7 @@ export const MultiplayerMatchmaking = ({
 
   // Usar ref para el nombre del jugador para evitar re-renders
   const nombreJugadorRef = useRef(nombreJugador);
+  const abandonandoPartida = useRef(false);
 
   useEffect(() => {
     nombreJugadorRef.current = nombreJugador;
@@ -140,8 +141,8 @@ export const MultiplayerMatchmaking = ({
         }
       }
 
-      // Verificar ganador
-      if (data.winnerId && jugadorActual) {
+      // Verificar ganador - solo si NO estamos abandonando la partida
+      if (data.winnerId && jugadorActual && !abandonandoPartida.current) {
         if (data.winnerId === jugadorActual.id) {
           setGanador(true);
           setPerdedor(false);
@@ -271,6 +272,9 @@ export const MultiplayerMatchmaking = ({
     }
 
     try {
+      // Marcar que estamos abandonando para ignorar GameUpdate posterior
+      abandonandoPartida.current = true;
+      
       // Marcar localmente como perdedor para mostrar feedback inmediato
       setPerdedor(true);
       setGanador(false);
