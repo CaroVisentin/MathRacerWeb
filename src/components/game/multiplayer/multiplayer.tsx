@@ -59,10 +59,15 @@ export const MultiplayerGame = () => {
 
   const nombreJugador = player?.name || "";
   const nombreJugadorRef = useRef(nombreJugador);
+  const jugadorIdRef = useRef<number | null>(jugadorId);
 
   useEffect(() => {
     nombreJugadorRef.current = nombreJugador;
   }, [nombreJugador]);
+
+  useEffect(() => {
+    jugadorIdRef.current = jugadorId;
+  }, [jugadorId]);
 
   const conectarJugador = useCallback(async () => {
     if (gameId) {
@@ -295,9 +300,9 @@ export const MultiplayerGame = () => {
         );
         if (candidatos.length === 1) {
           jugadorActual = candidatos[0];
-        } else if (candidatos.length > 1 && jugadorId) {
+        } else if (candidatos.length > 1 && jugadorIdRef.current) {
           jugadorActual =
-            candidatos.find((p) => p.id === jugadorId) ?? candidatos[0];
+            candidatos.find((p) => p.id === jugadorIdRef.current) ?? candidatos[0];
         }
       }
       const otroJugador = data.players.find((p) => p.id !== jugadorActual?.id);

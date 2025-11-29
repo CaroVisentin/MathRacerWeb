@@ -14,7 +14,7 @@ export const Menu = () => {
     if (user) {
       checkInvitations();
     }
-  }, [user]);
+  }, [user, checkInvitations]);
 
   return (
     <div className="min-h-screen w-full fondo-city flex flex-col overflow-hidden">
