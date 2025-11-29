@@ -140,40 +140,58 @@ export const EnergyWildcardsStoreSection = ({ playerId, energyInfo, wildcards, o
   }
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-1">
-        <h2 className="text-white text-xl">Energía y Wildcards</h2>
-     
+    <div className="flex flex-col gap-6 w-full">
+      <div>
+        <h2 className="text-white text-xl sm:text-2xl">Energía y Comodines</h2>
       </div>
 
-      <div className="flex gap-4 overflow-x-auto custom-scrollbar pb-3">
-        <EnergyProductCard
-          energyInfo={energyInfo}
-          canBuy={canBuyEnergy}
-          quantity={energyQuantity}
-          onQuantityChange={setEnergyQuantity}
-          onBuy={handleEnergyClick}
-          totalPrice={energyTotalPrice}
-        />
+      {/* === LISTA DE PRODUCTOS (Responsive) === */}
+      <div
+        className="
+        flex sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4
+        gap-4 sm:gap-6 
+        overflow-x-auto sm:overflow-visible 
+        snap-x snap-mandatory
+        pb-3 sm:pb-0
+        custom-scrollbar
+      "
+      >
+        {/* ENERGY CARD */}
+        <div className="snap-start min-w-[260px] max-w-full flex-shrink-0">
+          <EnergyProductCard
+            energyInfo={energyInfo}
+            canBuy={canBuyEnergy}
+            quantity={energyQuantity}
+            onQuantityChange={setEnergyQuantity}
+            onBuy={handleEnergyClick}
+            totalPrice={energyTotalPrice}
+          />
+        </div>
 
+        {/* WILDCARDS */}
         {wildcards.length === 0 ? (
-          <div className="bg-gray-900 rounded-lg p-4 flex-shrink-0 w-[260px] border-2 border-dashed border-gray-600 text-gray-400 text-center flex items-center justify-center">
+          <div className="bg-gray-900 rounded-lg p-4 flex-shrink-0 min-w-[260px] text-gray-400 text-center flex items-center justify-center border-2 border-dashed border-gray-600">
             No hay wildcards disponibles por ahora.
           </div>
         ) : (
           wildcards.map((item) => (
-            <WildcardProductCard
+            <div
               key={item.id}
-              item={item}
-              quantity={wildcardQuantities[item.id] ?? 1}
-              onQuantityChange={(value) => handleWildcardQuantityChange(item.id, value)}
-              onBuy={() => handleWildcardClick(item)}
-              maxQuantity={MAX_WILDCARD_PER_PURCHASE}
-            />
+              className="snap-start min-w-[260px] flex-shrink-0"
+            >
+              <WildcardProductCard
+                item={item}
+                quantity={wildcardQuantities[item.id] ?? 1}
+                onQuantityChange={(value) => handleWildcardQuantityChange(item.id, value)}
+                onBuy={() => handleWildcardClick(item)}
+                maxQuantity={MAX_WILDCARD_PER_PURCHASE}
+              />
+            </div>
           ))
         )}
       </div>
 
+      {/* Modals */}
       {confirmAction && (
         <ConfirmModal
           title="Confirmar compra"
@@ -208,4 +226,5 @@ export const EnergyWildcardsStoreSection = ({ playerId, energyInfo, wildcards, o
       )}
     </div>
   );
+
 };

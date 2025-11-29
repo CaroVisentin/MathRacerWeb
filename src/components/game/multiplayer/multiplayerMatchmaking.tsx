@@ -23,7 +23,10 @@ interface MultiplayerMatchmakingProps {
   initialData?: GameUpdateDto;
 }
 
-export const MultiplayerMatchmaking = ({ gameIdProp, initialData }: MultiplayerMatchmakingProps) => {
+export const MultiplayerMatchmaking = ({
+  gameIdProp,
+  initialData,
+}: MultiplayerMatchmakingProps) => {
   const { gameId: gameIdFromUrl } = useParams<{ gameId: string }>();
   const gameId = gameIdProp?.toString() || gameIdFromUrl;
   const { player } = usePlayer();
@@ -31,7 +34,9 @@ export const MultiplayerMatchmaking = ({ gameIdProp, initialData }: MultiplayerM
   const { conn, errorConexion, invoke, on, off } = useConnection();
   const [ecuacion, setEcuacion] = useState<QuestionDto>();
   const [opciones, setOpciones] = useState<number[]>();
-  const [respuestaSeleccionada, setRespuestaSeleccionada] = useState<number | null>(null);
+  const [respuestaSeleccionada, setRespuestaSeleccionada] = useState<
+    number | null
+  >(null);
   const [resultado, setResultado] = useState<"acierto" | "error" | null>(null);
   const [posicionAuto1, setPosicionAuto1] = useState<number>(0);
   const [posicionAuto2, setPosicionAuto2] = useState<number>(0);
@@ -57,6 +62,7 @@ export const MultiplayerMatchmaking = ({ gameIdProp, initialData }: MultiplayerM
 
   // Usar ref para el nombre del jugador para evitar re-renders
   const nombreJugadorRef = useRef(nombreJugador);
+  const abandonandoPartida = useRef(false);
 
   useEffect(() => {
     nombreJugadorRef.current = nombreJugador;
@@ -73,9 +79,7 @@ export const MultiplayerMatchmaking = ({ gameIdProp, initialData }: MultiplayerM
 
   // PASO 1: REGISTRAR LISTENERS PRIMERO - CRÍTICO
   useEffect(() => {
-
     const gameUpdateHandler = (data: GameUpdateDto) => {
-
       setJugadoresPartida(data.players);
       setPartidaId(data.gameId);
 
@@ -83,27 +87,27 @@ export const MultiplayerMatchmaking = ({ gameIdProp, initialData }: MultiplayerM
       const auth = getAuth();
       const myUid = auth.currentUser?.uid;
 
-
       let jugadorActual: PlayerDto | undefined;
       if (myUid) {
-        jugadorActual = data.players.find(p => p.uid === myUid);
-
+        jugadorActual = data.players.find((p) => p.uid === myUid);
       }
 
       if (!jugadorActual) {
-
-        jugadorActual = data.players.find(p => p.name?.trim() === nombreJugadorRef.current.trim());
-
+        jugadorActual = data.players.find(
+          (p) => p.name?.trim() === nombreJugadorRef.current.trim()
+        );
       }
 
-      const otroJugador = data.players.find(p => p.id !== jugadorActual?.id);
+      const otroJugador = data.players.find((p) => p.id !== jugadorActual?.id);
 
       if (jugadorActual) {
         setJugadorId(jugadorActual.id);
         const avance = (jugadorActual.correctAnswers / 10) * 100;
         setPosicionAuto1(avance);
         if (jugadorActual.equippedBackground?.id) {
-          setFondoJugador(resolveImageUrl("background", jugadorActual.equippedBackground.id));
+          setFondoJugador(
+            resolveImageUrl("background", jugadorActual.equippedBackground.id)
+          );
         }
         if (jugadorActual.equippedCar?.id) {
           setCarJugador(resolveImageUrl("car", jugadorActual.equippedCar.id));
@@ -114,7 +118,9 @@ export const MultiplayerMatchmaking = ({ gameIdProp, initialData }: MultiplayerM
         setPosicionAuto2(avanceOtro);
         // Apariencia rival (solo cambiar si viene equipado)
         if (otroJugador.equippedBackground?.id) {
-          setFondoRival(resolveImageUrl("background", otroJugador.equippedBackground.id));
+          setFondoRival(
+            resolveImageUrl("background", otroJugador.equippedBackground.id)
+          );
         }
         if (otroJugador.equippedCar?.id) {
           setCarRival(resolveImageUrl("car", otroJugador.equippedCar.id));
@@ -135,8 +141,8 @@ export const MultiplayerMatchmaking = ({ gameIdProp, initialData }: MultiplayerM
         }
       }
 
-      // Verificar ganador
-      if (data.winnerId && jugadorActual) {
+      // Verificar ganador - solo si NO estamos abandonando la partida
+      if (data.winnerId && jugadorActual && !abandonandoPartida.current) {
         if (data.winnerId === jugadorActual.id) {
           setGanador(true);
           setPerdedor(false);
@@ -148,7 +154,6 @@ export const MultiplayerMatchmaking = ({ gameIdProp, initialData }: MultiplayerM
 
       // Actualizar pregunta actual
       if (data.currentQuestion) {
-
         setRespuestaSeleccionada(null);
         setResultado(null);
         setEcuacion({
@@ -159,7 +164,6 @@ export const MultiplayerMatchmaking = ({ gameIdProp, initialData }: MultiplayerM
         });
         setOpciones(data.currentQuestion.options);
         setInstruccion(data.expectedResult);
-
       }
     };
 
@@ -167,7 +171,6 @@ export const MultiplayerMatchmaking = ({ gameIdProp, initialData }: MultiplayerM
       console.error("Error del servidor SignalR:", message);
       setError(message);
     };
-
 
     on("GameUpdate", gameUpdateHandler);
     on("gameUpdate", gameUpdateHandler);
@@ -177,9 +180,7 @@ export const MultiplayerMatchmaking = ({ gameIdProp, initialData }: MultiplayerM
     on("Error", errorHandler);
     on("error", errorHandler);
 
-
     return () => {
-
       off("GameUpdate", gameUpdateHandler);
       off("gameUpdate", gameUpdateHandler);
       off("game-update", gameUpdateHandler);
@@ -188,7 +189,6 @@ export const MultiplayerMatchmaking = ({ gameIdProp, initialData }: MultiplayerM
       off("error", errorHandler);
     };
   }, [conn, on, off]); // Dependencias mínimas
-
 
   useEffect(() => {
     if (!initialData) return;
@@ -204,15 +204,15 @@ export const MultiplayerMatchmaking = ({ gameIdProp, initialData }: MultiplayerM
       const auth = getAuth();
       const myUid = auth.currentUser?.uid;
 
-
       let jugadorActual: PlayerDto | undefined;
       if (myUid) {
         jugadorActual = players.find((p: PlayerDto) => p.uid === myUid);
-
       }
 
       if (!jugadorActual) {
-        jugadorActual = players.find((p: PlayerDto) => p.name?.trim() === nombreJugadorRef.current.trim());
+        jugadorActual = players.find(
+          (p: PlayerDto) => p.name?.trim() === nombreJugadorRef.current.trim()
+        );
       }
 
       if (jugadorActual) {
@@ -220,8 +220,9 @@ export const MultiplayerMatchmaking = ({ gameIdProp, initialData }: MultiplayerM
         const avance = (jugadorActual.correctAnswers / 10) * 100;
         setPosicionAuto1(avance);
       } else {
-        console.error("❌ No se pudo identificar al jugador actual en initialData!");
-
+        console.error(
+          "❌ No se pudo identificar al jugador actual en initialData!"
+        );
       }
 
       // También procesar la pregunta si viene (inicial)
@@ -238,17 +239,26 @@ export const MultiplayerMatchmaking = ({ gameIdProp, initialData }: MultiplayerM
     }
   }, [initialData]); // Solo depende de initialData
 
-  const randomFrom = (arr: number[]) => arr[Math.floor(Math.random() * arr.length)];
+  const randomFrom = (arr: number[]) =>
+    arr[Math.floor(Math.random() * arr.length)];
 
   //const resolveBackground = (id?: number) => resolveImageUrl("background", id);
   //const resolveCar = (id?: number) => resolveImageUrl("car", id);
 
   useEffect(() => {
-    const resolvedBg = resolveImageUrl("background", player?.equippedBackground?.id || player?.background?.id || randomFrom(fondoFallbackIds));
+    const resolvedBg = resolveImageUrl(
+      "background",
+      player?.equippedBackground?.id ||
+        player?.background?.id ||
+        randomFrom(fondoFallbackIds)
+    );
     setFondoJugador(resolvedBg);
     // Fallback del rival: usar el mismo fondo del jugador si el rival no trae uno
     setFondoRival(resolvedBg);
-    const resolvedCar = resolveImageUrl("car", player?.equippedCar?.id || player?.car?.id || randomFrom(autoFallbackIds));
+    const resolvedCar = resolveImageUrl(
+      "car",
+      player?.equippedCar?.id || player?.car?.id || randomFrom(autoFallbackIds)
+    );
     setCarJugador(resolvedCar);
     // Fallback del rival: usar el mismo auto del jugador si el rival no trae uno
     setCarRival(resolvedCar);
@@ -257,11 +267,14 @@ export const MultiplayerMatchmaking = ({ gameIdProp, initialData }: MultiplayerM
   const handleVolver = async () => {
     // Si aún no tenemos IDs simplemente salir
     if (!partidaId || !jugadorId) {
-      navigate('/menu');
+      navigate("/menu");
       return;
     }
 
     try {
+      // Marcar que estamos abandonando para ignorar GameUpdate posterior
+      abandonandoPartida.current = true;
+      
       // Marcar localmente como perdedor para mostrar feedback inmediato
       setPerdedor(true);
       setGanador(false);
@@ -276,26 +289,23 @@ export const MultiplayerMatchmaking = ({ gameIdProp, initialData }: MultiplayerM
         } catch (e) {
           console.warn("[Matchmaking] Error al detener conexión:", e);
         } finally {
-          navigate('/menu');
+          navigate("/menu");
         }
       }, 1200); // ~1.2s de margen
     } catch (error) {
       console.error("Error al abandonar la partida:", error);
-      navigate('/menu');
+      navigate("/menu");
     }
   };
 
   const reiniciarJuego = () => {
-    navigate('/menu');
+    navigate("/menu");
   };
 
   const sendAnswer = useCallback(
     async (respuestaSeleccionada: number | null) => {
-
       try {
-
         await invoke("SendAnswer", partidaId, jugadorId, respuestaSeleccionada);
-
       } catch (error) {
         console.error("❌ Error al invocar SendAnswer:", error);
       }
@@ -304,11 +314,9 @@ export const MultiplayerMatchmaking = ({ gameIdProp, initialData }: MultiplayerM
   );
 
   const manejarRespuesta = async (opcion: number) => {
-
     setRespuestaSeleccionada(opcion);
 
     if (ecuacion && opcion === ecuacion.correctAnswer) {
-
       setResultado("acierto");
       setPenalizado(false);
     } else {
@@ -321,9 +329,16 @@ export const MultiplayerMatchmaking = ({ gameIdProp, initialData }: MultiplayerM
 
   const handleFireExtinguisher = () => {
     if (eliminaOpciones || !ecuacion) return;
-    const opcionesIncorrectas = ecuacion.options.filter((opt) => opt !== ecuacion.correctAnswer);
-    const unaIncorrecta = opcionesIncorrectas[Math.floor(Math.random() * opcionesIncorrectas.length)];
-    setOpciones([ecuacion.correctAnswer, unaIncorrecta].sort(() => Math.random() - 0.5));
+    const opcionesIncorrectas = ecuacion.options.filter(
+      (opt) => opt !== ecuacion.correctAnswer
+    );
+    const unaIncorrecta =
+      opcionesIncorrectas[
+        Math.floor(Math.random() * opcionesIncorrectas.length)
+      ];
+    setOpciones(
+      [ecuacion.correctAnswer, unaIncorrecta].sort(() => Math.random() - 0.5)
+    );
     setEliminaOpciones(true);
     setMensajeComodin("Se han eliminado dos opciones incorrectas.");
   };
@@ -331,9 +346,16 @@ export const MultiplayerMatchmaking = ({ gameIdProp, initialData }: MultiplayerM
   const handleChangeEquation = async () => {
     if (!partidaId || !jugadorId) return;
     try {
-      await invoke("UsePowerUp", partidaId, jugadorId, PowerUpType.ShuffleRival);
+      await invoke(
+        "UsePowerUp",
+        partidaId,
+        jugadorId,
+        PowerUpType.ShuffleRival
+      );
       setPowerUseOrden(true);
-      setMensajeComodin("Se han mezclado las opciones de la ecuación del rival.");
+      setMensajeComodin(
+        "Se han mezclado las opciones de la ecuación del rival."
+      );
       setTimeout(() => setMensajeComodin(null), 2000);
     } catch (error) {
       console.error("Error using Change Equation power-up:", error);
@@ -343,7 +365,12 @@ export const MultiplayerMatchmaking = ({ gameIdProp, initialData }: MultiplayerM
   const handleDobleCount = async () => {
     if (!partidaId || !jugadorId) return;
     try {
-      await invoke("UsePowerUp", partidaId, jugadorId, PowerUpType.DoublePoints);
+      await invoke(
+        "UsePowerUp",
+        partidaId,
+        jugadorId,
+        PowerUpType.DoublePoints
+      );
       setPowerUsePosition(true);
       setMensajeComodin("Si contestas bien avanzas 2 lugares");
       setTimeout(() => setMensajeComodin(null), 2000);
@@ -352,9 +379,13 @@ export const MultiplayerMatchmaking = ({ gameIdProp, initialData }: MultiplayerM
     }
   };
 
-  const opponentName = jugadoresPartida.find(
-    (p) => p.name && p.name.trim() && p.name.trim().toLowerCase() !== nombreJugador.trim().toLowerCase()
-  )?.name ?? "Rival";
+  const opponentName =
+    jugadoresPartida.find(
+      (p) =>
+        p.name &&
+        p.name.trim() &&
+        p.name.trim().toLowerCase() !== nombreJugador.trim().toLowerCase()
+    )?.name ?? "Rival";
 
   // Renderizar pantalla de carga mientras esperamos al rival
   const esperandoRival = jugadoresPartida.length < 2 && !error;
@@ -364,11 +395,13 @@ export const MultiplayerMatchmaking = ({ gameIdProp, initialData }: MultiplayerM
       {esperandoRival ? (
         // Pantalla de espera
         <div className="h-screen w-screen bg-[#1C092D] flex items-center justify-center">
-          <div className="bg-black/90 border-2 border-cyan-400 rounded-lg p-8 text-center">
+          <div className="bg-black/90 border-2 border-cyan-400 rounded-lg p-8 flex flex-col items-center justify-center text-center">
             <div className="animate-spin rounded-full h-20 w-20 border-t-4 border-b-4 border-[#5df9f9] mx-auto mb-4"></div>
             <h2 className="text-3xl text-[#f95ec8] mb-4">Esperando rival...</h2>
             <p className="text-white text-xl">{nombreJugador}</p>
-            <p className="text-gray-400 mt-2">Jugadores: {jugadoresPartida.length}/2</p>
+            <p className="text-gray-400 mt-2">
+              Jugadores: {jugadoresPartida.length}/2
+            </p>
             <p className="text-gray-400 mt-1">Partida ID: {gameId}</p>
             <button
               onClick={handleVolver}
@@ -392,7 +425,10 @@ export const MultiplayerMatchmaking = ({ gameIdProp, initialData }: MultiplayerM
               <div className="bg-black/90 border-2 border-red-500 rounded-lg p-8 text-center max-w-md">
                 <h2 className="text-3xl text-red-500 mb-4">❌ Error</h2>
                 <p className="text-white text-xl mb-6">{error}</p>
-                <button onClick={() => navigate('/menu')} className="bg-[#5df9f9] text-black px-6 py-3 rounded text-xl">
+                <button
+                  onClick={() => navigate("/menu")}
+                  className="bg-[#5df9f9] text-black px-6 py-3 rounded text-xl"
+                >
                   <i className="ri-arrow-left-line mr-2"></i> Volver
                 </button>
               </div>
@@ -430,25 +466,41 @@ export const MultiplayerMatchmaking = ({ gameIdProp, initialData }: MultiplayerM
             <div
               className="flex justify-center items-center fondoRuta w-full relative mt-20 border-3 border-[#5df9f9] rounded-lg"
               style={{
-                backgroundImage: `url('${fondoRival}')`
+                backgroundImage: `url('${fondoRival}')`,
               }}
             >
-              <div className="absolute text-[#000000] text-l ml-2 px-2 py-1 rounded bg-[#5df9f9]" style={{ left: "0px", top: "-2%" }}>
+              <div
+                className="absolute text-[#000000] text-l ml-2 px-2 py-1 rounded bg-[#5df9f9]"
+                style={{ left: "0px", top: "-2%" }}
+              >
                 {opponentName}
               </div>
-              <img src={carRival} alt="Auto 2" className="absolute bottom-[180px] auto auto2" style={{ left: `${posicionAuto2}%` }} />
+              <img
+                src={carRival}
+                alt="Auto 2"
+                className="absolute bottom-[180px] auto auto2"
+                style={{ left: `${posicionAuto2}%` }}
+              />
             </div>
 
             <div
               className="flex justify-center items-center fondoRuta w-full relative mt-20 border-3 border-[#f95ec8] rounded-lg"
               style={{
-                backgroundImage: `url('${fondoJugador}')`
+                backgroundImage: `url('${fondoJugador}')`,
               }}
             >
-              <div className="absolute text-white text-l ml-2 px-2 py-1 rounded bg-[#f95ec8]" style={{ left: "0px", top: "-2%" }}>
+              <div
+                className="absolute text-white text-l ml-2 px-2 py-1 rounded bg-[#f95ec8]"
+                style={{ left: "0px", top: "-2%" }}
+              >
                 {nombreJugador}
               </div>
-              <img src={carJugador} alt="Auto 1" className="absolute auto transition-all duration-500" style={{ left: `${posicionAuto1}%` }} />
+              <img
+                src={carJugador}
+                alt="Auto 1"
+                className="absolute auto transition-all duration-500"
+                style={{ left: `${posicionAuto1}%` }}
+              />
             </div>
           </div>
 
@@ -457,8 +509,14 @@ export const MultiplayerMatchmaking = ({ gameIdProp, initialData }: MultiplayerM
             <div className="instruccion text-3xl text-center">
               {instruccion ? (
                 <>
-                  Elegí la opción para que <span className="text-cyan-400 drop-shadow-[0_0_5px_#00ffff]">Y</span> sea{" "}
-                  <span className="text-cyan-400">{instruccion.toUpperCase()}</span>
+                  Elegí la opción para que{" "}
+                  <span className="text-cyan-400 drop-shadow-[0_0_5px_#00ffff]">
+                    Y
+                  </span>{" "}
+                  sea{" "}
+                  <span className="text-cyan-400">
+                    {instruccion.toUpperCase()}
+                  </span>
                 </>
               ) : (
                 "Esperando instrucción"
@@ -491,12 +549,16 @@ export const MultiplayerMatchmaking = ({ gameIdProp, initialData }: MultiplayerM
                 {ecuacion?.equation ? (
                   <span>{ecuacion.equation}</span>
                 ) : (
-                  <span className="text-xl animate-pulse">Cargando ecuación...</span>
+                  <span className="text-xl animate-pulse">
+                    Cargando ecuación...
+                  </span>
                 )}
               </div>
             </div>
 
-            {errorConexion && <div className="text-red-600 text-lg mt-4">{errorConexion}</div>}
+            {errorConexion && (
+              <div className="text-red-600 text-lg mt-4">{errorConexion}</div>
+            )}
 
             {/* Opciones */}
             <div className="flex justify-center items-center mt-6 gap-6 opciones">
@@ -504,11 +566,20 @@ export const MultiplayerMatchmaking = ({ gameIdProp, initialData }: MultiplayerM
                 let clases = `border-2 border-white rounded-lg text-4xl transition w-20 h-20 `;
 
                 if (respuestaSeleccionada !== null) {
-                  if (resultado === "acierto" && opcion === respuestaSeleccionada) {
+                  if (
+                    resultado === "acierto" &&
+                    opcion === respuestaSeleccionada
+                  ) {
                     clases += "bg-green-400";
-                  } else if (resultado === "error" && opcion === respuestaSeleccionada) {
+                  } else if (
+                    resultado === "error" &&
+                    opcion === respuestaSeleccionada
+                  ) {
                     clases += "bg-red-500 opacity-50 cursor-not-allowed";
-                  } else if (resultado === "error" && opcion === ecuacion?.correctAnswer) {
+                  } else if (
+                    resultado === "error" &&
+                    opcion === ecuacion?.correctAnswer
+                  ) {
                     clases += "bg-green-400 opacity-50 cursor-not-allowed";
                   } else {
                     clases += "bg-[#0F7079]";
@@ -521,15 +592,25 @@ export const MultiplayerMatchmaking = ({ gameIdProp, initialData }: MultiplayerM
 
                 const mostrarMascota =
                   respuestaSeleccionada !== null &&
-                  ((resultado === "acierto" && opcion === respuestaSeleccionada) ||
-                    (resultado === "error" && opcion === ecuacion?.correctAnswer));
+                  ((resultado === "acierto" &&
+                    opcion === respuestaSeleccionada) ||
+                    (resultado === "error" &&
+                      opcion === ecuacion?.correctAnswer));
 
                 return (
                   <div key={i} className="flex flex-col items-center">
                     {mostrarMascota && (
-                      <img src={mathi} alt="Mascota" className="w-16 h-16 mb-2 animate-bounce drop-shadow-[0_0_10px_#00ffff]" />
+                      <img
+                        src={mathi}
+                        alt="Mascota"
+                        className="w-16 h-16 mb-2 animate-bounce drop-shadow-[0_0_10px_#00ffff]"
+                      />
                     )}
-                    <button onClick={() => manejarRespuesta(opcion)} className={clases} disabled={!!respuestaSeleccionada || penalizado}>
+                    <button
+                      onClick={() => manejarRespuesta(opcion)}
+                      className={clases}
+                      disabled={!!respuestaSeleccionada || penalizado}
+                    >
                       {opcion}
                     </button>
                   </div>

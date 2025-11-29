@@ -165,7 +165,7 @@ export default function CreateGame() {
             onClick={playBackSound}
             className="text-black hover:bg-red-700 bg-[#00f0ff] text-2xl border-2 border-white px-3 py-1
                 tracking-wider transition-all duration-300 
-                 hover:bg-cyan-400 shadow-[0_0_10px_rgba(0,217,255,0.3)] 
+                  shadow-[0_0_10px_rgba(0,217,255,0.3)] 
                  hover:shadow-[0_0_20px_rgba(0,217,255,0.6)]
                  disabled:opacity-50">
             <i className="ri-arrow-left-line mr-2"></i> Volver

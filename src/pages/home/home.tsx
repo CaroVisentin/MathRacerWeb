@@ -23,9 +23,8 @@ export const Home = () => {
       </div>
     );
   }
-
   return (
-    <div className="relative h-screen w-screen flex flex-col">
+    <div className="relative min-h-screen w-full flex flex-col">
       {/* Fondo del Home */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -34,32 +33,62 @@ export const Home = () => {
         <div className="absolute pointer-events-none inset-0 bg-black/60"></div>
       </div>
 
-      <div className="relative z-10 h-full flex flex-col">
-        {/* Isologo */}
-        <div className="absolute top-4 left-10">
+      {/* Contenido */}
+      <div className="relative z-10 flex flex-col min-h-screen">
+        {/* Logo */}
+        <div className="absolute top-2 left-2 sm:top-3 sm:left-3 md:top-4 md:left-4">
           <img
             src={isologo}
             alt="Mathi Racer"
-            className=" drop-shadow-[0_0_10px_#00ffff]"
+            className="
+            h-16
+            sm:h-26
+            md:h-28
+            lg:h-45
+            drop-shadow-[0_0_10px_#00ffff]
+          "
           />
         </div>
 
-        {/* Esquina superior derecha - Monedas, Perfil, Nivel y Ranking */}
-        <div className={`relative flex flex-col items-end gap-3`}>
-          <div className={`pt-8 pr-6`}>
-            <PlayerStatusPanel
-              coins={homeData.user.coins}
-              level={homeData.user.level}
-              ranking={homeData.user.ranking}
-              backgroundImageUrl={homeData.activeItems.background.imageUrl}
-              profileImageUrl={homeData.activeItems.profile.imageUrl}
-            />
-          </div>
+        {/* Panel Superior Derecha */}
+        <div
+          className="
+        relative flex justify-end
+        sm:px-3 sm:pt-8
+        px-3 pt-3
+        lg:px-5 lg:pt-6
+
+     
+      "
+        >
+          <PlayerStatusPanel
+            coins={homeData.user.coins}
+            level={homeData.user.level}
+            ranking={homeData.user.ranking}
+            backgroundImageUrl={homeData.activeItems.background.imageUrl}
+            profileImageUrl={homeData.activeItems.profile.imageUrl}
+          />
         </div>
 
-        {/* Esquina inferior izquierda - Modos de juego */}
-        <div className="flex flex-1 items-end justify-between px-4 pb-8">
-          <div className="flex flex-col gap-3">
+        {/* Botones inferiores */}
+        <div
+          className="
+        flex flex-1 items-end justify-between
+        px-3 pb-5
+        sm:px-3 sm:pb-5
+        lg:px-5 lg:pb-7
+      "
+        >
+          {/* Modos de Juego Izquierda */}
+          <div
+            className="
+          flex flex-col gap-2
+          max-w-[160px]
+          sm:max-w-[200px]
+          md:max-w-none
+          md:gap-3
+        "
+          >
             <ActionButton to="/menu" title="Multijugador">
               Multijugador
             </ActionButton>
@@ -71,8 +100,14 @@ export const Home = () => {
             </ActionButton>
           </div>
 
-          {/* Esquina inferior derecha - Navegación a otras páginas */}
-          <div className="flex flex-col gap-3 items-end">
+          {/* Icon buttons derecha */}
+          <div
+            className="
+          flex flex-col items-end
+          gap-2
+          md:gap-3
+        "
+          >
             <ActionButton to="/ranking" size="small" title="Ranking">
               <i className="ri-trophy-fill"></i>
             </ActionButton>
@@ -85,6 +120,7 @@ export const Home = () => {
           </div>
         </div>
 
+        {/* Auto al centro */}
         <CarDisplay imageUrl={auto} />
       </div>
     </div>

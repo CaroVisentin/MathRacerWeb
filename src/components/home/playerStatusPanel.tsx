@@ -19,14 +19,17 @@ export const PlayerStatusPanel = ({
   className,
 }: PlayerStatusPanelProps) => {
   return (
-    <div className={`flex items-end gap-5 ${className ?? ""}`}>
-        <div className="flex items-center flex-col gap-4">
-          <BatteryStatus />
-          <CoinsDisplay coins={coins} />
-        </div>
-        <Link to="/perfil">
-          <ProfileCard imageUrl={profileImageUrl} backgroundUrl={backgroundImageUrl} />
-        </Link>
+    <div className={`flex items-end gap-4 ${className ?? ""}`}>
+      <div className="flex items-end flex-col gap-2 sm:gap-3 md:gap-4">
+        <BatteryStatus />
+        <CoinsDisplay coins={coins} />
       </div>
+      <Link to="/perfil">
+        <ProfileCard
+          imageUrl={profileImageUrl}
+          backgroundUrl={backgroundImageUrl}
+        />
+      </Link>
+    </div>
   );
 };
