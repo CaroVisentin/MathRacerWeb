@@ -46,15 +46,20 @@ export default function JoinGame() {
     }
   };
 
+  const normalizeText = (text: string) =>
+    text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+
   // Filtrar partidas cuando cambien los filtros
   useEffect(() => {
     const filtered = games.filter(g =>
-      g.gameName.toLowerCase().includes(search.toLowerCase()) &&
-      (difficulty ? g.difficulty === difficulty : true) &&
-      (privacy ? (privacy === 'Pública' ? !g.isPrivate : g.isPrivate) : true)
+      normalizeText(g.gameName).includes(normalizeText(search)) &&
+      (difficulty ? normalizeText(g.difficulty) === normalizeText(difficulty) : true) &&
+      (privacy
+        ? (normalizeText(privacy) === 'publica' ? !g.isPrivate : g.isPrivate)
+        : true)
     );
     setFilteredGames(filtered);
-    setCurrentPage(1); // Resetear a la primera página al filtrar
+    setCurrentPage(1);
   }, [search, difficulty, privacy, games]);
 
   const gamesPerPage = 4;
