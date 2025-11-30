@@ -51,9 +51,9 @@ export default function InvitationsInbox() {
 
       if (response.accepted && response.gameId) {
         playJoinCreateSound();
-        
+
         await checkInvitations();
-        
+
         navigate(`/multijugador/${response.gameId}`);
       }
     } catch (err) {
@@ -74,7 +74,7 @@ export default function InvitationsInbox() {
         accept: false,
       });
 
-     
+
       await fetchInvitations();
       await checkInvitations();
       setRespondingTo(null);
@@ -86,20 +86,9 @@ export default function InvitationsInbox() {
     }
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleString("es-AR", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
   return (
     <div className="h-screen w-screen fondo-city flex flex-col items-center justify-start">
-    <AppHeader />
+      <AppHeader />
 
       <div className="w-full max-w-5xl mx-auto bg-black/60 text-[#5df9f9] p-6 pb-2 rounded-lg shadow-lg overflow-auto custom-scrollbar">
         <h1 className="text-6xl text-[#00f0ff]  text-center mb-10 pb-5 drop-shadow-[0_0_10px_#00ffff]">
@@ -155,9 +144,6 @@ export default function InvitationsInbox() {
                     <p>
                       <span className="text-cyan-400">Objetivo:</span> {invitation.expectedResult}
                     </p>
-                    <p className="text-sm text-gray-400">
-                      Recibida: {formatDate(invitation.createdAt)}
-                    </p>
                   </div>
                 </div>
 
@@ -193,7 +179,7 @@ export default function InvitationsInbox() {
                        hover:shadow-[0_0_20px_rgba(0,217,255,0.6)]"
             style={{ marginTop: "20px", marginBottom: "20px" }}
           >
-           <i className="ri-arrow-left-line mr-2"></i> Volver
+            <i className="ri-arrow-left-line mr-2"></i> Volver
 
           </Link>
         </div>

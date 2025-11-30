@@ -135,7 +135,7 @@ export const MultiplayerGame = () => {
     try {
       // Marcar que estamos abandonando para ignorar GameUpdate posterior
       abandonandoPartida.current = true;
-      
+
       // Mostrar modal de perdedor localmente para feedback inmediato
       setPerdedor(true);
       setGanador(false);
@@ -167,7 +167,7 @@ export const MultiplayerGame = () => {
 
     const unaIncorrecta =
       opcionesIncorrectas[
-        Math.floor(Math.random() * opcionesIncorrectas.length)
+      Math.floor(Math.random() * opcionesIncorrectas.length)
       ];
 
     setOpciones(
@@ -380,7 +380,7 @@ export const MultiplayerGame = () => {
 
     const errorHandler = (message: string) => {
       console.error("Error del servidor SignalR:", message);
-      alert(`Error: ${message}`);
+      setError(message);
 
       navigate("/menu");
     };
@@ -419,8 +419,8 @@ export const MultiplayerGame = () => {
     const resolvedBg = resolveImageUrl(
       "background",
       player?.equippedBackground?.id ||
-        player?.background?.id ||
-        randomFrom(fondoFallbackIds)
+      player?.background?.id ||
+      randomFrom(fondoFallbackIds)
     );
     setFondoJugador(resolvedBg);
     // Fallback del rival: usar el mismo fondo del jugador si el rival no trae uno
@@ -453,7 +453,7 @@ export const MultiplayerGame = () => {
       {buscandoRival && !gameId && (
         <LookingForRivalModal
           playerId={nombreJugador}
-          setPlayerId={() => {}} // El nombre viene del contexto, no se puede cambiar aquí
+          setPlayerId={() => { }} // El nombre viene del contexto, no se puede cambiar aquí
           onConnection={conectarJugador}
         />
       )}
