@@ -12,7 +12,7 @@ export interface GameInvitationDto {
 export interface SendInvitationRequest {
   invitedFriendId: number; // ID del amigo a invitar
   difficulty: string; // "Facil", "Medio", "Dificil"
-  expectedResult: string; // "Mayor", "Menor", "Igual"
+  expectedResult: string; // "Mayor", "Menor"
 }
 
 export interface RespondInvitationRequest {

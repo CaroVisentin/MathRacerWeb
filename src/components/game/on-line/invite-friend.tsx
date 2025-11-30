@@ -119,7 +119,6 @@ export default function InviteFriends() {
             >
               <option value="Mayor">Mayor</option>
               <option value="Menor">Menor</option>
-              <option value="Igual">Igual</option>
             </select>
           </div>
         </div>
