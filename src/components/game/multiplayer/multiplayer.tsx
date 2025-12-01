@@ -164,17 +164,39 @@ export const MultiplayerGame = () => {
     const opcionesIncorrectas = ecuacion.options.filter(
       (opt) => opt !== ecuacion.correctAnswer
     );
+  
+    // const unaIncorrecta =
+    //   opcionesIncorrectas[
+    //   Math.floor(Math.random() * opcionesIncorrectas.length)
+    //   ];
+    let nuevasOpciones;   
+     if (ecuacion.options.length === 2) {
+      //si hay 2 eliminanos la incorrecta
+       nuevasOpciones = [ecuacion.correctAnswer];
+    } else {
+      //caso general eliminamos 2 incorrectas
+      const cantidadFinal = Math.ceil(ecuacion.options.length/2);
+      // Siempre incluimos la correcta
+     nuevasOpciones = [ecuacion.correctAnswer];
 
-    const unaIncorrecta =
-      opcionesIncorrectas[
-      Math.floor(Math.random() * opcionesIncorrectas.length)
-      ];
+    // Elegimos aleatoriamente incorrectas hasta completar el 50%
+    while (nuevasOpciones.length < cantidadFinal) {
+      const incorrectaAleatoria =
+        opcionesIncorrectas[Math.floor(Math.random() * opcionesIncorrectas.length)];
+      if (!nuevasOpciones.includes(incorrectaAleatoria)) {
+        nuevasOpciones.push(incorrectaAleatoria);
+      }
+    }
 
-    setOpciones(
-      [ecuacion.correctAnswer, unaIncorrecta].sort(() => Math.random() - 0.5)
-    );
+    }
+
+    // setOpciones(
+    //   [ecuacion.correctAnswer, unaIncorrecta].sort(() => Math.random() - 0.5)
+    // );
+    setOpciones(nuevasOpciones.sort(() => Math.random() - 0.5));
     setEliminaOpciones(true);
-    setMensajeComodin("Se han eliminado dos opciones incorrectas.");
+    setMensajeComodin("Se han eliminado 2 opciones incorrectas.");
+    setTimeout(() => setMensajeComodin(null), 2000);
   };
 
   const handleChangeEquation = async () => {
