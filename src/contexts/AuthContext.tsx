@@ -11,6 +11,7 @@ import type { AuthUser } from "../models/domain/auth/authTypes";
 import { authService } from "../services/auth/authService";
 import { setAuthToken } from "../services/network/api";
 import type { Player, PlayerItem } from "../models/ui/player/player";
+import { getPlayerData } from "../services/player/playerService";
 
 interface AuthContextType {
   user: AuthUser | null;
@@ -26,6 +27,7 @@ interface AuthContextType {
   logout: () => Promise<void>;
   player: Player | null;
   setPlayer: (player: Player | null) => void;
+  refreshPlayer: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -208,7 +210,6 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       setLoading(false);
     }
   };
-
   const logout = async () => {
     try {
       await authService.logout();
@@ -226,6 +227,21 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const refreshPlayer = async () => {
+    try {
+      if (!user) return;
+      const updatedPlayer = await getPlayerData();
+      setPlayer(updatedPlayer);
+      try {
+        localStorage.setItem("player", JSON.stringify(updatedPlayer));
+      } catch (e) {
+        console.warn("No se pudo guardar el player actualizado en el storage:", e);
+      }
+    } catch (err) {
+      console.error("Error al refrescar datos del jugador:", err);
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -238,6 +254,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         logout,
         player,
         setPlayer,
+        refreshPlayer,
       }}
     >
       {children}

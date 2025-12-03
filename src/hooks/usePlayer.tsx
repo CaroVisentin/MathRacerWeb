@@ -6,7 +6,7 @@ export const usePlayer = () => {
   const context = useContext(AuthContext);
   if (!context) throw new Error('usePlayer debe usarse dentro de AuthProvider');
 
-  const { player, setPlayer } = context;
+  const { player, setPlayer, refreshPlayer } = context;
 
-  return { player, setPlayer };
+  return { player, setPlayer, refreshPlayer };
 };

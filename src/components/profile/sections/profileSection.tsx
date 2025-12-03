@@ -1,10 +1,15 @@
+import { useEffect } from "react";
 import { useHomeData } from "../../../hooks/useHomeData";
 import { usePlayer } from "../../../hooks/usePlayer";
 import { UserInfoSection } from "../components/userInfo";
 
 export const ProfileSection = () => {
-  const { player } = usePlayer();
+  const { player, refreshPlayer } = usePlayer();
   const { homeData } = useHomeData();
+
+  useEffect(() => {
+    refreshPlayer();
+  }, [refreshPlayer]);
 
   if (!player) {
     return (

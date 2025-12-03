@@ -7,7 +7,7 @@ import { AppHeader } from "../../../components/shared/appHeader";
 
 export const Menu = () => {
   const { playButtonSound, playBackSound } = useAudio();
-  const { hasInvitation, checkInvitations } = useInvitation();
+  const { hasInvitation, invitationCount, checkInvitations } = useInvitation();
   const { user } = useAuth();
 
   useEffect(() => {
@@ -53,12 +53,13 @@ export const Menu = () => {
           <Link
             to="/invitaciones"
             onClick={playButtonSound}
-            className={`botonGral text-center text-3xl sm:text-4xl lg:text-5xl hover:drop-shadow-[0_0_10px_#00ffff] 
-              ${hasInvitation ? 'botonBrillante' : ''}
-              ${hasInvitation && (<span className="contador-invitacion">{hasInvitation ? '1' : '0'}</span>)}`}
+            className={`botonGral text-center text-3xl sm:text-4xl lg:text-5xl hover:drop-shadow-[0_0_10px_#00ffff] relative
+              ${hasInvitation ? 'botonBrillante' : ''}`}
           >
-            Buzón de Invitaciones          
-    
+            Buzón de Invitaciones
+            {hasInvitation && invitationCount > 0 && (
+              <span className="contador-invitacion">{invitationCount}</span>
+            )}
           </Link>
           <Link
             to="/ranking"
