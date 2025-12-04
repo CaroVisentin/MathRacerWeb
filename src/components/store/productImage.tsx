@@ -20,15 +20,19 @@ export const ProductImage = ({ product }: ProductImageProps) => {
   };
 
   const productType = getProductType();
-  const isCar = productType === "car";
-
-  // Resolver la imagen usando el ID del producto
   const imageUrl = product.imageUrl || resolveImageUrl(productType, product.id);
 
-  // Elegimos la clase según el tipo
-  const imageClass = isCar
-    ? "w-full h-32 object-contain rounded-md mb-2"
-    : "w-full aspect-[4/3] object-cover rounded-md mb-2";
-
-  return <img src={imageUrl} alt={product.name} className={imageClass} />;
+  return (
+    <div className="w-full aspect-[4/3] rounded-md mb-2 overflow-hidden flex items-center justify-center">
+      <img
+        src={imageUrl}
+        alt={product.name}
+        className={
+          productType === "background"
+            ? "w-full h-full object-cover"
+            : "max-h-full max-w-full object-contain"
+        }
+      />
+    </div>
+  );
 };
